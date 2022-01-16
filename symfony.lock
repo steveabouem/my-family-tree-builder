@@ -586,10 +586,10 @@
             "ref": "0f274572ea315eb3b5884518a50ca43f211b4534"
         },
         "files": [
-            "./assets/styles/app.css",
+            "./assets/js/react/styles/index.css",
             "./assets/controllers.json",
             "./assets/controllers/hello_controller.js",
-            "./assets/js/app.js",
+            "./assets/js/react/src/index.jsx",
             "./assets/bootstrap.js",
             "./config/packages/webpack_encore.yaml",
             "./config/packages/test/webpack_encore.yaml",
