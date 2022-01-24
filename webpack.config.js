@@ -20,7 +20,8 @@ Encore
      * Each entry will result in one JavaScript file (e.g. app.js)
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
-    .addEntry('app', './assets/js/react/src/index.jsx')
+    .addEntry('app', './assets/js/react/app.jsx')
+    // .addPlugin(new HtmlWebpackPlugin({ template: 'app.ejs', alwaysWriteToDisk: true }))
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

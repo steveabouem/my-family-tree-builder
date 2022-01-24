@@ -1,3 +1,4 @@
-home_page:
-    path: /
+landing:
+    path: /test
     controller: App\Controller\LandingController::show
+    methods: GET|HEAD
