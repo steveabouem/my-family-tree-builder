@@ -5,9 +5,11 @@ export const UserMenu = ({opened, setOpened, user}) => {
 
     return opened ? (
         <StyledUserMenu>
+            <div className="w-100 d-flex align-content-center justify-content-end">
+                <div className="close-menu hover red" onClick={() => setOpened(false)}>X</div>
+            </div>
             <div className="user-menu-link">
                 Logo
-                <div className="close-menu hover red" onClick={() => setOpened(false)}>X</div>
             </div>
             {
                 user ? (
