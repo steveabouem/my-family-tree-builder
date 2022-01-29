@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class LandingController extends AbstractController
 {
     /**
-    * @Route("/test", name="landing")
+    * @Route("/home", name="landing")
     */
     public function show()
     {

@@ -1,4 +1,19 @@
 landing:
-    path: /test
+    path: /home
     controller: App\Controller\LandingController::show
     methods: GET|HEAD
+
+root:
+    path: /root
+    controller: App\Controller\LandingController::showRoot
+    methods: GET
+
+list_expenses:
+    path: /expenses
+    controller: App\Controller\ExpenseController::show
+    methods: GET|HEAD
+
+create_expense:
+    path: api/expenses/new
+    controller: App\Controller\ExpenseController::create
+    methods: POST

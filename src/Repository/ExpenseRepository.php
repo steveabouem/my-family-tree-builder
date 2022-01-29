@@ -7,8 +7,8 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Expense|null find($id, $lockMode = null, $lockVersion = null)
- * @method Expense|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Expense|null create($expense)
+ * @method Expense|null findById($id)
  * @method Expense[]    findAll()
  * @method Expense[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -22,29 +22,26 @@ class ExpenseRepository extends ServiceEntityRepository
     // /**
     //  * @return Expense[] Returns an array of Expense objects
     //  */
-    /*
-    public function findByExampleField($value)
+    public function findById($id): Expense
     {
         return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('e.id = :expense_id')
+            ->setParameter('expense_id', $id)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Expense
+
+    // /**
+    //  * @return boolean creates an Expense instance and returns a boolean
+    //  */
+    public function create($expense): boolean
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $em = $this->getDoctrine()->getManager();
+        var_dump($em);
+
+        return $test;
     }
-    */
+
 }
