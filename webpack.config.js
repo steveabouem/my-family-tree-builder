@@ -21,6 +21,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/js/react/app.jsx')
+    .addEntry('household', './assets/js/react/src/containers/household.jsx')
     // .addPlugin(new HtmlWebpackPlugin({ template: 'app.ejs', alwaysWriteToDisk: true }))
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
@@ -65,12 +66,12 @@ Encore
     // uncomment if you use React
     .enableReactPreset()
 
-    // uncomment to get integrity="..." attributes on your script & link tags
-    // requires WebpackEncoreBundle 1.4 or higher
-    //.enableIntegrityHashes(Encore.isProduction())
+// uncomment to get integrity="..." attributes on your script & link tags
+// requires WebpackEncoreBundle 1.4 or higher
+//.enableIntegrityHashes(Encore.isProduction())
 
-    // uncomment if you're having problems with a jQuery plugin
-    //.autoProvidejQuery()
+// uncomment if you're having problems with a jQuery plugin
+//.autoProvidejQuery()
 ;
 
 module.exports = Encore.getWebpackConfig();

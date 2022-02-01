@@ -17,3 +17,8 @@ create_expense:
     path: api/expenses/new
     controller: App\Controller\ExpenseController::create
     methods: POST
+
+household_landing:
+    path: /my-household
+    controller: App\Controller\HouseholdController::show
+    methods: GET|HEAD
