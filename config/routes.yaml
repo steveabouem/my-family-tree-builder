@@ -22,3 +22,8 @@ household_landing:
     path: /my-household
     controller: App\Controller\HouseholdController::show
     methods: GET|HEAD
+
+create_household:
+    path: api/my-household/new
+    controller: App\Controller\HouseholdController::createNew
+    methods: POST

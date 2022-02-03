@@ -16,7 +16,7 @@ export const TopNav = () => {
             </div>
             <div className="topnav-section">
                 <div>
-                    <NavLink href="">household</NavLink>
+                    <NavLink href="/my-household">household</NavLink>
                 </div>
                 <div>
                     <NavLink href="">goals</NavLink>
