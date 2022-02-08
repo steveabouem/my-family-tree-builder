@@ -13,8 +13,10 @@ const registrationElement = document.getElementById('registration');
 const Registration = () => {
 
     const onSubmit = (values) => {
-        e.preventDefault();
-        authenticationService.submitRegistrationForm(values);
+        authenticationService.submitRegistrationForm(values)
+            .then(r => {
+                console.log(r);
+            })
     };
 
 

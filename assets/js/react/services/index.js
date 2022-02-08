@@ -1,5 +1,6 @@
 import authenticationService from './authentication.service';
 
 export default {
-    authenticationService
+    submitLoginForm: authenticationService.submitLoginForm,
+    submitRegistrationForm: authenticationService.submitRegistrationForm
 }

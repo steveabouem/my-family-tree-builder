@@ -49,7 +49,8 @@ class RegistrationController extends AbstractController
 
             return new JsonResponse(
                 [
-                    'data' => $user
+                    'name' => $name,
+                    'email' => $email,
                 ]
             );
         }
