@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block head %}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('registration') }}
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('registration') }}
+    {% endblock %}
+    {% block title %}Register{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <div id="registration">
+
+    </div>
+{% endblock %}

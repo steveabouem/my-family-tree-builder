@@ -3,6 +3,26 @@ landing:
     controller: App\Controller\LandingController::show
     methods: GET|HEAD
 
+login:
+    path: /login
+    controller: App\Controller\LoginController::show
+    methods: GET
+
+submit_login:
+    path: api/login
+    controller: App\Controller\LoginController::show
+    methods: POST
+
+registration:
+    path: /register
+    controller: App\Controller\RegistrationController::show
+    methods: GET
+
+submit_registration:
+    path: api/register
+    controller: App\Controller\RegistrationController::submitRegistrationForm
+    methods: POST
+
 root:
     path: /root
     controller: App\Controller\LandingController::showRoot

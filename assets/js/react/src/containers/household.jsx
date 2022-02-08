@@ -24,6 +24,12 @@ class Household extends React.Component {
                 {/*        <button type="submit">Edit</button>*/}
                 {/*    </Form>*/}
                 {/*</Formik>*/}
+                <div>
+                    <h2>Welcome to your household</h2>
+                    <div>
+
+                    </div>
+                </div>
                 <StyledHouseholdBubble />
             </Page>
         );

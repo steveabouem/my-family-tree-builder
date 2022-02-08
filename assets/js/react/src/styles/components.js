@@ -12,3 +12,14 @@ export const StyledHouseholdBubble = styled.div`
   background-blend-mode: overlay;
   opacity: .6;
 `;
+
+export const StyledLoginContainer = styled.div`
+  position: absolute;
+  left: 25%;
+  width: 50%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  top: 15%;
+`;
