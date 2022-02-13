@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ObjectiveRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -17,11 +19,6 @@ class Objective
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     */
-    private $milestones = [];
-
      /**
      * @ORM\Column(type="string", length=255)
      */
@@ -33,21 +30,19 @@ class Objective
      */
     private $created_by;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="objective")
+     */
+    private $tasks;
+
+    public function __construct()
+    {
+        $this->tasks = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getMilestones(): ?array
-    {
-        return $this->milestones;
-    }
-
-    public function setMilestones(?array $milestones): self
-    {
-        $this->milestones = $milestones;
-
-        return $this;
     }
 
     public function getDescription(): ?string
@@ -70,6 +65,36 @@ class Objective
     public function setCreatedBy(?User $created_by): self
     {
         $this->created_by = $created_by;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Task[]
+     */
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    public function addTask(Task $task): self
+    {
+        if (!$this->tasks->contains($task)) {
+            $this->tasks[] = $task;
+            $task->setObjective($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): self
+    {
+        if ($this->tasks->removeElement($task)) {
+            // set the owning side to null (unless already changed)
+            if ($task->getObjective() === $this) {
+                $task->setObjective(null);
+            }
+        }
 
         return $this;
     }

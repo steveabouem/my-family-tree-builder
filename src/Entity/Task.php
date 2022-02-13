@@ -22,6 +22,12 @@ class Task
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Objective::class, inversedBy="tasks")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $objective;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,6 +41,18 @@ class Task
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getObjective(): ?Objective
+    {
+        return $this->objective;
+    }
+
+    public function setObjective(?Objective $objective): self
+    {
+        $this->objective = $objective;
 
         return $this;
     }
