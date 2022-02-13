@@ -47,9 +47,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $households;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Objective::class, mappedBy="created_by", orphanRemoval=true)
+     */
+    private $objectives;
+
     public function __construct()
     {
         $this->households = new ArrayCollection();
+        $this->objectives = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -175,6 +181,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->households->removeElement($householdId)) {
             $householdId->removeUserId($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Objective[]
+     */
+    public function getObjectives(): Collection
+    {
+        return $this->objectives;
+    }
+
+    public function addObjective(Objective $objective): self
+    {
+        if (!$this->objectives->contains($objective)) {
+            $this->objectives[] = $objective;
+            $objective->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjective(Objective $objective): self
+    {
+        if ($this->objectives->removeElement($objective)) {
+            // set the owning side to null (unless already changed)
+            if ($objective->getCreatedBy() === $this) {
+                $objective->setCreatedBy(null);
+            }
         }
 
         return $this;

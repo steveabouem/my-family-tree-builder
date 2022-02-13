@@ -27,6 +27,12 @@ class Objective
      */
     private $description;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="objectives")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $created_by;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -52,6 +58,18 @@ class Objective
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->created_by;
+    }
+
+    public function setCreatedBy(?User $created_by): self
+    {
+        $this->created_by = $created_by;
 
         return $this;
     }

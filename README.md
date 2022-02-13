@@ -2,7 +2,7 @@
 
 #### Run migration
 `php bin/console make:migration` then `php bin/console doctrine:migrations:migrate`
-s
+
 #### Debug routes
 `php bin/console debug:router`
 
@@ -23,7 +23,8 @@ s
     make sure you ran XAMPP as an admin
     Rename the `data` XAMPP sub folder to something else, than the `backup` sub folder to data.
     Alternatively, change ports
-  
+
+#### ORM/DOCTRINE  
 - `Foreign key constraint incorrectly formed`:
     Make sure to define relations one at the time for easy debug
     Last resort, delete migration files and start over, one relation at the time
