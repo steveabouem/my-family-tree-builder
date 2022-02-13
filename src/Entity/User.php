@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -39,6 +41,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Household::class, mappedBy="inhabitants")
+     */
+    private $households;
+
+    public function __construct()
+    {
+        $this->households = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -139,5 +151,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection|Household[]
+     */
+    public function getHouseholdIds(): Collection
+    {
+        return $this->households;
+    }
+
+    public function addHouseholdId(Household $householdId): self
+    {
+        if (!$this->households->contains($householdId)) {
+            $this->households[] = $householdId;
+            $householdId->addUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHouseholdId(Household $householdId): self
+    {
+        if ($this->households->removeElement($householdId)) {
+            $householdId->removeUserId($this);
+        }
+
+        return $this;
     }
 }
