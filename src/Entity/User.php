@@ -52,6 +52,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $objectives;
 
+    /**
+     * @ORM\Column(type="datetimetz")
+     */
+    private $date_created;
+
     public function __construct()
     {
         $this->households = new ArrayCollection();
@@ -212,6 +217,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $objective->setCreatedBy(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->date_created;
+    }
+
+    public function setDateCreated(\DateTimeInterface $date_created): self
+    {
+        $this->date_created = $date_created;
 
         return $this;
     }

@@ -34,6 +34,11 @@ class Expense
      */
     private $task;
 
+    /**
+     * @ORM\Column(type="datetimetz")
+     */
+    private $date_created;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -71,6 +76,18 @@ class Expense
     public function setTask(Task $task): self
     {
         $this->task = $task;
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->date_created;
+    }
+
+    public function setDateCreated(\DateTimeInterface $date_created): self
+    {
+        $this->date_created = $date_created;
 
         return $this;
     }

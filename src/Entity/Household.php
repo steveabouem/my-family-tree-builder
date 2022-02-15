@@ -35,6 +35,11 @@ class Household
      */
     private $objectives;
 
+    /**
+     * @ORM\Column(type="datetimetz")
+     */
+    private $date_created;
+
     public function __construct()
     {
         $this->inhabitants = new ArrayCollection();
@@ -108,6 +113,18 @@ class Household
                 $objective->setHousehold(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->date_created;
+    }
+
+    public function setDateCreated(\DateTimeInterface $date_created): self
+    {
+        $this->date_created = $date_created;
 
         return $this;
     }

@@ -28,6 +28,11 @@ class Task
      */
     private $objective;
 
+    /**
+     * @ORM\Column(type="datetimetz")
+     */
+    private $date_created;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -53,6 +58,18 @@ class Task
     public function setObjective(?Objective $objective): self
     {
         $this->objective = $objective;
+
+        return $this;
+    }
+
+    public function getDateCreated(): ?\DateTimeInterface
+    {
+        return $this->date_created;
+    }
+
+    public function setDateCreated(\DateTimeInterface $date_created): self
+    {
+        $this->date_created = $date_created;
 
         return $this;
     }
