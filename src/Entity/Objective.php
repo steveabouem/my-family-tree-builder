@@ -35,6 +35,11 @@ class Objective
      */
     private $tasks;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $total_cost;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
@@ -95,6 +100,18 @@ class Objective
                 $task->setObjective(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTotalCost(): ?string
+    {
+        return $this->total_cost;
+    }
+
+    public function setTotalCost(?string $total_cost): self
+    {
+        $this->total_cost = $total_cost;
 
         return $this;
     }

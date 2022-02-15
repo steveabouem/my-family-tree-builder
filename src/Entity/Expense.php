@@ -28,6 +28,12 @@ class Expense
      */
     private $description;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Task::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $task;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -53,6 +59,18 @@ class Expense
     public function setDescription(string $description): self
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function getTask(): ?Task
+    {
+        return $this->task;
+    }
+
+    public function setTask(Task $task): self
+    {
+        $this->task = $task;
 
         return $this;
     }
