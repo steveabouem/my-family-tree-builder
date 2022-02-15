@@ -28,3 +28,5 @@
 - `Foreign key constraint incorrectly formed`:
     Make sure to define relations one at the time for easy debug
     Last resort, delete migration files and start over, one relation at the time
+- `The metadata storage is not up to date(...)`:
+    
