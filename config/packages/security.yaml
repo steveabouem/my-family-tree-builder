@@ -20,6 +20,14 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            form_login:
+                enable_csrf: true
+                login_path: login
+                check_path: login
+            # configure the maximum login attempts in a custom period of time
+            login_throttling:
+                max_attempts: 3
+                interval: '15 minutes'
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -32,3 +40,4 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+

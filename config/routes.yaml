@@ -5,12 +5,16 @@ landing:
 
 login:
     path: /login
-    controller: App\Controller\LoginController::show
+    controller: App\Controller\LoginController::index
+    methods: GET|POST
+
+logout:
+    path: /logout
     methods: GET
 
 submit_login:
     path: api/login
-    controller: App\Controller\LoginController::show
+    controller: App\Controller\LoginController::submitLoginForm
     methods: POST
 
 registration:

@@ -7,7 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\User;
+use DateTime;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class RegistrationController extends AbstractController
 {
@@ -39,11 +41,10 @@ class RegistrationController extends AbstractController
                 $user,
                 $plaintextPassword
             );
-
             $user->setEmail($email);
             $user->setName($name);
             $user->setPassword($hashedPassword);
-
+            $user->setDateCreated(new \DateTime());
             $em->persist($user);
             $em->flush();
 

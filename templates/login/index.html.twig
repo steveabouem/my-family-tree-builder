@@ -1,18 +1,34 @@
 {% extends 'base.html.twig' %}
 
 {% block head %}
-    {% block stylesheets %}
-        {{ encore_entry_link_tags('login') }}
-    {% endblock %}
+{#    {% block stylesheets %}#}
+{#        {{ encore_entry_link_tags('login') }}#}
+{#    {% endblock %}#}
 
     {% block javascripts %}
-        {{ encore_entry_script_tags('login') }}
+{#        {{ encore_entry_script_tags('login') }}#}
     {% endblock %}
     {% block title %}Login{% endblock %}
 {% endblock %}
 
 {% block body %}
-    <div id="login">
+    {% if error %}
+        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
 
-    </div>
+
+    <form action="{{ path('login') }}" method="post">
+        <label for="email"></label>
+        <label for="username">Email:</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}"/>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="_password"/>
+        {#TODO: keep in mind to have a variable for the environment url below#}
+        {# If you want to control the URL the user is redirected to on success#}
+        <input type="hidden" name="_target_path" value="http://localhost:8000/my-household"/>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+        <button type="submit">login</button>
+    </form>
 {% endblock %}

@@ -13,17 +13,14 @@ const registrationElement = document.getElementById('registration');
 const Registration = () => {
 
     const onSubmit = (values) => {
-        authenticationService.submitRegistrationForm(values)
-            .then(r => {
-                console.log(r);
-            })
+        authenticationService.submitRegistrationForm(values);
     };
 
 
     return (
         <Page>
             <StyledLoginContainer>
-                <div>
+                <div className="form-header-row">
                     <h2>Register</h2>
                 </div>
                 <Formik
@@ -37,11 +34,11 @@ const Registration = () => {
                         </div>
                         <div>
                             <label>Email</label>
-                            <Field name="email" />
+                            <Field name="email" type="email" />
                         </div>
                         <div>
                             <label>Password</label>
-                            <Field name="password" />
+                            <Field name="password" type="password"/>
                         </div>
                         <div>
                             <button type="submit" >Sign up</button>
