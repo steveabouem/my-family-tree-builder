@@ -25,7 +25,7 @@ class Household extends React.Component {
                 {/*    </Form>*/}
                 {/*</Formik>*/}
                 <div>
-                    <h2>Welcome to your household</h2>
+                    <h2>Welcome to your household {window.user.name}</h2>
                     <div>
 
                     </div>

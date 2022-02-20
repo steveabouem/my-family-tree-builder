@@ -16,6 +16,9 @@ class HouseholdController extends AbstractController
     {
 //         $repository = $this->getDoctrine()->getRepository(Household::class);
 //         $householdData = $repository->findOneById(1);
+//         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $user = $this->getUser();
 
          return $this->render (
             'household/index.html.twig'
