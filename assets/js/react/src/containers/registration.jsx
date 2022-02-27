@@ -4,11 +4,11 @@ import {Formik, Field, Form} from "formik";
 import '../styles/index.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../../../bootstrap";
-import {Page} from "../components/common/Page.jsx";
 import {StyledLoginContainer} from "../styles/components";
 import authenticationService from "../../services"
+import App from "../../app";
 
-const registrationElement = document.getElementById('registration');
+const registrationElement = document.getElementById('root');
 
 const Registration = () => {
 
@@ -18,7 +18,7 @@ const Registration = () => {
 
 
     return (
-        <Page>
+        <App>
             <StyledLoginContainer>
                 <div className="form-header-row">
                     <h2>Register</h2>
@@ -46,7 +46,7 @@ const Registration = () => {
                     </Form>
                 </Formik>
             </StyledLoginContainer>
-        </Page>
+        </App>
     );
 }
 

@@ -1,12 +1,23 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {StyledNav} from "./styles";
 import logo from "../../../public/media/elephant.png";
-import user from "../../../public/media/male_user_large.png";
+import avatar from "../../../public/media/male_user_large.png";
 import {NavLink} from "react-bootstrap";
-import {UserMenu} from "./UserMenu";
+import { useDispatch, connect } from "react-redux";
+import UserMenu from "./UserMenu";
+import {PROFILE_ACTIONS} from "../../../redux/actions";
 
-export const TopNav = () => {
+ const TopNav = ({currentUser}) => {
     const [menuOpened, setMenuOpened] = useState(false);
+    const dispatch = useDispatch();
+    const user = dispatch(PROFILE_ACTIONS.getUser());
+    useEffect(() => {
+        if (window.user) {
+
+            dispatch(PROFILE_ACTIONS.setUser(window.user));
+        }
+
+    }, [currentUser, window.user]);
 
     return (
         <StyledNav>
@@ -26,15 +37,25 @@ export const TopNav = () => {
                 </div>
                 <div className="position-relative">
                     <div className="avatar-container green hover" onClick={() => setMenuOpened(!menuOpened)}>
-                        <img className="user-avatar-top" src={user} alt="User Avatar" />
+                        <img className="user-avatar-top" src={avatar} alt="User Avatar" />
                     </div>
                 </div>
             </div>
-            {menuOpened ?   <UserMenu
-                                user={true}
-                                opened={menuOpened}
-                                setOpened={() => setMenuOpened(!menuOpened)}
-                            /> : null}
+            {menuOpened && (
+                <UserMenu
+                    user={user}
+                    opened={menuOpened}
+                    setOpened={() => setMenuOpened(!menuOpened)}
+                />
+            )}
         </StyledNav>
     );
 };
+
+ const mapStateToProps = (state) => ({
+    currentUser: state.currentUser,
+ });
+
+ const mapDispatchToProps = () => ({});
+
+ export default connect(mapStateToProps, mapDispatchToProps)(TopNav)

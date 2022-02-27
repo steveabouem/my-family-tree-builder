@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React from "react";
 import {Container} from "react-bootstrap";
-import {TopNav} from "./TopNav";
+import TopNav from "./TopNav";
+import {connect} from "react-redux";
 
-export const Page = ({children}) => {
-    const [loading, setLoading] = useState(false);
+const Page = ({children}) => {
 
     return (
         <>
@@ -14,3 +14,11 @@ export const Page = ({children}) => {
         </>
 );
 }
+
+const mapStateToProps = (state) => ({
+    isLoading: state.isLoading,
+});
+
+const mapDispatchToProps = () => ({});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Page);

@@ -1,3 +1,13 @@
+====================[BACKLOG]====================
+* eslint
+* redux
+* access control
+* design system
+*
+
+
+
+====================[TIPS]====================
 # Common commands
 
 #### Run migration

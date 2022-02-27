@@ -3,22 +3,22 @@ import ReactDOM from 'react-dom';
 import '../styles/index.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../../../bootstrap";
-import {Page} from "../components/common/Page.jsx";
 import {Formik, Field, Form} from "formik";
 import {StyledLoginContainer} from "../styles/components";
+import App from "../../app";
+import AUTHENTICATION_SERVICE from "../../services/authentication.service";
 
-const loginElement = document.getElementById('login');
+const loginElement = document.getElementById('root');
 
 const Login = () => {
 
     const onSubmit = (values) => {
         e.preventDefault();
-
+        AUTHENTICATION_SERVICE.submitLoginForm()
     };
 
-
     return (
-        <Page>
+        <App>
             <StyledLoginContainer>
                 <div>
                     <h2>Login</h2>
@@ -42,8 +42,8 @@ const Login = () => {
                     </Form>
                 </Formik>
             </StyledLoginContainer>
-        </Page>
+        </App>
     );
 }
 
-// ReactDOM.render(<Login />, loginElement)
+ReactDOM.render(<Login />, loginElement)

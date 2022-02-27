@@ -1,7 +1,8 @@
 import React, {useEffect} from "react";
 import {StyledUserMenu} from "./styles";
 
-export const UserMenu = ({opened, setOpened, user}) => {
+const UserMenu = ({opened, setOpened, user}) => {
+
 
     return opened ? (
         <StyledUserMenu>
@@ -14,7 +15,7 @@ export const UserMenu = ({opened, setOpened, user}) => {
             {
                 user ? (
                     <>
-                        <div className="user-menu-link">user name</div>
+                        <div className="user-menu-link">{user.name}</div>
                         <div className="user-menu-link">Notifications<div className="exp-num">2</div></div>
                         <div className="user-menu-link">Settings</div>
                         <div className="user-menu-link red hover">Logout</div>
@@ -26,3 +27,5 @@ export const UserMenu = ({opened, setOpened, user}) => {
         </StyledUserMenu>
     ) : null;
 };
+
+export default UserMenu;

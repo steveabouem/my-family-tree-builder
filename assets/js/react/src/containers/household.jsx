@@ -1,39 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import '../styles/index.scss';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import "../../../../bootstrap";
-import {Page} from "../components/common/Page.jsx";
-import {Formik, Field, Form} from "formik";
-import {StyledHouseholdBubble} from "../styles/components";
+import App from "../../app";
+import {HouseholdLanding} from "../components/household/household.landing";
 
-const householdElement = document.getElementById('household');
+const householdElement = document.getElementById('root');
 
-class Household extends React.Component {
+const Household = () => {
 
-    render() {
-        return (
-            <Page>
-                {/*<Formik*/}
-                {/*    initialValues={{}}*/}
-                {/*    onSubmit={(values) => console.log(values)}*/}
-                {/*>*/}
-                {/*    <Form>*/}
-                {/*        <label>Name</label>*/}
-                {/*        <Field name="name" />*/}
-                {/*        <button type="submit">Edit</button>*/}
-                {/*    </Form>*/}
-                {/*</Formik>*/}
-                <div>
-                    <h2>Welcome to your household {window.user.name}</h2>
-                    <div>
-
-                    </div>
-                </div>
-                <StyledHouseholdBubble />
-            </Page>
-        );
-    }
+    return (
+        <App>
+           <HouseholdLanding />
+        </App>
+    );
 }
 
 ReactDOM.render(<Household />, householdElement)

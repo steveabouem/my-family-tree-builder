@@ -14,14 +14,12 @@ class HouseholdController extends AbstractController
     */
     public function show(Request $request)
     {
-//         $repository = $this->getDoctrine()->getRepository(Household::class);
-//         $householdData = $repository->findOneById(1);
-//         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $user = $this->getUser();
 
          return $this->render (
-            'household/index.html.twig'
+            'household/index.html.twig', ["user" => $user]
         );
     }
 

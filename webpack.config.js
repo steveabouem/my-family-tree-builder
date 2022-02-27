@@ -22,7 +22,7 @@ Encore
      */
     .addEntry('app', './assets/js/react/app.jsx')
     .addEntry('household', './assets/js/react/src/containers/household.jsx')
-    // .addEntry('login', './assets/js/react/src/containers/login.jsx')
+    .addEntry('login', './assets/js/react/src/containers/login.jsx')
     .addEntry('registration', './assets/js/react/src/containers/registration.jsx')
     // .addPlugin(new HtmlWebpackPlugin({ template: 'app.ejs', alwaysWriteToDisk: true }))
 

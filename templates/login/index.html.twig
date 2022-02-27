@@ -16,7 +16,7 @@
         <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
-
+{#//TODO: HAVE GLOBAL CLASSES IN YOUR DESIGN SYSTEM TO STYLE THIS PAGE THROUGH REACT#}
     <form action="{{ path('login') }}" method="post">
         <label for="email"></label>
         <label for="username">Email:</label>
