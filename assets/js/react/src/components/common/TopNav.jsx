@@ -10,13 +10,11 @@ import {PROFILE_ACTIONS} from "../../../redux/actions";
  const TopNav = ({currentUser}) => {
     const [menuOpened, setMenuOpened] = useState(false);
     const dispatch = useDispatch();
-    const user = dispatch(PROFILE_ACTIONS.getUser());
-    useEffect(() => {
-        if (window.user) {
 
+    useEffect(() => {
+        if (!currentUser) {
             dispatch(PROFILE_ACTIONS.setUser(window.user));
         }
-
     }, [currentUser, window.user]);
 
     return (
@@ -43,7 +41,7 @@ import {PROFILE_ACTIONS} from "../../../redux/actions";
             </div>
             {menuOpened && (
                 <UserMenu
-                    user={user}
+                    user={currentUser}
                     opened={menuOpened}
                     setOpened={() => setMenuOpened(!menuOpened)}
                 />
@@ -53,7 +51,7 @@ import {PROFILE_ACTIONS} from "../../../redux/actions";
 };
 
  const mapStateToProps = (state) => ({
-    currentUser: state.currentUser,
+    currentUser: state.profile.currentUser,
  });
 
  const mapDispatchToProps = () => ({});

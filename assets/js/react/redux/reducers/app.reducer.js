@@ -10,8 +10,12 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 isLoading: action.payload
-            }
-
+            };
+        case APP_CONSTANTS.GET_IS_LOADING:
+            return {
+                ...state,
+                isLoading: state.isLoading
+            };
         default:
             return  state;
     }

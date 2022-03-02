@@ -1,17 +1,16 @@
 import React, {useEffect} from "react";
 import {useDispatch, connect} from "react-redux";
-import {APP_ACTIONS, PROFILE_ACTIONS} from "../../../redux/actions";
+import {APP_ACTIONS} from "../../../redux/actions";
 import {StyledHouseholdBubble} from "../../styles/components";
 
-export const HouseholdLanding = ({currentUser}) => {
+const HouseholdLanding = ({currentUser, isLoading}) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (window.user) {
-            dispatch(PROFILE_ACTIONS.setUser(window.user));
-            // dispatch(APP_ACTIONS.setIsLoading(false));
+        if (currentUser) {
+            dispatch(APP_ACTIONS.setIsLoading(false));
         }
-    }, [currentUser]);
+    }, [currentUser, isLoading]);
 
     return (
         <>
@@ -25,12 +24,17 @@ export const HouseholdLanding = ({currentUser}) => {
             {/*        <button type="submit">Edit</button>*/}
             {/*    </Form>*/}
             {/*</Formik>*/}
-            <div>
-                <h2>Welcome to your household {window.user.name}</h2>
-                <div>
-
-                </div>
-            </div>
+                {
+                    !isLoading && (
+                        <div>
+                            <h2>Welcome to your household {currentUser.name}</h2>
+                            <div>
+                                <ul>Objectives</ul>
+                                <ul>Members</ul>
+                            </div>
+                        </div>
+                    )
+                }
             <StyledHouseholdBubble />
         </>
 
@@ -38,10 +42,10 @@ export const HouseholdLanding = ({currentUser}) => {
 }
 
 const mapStateToProps = (state) => ({
-    isLoading: state.isLoading,
-    currentUSer: state.currentUSer
+    isLoading: state.app.isLoading,
+    currentUser: state.profile.currentUser
 });
 
-const mapDispatchToProps = (dispatch) => ({});
+const mapDispatchToProps = () => ({});
 
 export default  connect(mapStateToProps, mapDispatchToProps)(HouseholdLanding)

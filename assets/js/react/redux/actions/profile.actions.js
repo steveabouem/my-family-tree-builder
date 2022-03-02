@@ -1,8 +1,11 @@
 import {PROFILE_CONSTANTS} from "../constants";
 
-const getUser = () => dispatch => {
+const getUser = () => (dispatch, getState) => {
+    const currentUSer = getState().profile.currentUSer;
+
     dispatch({
-        type: PROFILE_CONSTANTS.GET_CURRENT_USER
+        type: PROFILE_CONSTANTS.GET_CURRENT_USER,
+        payload: currentUSer || null
     })
 };
 

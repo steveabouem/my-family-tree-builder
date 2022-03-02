@@ -1,6 +1,6 @@
 import styled, {keyframes} from "styled-components";
 import {Nav} from "react-bootstrap";
-
+// TODO: global design system might not be really compatible with styled components
 const revealCircle = keyframes`
   from {
     transform: translateY(-15px);
