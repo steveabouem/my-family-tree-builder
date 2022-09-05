@@ -1,0 +1,16 @@
+.spinner-container {
+  //TODO: the container's width is a little off whhen it comes to the spinner container. EAsy fix, just not for now
+  position: absolute;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: #00000069;
+  z-index: 100000;
+
+  .spinner-grow {
+    background: #b2b2b299;
+    width: 10%;
+    height: 20%;
+    margin: auto;
+  }
+}
