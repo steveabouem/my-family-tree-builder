@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react";
 import {StyledNav} from "./styles";
-import logo from "../../../public/media/elephant.png";
-import avatar from "../../../public/media/male_user_large.png";
+// import logo from "../../../public/media/elephant.png";
+// import avatar from "../../../public/media/male_user_large.png";
 import {NavLink} from "react-bootstrap";
 import { useDispatch, connect } from "react-redux";
 import UserMenu from "./UserMenu";
-import {PROFILE_ACTIONS} from "../../../redux/actions";
+import {PROFILE_ACTIONS} from "../../redux/actions";
 
  const TopNav = ({currentUser}) => {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -21,7 +21,7 @@ import {PROFILE_ACTIONS} from "../../../redux/actions";
         <StyledNav>
             <div className="position-relative topnav-section">
                 <div className="top-logo-label">Zogh Tracker</div>
-                <img src={logo} className="top-logo-main" alt="App Logo"/>
+                {/* <img src={logo} className="top-logo-main" alt="App Logo"/> */}
             </div>
             <div className="topnav-section">
                 <div>
@@ -35,7 +35,7 @@ import {PROFILE_ACTIONS} from "../../../redux/actions";
                 </div>
                 <div className="position-relative">
                     <div className="avatar-container green hover" onClick={() => setMenuOpened(!menuOpened)}>
-                        <img className="user-avatar-top" src={avatar} alt="User Avatar" />
+                        {/* <img className="user-avatar-top" src={avatar} alt="User Avatar" /> */}
                     </div>
                 </div>
             </div>

@@ -1,8 +1,8 @@
 import React from "react";
 import "../styles/landing.scss";
-import family from "../../public/media/family.png";
-import heroArt from "../../public/media/bogus-hero.png";
-import bottomArt from "../../public/media/diagram.png"
+// import family from "../../public/media/family.png";
+// import heroArt from "../../public/media/bogus-hero.png";
+// import bottomArt from "../../public/media/diagram.png"
 
 export const LandingPage = () => {
 
@@ -12,7 +12,7 @@ export const LandingPage = () => {
             <div className="landing-section">
                 <div className="hero-left">
                     <div className="hero-img-left">
-                        <img src={family} alt="Section 1 Image" />
+                        {/* <img src={family} alt="Section 1 Image" /> */}
                     </div>
                     <div className="hero-text-left">
                         Quisque id neque id metus blandit porta at ac metus. Nulla facilisi.
@@ -23,7 +23,7 @@ export const LandingPage = () => {
                 </div>
                 <div className="hero-right">
                     <div className="landing-art-top">
-                        <img src={heroArt} alt="Digital Art Household" />
+                        {/* <img src={heroArt} alt="Digital Art Household" /> */}
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@ export const LandingPage = () => {
                 </div>
                 <div className="hero-right">
                     <div className="landing-art-top">
-                        <img src={bottomArt} alt="Digital Art Bottom" />
+                        {/* <img src={bottomArt} alt="Digital Art Bottom" /> */}
                     </div>
                 </div>
             </div>

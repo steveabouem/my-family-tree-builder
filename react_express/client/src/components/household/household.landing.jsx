@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {useDispatch, connect} from "react-redux";
-import {APP_ACTIONS} from "../../../redux/actions";
+import {APP_ACTIONS} from "../../redux/actions";
 import {StyledHouseholdBubble} from "../../styles/components";
 
 const HouseholdLanding = ({currentUser, isLoading}) => {

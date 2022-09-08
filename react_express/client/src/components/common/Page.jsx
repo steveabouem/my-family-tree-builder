@@ -7,14 +7,16 @@ import Spinner from "./spinner";
 const Page = ({children, isLoading}) => {
 
     return (
-        <>
-            <TopNav />
+
+
+        <div>
+            {/*<TopNav />*/}
             <Container fluid>
-                {isLoading && <Spinner />}
+                {isLoading && <Spinner/>}
                 {children}
             </Container>
-        </>
-);
+        </div>
+    );
 }
 
 const mapStateToProps = ({app}) => ({

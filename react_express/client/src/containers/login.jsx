@@ -5,8 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../../../bootstrap";
 import {Formik, Field, Form} from "formik";
 import {StyledLoginContainer} from "../styles/components";
-import App from "../../app";
-import AUTHENTICATION_SERVICE from "../../services/authentication.service";
+import App from "../App";
+import AUTHENTICATION_SERVICE from "../services/authentication.service";
 
 const loginElement = document.getElementById('root');
 

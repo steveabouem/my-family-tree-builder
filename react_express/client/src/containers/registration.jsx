@@ -5,8 +5,8 @@ import '../styles/index.scss';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../../../bootstrap";
 import {StyledLoginContainer} from "../styles/components";
-import authenticationService from "../../services"
-import App from "../../app";
+import authenticationService from "../services"
+import App from "../App";
 
 const registrationElement = document.getElementById('root');
 
