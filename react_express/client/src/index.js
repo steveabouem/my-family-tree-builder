@@ -2,7 +2,30 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 import reportWebVitals from './reportWebVitals';
+import pages from './components';
+
+const routes = [
+  {
+    path: "/",
+    component: pages.home
+  },
+  {
+    path: "/households",
+    component: pages.household,
+  //   subroutes: [
+  //     {
+  //       path: "/households/index",
+  //       component: household list
+  //     },
+  //     {
+  //       path: "/households/:id",
+  //       component: household form and household details
+  //     }
+  //   ]
+  }
+];
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

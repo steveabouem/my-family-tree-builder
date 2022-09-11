@@ -7,9 +7,9 @@ const HouseholdLanding = ({currentUser, isLoading}) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (currentUser) {
-            dispatch(APP_ACTIONS.setIsLoading(false));
-        }
+        // if (currentUser) {
+        //     dispatch(APP_ACTIONS.setIsLoading(false));
+        // }
     }, [currentUser, isLoading]);
 
     return (

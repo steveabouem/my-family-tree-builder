@@ -12,9 +12,9 @@ import {PROFILE_ACTIONS} from "../../../redux/actions";
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (!currentUser) {
-            dispatch(PROFILE_ACTIONS.setUser(window.user));
-        }
+        // if (!currentUser) {
+        //     dispatch(PROFILE_ACTIONS.setUser(window.user));
+        // }
     }, [currentUser, window.user]);
 
     return (
