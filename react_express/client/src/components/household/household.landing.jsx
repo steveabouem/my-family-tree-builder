@@ -1,5 +1,6 @@
 import React, {useEffect} from "react";
 import {useDispatch, connect} from "react-redux";
+import { Formik, Form, Field} from 'formik';
 import {APP_ACTIONS} from "../../redux/actions";
 import {StyledHouseholdBubble} from "../../styles/components";
 
@@ -14,16 +15,6 @@ const HouseholdLanding = ({currentUser, isLoading}) => {
 
     return (
         <>
-            {/*<Formik*/}
-            {/*    initialValues={{}}*/}
-            {/*    onSubmit={(values) => console.log(values)}*/}
-            {/*>*/}
-            {/*    <Form>*/}
-            {/*        <label>Name</label>*/}
-            {/*        <Field name="name" />*/}
-            {/*        <button type="submit">Edit</button>*/}
-            {/*    </Form>*/}
-            {/*</Formik>*/}
                 {
                     !isLoading && (
                         <div>

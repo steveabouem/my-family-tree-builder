@@ -2,7 +2,6 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import {
   BrowserRouter,
-    BrowserRouter as Router,
     Route, Routes
   } from "react-router-dom";
 import pages from './components';
@@ -10,6 +9,7 @@ import store from './redux/store';
 import Page from "./components/common/Page";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/index.scss';
+import NotFound from './components/common/404NotFound';
 
 const routes = [
     {
@@ -19,16 +19,12 @@ const routes = [
     {
       path: "/households",
       component: pages.household,
-    //   subroutes: [
-    //     {
-    //       path: "/households/index",
-    //       component: household list
-    //     },
-    //     {
-    //       path: "/households/:id",
-    //       component: household form and household details
-    //     }
-    //   ]
+      subroutes: [
+        {
+          path: "/households/manage",
+          component: pages.household.create
+        }
+      ]
     }
   ];
 
@@ -46,6 +42,10 @@ const App = () => {
                             element={<r.component routes={r.subroutes} />} 
                           /> 
                     ))}
+                    <Route
+                      path="*"
+                      element={<NotFound />}
+                    />
                 </Routes>
             </BrowserRouter>
             </Page>

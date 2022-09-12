@@ -1,0 +1,6 @@
+const HOUSEHOLD_CONSTANTS = {
+    FETCH_ALL: "FETCH_ALL",
+    FETCH_ONE: "FETCH_ONE",
+}
+
+export default HOUSEHOLD_CONSTANTS;
