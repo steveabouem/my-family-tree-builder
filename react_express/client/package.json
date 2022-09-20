@@ -17,6 +17,7 @@
     "@testing-library/user-event": "^14.4.3",
     "formik": "^2.2.9",
     "mysql": "^2.18.1",
+    "nodemon": "^2.0.19",
     "react": "^18.2.0",
     "react-bootstrap": "^2.5.0",
     "react-dom": "^18.2.0",

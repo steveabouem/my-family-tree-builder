@@ -19,6 +19,6 @@ const tableExists = (table) => {
   });
 };
 
-const createTable = (table, columns) => `CREATE TABLE IF NO EXISTS ${table} ${columns};`;
+const createTable = (table, columns) => `CREATE TABLE IF NOT EXISTS ${table} (${columns});`;
 
 module.exports = { tableExists, createTable };

@@ -1,24 +1,32 @@
 //  USER NAMESPACE
-
 const express = require('express');
 const router = express.Router();
 const db = require('../../database');
-const { createTable } = require('../../database/queries/common');
+const { initPlatform, validateNewUser } = require('./helpers');
 
+// REGISTER
 router.post('/new', (req, res) => {
-  // TABLES SHOULD BE CREATED ON REGISTER
-  const response = {success: false};
-  const { name, email, password } = req.body;
-  createTable('family_tracker.households', 'id AUTO_INCREMENT, name VARCHAR(255),  members JSON, objectives JSON, crated DATETIME, last_updated DATETIME, PRIMARY KEY id');
-  const statement = `INSERT INTO users (name, email, password) VALUES (${name}, ${email}, ${password})`;
-  db.query(statement, (e, r) => {
-    if (e) throw e;
+  const response = { };
+  const { first_name, last_name, email, password } = req.body;
+  const statement = `INSERT INTO Users (first_name, last_name, email, password) VALUES ('${first_name}', '${last_name}', '${email}', '${password}')`;
 
-    response.data = r;
-    response.success = true;
-  });
-
-  res.send(response);
+  initPlatform().then(() => {
+    const duplicates = validateNewUser(email);
+    if (duplicates?.length > 0) {
+      response.error = 'dupe';
+    } else {
+      db.query(statement, (err, r) => {
+        if (err) {
+          response.success = false;
+          console.log('Unable to register ', err);
+          throw err;
+        } else {
+          response.success = true;
+          res.send(response);
+        }
+      });
+    }
+  })
 });
 
 router.get('/:id', (req, res) => {
