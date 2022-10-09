@@ -18,20 +18,18 @@ export class UsersController {
 
   @Post()
   create(@Body() data: CreateUserDto) {
-    this.userService.create(data).then((res) => {
-      console.log('RES', res);
-
-      return res;
-    });
+    const newUSer = this.userService.create(data);
+    return newUSer;
   }
 
-  @Get()
-  fetch(@Param() id: string) {
-    return id;
+  @Get(':id')
+  fetch(@Param() { id }) {
+    const user = this.userService.fetch(id);
+    return user;
   }
 
-  @Delete()
-  delete(@Param() id: string): BaseResponseDto {
+  @Delete(':id')
+  delete(@Param() params): BaseResponseDto {
     return { success: true, message: 'Ok' };
   }
 
