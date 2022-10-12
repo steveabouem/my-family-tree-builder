@@ -1,7 +1,7 @@
 export class CreateHouseholdDTO {
-  readonly id: number;
   readonly name: string;
-  readonly created: Date;
-  readonly updated: Date;
   readonly description: string;
+  readonly admin: string;
+  // upon initial creation of a Household, the creator will be the admin
+  //  by default. He can transfer or share the rights  with any other member
 }

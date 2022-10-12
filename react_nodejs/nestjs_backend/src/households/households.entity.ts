@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 import { User } from 'src/users/user.entity';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Entity()
 export class Household {
@@ -19,7 +20,7 @@ export class Household {
   description: string;
 
   @Column()
-  admin: User;
+  admin: string;
 
   @ManyToMany(() => User, (user) => user.households)
   members: User[];

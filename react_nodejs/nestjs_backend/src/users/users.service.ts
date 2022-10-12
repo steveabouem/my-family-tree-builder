@@ -9,9 +9,9 @@ export class UsersService {
   constructor(private dataSource: DataSource) {}
 
   async create(newUser: CreateUserDto): Promise<BaseResponseDto> {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    const duplicate = await queryRunner.manager.findOneBy(User, {
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+    const duplicate = await qr.manager.findOneBy(User, {
       email: newUser.email,
     });
 
@@ -19,22 +19,22 @@ export class UsersService {
       if (duplicate) {
         throw new HttpException('Duplicate email.', HttpStatus.FORBIDDEN);
       } else {
-        await queryRunner.startTransaction();
+        await qr.startTransaction();
         const user = new User();
         Object.assign(user, {
           firstName: newUser.first_name,
           lastName: newUser.last_name,
           email: newUser.email,
           password: newUser.password,
-          created: new Date().toUTCString(),
+          created: new Date(),
         });
 
-        await queryRunner.manager.save(user);
-        await queryRunner.commitTransaction();
-        queryRunner.release();
+        await qr.manager.save(user);
+        await qr.commitTransaction();
+        qr.release();
       }
     } catch (e) {
-      queryRunner.release();
+      qr.release();
       return { success: !duplicate, data: e };
     }
   }

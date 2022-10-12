@@ -1,4 +1,4 @@
-import { Household } from 'src/households/household.entity';
+import { Household } from 'src/households/households.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 import { UserRoles } from './user.inteface';
 

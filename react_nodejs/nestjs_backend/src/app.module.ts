@@ -3,12 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { HouseholdsController } from './households/household.controller';
-import { TasksController } from './task/task.controller';
-import { ObjectivesController } from './objective/objective.controller';
 import { User } from './users/user.entity';
-import { Household } from './households/household.entity';
+import { Household } from './households/households.entity';
 import { UserModule } from './users/users.module';
+import { HouseholdModule } from './households/households.module';
 
 @Module({
   imports: [
@@ -23,13 +21,9 @@ import { UserModule } from './users/users.module';
       synchronize: true,
     }),
     UserModule,
+    HouseholdModule,
   ],
-  controllers: [
-    AppController,
-    HouseholdsController,
-    TasksController,
-    ObjectivesController,
-  ],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {
