@@ -1,5 +1,13 @@
 import { Household } from 'src/households/households.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToMany,
+  JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { UserRoles } from './user.inteface';
 
 @Entity()
@@ -13,18 +21,29 @@ export class User {
   @Column()
   email: string;
 
-  @Column()
+  @CreateDateColumn()
   created: Date;
 
-  @Column({ nullable: true })
+  @UpdateDateColumn({ nullable: true })
   updated: Date;
 
   @Column()
   lastName: string;
 
-  @Column({ default: [UserRoles.GUEST] })
-  role: UserRoles;
+  @Column('simple-array')
+  roles: UserRoles[];
 
-  @ManyToMany(() => Household, (household) => household.members)
+  @ManyToMany((type) => Household, (household) => household.members)
+  @JoinTable({
+    name: 'household_users',
+    joinColumn: {
+      name: 'user',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'household',
+      referencedColumnName: 'id',
+    },
+  })
   households: Household[];
 }

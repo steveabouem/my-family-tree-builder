@@ -27,6 +27,7 @@ export class UsersService {
           email: newUser.email,
           password: newUser.password,
           created: new Date(),
+          roles: [3],
         });
 
         await qr.manager.save(user);

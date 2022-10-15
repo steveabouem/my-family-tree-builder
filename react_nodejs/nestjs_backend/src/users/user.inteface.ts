@@ -10,8 +10,8 @@ export interface UserInterface {
 }
 
 export enum UserRoles {
-  SUPER_ADMIN, // 1
-  ADMIN, // 2
-  MEMBER, // 3
+  APP_ADMIN, // 1
+  HOUSEHOLD_ADMIN, // 2
+  HOUSEHOLD_MEMBER, // 3
   GUEST, // 4
 }
