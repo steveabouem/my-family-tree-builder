@@ -49,4 +49,22 @@ export class HouseholdsService {
       return { success: false, data: e };
     }
   }
+
+  async addMember(memberId: string, householdId: string) {
+    const qr = this.dataSource.createQueryRunner();
+    await qr.connect();
+
+    const user = await qr.manager.findOneBy(User, { id: parseInt(memberId) });
+    const household = await qr.manager.findOneBy(Household, {
+      id: parseInt(householdId),
+    });
+    await qr.startTransaction();
+
+    household.members = [...household.members, user];
+    await qr.manager.save(household);
+    await qr.commitTransaction();
+    qr.release();
+
+    return { success: true, data: household };
+  }
 }
