@@ -3,16 +3,23 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateHouseholdDTO } from './dto/create-household.dto';
 import { BaseResponseDto } from 'src/common/dto/base-response.dto';
 import { Household } from './households.entity';
-import { User } from 'src/users/user.entity';
+import { User } from 'src/users/users.entity';
 import { UserRoles } from 'src/users/user.inteface';
+import initializeQueryRunner from 'src/common/helpers/initQuery';
 
 @Injectable()
 export class HouseholdsService {
   constructor(private dataSource: DataSource) {}
 
+  async fetch(id: number): Promise<BaseResponseDto> {
+    const qr = await initializeQueryRunner(this.dataSource);
+    const household = await qr.manager.findOneBy(Household, { id });
+
+    return { success: true, data: household };
+  }
+
   async create(newHousehold: CreateHouseholdDTO): Promise<BaseResponseDto> {
-    const qr = this.dataSource.createQueryRunner();
-    await qr.connect();
+    const qr = await initializeQueryRunner(this.dataSource);
 
     try {
       // if (!admin) {
@@ -51,8 +58,7 @@ export class HouseholdsService {
   }
 
   async addMember(memberId: string, householdId: string) {
-    const qr = this.dataSource.createQueryRunner();
-    await qr.connect();
+    const qr = await initializeQueryRunner(this.dataSource);
 
     const user = await qr.manager.findOneBy(User, { id: parseInt(memberId) });
     const household = await qr.manager.findOneBy(Household, {

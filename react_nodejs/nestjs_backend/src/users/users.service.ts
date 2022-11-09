@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { BaseResponseDto } from 'src/common/dto/base-response.dto';
 import { DataSource } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './user.entity';
+import { User } from './users.entity';
 
 @Injectable()
 export class UsersService {
