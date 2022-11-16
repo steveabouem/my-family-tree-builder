@@ -1,4 +1,4 @@
-import { UserRoles } from '../user.inteface';
+import { UserRoles } from '../users.inteface';
 
 export class FetchUserDto {
   readonly id?: string;

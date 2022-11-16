@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Objective } from 'src/objectives/objectives.entity';
 import { HouseholdsController } from './households.controller';
 import { Household } from './households.entity';
 import { HouseholdsService } from './households.service';
@@ -10,4 +11,4 @@ import { HouseholdsService } from './households.service';
   providers: [HouseholdsService],
 })
 
-export class HouseholdModule {}
+export class HouseholdsModule {}

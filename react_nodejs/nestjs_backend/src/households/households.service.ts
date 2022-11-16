@@ -4,7 +4,7 @@ import { CreateHouseholdDTO } from './dto/create-household.dto';
 import { BaseResponseDto } from 'src/common/dto/base-response.dto';
 import { Household } from './households.entity';
 import { User } from 'src/users/users.entity';
-import { UserRoles } from 'src/users/user.inteface';
+import { UserRoles } from 'src/users/users.inteface';
 import initializeQueryRunner from 'src/common/helpers/initQuery';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class HouseholdsService {
       await qr.startTransaction();
 
       const adminUser = await qr.manager.findOneBy(User, {
-        id: parseInt(newHousehold.admin_id),
+        id: parseInt(newHousehold.admin),
       });
 
       // since this user is the one creating the household, assign him the role of HOUSEHOLD_ADMIN

@@ -1,4 +1,5 @@
 import { Household } from 'src/households/households.entity';
+import { Task } from 'src/tasks/tasks.entity';
 import {
   Entity,
   Column,
@@ -7,8 +8,9 @@ import {
   JoinTable,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
-import { UserRoles } from './user.inteface';
+import { UserRoles } from './users.inteface';
 
 @Entity()
 export class User {
@@ -33,7 +35,7 @@ export class User {
   @Column('simple-array')
   roles: UserRoles[];
 
-  @ManyToMany((type) => Household, (household) => household.members)
+  @ManyToMany((type) => Household, (h) => h.members)
   @JoinTable({
     name: 'household_users',
     joinColumn: {
@@ -46,4 +48,7 @@ export class User {
     },
   })
   households: Household[];
+
+  @OneToMany((type) => Task, (t) => t.createdBy)
+  tasks: Task[];
 }

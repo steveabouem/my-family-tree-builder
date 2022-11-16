@@ -5,8 +5,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './users/users.entity';
 import { Household } from './households/households.entity';
-import { UserModule } from './users/users.module';
-import { HouseholdModule } from './households/households.module';
+import { UsersModule } from './users/users.module';
+import { HouseholdsModule } from './households/households.module';
+import { ObjectivesModule } from './objectives/objectives.module';
+import { TasksModule } from './tasks/tasks.module';
+import { Task } from './tasks/tasks.entity';
+import { Objective } from './objectives/objectives.entity';
 
 @Module({
   imports: [
@@ -17,11 +21,13 @@ import { HouseholdModule } from './households/households.module';
       username: 'root',
       password: 'rootpass',
       database: 'tracker',
-      entities: [User, Household],
+      entities: [User, Household, Task, Objective],
       synchronize: true,
     }),
-    UserModule,
-    HouseholdModule,
+    UsersModule,
+    HouseholdsModule,
+    ObjectivesModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
