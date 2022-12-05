@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToMany,
-  JoinTable,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 import { User } from 'src/users/users.entity';
 import { Objective } from 'src/objectives/objectives.entity';
 
@@ -13,17 +7,26 @@ export class Household {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
-
-  @Column()
-  created: Date;
+  /**TODO: Embedded entities pattern*/
+  @Column({ default: 'auto' })
+  itemName: string;
 
   @Column({ nullable: true })
-  updated: Date;
+  itemDescription: string;
 
-  @Column()
-  description: string;
+  @Column({ default: () => 'NOW()' })
+  recordCreated: Date;
+
+  @Column({ nullable: true })
+  recordUpdated: Date;
+
+  // TODO: check readme
+  @Column({ nullable: true })
+  recordCreatedBy: number;
+
+  @Column({ nullable: true })
+  recordUpdatedBy: number;
+  /*End*/
 
   @Column()
   admin: number;
@@ -34,17 +37,9 @@ export class Household {
   })
   members: User[];
 
-  @ManyToMany((type) => Objective, (o) => o.households)
-  @JoinTable({
-    name: 'households_objectives',
-    joinColumn: {
-      name: 'objectives',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'households',
-      referencedColumnName: 'id',
-    },
+  @ManyToMany((type) => Objective, (o) => o.households, {
+    eager: true,
+    cascade: true,
   })
   objectives: Objective[];
 }

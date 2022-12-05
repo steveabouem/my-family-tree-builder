@@ -1,3 +1,4 @@
+import { CreatedAndUpdatedBy } from 'src/common/entities/global-column-types';
 import { Household } from 'src/households/households.entity';
 import { Task } from 'src/tasks/tasks.entity';
 import {
@@ -6,8 +7,6 @@ import {
   PrimaryGeneratedColumn,
   ManyToMany,
   JoinTable,
-  CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
 import { UserRoles } from './users.inteface';
@@ -17,17 +16,26 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
+  /**TODO: Embedded entities pattern*/
+  @Column({ default: () => 'NOW()' })
+  recordCreated: Date;
+
+  @Column({ nullable: true })
+  recordUpdated: Date;
+
+  // TODO: check readme
+  @Column({ nullable: true })
+  recordCreatedBy: number;
+
+  @Column({ nullable: true })
+  recordUpdatedBy: number;
+  /*End*/
+
   @Column()
   firstName: string;
 
   @Column()
   email: string;
-
-  @CreateDateColumn()
-  created: Date;
-
-  @UpdateDateColumn({ nullable: true })
-  updated: Date;
 
   @Column()
   lastName: string;
@@ -35,7 +43,7 @@ export class User {
   @Column('simple-array')
   roles: UserRoles[];
 
-  @ManyToMany((type) => Household, (h) => h.members)
+  @ManyToMany((type) => Household, (h) => h.objectives)
   @JoinTable({
     name: 'household_users',
     joinColumn: {
@@ -49,6 +57,6 @@ export class User {
   })
   households: Household[];
 
-  @OneToMany((type) => Task, (t) => t.createdBy)
+  @OneToMany((type) => Task, (t) => t.recordCreatedBy)
   tasks: Task[];
 }

@@ -1,3 +1,7 @@
+import {
+  CreatedAndUpdatedBy,
+  NameAndDesc,
+} from 'src/common/entities/global-column-types';
 import { Objective } from 'src/objectives/objectives.entity';
 import { User } from 'src/users/users.entity';
 import {
@@ -13,20 +17,25 @@ export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  description: string;
-
-  @Column()
-  expense: number;
-
-  @Column()
-  created: Date;
+  /**TODO: Embedded entities pattern*/
+  @Column({ default: 'auto' })
+  itemName: string;
 
   @Column({ nullable: true })
-  updated: Date;
+  itemDescription: string;
 
-  @ManyToOne((type) => User, (u) => u.tasks)
-  createdBy: User;
+  @Column({ default: () => 'NOW()' })
+  recordCreated: Date;
+
+  @Column({ nullable: true })
+  recordUpdated: Date;
+
+  @Column({ nullable: true })
+  recordCreatedBy: number;
+
+  @Column({ nullable: true })
+  recordUpdatedBy: number;
+  /*End*/
 
   @ManyToMany((type) => Objective, (o) => o.tasks)
   objectives: Objective[];

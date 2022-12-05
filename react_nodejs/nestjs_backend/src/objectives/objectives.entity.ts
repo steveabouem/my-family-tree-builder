@@ -3,8 +3,8 @@ import { Task } from 'src/tasks/tasks.entity';
 import {
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
-  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -13,25 +13,45 @@ export class Objective {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  description: string;
-
-  @Column()
-  expenses: number;
-
-  @Column()
-  budget: number;
-
-  @Column()
-  created: Date;
-
-  @Column()
-  createdBy: number;
+  /**TODO: Embedded entities pattern*/
+  @Column({ default: 'auto' })
+  itemName: string;
 
   @Column({ nullable: true })
-  updated: Date;
+  itemDescription: string;
+
+  @Column({ default: () => 'NOW()' })
+  recordCreated: Date;
+
+  @Column({ nullable: true })
+  recordUpdated: Date;
+
+  // TODO: check readme
+  @Column({ nullable: true })
+  recordCreatedBy: number;
+
+  @Column({ nullable: true })
+  recordUpdatedBy: number;
+  /*End*/
+
+  @Column({ nullable: true })
+  expenses: number;
+
+  @Column({ nullable: true })
+  budget: number;
 
   @ManyToMany((type) => Household, (h) => h.objectives)
+  @JoinTable({
+    name: 'households_objectives',
+    joinColumn: {
+      name: 'objectives',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'households',
+      referencedColumnName: 'id',
+    },
+  })
   households: Household[];
 
   @ManyToMany((type) => Task, (t) => t.objectives)

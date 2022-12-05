@@ -6,6 +6,7 @@ import { Household } from './households.entity';
 import { User } from 'src/users/users.entity';
 import { UserRoles } from 'src/users/users.inteface';
 import initializeQueryRunner from 'src/common/helpers/initQuery';
+import { Objective } from 'src/objectives/objectives.entity';
 
 @Injectable()
 export class HouseholdsService {
@@ -22,18 +23,19 @@ export class HouseholdsService {
     const qr = await initializeQueryRunner(this.dataSource);
 
     try {
-      // if (!admin) {
-      //   throw new HttpException(
-      //     'Unable to locate current user.',
-      //     HttpStatus.INTERNAL_SERVER_ERROR,
-      //   );
-      // } else {
       await qr.startTransaction();
 
       const adminUser = await qr.manager.findOneBy(User, {
         id: parseInt(newHousehold.admin),
       });
 
+      if (!adminUser) {
+        //TODO: replace with use of session
+        throw new HttpException(
+          'Unable to locate current user.',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
       // since this user is the one creating the household, assign him the role of HOUSEHOLD_ADMIN
       adminUser.roles = [UserRoles.HOUSEHOLD_ADMIN];
       await qr.manager.save(adminUser);
@@ -41,8 +43,6 @@ export class HouseholdsService {
       const household = new Household();
       Object.assign(household, {
         ...newHousehold,
-
-        created: new Date(),
         members: [adminUser],
       });
 
@@ -67,6 +67,23 @@ export class HouseholdsService {
     await qr.startTransaction();
 
     household.members = [...household.members, user];
+    await qr.manager.save(household);
+    await qr.commitTransaction();
+    qr.release();
+
+    return { success: true, data: household };
+  }
+
+  async addObjective(id: number, objective: Objective) {
+    const qr = await initializeQueryRunner(this.dataSource);
+
+    const household = await qr.manager.findOne(Household, {
+      where: { id: id },
+      relations: ['objectives'],
+    });
+    await qr.startTransaction();
+
+    household.objectives = [...household.objectives, objective];
     await qr.manager.save(household);
     await qr.commitTransaction();
     qr.release();

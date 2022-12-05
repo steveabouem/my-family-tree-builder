@@ -26,11 +26,20 @@ npm run new-migration --name=NameOfMigration
 ```
 npm run migrations
 ```
+- Revert migrations:
+```
+npm run revert-migrations
+```
+
 ## Documentation
 
 ## Notes
 
 ## TODO
+- figure out how to pass user session for create functions
+-  is there a way to pass an arguments in embedded entities in case I need a column to be non nullable?
+- you might need to write migrations to drop that `recordCreatedById` column in task (seems like creating the relation is creating this new column)
+- why was embedding not allowing inserts when default values were provided?
 - update entities with any missing columns
-- REDO migrations, including table names
+- do migrations, if necessary
 - setup docker

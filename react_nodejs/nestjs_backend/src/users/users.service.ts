@@ -26,7 +26,6 @@ export class UsersService {
           lastName: newUser.last_name,
           email: newUser.email,
           password: newUser.password,
-          created: new Date(),
           roles: [3],
         });
 
