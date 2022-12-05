@@ -7,7 +7,6 @@ import {
 import pages from './components';
 import store from './redux/store';
 import Page from "./components/common/Page";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/index.scss';
 import NotFound from './components/common/404NotFound';
 
