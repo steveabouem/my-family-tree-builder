@@ -41,11 +41,11 @@ module.exports = {
       profile_url: { type: Sequelize.STRING },
       description: { type: Sequelize.STRING },
       links_to: { type: Sequelize.INTEGER },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

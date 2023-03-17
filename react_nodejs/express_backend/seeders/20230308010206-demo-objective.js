@@ -1,8 +1,9 @@
 'use strict';
 
 /** @type {import('sequelize-cli').Migration} */
+var { faker } = require('@faker-js/faker');
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     /**
      * Add seed commands here.
      *
@@ -12,14 +13,21 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
+    let dummyJSON = [];
+    for (let i = 0; i < 5000; i++) {
+      dummyJSON.push({
+        description: faker.lorem.sentence(),
+        created_by: Math.round(Math.random() * 25),
+        cost: Math.random() * 1000,
+        assignees: '[1, 20, 30]',
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
+      });
+    }
+    await queryInterface.bulkInsert('Objectives', dummyJSON, {});
   },
 
-  async down (queryInterface, Sequelize) {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete('Objectives', null, {});
   }
 };

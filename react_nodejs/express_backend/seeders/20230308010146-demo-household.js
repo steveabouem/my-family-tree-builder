@@ -13,15 +13,15 @@ module.exports = {
       dummyJSON.push({
         name: faker.company.name(),
         description: faker.lorem.sentence(),
-        created_by: Math.random() * 25,
+        created_by: Math.round(Math.random() * 25),
         expenses: Math.random() * 1000,
         updated_by: 3,
         budget: 45,
         profile_url: faker.internet.avatar(),
         head_1: Math.random() * 10,
         head_2: Math.random() * 10,
-        createdAt: faker.date.past(),
-        updatedAt: faker.date.past(),
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
       });
     }
     await queryInterface.bulkInsert('Households', dummyJSON, {});

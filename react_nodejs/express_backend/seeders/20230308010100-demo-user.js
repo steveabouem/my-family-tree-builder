@@ -13,10 +13,10 @@ module.exports = {
       dummyJSON.push({
         tasks: '["1", "2", "3", "4", "5"]',
         roles: '["1", "2", "3", "4", "5"]',
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        createdAt: faker.date.past(),
-        updatedAt: faker.date.past(),
+        first_name: faker.name.firstName(),
+        last_name: faker.name.lastName(),
+        created_at: faker.date.past(),
+        updated_at: faker.date.past(),
         email: faker.internet.email(),
         password: '12345',
       });
