@@ -18,7 +18,12 @@ module.exports = (sequelize, DataTypes) => {
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     email: DataTypes.STRING,
-    password: DataTypes.STRING,
+    password: {
+      type: DataTypes.STRING,
+      set(value) {
+        this.setDataValue('password', hash(value));
+      }
+    },
     tasks: DataTypes.JSON,
     roles: DataTypes.JSON,
   }, {

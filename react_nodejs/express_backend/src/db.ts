@@ -1,12 +1,10 @@
-import { Sequelize} from'@sequelize/core';
+import { Sequelize } from '@sequelize/core';
 import dotenv from 'dotenv';
-import db from './models';
-  
-  
-  dotenv.config();
-  const {DB_USER, DB_PWD, DB_HOST} = process.env;
-  
-const sequelize = new Sequelize('', DB_USER, DB_PWD, {
+// TODO: types
+dotenv.config();
+const { DB_USER, DB_PWD, DB_HOST, DB }: { [key: string]: string | undefined } = process.env;
+
+const sequelize = new Sequelize(DB || '', DB_USER || '', DB_PWD, {
     host: DB_HOST,
     dialect: 'mysql'
 });
@@ -23,3 +21,5 @@ sequelize.sync({ force: true }).then(() => {
 //   } catch (error) {
 //     console.error('Unable to connect to the database:', error);
 //   }
+
+export default sequelize;

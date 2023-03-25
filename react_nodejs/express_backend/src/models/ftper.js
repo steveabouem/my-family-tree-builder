@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class FTper extends Model {
+  class FTPer extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,25 +11,27 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      FTper.belongsToMany(models.FTFam, { through: 'FTFamilyMembers' });
+      FTPer.belongsToMany(models.FTFam, { through: 'FTFamilyMembers' });
     }
   }
-  FTper.init({
+  FTPer.init({
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
     age: DataTypes.INTEGER,
     occupation: DataTypes.STRING,
-    partner: DataTypes.INTEGER, // ftpers
+    partner: DataTypes.INTEGER, // FTPer
     marital_status: DataTypes.STRING,
-    is_co_head: DataTypes.BOOLEAN,
+    is_parent: DataTypes.BOOLEAN,
     description: DataTypes.STRING,
-    gender: DataTypes.INTEGER,
+    gender: DataTypes.INTEGER, // 1:m 2:f
     profile_url: DataTypes.STRING,
     description: DataTypes.STRING,
+    assigned_ip: DataTypes.STRING, //each FTPer has an ip assigned to them. ip can be shared between multiple
+    has_ipa: DataTypes.BOOLEAN, //has authority to update authorized ips
     links_to: DataTypes.INTEGER // FTFam
   }, {
     sequelize,
-    modelName: 'FTper',
+    modelName: 'FTPer',
   });
-  return FTper;
+  return FTPer;
 };

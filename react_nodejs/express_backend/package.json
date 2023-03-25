@@ -1,14 +1,16 @@
 {
   "name": "household_tracker",
   "version": "1.0.0",
-  "main": "server.js",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "npx nodemon server.js",
-    "serve": "nodemon server.js"
+    "dev": "tsc -w & nodemon dist/index.js",
+    "serve": "nodemon dist/index.js",
+    "build": "npx tsc"
   },
   "author": "Steve Abouem",
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.10",
+    "@types/cors": "^2.8.13",
     "@types/sequelize": "^4.28.14",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -20,7 +22,7 @@
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
     "@types/express": "^4.17.17",
-    "@types/node": "^18.14.2",
+    "@types/node": "^18.15.5",
     "babel-register": "^6.26.0",
     "nodemon": "^2.0.20",
     "sequelize-cli": "^6.6.0",

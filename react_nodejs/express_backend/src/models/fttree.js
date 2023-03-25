@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class FTLoc extends Model {
+  class FTTree extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,16 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      FTLoc.belongsTo(models.FTFam);
+      FTTree.hasMany(models.FTFam);
     }
   }
-  FTLoc.init({
+  FTTree.init({
     name: DataTypes.STRING,
-    coords: DataTypes.STRING,
-    flag_url: DataTypes.STRING
+    authorized_ips: DataTypes.JSON,
+    public: DataTypes.BOOLEAN,
   }, {
     sequelize,
-    modelName: 'FTLoc',
+    modelName: 'FTTree',
   });
-  return FTLoc;
+  return FTTree;
 };
