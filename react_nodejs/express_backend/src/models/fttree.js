@@ -15,9 +15,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   FTTree.init({
-    name: DataTypes.STRING,
     authorized_ips: DataTypes.JSON,
     public: DataTypes.BOOLEAN,
+    name: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'FTTree',

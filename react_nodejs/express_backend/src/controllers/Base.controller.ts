@@ -3,47 +3,21 @@ import { DTableJoin } from "./common.definitions";
 
 class BaseController<GClassAttributes> {
     tableName: string;
-    service: any;
+    baseService: any;
 
     constructor(p_table: string) {
         this.tableName = p_table;
-        this.service = new BaseService();
+        this.baseService = new BaseService(p_table);
     }
 
-    getList = async (p_id: number, p_columns?: string, p_where?: string, p_joins?: DTableJoin[], p_limit?: string): Promise<any> => {
-        let joins = '';
-        let limit = '';
-        if (p_joins) {
-            joins = p_joins.reduce((p_joinStatement: string, p_currentJoin: DTableJoin) => {
-                return `${p_joinStatement} JOIN ${p_currentJoin.tableName} ON ${p_currentJoin.on}`
-            }, joins);
-        }
+    getList = async (p_columns?: string, p_where?: string, p_joins?: DTableJoin[], p_limit?: number): Promise<any> => {
+        const records = await this.baseService.getList(p_columns, p_where, p_joins, p_limit);
 
-        if (p_limit) {
-            limit = `limit ${p_limit}`;
-        }
-
-        const select = `
-            SELECT ${p_columns || '*'}
-            ${p_joins?.join(' JOIN ')}
-            FROM ${this.tableName}
-            ${p_where || ''}
-            ${limit}
-            ;
-        `;
-
-        const result = await this.service.getById(select);
-        return result;
+        return records;
     };
 
     getById = async (p_id: number): Promise<any> => {
-        const select = `
-            SELECT *
-            FROM ${this.tableName} WHERE id = ${p_id}
-            ;
-        `;
-
-        const result = await this.service.getById(select);
+        const result = await this.baseService.getById(p_id);
         return result;
     };
 

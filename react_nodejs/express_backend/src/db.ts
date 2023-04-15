@@ -1,7 +1,9 @@
+// TODO: types
 import { Sequelize } from '@sequelize/core';
 import dotenv from 'dotenv';
 // TODO: types
 dotenv.config();
+
 const { DB_USER, DB_PWD, DB_HOST, DB }: { [key: string]: string | undefined } = process.env;
 
 const sequelize = new Sequelize(DB || '', DB_USER || '', DB_PWD, {

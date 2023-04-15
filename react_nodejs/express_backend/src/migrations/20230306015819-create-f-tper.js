@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('FTPer', {
+    await queryInterface.createTable('FTUsers', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -52,6 +52,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('FTPer');
+    await queryInterface.dropTable('FTUsers');
   }
 };

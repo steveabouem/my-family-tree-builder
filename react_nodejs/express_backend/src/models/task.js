@@ -15,10 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
     Task.init({
-        description: DataTypes.STRING,
-        created_by: DataTypes.INTEGER,
-        cost: DataTypes.INTEGER,
         assignees: DataTypes.JSON, //User[]
+        cost: DataTypes.INTEGER,
+        created_by: DataTypes.INTEGER,
+        description: DataTypes.STRING,
         lead: DataTypes.INTEGER //User
     }, {
         sequelize,

@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   FTLoc.init({
-    name: DataTypes.STRING,
     coords: DataTypes.STRING,
+    name: DataTypes.STRING,
     flag_url: DataTypes.STRING
   }, {
     sequelize,

@@ -10,22 +10,21 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      FTFam.belongsToMany(models.FTPer, { through: 'FTFamilyMembers' });
+      FTFam.belongsToMany(models.FTUser, { through: 'FTFamilyMembers' });
       FTFam.belongsTo(models.FTTree)
     }
   }
   FTFam.init({
-    name: DataTypes.STRING,
-    head_count: DataTypes.INTEGER,
-    profile_url: DataTypes.STRING,
-    linked_fams: DataTypes.JSON, // FTFam
-    description: DataTypes.STRING,
     base_location: DataTypes.INTEGER, // FTLoc
-    head_1: DataTypes.INTEGER, // FTPer
+    description: DataTypes.STRING,
+    head_1: DataTypes.INTEGER, // FTUser
+    head_count: DataTypes.INTEGER,
+    linked_fams: DataTypes.JSON, // FTFam
+    name: DataTypes.STRING,
+    profile_url: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'FTFam',
   });
   return FTFam;
 };
-// 514 845 8338

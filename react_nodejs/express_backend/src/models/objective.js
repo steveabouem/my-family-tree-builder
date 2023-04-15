@@ -16,24 +16,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Objective.init({
-    name: {
-      type: DataTypes.STRING
-    },
-    created_by: {
-      type: DataTypes.INTEGER
-    },
-    description: {
-      type: DataTypes.STRING
-    },
-    expenses: {
-      type: DataTypes.INTEGER
-    },
-    budget: {
-      type: DataTypes.INTEGER
-    },
-    created_by: {
-      type: DataTypes.INTEGER
-    }
+    name: DataTypes.STRING,
+    created_by: DataTypes.INTEGER,
+    description: DataTypes.STRING,
+    expenses: DataTypes.INTEGER,
+    budget: DataTypes.INTEGER,
+    created_by: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Objective',

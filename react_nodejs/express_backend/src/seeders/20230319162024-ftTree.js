@@ -13,6 +13,7 @@ module.exports = {
     for (let i = 0; i < 5000; i++) {
       dummyJSON.push({
         public: dummyBoolean[Math.floor(Math.random() * 3)],
+        active: dummyBoolean[Math.floor(Math.random() * 3)],
         authorized_ips: '["70.81.130.188"]',
         name: faker.name.firstName(),
         createdAt: faker.date.past(),

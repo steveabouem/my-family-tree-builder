@@ -1,15 +1,26 @@
 import express, { Express, Request, Response } from 'express';
+import bodyParser from 'body-parser';
 import cors from 'cors';
-import familyHandlers from './routes/FTFam';
+import FTFamilyHandlers from './routes/FT/FT.family.routes';
+import FTUserHandlers from './routes/FT/FT.user.routes';
+import userHandlers from './routes/tracker/User.routes';
+import FTAuthHandler from './routes/FT/FT.authentication.routes';
 import BaseController from './controllers/Base.controller';
-import { DUserDTO } from './dtos/user.dto';
-
 const app: Express = express();
 /**
  MIDDLEWARES SECTION
  **/
 app.use(cors());
-app.use('/api/family', familyHandlers);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// TRACKER APP
+app.use('/api/users', userHandlers);
+
+// FT APP
+app.use('/api/FT/families', FTFamilyHandlers);
+app.use('/api/FT/users', FTUserHandlers);
+app.use('/api/FT/auth', FTAuthHandler);
 /** END */
 
 /**

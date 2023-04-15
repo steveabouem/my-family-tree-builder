@@ -15,8 +15,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Role.init({
-    code: DataTypes.STRING,
-    assigned: DataTypes.BOOLEAN
+    assigned: DataTypes.BOOLEAN,
+    code: DataTypes.STRING, // 3: admin (tracker/FT), 2:user (tracker)
   }, {
     sequelize,
     modelName: 'Role',

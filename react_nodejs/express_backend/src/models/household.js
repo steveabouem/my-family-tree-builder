@@ -16,15 +16,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Household.init({
-    name: DataTypes.STRING,
-    description: DataTypes.STRING,
-    created_by: DataTypes.INTEGER,
-    expenses: DataTypes.INTEGER,
-    updated_by: DataTypes.INTEGER,
     budget: DataTypes.INTEGER,
-    profile_url: DataTypes.STRING,
+    created_by: DataTypes.INTEGER,
+    description: DataTypes.STRING,
+    expenses: DataTypes.INTEGER,
     head_1: DataTypes.INTEGER, //User
-    head_2: DataTypes.INTEGER //User
+    head_2: DataTypes.INTEGER, //User
+    name: DataTypes.STRING,
+    profile_url: DataTypes.STRING,
+    updated_by: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Household',
