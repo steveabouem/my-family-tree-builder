@@ -1,0 +1,30 @@
+* {
+  transition: .4s ease-in-out!important;
+}
+
+body {
+  //potential replacement
+  background: #f3f2e2;
+  // background: #673ab7;//primary
+  font-family: 'Rajdhani', sans-serif;
+
+  .hover {
+    color: white;
+
+    &.red {
+      &:hover {
+        background: #e94a4a !important; // red
+      }
+    }
+
+    &.green {
+      &:hover {
+        background: #6ce123!important;
+      }
+    }
+  }
+
+  .form-header-row {
+
+  }
+}
