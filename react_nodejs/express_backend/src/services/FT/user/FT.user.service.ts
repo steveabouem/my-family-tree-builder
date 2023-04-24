@@ -1,24 +1,36 @@
-import { DUserRecord } from "../../../controllers/tracker/User/User.definitions";
+import { DFTUserRecord } from "../../../controllers/FT/user/FT.user.definitions";
 import { BaseService } from "../../base/base.service";
 import { DFTUserDTO } from "./FT.user..definitions";
 
 // TODO: I feel like the controlle should use a generic of the DTO and the service a generic of the record, somtheing like that
-export class FTUserService extends BaseService<DUserRecord> {
+export class FTUserService extends BaseService<DFTUserRecord> {
     constructor() {
         super('FTUser');
     }
 
 
     create = async (p_member: DFTUserDTO): Promise<boolean> => {
-        return false;
+        const formattedMemberInfo = { ...p_member, created_at: new Date().toUTCString() };
+
+        const insert = `
+        INSERT INTO FTUsers 
+        (${Object.keys(formattedMemberInfo).join(', ')}) 
+        VALUES (${Object.values(formattedMemberInfo).join(', ')});`
+
+        const result = await this.dataBase.query(insert)
+            .catch((e) => { //TODO: Error typing and catch
+                console.log(e); //TODO: LOGGING
+                return false;
+            });
+        console.log({ results: result, insert });
+
+        return true;
     }
 
-    validateFamilyMemberFields = (p_values: DFTUserDTO): boolean => {
-        console.log('ALL VALUES', Object.values(p_values));
-
-        const memberHasAllValues = !Object.values(p_values).find((v: string | undefined) => !v);
+    validateFTUserFields = (p_values: DFTUserDTO): boolean => {
+        const ftUserHasAllValues = !Object.values(p_values).find((v: string | undefined) => !v);
         // TODO: throw errors properly back to the front
-        if (!memberHasAllValues) {
+        if (!ftUserHasAllValues) {
             return false;
         }
 
@@ -27,7 +39,7 @@ export class FTUserService extends BaseService<DUserRecord> {
             return false;
         }
 
-
         return true;
     };
 }
+

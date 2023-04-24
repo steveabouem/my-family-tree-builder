@@ -14,14 +14,14 @@ module.exports = {
      * }], {});
     */
     let dummyJSON = [];
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 50; i++) {
       dummyJSON.push({
         name: faker.name.lastName(),
         description: faker.lorem.sentence(),
         created_by: Math.round(Math.random() * 25),
+        updated_by: Math.round(Math.random() * 25),
         expenses: Math.random() * 1000,
         budget: Math.random() * 1000,
-        assignees: '[1, 20, 30]',
         created_at: faker.date.past(),
         updated_at: faker.date.past(),
       });

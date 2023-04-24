@@ -4,7 +4,7 @@ import cors from 'cors';
 import FTFamilyHandlers from './routes/FT/FT.family.routes';
 import FTUserHandlers from './routes/FT/FT.user.routes';
 import userHandlers from './routes/tracker/User.routes';
-import FTAuthHandler from './routes/FT/FT.authentication.routes';
+import FTAuthHandler from './routes/FT/FT.auth.routes';
 import BaseController from './controllers/Base.controller';
 const app: Express = express();
 /**

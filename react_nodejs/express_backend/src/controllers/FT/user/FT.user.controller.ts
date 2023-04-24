@@ -5,8 +5,6 @@ import { DFTUserRecord } from "./FT.user.definitions";
 
 
 class FTUserController extends BaseController<DFTUserRecord> {
-    // TODO: set user for both below? should this be more ov a service task?
-
     //      User model
     //          first_name: DataTypes.STRING,
     //          last_name: DataTypes.STRING,

@@ -11,7 +11,7 @@ module.exports = {
     let dummyJSON = [];
     let dummyBoolean = [true, false, true, false];
     const dummyGender = [1, 2];
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 50; i++) {
       dummyJSON.push({
         first_name: faker.name.firstName(),
         last_name: faker.name.lastName(),
@@ -19,13 +19,14 @@ module.exports = {
         occupation: faker.name.jobArea(),
         partner: Math.floor(Math.random() * 100),
         marital_status: faker.lorem.word(),
+        password: '12345',
         is_parent: dummyBoolean[Math.floor(Math.random() * 3)],
-        description: faker.lorem.sentence(),
-        gender: dummyGender[Math.floor(Math.random() * 2)],
-        profile_url: '',
-        assigned_ip: ['123'],
         has_ipa: dummyBoolean[Math.floor(Math.random() * 3)],
-        links_to: Math.floor(Math.random() * 90),
+        gender: dummyGender[Math.floor(Math.random() * 2)],
+        assigned_ips: '["123", "456"]',
+        profile_url: '',
+        description: faker.lorem.sentence(),
+        imm_family: Math.floor(Math.random() * 90),
         created_at: faker.date.past(),
         updated_at: faker.date.past(),
       });

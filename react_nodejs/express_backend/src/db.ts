@@ -1,5 +1,5 @@
 // TODO: types
-import { Sequelize } from '@sequelize/core';
+import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 // TODO: types
 dotenv.config();

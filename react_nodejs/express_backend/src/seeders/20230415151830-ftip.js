@@ -9,17 +9,13 @@ module.exports = {
      * Example:
     */
     let dummyJSON = [];
-    let dummyBoolean = [true, false, true, false];
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 8; i++) {
       dummyJSON.push({
-        name: faker.name.lastName(),
-        coords: '',
-        flag_url: '',
-        created_at: faker.date.past(),
-        updated_at: faker.date.past(),
+        value: `${faker.internet.ip()}`,
+        owners: '[1,2,47,9]',
       });
     }
-    // await queryInterface.bulkInsert('FTLocs', dummyJSON, {});
+    await queryInterface.bulkInsert('FTIPs', dummyJSON, {});
   },
 
   async down(queryInterface, Sequelize) {
@@ -29,6 +25,7 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
     */
-    // await queryInterface.bulkDelete('FTLocs', null, {});
+    await queryInterface.bulkDelete('FTIPs', null, {});
   }
 };
+

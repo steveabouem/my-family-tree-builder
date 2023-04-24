@@ -13,16 +13,22 @@ For the time being, given that the family tree requirement came along as the pro
 - Functions arguments: `p_arg`
 - Generics: `GTypeName`
 - Sql statement variables: `const select/insert/update/delete`
-- Queries: prioritize Sequelize, outside of Base classes (this is mainly because of automaticly generated associations get - set functions). result for single record, results for arrays
-- Variables for models in controller/services: const current... = fetchDataOnCurrentlyDisplayedModel, const target... = fetchAnotherRecord
+- Queries: prioritize Sequelize, outside of Base classes (this is mainly because of automaticly generated associations get - set functions). `result` for single record, `results` for arrays
+- Variables for models in controller/services: const current... = fetchDataOnCurrentlyDisplayedModel, const target... = fe  tchAnotherRecord
+- Booleans/validations: const `variableValid` = ...;
 - Snake vs Camel: db fields and DTOS (for mapping in queries): snake, functions args: snake,  `everything else: camel`
+### Dates
+Created with 
+```
+new Date().toUTCString()
+```
 
 ## Models
 Define the attributes for each entity, as well as the related table
 - **Typing**: see sequelize docs
-
-## Controllers
-Define the basic getters/setters for each entity, and provide those capabilities to the related service. I.E: the service receives the params and performs the queries, and if necessary the business logic. `NO QUERIES IN CONTROLLER`
+(https://sequelize.org/docs/v6/other-topics/typescript/ to switch models to TS)
+<!-- ## Controllers REMOVED
+Define the basic getters/setters for each entity, and provide those capabilities to the related service. I.E: the service receives the params and performs the queries, and if necessary the business logic. `NO QUERIES IN CONTROLLER` -->
 
 - **Typing**: Intuitively typed params, used to return data types as defined in the models (e.g: json instead of (string | number)[] ). Conversion will occur in the service. Each controller has the typings in a separate definitions file (``MANDATORY``)
 

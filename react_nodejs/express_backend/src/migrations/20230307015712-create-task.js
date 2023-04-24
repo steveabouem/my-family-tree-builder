@@ -12,6 +12,9 @@ module.exports = {
       description: {
         type: Sequelize.STRING
       },
+      status: {
+        type: Sequelize.BOOLEAN
+      },
       created_by: {
         allowNull: false,
         type: Sequelize.INTEGER
@@ -31,6 +34,9 @@ module.exports = {
       updated_at: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      updated_by: {
+        type: Sequelize.INTEGER
       }
     });
   },

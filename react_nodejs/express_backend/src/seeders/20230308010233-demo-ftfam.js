@@ -10,16 +10,16 @@ module.exports = {
     */
     let dummyJSON = [];
     let dummyBoolean = [true, false, true, false];
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 50; i++) {
       dummyJSON.push({
         name: faker.name.lastName(),
-        active: dummyBoolean[Math.floor(Math.random() * 3)],
         head_count: 6,
         profile_url: '',
         linked_fams: '[1,10,5,7]', // FTFams
         description: faker.lorem.sentence(),
         base_location: Math.floor(Math.random() * 40), // FTLoc
         head_1: 16, // FTUser
+        head_2: 17, // FTUser
         created_at: faker.date.past(),
         updated_at: faker.date.past(),
       });

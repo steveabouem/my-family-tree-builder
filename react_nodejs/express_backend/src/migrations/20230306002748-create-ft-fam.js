@@ -34,6 +34,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      head_2: {
+        type: Sequelize.INTEGER
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

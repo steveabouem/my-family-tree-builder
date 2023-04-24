@@ -9,7 +9,7 @@ module.exports = {
      * Example:
     */
     let dummyJSON = [];
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 50; i++) {
       dummyJSON.push({
         name: faker.company.name(),
         description: faker.lorem.sentence(),

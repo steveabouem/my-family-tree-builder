@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTAuthService from "../../services/FT/auth/auth.service";
+import FTAuthService from "../../services/FT/auth/FT.auth.service";
 
 const router = Router();
 

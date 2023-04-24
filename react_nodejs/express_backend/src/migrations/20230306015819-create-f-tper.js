@@ -30,17 +30,28 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      is_co_head: {
+      password: {
         allowNull: false,
+        type: Sequelize.STRING
+      },
+      is_parent: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN
+      },
+      has_ipa: {
         type: Sequelize.BOOLEAN
       },
       gender: {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      assigned_ips: {
+        allowNull: false,
+        type: Sequelize.JSON
+      },
       profile_url: { type: Sequelize.STRING },
       description: { type: Sequelize.STRING },
-      links_to: { type: Sequelize.INTEGER },
+      imm_family: { type: Sequelize.INTEGER },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE

@@ -9,25 +9,37 @@ export interface DFTUserDTO {
     description: string,
     gender: number, // 1:m 2:f
     profile_url: string,
-    assigned_ip: string[],
-    has_ipa: boolean, //has authority to update authorized ips
     links_to: string,
-    user_id: number,
-    password: string
+    password: string,
+    created_at: string,
+    updated_at: string,
 }
 
-// age: DataTypes.INTEGER,
-// assigned_ip: DataTypes.STRING, //each FTUser has an ip assigned to them. ip can be shared between multiple"
-// description: DataTypes.STRING,
-// first_name: DataTypes.STRING,
-// gender: DataTypes.INTEGER, // 1:m 2:f"
-// has_ipa: DataTypes.BOOLEAN, //has authority to update authorized ips"
-// is_parent: DataTypes.BOOLEAN,
-// last_name: DataTypes.STRING,
-// links_to: DataTypes.INTEGER, // FTFam"
-// marital_status: DataTypes.STRING,
-// occupation: DataTypes.STRING,
-// partner: DataTypes.INTEGER, // FTUser"
-// profile_url: DataTypes.STRING,
-// user_id | int
-// password | string
+// | id | int | NO 
+// | first_name | varchar(255) | NO |
+// | last_name | varchar(255) | NO |
+// | age | int | NO |
+// | occupation | varchar(255) | NO |
+// | marital_status | varchar(255) | NO |
+// | gender | int | NO |
+// | created_at | datetime | NO |
+// | updated_at | datetime | NO |
+    
+// | profile_url?: | varchar(255) | YES |
+// | is_parent?: | tinyint(1) | YES |
+// | partner?: | int | YES |
+// | description?: | varchar(255) | YES |
+// | links_to?: | int | YES |
+// | has_ipa?: | tinyint(1) | YES |
+// | assigned_ip?: | varchar(255) | YES |
+// | password?: | varchar(255) | YES |  
+
+// | id | int | NO 
+// | first_name | varchar(255) | NO |
+// | last_name | varchar(255) | NO |
+// | age | int | NO |
+// | occupation | varchar(255) | NO |
+// | marital_status | varchar(255) | NO |
+// | gender | int | NO |
+// | created_at | datetime | NO |
+// | updated_at | datetime | NO |

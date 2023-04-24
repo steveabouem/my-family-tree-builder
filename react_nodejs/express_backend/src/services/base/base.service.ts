@@ -1,4 +1,4 @@
-import { Sequelize } from '@sequelize/core/types';
+import { Sequelize } from 'sequelize';
 import { DTableJoin } from '../../controllers/common.definitions';
 import db from '../../db';
 

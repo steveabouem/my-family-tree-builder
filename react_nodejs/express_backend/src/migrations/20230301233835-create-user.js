@@ -9,6 +9,9 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      active: {
+        type: Sequelize.BOOLEAN
+      },
       first_name: {
         allowNull: false,
         type: Sequelize.STRING
@@ -40,6 +43,9 @@ module.exports = {
       updated_at: {
         allowNull: false,
         type: Sequelize.DATE
+      },
+      updated_by: {
+        type: Sequelize.INTEGER
       }
     });
   },

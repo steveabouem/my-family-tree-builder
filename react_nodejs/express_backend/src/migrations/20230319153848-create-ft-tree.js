@@ -18,11 +18,17 @@ module.exports = {
       public: {
         type: Sequelize.BOOLEAN
       },
-      createdAt: {
+      active: {
+        type: Sequelize.BOOLEAN
+      },
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      created_by: {
+        type: Sequelize.INTEGER
+      },
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       }

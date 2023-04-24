@@ -25,7 +25,7 @@ module.exports = {
 
     let dummyJSON = [admin];
     let dummyBoolean = [true, false, true, false];
-    for (let i = 0; i < 5000; i++) {
+    for (let i = 0; i < 50; i++) {
       dummyJSON.push({
         tasks: '[1, 2, 3, 4, 5]',
         roles: '[1]',
@@ -35,6 +35,7 @@ module.exports = {
         created_at: faker.date.past(),
         updated_at: faker.date.past(),
         email: faker.internet.email(),
+        updated_by: 3,
         password: '11111111111111',
       });
     }
