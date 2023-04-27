@@ -8,14 +8,8 @@ module.exports = {
      *
      * Example:
     */
-    let dummyJSON = [];
-    for (let i = 0; i < 8; i++) {
-      dummyJSON.push({
-        value: `${faker.internet.ip()}`,
-        owners: '[1,2,47,9]',
-      });
-    }
-    await queryInterface.bulkInsert('FTIPs', dummyJSON, {});
+
+    await queryInterface.bulkInsert('FTIPs', [{ value: '::1', owners: '[1,2,47,9]' }], {});
   },
 
   async down(queryInterface, Sequelize) {

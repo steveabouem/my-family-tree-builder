@@ -1,5 +1,7 @@
+import { generatePrimeSync } from 'crypto';
 import { Sequelize } from 'sequelize';
 import { DTableJoin } from '../../controllers/common.definitions';
+import bcrypt from "bcryptjs";
 import db from '../../db';
 
 /**
@@ -10,10 +12,12 @@ import db from '../../db';
 export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
     dataBase: Sequelize;
     tableName: string;
+    salt: string;
 
     constructor(table: string) {
         this.dataBase = db;
         this.tableName = table;
+        this.salt = bcrypt.genSaltSync(8);
     }
 
     async index(p_limit: number): Promise<any> {
@@ -95,4 +99,17 @@ export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
         return obj;
     }
 
+    // TODO: ask around for this, chatGPT failed
+    // validateHasAllValues<G extends Record<string, unknown>>(p_values: MyType<G>): boolean {
+    //     // this uses the DTO for p_values, hence me using a different generatePrimeSync (the service accepts the record type).
+    //     const requiredKeys = Object.keys(p_values) as (keyof G)[];
+
+    //     for (const key of requiredKeys) {
+    //         if (!p_values.hasOwnProperty(key) || p_values[key] === null) {
+    //             return false;
+    //         }
+    //     }
+
+    //     return true;
+    // }
 }

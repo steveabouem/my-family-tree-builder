@@ -8,7 +8,7 @@ export class UserService extends BaseService<DUserRecord> {
     salt: string;
     constructor() {
         super('Users');
-        this.salt = bcrypt.genSaltSync(10);
+        this.salt = bcrypt.genSaltSync(8);
     }
 
     create = async (p_user: DUserDTO): Promise<boolean> => {

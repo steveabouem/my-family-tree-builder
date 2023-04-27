@@ -2,6 +2,10 @@ import { DUserRecord } from "../../../controllers/tracker/User/User.definitions"
 import { BaseService } from "../../base/base.service";
 // import { FTUserService } from "../user/FT.user.service";
 import db from "../../../db";
+import FTIP from "../../../models/FT.ip";
+import { DFTLoginFields } from "./FT.auth.definitions";
+import FTUser from "../../../models/FT.user";
+import bcrypt from "bcryptjs";
 
 class FTAuthService extends BaseService<any> { // TODO: no any
     constructor() {
@@ -20,11 +24,21 @@ class FTAuthService extends BaseService<any> { // TODO: no any
         if (!p_ip) {
             return false;
         }
-        // TODO: SQL BINDINGS
-        const select = `SELECT *FROM FTIPs where value = '228.247.168.47';`
-        const result = await this.dataBase.query(select);
 
-        return !!result[0].length;
+        // TODO: SQL BINDINGS
+        const ip = FTIP.findOne({ where: { value: p_ip } });
+        return !!ip;
+    }
+
+    verifyUser = async (p_values: DFTLoginFields): Promise<boolean> => {
+        const currentUser = await FTUser.findOne({ where: { email: p_values.email } });
+        if (!currentUser) {
+            return false;
+        }
+
+        const passwordValid = bcrypt.compareSync(p_values.password, currentUser.password);
+
+        return passwordValid;
     }
 
 }

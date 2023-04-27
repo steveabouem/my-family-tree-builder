@@ -1,41 +1,3 @@
-'use strict';
-// const {
-//   Model
-// } = require('sequelize');
-// module.exports = (sequelize, DataTypes) => {
-//   class FTUser extends Model {
-//     /**
-//      * Helper method for defining associations.
-//      * This method is not a part of Sequelize lifecycle.
-//      * The `models/index` file will call this method automatically.
-//      */
-//     static associate(models) { // define association here
-//       FTUser.belongsToMany(models.FTFam, { through: 'FTFamilyMembers' });
-//       FTUser.hasOne(models.FTIP);
-//     }
-//   }
-//   FTUser.init({
-//     age: DataTypes.INTEGER,
-//     assigned_ip: DataTypes.STRING, //each FTUser has an ip assigned to them. ip can be shared between multiple. model: FTIP"
-//     description: DataTypes.STRING,
-//     first_name: DataTypes.STRING,
-//     gender: DataTypes.INTEGER, // 1:m 2:f"
-//     has_ipa: DataTypes.BOOLEAN, //has authority to update authorized ips"
-//     is_parent: DataTypes.BOOLEAN,
-//     last_name: DataTypes.STRING,
-//     links_to: DataTypes.INTEGER, // FTFam"
-//     marital_status: DataTypes.STRING,
-//     occupation: DataTypes.STRING,
-//     partner: DataTypes.INTEGER, // FTUser"
-//     profile_url: DataTypes.STRING,
-//     // password | string
-//   }, {
-//     sequelize,
-//     modelName: 'FTUser',
-//   });
-//   return FTUser;
-// };
-
 import {
   Association, DataTypes, HasManyCountAssociationsMixin,
   HasManyGetAssociationsMixin, HasManySetAssociationsMixin,
@@ -43,7 +5,7 @@ import {
   HasManyRemoveAssociationsMixin, Model, InferAttributes,
   InferCreationAttributes, CreationOptional, NonAttribute, ForeignKey,
 } from 'sequelize';
-import FTFam from './ftFam';
+import FTFam from './FT.family';
 import db from "../db";
 
 
@@ -59,6 +21,7 @@ class FTUser extends Model<InferAttributes<FTUser, { omit: 'families' }>, InferC
   declare partner: ForeignKey<FTUser['id']>;
   declare assigned_ips: string[]; //each FTUser has one or more ip assigned to them. ips can be shared between multiple. model: FTIP"
   declare description: string;
+  declare email: string;
   declare gender: number; // 1:m 2:f"
   declare has_ipa: CreationOptional<boolean>; //has authority to update authorized ips"
   declare is_parent: boolean;
@@ -90,7 +53,6 @@ class FTUser extends Model<InferAttributes<FTUser, { omit: 'families' }>, InferC
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
   declare families?: NonAttribute<FTFam[]>; // Note this is optional since it's only populated when explicitly requested in code
-  // declare ip?: NonAttribute<FTIP[]>; // Note this is optional since it's only populated when explicitly requested in code
 
   // getters that are not attributes should be tagged using NonAttribute
   // to remove them from the model's Attribute Typings.
@@ -100,6 +62,10 @@ class FTUser extends Model<InferAttributes<FTUser, { omit: 'families' }>, InferC
 
   get FTUserAge(): NonAttribute<number> {
     return this.age;
+  }
+
+  get FTUserEmail(): NonAttribute<string> {
+    return this.email;
   }
 
   get FTUserAssigned_ip(): NonAttribute<string[]> {
@@ -180,6 +146,7 @@ FTUser.init(
     },
     assigned_ips: {
       type: DataTypes.JSON,
+      allowNull: false
     },
     description: {
       type: DataTypes.STRING,
@@ -195,11 +162,15 @@ FTUser.init(
     },
     has_ipa: {
       type: DataTypes.BOOLEAN,
-      allowNull: true,
     },
     is_parent: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true
     },
     last_name: {
       type: DataTypes.STRING,
@@ -215,7 +186,6 @@ FTUser.init(
     },
     occupation: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     partner: {
       type: DataTypes.INTEGER,

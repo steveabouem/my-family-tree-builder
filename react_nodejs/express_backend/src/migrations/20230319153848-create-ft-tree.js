@@ -35,6 +35,9 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
+    // deal with foreign key constraints
+    await queryInterface.dropTable('FTUsers');
+    await queryInterface.dropTable('FTFams');
     await queryInterface.dropTable('FTTrees');
   }
 };

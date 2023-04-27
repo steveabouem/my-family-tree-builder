@@ -34,7 +34,7 @@ import {
   HasManyCountAssociationsMixin,
 } from 'sequelize';
 import db from "../db";
-import FTFam from './ftFam';
+import FTFam from './FT.family';
 
 
 // order of InferAttributes & InferCreationAttributes is important.
@@ -105,6 +105,9 @@ class FTTree extends Model<InferAttributes<FTTree, { omit: 'families' }>, InferC
     return this.updated_at;
   }
 
+  public getFams(): FTFam[] | undefined {
+    return this.families;
+  }
   /**
    * End
    * */
@@ -125,8 +128,9 @@ FTTree.init(
       type: DataTypes.JSON
     },
     created_at: {
-      type: DataTypes.STRING,
-      defaultValue: new Date().toUTCString
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: new Date
     },
     created_by: {
       type: DataTypes.INTEGER,
@@ -141,10 +145,11 @@ FTTree.init(
       allowNull: false
     },
     updated_at: {
-      type: DataTypes.STRING
+      type: DataTypes.DATE
     },
     active: {
-      type: DataTypes.BOOLEAN
+      type: DataTypes.BOOLEAN,
+      allowNull: false
     }
   },
   {
@@ -152,5 +157,12 @@ FTTree.init(
     sequelize: db // passing the `sequelize` instance is required
   }
 );
+
+
+FTTree.hasMany(FTFam, {
+  as: 'families',
+  sourceKey: 'id',
+  foreignKey: 'families'
+});
 
 export default FTTree;

@@ -10,7 +10,7 @@ module.exports = {
      *
      * Example:
     */
-    const salt = bcrypt.genSaltSync(5);
+    const salt = bcrypt.genSaltSync(8);
     const admin = {
       tasks: '[1, 2, 3, 4, 5]',
       roles: '[3]',

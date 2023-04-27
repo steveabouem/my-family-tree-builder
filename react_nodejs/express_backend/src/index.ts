@@ -1,11 +1,11 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import FTFamilyHandlers from './routes/FT/FT.family.routes';
-import FTUserHandlers from './routes/FT/FT.user.routes';
-import userHandlers from './routes/tracker/User.routes';
+import FTFamilyHandler from './routes/FT/FT.family.routes';
+import FTUserHandler from './routes/FT/FT.user.routes';
+import userHandler from './routes/tracker/User.routes';
 import FTAuthHandler from './routes/FT/FT.auth.routes';
-import BaseController from './controllers/Base.controller';
+import FTTreeHandler from './routes/FT/FT.tree.routes';
 const app: Express = express();
 /**
  MIDDLEWARES SECTION
@@ -15,23 +15,24 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // TRACKER APP
-app.use('/api/users', userHandlers);
+app.use('/api/users', userHandler);
 
 // FT APP
-app.use('/api/FT/families', FTFamilyHandlers);
-app.use('/api/FT/users', FTUserHandlers);
 app.use('/api/FT/auth', FTAuthHandler);
+app.use('/api/FT/trees', FTTreeHandler);
+app.use('/api/FT/families', FTFamilyHandler);
+app.use('/api/FT/users', FTUserHandler);
 /** END */
 
 /**
  ROUTE HANDLERS
  **/
-app.get('/', (req: Request, res: Response, next) => {
-    const test = new BaseController('Objectives');
-    test.getById(1).then((r: any) => {
-        res.send(r);
-    });
-});
+// app.get('/', (req: Request, res: Response, next) => {
+//     const test = new BaseController('Objectives');
+//     test.getById(1).then((r: any) => {
+//         res.send(r);
+//     });
+// });
 /** END */
 
 const port = 4000;

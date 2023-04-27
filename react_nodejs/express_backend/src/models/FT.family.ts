@@ -1,44 +1,11 @@
-// 'use strict';
-// const {
-//   Model
-// } = require('sequelize');
-// module.exports = (sequelize, DataTypes) => {
-//   class FTFam extends Model {
-//     /**
-//      * Helper method for defining associations.
-//      * This method is not a part of Sequelize lifecycle.
-//      * The `models/index` file will call this method automatically.
-//      */
-//     static associate(models) {
-//       FTFam.belongsToMany(models.FTUser, { through: 'FTFamilyMembers' });
-//       FTFam.belongsTo(models.FTTree);
-//     }
-//   }
-//   FTFam.init({
-//     base_location: DataTypes.INTEGER, // location api
-//     description: DataTypes.STRING,
-//     head_1: DataTypes.INTEGER, // FTUser
-//     head_count: DataTypes.INTEGER,
-//     linked_fams: DataTypes.JSON, // FTFam
-//     name: DataTypes.STRING,
-//     profile_url: DataTypes.STRING,
-//   }, {
-//     sequelize,
-//     modelName: 'FTFam',
-//   });
-//   return FTFam;
-// };
-
-
 import {
-  DataTypes, HasManyCountAssociationsMixin,
-  HasManyGetAssociationsMixin,
+  DataTypes, HasManyCountAssociationsMixin, HasManyGetAssociationsMixin,
   HasManySetAssociationsMixin, HasManyAddAssociationsMixin, HasManyHasAssociationsMixin,
-  HasManyRemoveAssociationsMixin, Model,
-  InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute,
+  HasManyRemoveAssociationsMixin, Model, InferAttributes, InferCreationAttributes,
+  CreationOptional, NonAttribute, Association,
 } from 'sequelize';
 import db from "../db";
-import FTUser from './ftUser';
+import FTUser from './FT.user';
 
 
 // order of InferAttributes & InferCreationAttributes is important.
@@ -46,14 +13,15 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare base_location: number; // FTLoc
+  declare base_location: string; // FTLoc
   declare description: string;
   declare head_1: number; // FTUser
   declare head_2: number; // ?FTUser
   declare head_count: number;
-  declare linked_fams: number[]; // FTFam
+  declare tree: number; // FTTree
   declare name: string;
   declare profile_url: string;
+  declare created_by: number; // FTUser
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 
@@ -74,7 +42,7 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   get FTFamId(): NonAttribute<number> {
     return this.id;
   }
-  get FTFamBaseLocation(): NonAttribute<number> {
+  get FTFamBaseLocation(): NonAttribute<string> {
     return this.base_location;
   }
   get FTFamDescription(): NonAttribute<string> {
@@ -89,8 +57,8 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   get FTFamHeadCount(): NonAttribute<number> {
     return this.head_count;
   }
-  get FTFamLinkedFams(): NonAttribute<number[]> {
-    return this.linked_fams;
+  get FTFamTree(): NonAttribute<number> {
+    return this.tree;
   }
   get FTFamName(): NonAttribute<string> {
     return this.name;
@@ -98,12 +66,19 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   get FTFamProfileURL(): NonAttribute<string> {
     return this.profile_url;
   }
+  get FTFamCreatedBy(): NonAttribute<number> {
+    return this.created_by;
+  }
   get FTFamCreatedAt(): NonAttribute<Date> {
     return this.created_at;
   }
   get FTFamUpdatedAt(): NonAttribute<Date> {
     return this.updated_at;
   }
+
+  declare static associations: {
+    members: Association<FTFam, FTUser>;
+  };
 }
 
 FTFam.init(
@@ -113,22 +88,25 @@ FTFam.init(
       autoIncrement: true,
       primaryKey: true
     },
-    base_location: { type: DataTypes.INTEGER },
+    base_location: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING },
-    head_1: { type: DataTypes.INTEGER },
+    head_1: { type: DataTypes.INTEGER, allowNull: false },
     head_2: { type: DataTypes.INTEGER },
     head_count: { type: DataTypes.INTEGER },
-    linked_fams: { type: DataTypes.JSON },
+    tree: { type: DataTypes.INTEGER },
     profile_url: { type: DataTypes.STRING },
-    name: { type: DataTypes.STRING },
+    name: { type: DataTypes.STRING, allowNull: false },
+    created_by: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     created_at: {
-      type: DataTypes.STRING,
+      type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: new Date().toUTCString()
+      defaultValue: new Date
     },
     updated_at: {
-      type: DataTypes.STRING,
-      allowNull: true
+      type: DataTypes.DATE,
     }
   },
   {
@@ -136,5 +114,10 @@ FTFam.init(
     sequelize: db // passing the `sequelize` instance is required
   }
 );
+
+FTFam.hasMany(FTUser, {
+  as: 'users',
+  foreignKey: 'members'
+});
 
 export default FTFam;

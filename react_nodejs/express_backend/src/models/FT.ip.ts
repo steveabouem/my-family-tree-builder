@@ -29,7 +29,7 @@ import {
     Association, DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute,
 } from 'sequelize';
 import db from "../db";
-import FTUser from './ftUser';
+import FTUser from './FT.user';
 
 
 // order of InferAttributes & InferCreationAttributes is important.
