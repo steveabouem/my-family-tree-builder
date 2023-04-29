@@ -9,4 +9,4 @@ export interface DFamilyTreeDTO {
     updated_at: Date;
 }
 
-export type DFamilyTreeUpdateDTO = Partial<DFamilyTreeDTO> & { id: number };
+export type DFamilyTreeUpdateDTO = Partial<DFamilyTreeDTO>

@@ -26,12 +26,19 @@ export class FTFamilyService extends BaseService<DFTFamDTO> {
         return false;
     }
 
-    update = async (p_values: Partial<DFTFamUpdateDTO>, p_id: number): Promise<boolean> => {
+    update = async (p_values: DFTFamUpdateDTO, p_id: number): Promise<boolean> => {
         const currentFamily = await FTFam.findByPk(p_id);
         if (currentFamily) {
-            const formattedValues = { ...p_values, updated_at: new Date };
-            await FTFam.update({ ...formattedValues }, { where: { id: p_id } });
+            const formattedValues = await this.formatUpdateValues(p_values, p_id);
+
+            await FTFam.update({ ...formattedValues }, { where: { id: p_id } })
+                .catch(e => {
+                    console.log('Error updating: ', e);
+                    return false;
+                });
+
             currentFamily.save();
+
             return true;
         }
 
@@ -66,6 +73,22 @@ export class FTFamilyService extends BaseService<DFTFamDTO> {
         console.log('No Tree Found');
 
         return undefined;
+    }
+
+    formatUpdateValues = async (p_values: DFTFamUpdateDTO, p_id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
+        const currentFamily = await FTFam.findByPk(p_id);
+        let formattedValues = {};
+        if (!currentFamily) {
+            return;
+        }
+
+        if (p_values.members) {
+            const familyMembers = JSON.parse(currentFamily?.FTFamMembers || '');
+            const formattedMembers = JSON.stringify([...familyMembers, ...p_values.members]);
+            formattedValues = { ...p_values, members: formattedMembers };
+        }
+
+        return ({ ...p_values, ...formattedValues, updated_at: new Date });
     }
 
     validateFTFamFields = async (p_values: DFTFamDTO): Promise<boolean> => {

@@ -94,7 +94,7 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
         // if (valid) {
 
         const currentTree = await FTTree.findByPk(p_id);
-        const formattedValues = await this.formatUpdateValues(p_values);
+        const formattedValues = await this.formatUpdateValues(p_values, p_id);
 
         if (currentTree) {
             await currentTree?.update({ ...formattedValues }, { where: { id: p_id } })
@@ -148,8 +148,8 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
     }
 
     // return type uses a partial here to not have to deal with the id property present in the update DTO
-    formatUpdateValues = async (p_values: DFamilyTreeUpdateDTO): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
-        const currentTree = await FTTree.findByPk(p_values?.id);
+    formatUpdateValues = async (p_values: DFamilyTreeUpdateDTO, p_id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
+        const currentTree = await FTTree.findByPk(p_id);
         let formattedValues = {};
         if (!currentTree) {
             return;

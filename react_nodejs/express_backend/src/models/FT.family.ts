@@ -13,7 +13,7 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare base_location: string; // FTLoc
+  declare base_location: string; // google api
   declare description: string;
   declare head_1: number; // FTUser
   declare head_2: number; // ?FTUser
@@ -26,7 +26,7 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   declare updated_at: CreationOptional<Date>;
 
   // TODO: replace with association
-  declare members: number[];
+  declare members: string;
 
   // FTUser
   // declare getMembers: HasManyGetAssociationsMixin<FTUser>; // Note the null assertions!
@@ -79,7 +79,7 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
     return this.updated_at;
   }
 
-  get FTFamMembers(): NonAttribute<number[]> {
+  get FTFamMembers(): NonAttribute<string> {
     return this.members;
   }
 

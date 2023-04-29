@@ -66,6 +66,7 @@ router.get('/:id', (req: Request, res: Response) => {
 
 router.put('/:id', (req: Request, res: Response) => {
     const ftFamService = new FTFamilyService;
+    console.log('RUNNING');
 
     ftFamService.update(req.body, parseInt(req.params.id))
         .then((success: boolean) => {
