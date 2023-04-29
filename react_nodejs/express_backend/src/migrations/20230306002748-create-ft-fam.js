@@ -20,9 +20,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      linked_fams: {
-        type: Sequelize.JSON
-      },
       description: {
         type: Sequelize.STRING
       },
@@ -37,9 +34,17 @@ module.exports = {
       head_2: {
         type: Sequelize.INTEGER
       },
+      tree: {
+        type: Sequelize.INTEGER
+      },
+      members: {
+        type: Sequelize.JSON,
+        defaultValue: '[]'
+      },
       created_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date
       },
       updated_at: {
         allowNull: false,

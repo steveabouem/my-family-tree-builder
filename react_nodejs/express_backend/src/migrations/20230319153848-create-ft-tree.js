@@ -16,14 +16,22 @@ module.exports = {
         type: Sequelize.JSON
       },
       public: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false
       },
       active: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+      },
+      families: {
+        type: Sequelize.JSON,
+        defaultValue: '[]'
       },
       created_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date
       },
       created_by: {
         type: Sequelize.INTEGER

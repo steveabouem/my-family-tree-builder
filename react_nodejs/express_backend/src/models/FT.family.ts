@@ -25,17 +25,20 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 
+  // TODO: replace with association
+  declare members: number[];
+
   // FTUser
-  declare getMembers: HasManyGetAssociationsMixin<FTUser>; // Note the null assertions!
-  declare setMembers: HasManySetAssociationsMixin<FTUser, number>;
-  declare addMembers: HasManyAddAssociationsMixin<FTUser, number>;
-  declare removeMembers: HasManyRemoveAssociationsMixin<FTUser, number>;
-  declare hasMembers: HasManyHasAssociationsMixin<FTUser, number>;
-  declare countMembers: HasManyCountAssociationsMixin;
+  // declare getMembers: HasManyGetAssociationsMixin<FTUser>; // Note the null assertions!
+  // declare setMembers: HasManySetAssociationsMixin<FTUser, number>;
+  // declare addMembers: HasManyAddAssociationsMixin<FTUser, number>;
+  // declare removeMembers: HasManyRemoveAssociationsMixin<FTUser, number>;
+  // declare hasMembers: HasManyHasAssociationsMixin<FTUser, number>;
+  // declare countMembers: HasManyCountAssociationsMixin;
 
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
-  declare members?: NonAttribute<FTUser[]>; // Note this is optional since it's only populated when explicitly requested in code
+  // declare members?: NonAttribute<FTUser[]>; // Note this is optional since it's only populated when explicitly requested in code
 
   // getters that are not attributes should be tagged using NonAttribute
   // to remove them from the model's Attribute Typings.
@@ -76,9 +79,15 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
     return this.updated_at;
   }
 
-  declare static associations: {
-    members: Association<FTFam, FTUser>;
-  };
+  get FTFamMembers(): NonAttribute<number[]> {
+    return this.members;
+  }
+
+  // TODO: uncomment once you figure out how to set and fetch associations, 
+  // an array of IDs is a little pedestrian. Don't forget the omit param
+  // declare static associations: {
+  //   members: Association<FTFam, FTUser>;
+  // };
 }
 
 FTFam.init(
@@ -100,6 +109,9 @@ FTFam.init(
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    members: {
+      type: DataTypes.JSON
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -115,9 +127,9 @@ FTFam.init(
   }
 );
 
-FTFam.hasMany(FTUser, {
-  as: 'users',
-  foreignKey: 'members'
-});
+// FTFam.hasMany(FTUser, {
+//   as: 'users',
+//   foreignKey: 'members'
+// });
 
 export default FTFam;

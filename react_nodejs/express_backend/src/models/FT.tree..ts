@@ -38,20 +38,23 @@ import FTFam from './FT.family';
 
 
 // order of InferAttributes & InferCreationAttributes is important.
-class FTTree extends Model<InferAttributes<FTTree, { omit: 'families' }>, InferCreationAttributes<FTTree>> {
+class FTTree extends Model<InferAttributes<FTTree>, InferCreationAttributes<FTTree>> {
   /**
    * Attributes
    * */
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare authorized_ips: string[];
+  declare authorized_ips: string;
   declare public: boolean;
   declare name: string;
   declare active: boolean;
   declare created_by: number; //FTUser
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
+
+  // TODO: replace with association
+  declare families: string;
   /**
    * End
    * */
@@ -60,20 +63,20 @@ class FTTree extends Model<InferAttributes<FTTree, { omit: 'families' }>, InferC
   /**
    * Association Getters/Setters
    * */
-  // FTFAM
-  declare getFamilies: HasManyGetAssociationsMixin<FTFam>; // Note the null assertions!
-  declare setFamilies: HasManySetAssociationsMixin<FTFam, number>;
-  declare addFamilies: HasManyAddAssociationsMixin<FTFam, number>;
-  declare removeFamilies: HasManyRemoveAssociationsMixin<FTFam, number>;
-  declare hasFamilies: HasManyHasAssociationsMixin<FTFam, number>;
-  declare countFamilies: HasManyCountAssociationsMixin;
+  // FTFAM 
+  // declare getFamilies: HasManyGetAssociationsMixin<FTFam>; // Note the null assertions!
+  // declare setFamilies: HasManySetAssociationsMixin<FTFam, number>;
+  // declare addFamilies: HasManyAddAssociationsMixin<FTFam, number>;
+  // declare removeFamilies: HasManyRemoveAssociationsMixin<FTFam, number>;
+  // declare hasFamilies: HasManyHasAssociationsMixin<FTFam, number>;
+  // declare countFamilies: HasManyCountAssociationsMixin;
   /**
    * End
    * */
 
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
-  declare families?: NonAttribute<FTFam[]>; // Note this is optional since it's only populated when explicitly requested in code
+  // declare families?: NonAttribute<FTFam[]>; // Note this is optional since it's only populated when explicitly requested in code
 
   /**
    * Attributes Getters/Setters
@@ -83,7 +86,7 @@ class FTTree extends Model<InferAttributes<FTTree, { omit: 'families' }>, InferC
   get FTTreeId(): NonAttribute<number> {
     return this.id;
   }
-  get FTTreeAuthorized_ips(): NonAttribute<string[]> {
+  get FTTreeAuthorized_ips(): NonAttribute<string> {
     return this.authorized_ips;
   };
   get FTTreePublic(): NonAttribute<boolean> {
@@ -105,16 +108,22 @@ class FTTree extends Model<InferAttributes<FTTree, { omit: 'families' }>, InferC
     return this.updated_at;
   }
 
-  public getFams(): FTFam[] | undefined {
+  get FTTreeFAmilies(): NonAttribute<string> {
     return this.families;
-  }
+  };
+
+  // TODO: uncomment once you figure out how to set and fetch associations, 
+  // an array of IDs is a little pedestrian. Don't forget the omit param
+  // public getFams(): FTFam[] | undefined {
+  //   return this.families;
+  // }
   /**
    * End
    * */
 
-  declare static associations: {
-    families: Association<FTTree, FTFam>;
-  };
+  // declare static associations: {
+  //   families: Association<FTTree, FTFam>;
+  // };
 }
 
 FTTree.init(
@@ -140,6 +149,10 @@ FTTree.init(
       type: DataTypes.STRING,
       allowNull: false
     },
+    families: {
+      type: DataTypes.JSON,
+      defaultValue: '[]'
+    },
     public: {
       type: DataTypes.BOOLEAN,
       allowNull: false
@@ -159,10 +172,10 @@ FTTree.init(
 );
 
 
-FTTree.hasMany(FTFam, {
-  as: 'families',
-  sourceKey: 'id',
-  foreignKey: 'families'
-});
+// FTTree.hasMany(FTFam, {
+//   as: 'families',
+//   sourceKey: 'id',
+//   foreignKey: 'families'
+// });
 
 export default FTTree;

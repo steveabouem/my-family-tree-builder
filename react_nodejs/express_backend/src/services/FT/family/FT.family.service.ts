@@ -39,7 +39,7 @@ export class FTFamilyService extends BaseService<DFTFamDTO> {
     }
 
     getFamily = async (p_id: number): Promise<FTFam | null> => {
-        const fam = await FTFam.findByPk(p_id);
+        const fam = await this.getById(p_id);
         return fam;
     }
 

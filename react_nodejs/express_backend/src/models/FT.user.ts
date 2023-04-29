@@ -10,7 +10,7 @@ import db from "../db";
 
 
 // order of InferAttributes & InferCreationAttributes is important.
-class FTUser extends Model<InferAttributes<FTUser, { omit: 'families' }>, InferCreationAttributes<FTUser>> {
+class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUser>> {
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
@@ -18,6 +18,9 @@ class FTUser extends Model<InferAttributes<FTUser, { omit: 'families' }>, InferC
   declare last_name: string;
   declare age: number;
   declare occupation: string;
+  // foreign keys are automatically added by associations methods (like Project.belongsTo)
+  // by branding them using the `ForeignKey` type, `Project.init` will know it does not need to
+  // display an error if partner is missing.
   declare partner: ForeignKey<FTUser['id']>;
   declare assigned_ips: string[]; //each FTUser has one or more ip assigned to them. ips can be shared between multiple. model: FTIP"
   declare description: string;
@@ -27,21 +30,21 @@ class FTUser extends Model<InferAttributes<FTUser, { omit: 'families' }>, InferC
   declare is_parent: boolean;
   declare imm_family: number; // FTFam: immediate family
   declare marital_status: string;
-  // foreign keys are automatically added by associations methods (like Project.belongsTo)
-  // by branding them using the `ForeignKey` type, `Project.init` will know it does not need to
-  // display an error if partner is missing.
   declare profile_url: CreationOptional<string>;
   declare password: string;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 
-  // FTFAM
-  declare getFamilies: HasManyGetAssociationsMixin<FTFam>; // Note the null assertions!
-  declare setFamilies: HasManySetAssociationsMixin<FTFam, number>;
-  declare addFamilies: HasManyAddAssociationsMixin<FTFam, number>;
-  declare removeFamilies: HasManyRemoveAssociationsMixin<FTFam, number>;
-  declare hasFamilies: HasManyHasAssociationsMixin<FTFam, number>;
-  declare countFamilies: HasManyCountAssociationsMixin;
+  // TODO: replace with association
+  declare related_to: number[];
+
+  // // FTFAM
+  // declare getFamilies: HasManyGetAssociationsMixin<FTFam>; // Note the null assertions!
+  // declare setFamilies: HasManySetAssociationsMixin<FTFam, number>;
+  // declare addFamilies: HasManyAddAssociationsMixin<FTFam, number>;
+  // declare removeFamilies: HasManyRemoveAssociationsMixin<FTFam, number>;
+  // declare hasFamilies: HasManyHasAssociationsMixin<FTFam, number>;
+  // declare countFamilies: HasManyCountAssociationsMixin;
 
   // FTIP
   // declare getIP: HasManyGetAssociationsMixin<FTIP>; // Note the null assertions!
@@ -52,7 +55,7 @@ class FTUser extends Model<InferAttributes<FTUser, { omit: 'families' }>, InferC
 
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
-  declare families?: NonAttribute<FTFam[]>; // Note this is optional since it's only populated when explicitly requested in code
+  // declare families?: NonAttribute<FTFam[]>; // Note this is optional since it's only populated when explicitly requested in code
 
   // getters that are not attributes should be tagged using NonAttribute
   // to remove them from the model's Attribute Typings.
@@ -128,9 +131,14 @@ class FTUser extends Model<InferAttributes<FTUser, { omit: 'families' }>, InferC
     return this.updated_at;
   }
 
-  declare static associations: {
-    families: Association<FTUser, FTFam>;
-  };
+  get FTUserRelatedTo(): NonAttribute<number[]> {
+    return this.related_to;
+  }
+  // TODO: uncomment once you figure out how to set and fetch associations, 
+  // an array of IDs is a little pedestrian. Don't forget the omit param
+  // declare static associations: {
+  //   families: Association<FTUser, FTFam>;
+  // };
 }
 
 FTUser.init(
@@ -196,6 +204,9 @@ FTUser.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    related_to: {
+      type: DataTypes.JSON
     },
     created_at: {
       type: DataTypes.DATE,

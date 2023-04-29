@@ -6,6 +6,7 @@ export interface DFTFamDTO {
     head_count: number;
     tree: number;
     linked_fams: number[]; // FTFam
+    members: number[];
     name: string;
     profile_url: string;
     created_by: number;

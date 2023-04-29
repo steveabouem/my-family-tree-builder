@@ -4,10 +4,10 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('FTUsers', {
       id: {
-        allowNull: false,
         autoIncrement: true,
+        type: Sequelize.INTEGER,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        allowNull: false,
       },
       first_name: {
         allowNull: false,
@@ -52,9 +52,14 @@ module.exports = {
       profile_url: { type: Sequelize.STRING },
       description: { type: Sequelize.STRING },
       imm_family: { type: Sequelize.INTEGER },
+      related_to: {
+        type: Sequelize.JSON,
+        defaultValue: '[]'
+      },
       created_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date
       },
       updated_at: {
         allowNull: false,

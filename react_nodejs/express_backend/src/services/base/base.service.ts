@@ -72,7 +72,7 @@ export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
 
         const record = await this.dataBase.query(select);
 
-        return record[0];
+        return record[0][0];
     }
 
     async disable(p_id: number, p_table: string): Promise<boolean> {
