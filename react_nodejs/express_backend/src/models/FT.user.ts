@@ -5,7 +5,6 @@ import {
   HasManyRemoveAssociationsMixin, Model, InferAttributes,
   InferCreationAttributes, CreationOptional, NonAttribute, ForeignKey,
 } from 'sequelize';
-import FTFam from './FT.family';
 import db from "../db";
 
 
@@ -32,8 +31,8 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
   declare marital_status: string;
   declare profile_url: CreationOptional<string>;
   declare password: string;
-  declare created_at: CreationOptional<Date>;
-  declare updated_at: CreationOptional<Date>;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
 
   // TODO: replace with association
   declare related_to: number[];
@@ -123,14 +122,6 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
     return this.password;
   }
 
-  get FTUserCreatedAt(): NonAttribute<Date> {
-    return this.created_at;
-  }
-
-  get FTUserUpdatedAt(): NonAttribute<Date> {
-    return this.updated_at;
-  }
-
   get FTUserRelatedTo(): NonAttribute<number[]> {
     return this.related_to;
   }
@@ -208,15 +199,17 @@ FTUser.init(
     related_to: {
       type: DataTypes.JSON
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      defaultValue: new Date
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
     },
   },
   {
+    timestamps: false,
     tableName: 'FTUsers',
     sequelize: db, // passing the `sequelize` instance is required
   }

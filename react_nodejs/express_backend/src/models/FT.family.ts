@@ -22,8 +22,8 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   declare name: string;
   declare profile_url: string;
   declare created_by: number; // FTUser
-  declare created_at: CreationOptional<Date>;
-  declare updated_at: CreationOptional<Date>;
+  declare createdAt: CreationOptional<Date>;
+  declare updatedAt: CreationOptional<Date>;
 
   // TODO: replace with association
   declare members: string;
@@ -73,10 +73,10 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
     return this.created_by;
   }
   get FTFamCreatedAt(): NonAttribute<Date> {
-    return this.created_at;
+    return this.createdAt;
   }
   get FTFamUpdatedAt(): NonAttribute<Date> {
-    return this.updated_at;
+    return this.updatedAt;
   }
 
   get FTFamMembers(): NonAttribute<string> {
@@ -112,16 +112,17 @@ FTFam.init(
     members: {
       type: DataTypes.JSON
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: new Date
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
-    }
+    },
   },
   {
+    timestamps: false,
     tableName: 'FTFams',
     sequelize: db // passing the `sequelize` instance is required
   }

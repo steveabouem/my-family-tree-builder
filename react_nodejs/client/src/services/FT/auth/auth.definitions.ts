@@ -1,4 +1,4 @@
-export interface DFTUserDTO {
+export interface DUserDTO {
     first_name: string,
     last_name: string,
     age: number,
@@ -14,8 +14,4 @@ export interface DFTUserDTO {
     profile_url: string,
     description: string,
     imm_family: number,
-    // TODO: replace with association
-    realated_to: number[],
-    created_at: Date,
-    updated_at?: Date,
 }

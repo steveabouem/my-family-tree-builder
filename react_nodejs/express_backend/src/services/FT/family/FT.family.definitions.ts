@@ -13,6 +13,11 @@ export interface DFTFamDTO {
     updated_at: Date;
 }
 
-// TODO: this will be obsolet very SVGComponentTransferFunctionElement. 
+// TODO: this will be obsolet very soon. 
 // Just pass id as a second arg
 export type DFTFamUpdateDTO = Partial<DFTFamDTO>
+
+export interface DRelatedFamily {
+    id: number;
+    name: string;
+}

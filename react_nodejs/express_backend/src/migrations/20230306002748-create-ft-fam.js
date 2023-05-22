@@ -41,14 +41,17 @@ module.exports = {
         type: Sequelize.JSON,
         defaultValue: '[]'
       },
-      created_at: {
+      created_by: {
+        type: Sequelize.INTEGER
+      },
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: new Date
       },
-      updated_at: {
-        allowNull: false,
-        type: Sequelize.DATE
+      updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: new Date
       }
     });
   },

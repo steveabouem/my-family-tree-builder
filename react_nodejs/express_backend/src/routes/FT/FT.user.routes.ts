@@ -49,5 +49,22 @@ router.get('/:id', (req: Request, res: Response) => {
         });
 });
 
-// router.get
+router.get('/:id/families', (req: Request, res: Response) => {
+    console.log('HEHEHEHEE');
+
+    const ftUserService = new FTUserService;
+
+    ftUserService.getRelatedFamilies(parseInt(req.params.id))
+        .then((fams: any) => {
+            console.log('DONE');
+            res.json({ "relatedFamilies": fams });
+        })
+        .catch(e => { //TODO: logging and error handling
+            console.log('ERRORRRR: ', e);
+
+            res.status(500);
+            res.json('failed');
+        });
+});
+
 export default router;

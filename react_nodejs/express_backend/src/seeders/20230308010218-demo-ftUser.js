@@ -16,6 +16,7 @@ module.exports = {
         first_name: faker.name.firstName(),
         last_name: faker.name.lastName(),
         age: Math.floor(Math.random() * 80),
+        email: 'abcd@efg.com',
         occupation: faker.name.jobArea(),
         partner: Math.floor(Math.random() * 100),
         marital_status: faker.lorem.word(),
@@ -27,10 +28,12 @@ module.exports = {
         profile_url: '',
         description: faker.lorem.sentence(),
         imm_family: Math.floor(Math.random() * 90),
-        created_at: faker.date.past(),
-        updated_at: faker.date.past(),
+        related_to: '[1,4,5,6]',
+        // createdAt: faker.date.past(),
+        // updatedAt: faker.date.past(),
       });
     }
+
     await queryInterface.bulkInsert('FTUsers', dummyJSON, {});
   },
 

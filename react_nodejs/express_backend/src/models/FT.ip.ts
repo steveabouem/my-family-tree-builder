@@ -95,6 +95,7 @@ FTIP.init(
 
     },
     {
+        timestamps: false,
         tableName: 'FTIPs',
         sequelize: db // passing the `sequelize` instance is required
     }

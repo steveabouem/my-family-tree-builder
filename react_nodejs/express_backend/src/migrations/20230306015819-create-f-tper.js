@@ -21,6 +21,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      email: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       occupation: {
         allowNull: false,
         type: Sequelize.STRING
@@ -56,14 +60,14 @@ module.exports = {
         type: Sequelize.JSON,
         defaultValue: '[]'
       },
-      created_at: {
+      createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: new Date
       },
-      updated_at: {
-        allowNull: false,
-        type: Sequelize.DATE
+      updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: new Date
       }
     });
   },

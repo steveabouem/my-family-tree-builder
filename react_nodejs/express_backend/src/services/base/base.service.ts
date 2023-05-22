@@ -1,5 +1,4 @@
-import { generatePrimeSync } from 'crypto';
-import { Sequelize } from 'sequelize';
+import { Sequelize, QueryTypes } from 'sequelize';
 import { DTableJoin } from '../../controllers/common.definitions';
 import bcrypt from "bcryptjs";
 import db from '../../db';
@@ -22,9 +21,13 @@ export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
 
     async index(p_limit: number): Promise<any> {
         // TODO: no any
-        const select = `SELECT * FROM ${this.tableName} LIMIT ${p_limit};`
-        const results = await this.dataBase.query(select);
-
+        const select = `SELECT * FROM :tableName LIMIT :limit;`
+        const results = await this.dataBase.query(select,
+            {
+                replacements: { tableName: this.tableName, limit: p_limit },
+                type: QueryTypes.SELECT
+            }
+        );
         return results[0];
     }
 
@@ -50,36 +53,47 @@ export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
         }
 
         const select = `
-            SELECT ${selector}
-            FROM ${this.tableName}
-            ${joins}
-            ${where}
-            ${limit}
+            SELECT :selector
+            FROM :tableName
+            :joins
+            :where
+            :limit
             ;
         `;
 
-        const results = await this.dataBase.query(select);
+        const results = await this.dataBase.query(select, {
+            type: QueryTypes.SELECT,
+            replacements: {
+                selector,
+                tableName: this.tableName,
+                joins,
+                where,
+                limit
+            }
+        });
         return results[0];
     }
 
     async getById(p_id: number): Promise<any> {
         await this.dataBase.authenticate();
-        const select = `
-            SELECT *
-            FROM ${this.tableName} WHERE id = ${p_id}
-            ;
-        `;
-
-        const record = await this.dataBase.query(select);
+        const select = `SELECT * FROM :tableNam} WHERE id = :id;`;
+        // TODO: no any
+        const record: any = await this.dataBase.query(select, {
+            type: QueryTypes.SELECT,
+            replacements: { tableName: this.tableName, id: p_id }
+        });
 
         return record[0][0];
     }
 
     async disable(p_id: number, p_table: string): Promise<boolean> {
-        const update = `UPDATE ${p_table} SET active = false WHERE id = ${p_id};`
+        const update = `UPDATE :table SET active = false WHERE id = :id;`
         // TODO: catch return false doesnt actually catch falty logic, 
         // just wrong syntax and maybe wrong typing. FIX
-        await this.dataBase.query(update).catch(() => false);
+        await this.dataBase.query(update, {
+            type: QueryTypes.UPDATE,
+            replacements: { table: p_table, id: p_id }
+        }).catch(() => false);
 
         return true;
     }
