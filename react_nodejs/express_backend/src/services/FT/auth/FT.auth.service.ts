@@ -6,6 +6,7 @@ import FTIP from "../../../models/FT.ip";
 import { DFTLoginFields } from "./FT.auth.definitions";
 import FTUser from "../../../models/FT.user";
 import bcrypt from "bcryptjs";
+import { DFTUserDTO } from "../user/FT.user..definitions";
 
 class FTAuthService extends BaseService<any> { // TODO: no any
     constructor() {
@@ -30,15 +31,21 @@ class FTAuthService extends BaseService<any> { // TODO: no any
         return !!ip;
     }
 
-    verifyUser = async (p_values: DFTLoginFields): Promise<boolean> => {
+    verifyUser = async (p_values: DFTLoginFields): Promise<Partial<DFTUserDTO> | null> => {
+        console.log('HERE HERE HERE');
+
         const currentUser = await FTUser.findOne({ where: { email: p_values.email } });
         if (!currentUser) {
-            return false;
+            return null;
         }
 
         const passwordValid = bcrypt.compareSync(p_values.password, currentUser.password);
+        if (passwordValid) {
 
-        return passwordValid;
+            return { ...currentUser.dataValues, password: '' };
+        }
+
+        return null
     }
 
 }

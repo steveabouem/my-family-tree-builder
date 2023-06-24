@@ -1,70 +1,82 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { request } from "http";
+import * as dotenv from 'dotenv';
+import FTSessionService from "../../services/FT/session/FT.session.service";
 import FTAuthService from "../../services/FT/auth/FT.auth.service";
 import { FTUserService } from "../../services/FT/user/FT.user.service";
 
 const router = Router();
+dotenv.config();
 
-router.use((req: Request, res: Response, next: NextFunction) => {
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const authService = new FTAuthService();
+router.use((p_req: Request, p_res: Response, p_next: NextFunction) => {
+  const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;
+  const authService = new FTAuthService();
+  const sessionService = new FTSessionService(p_req.cookies.FT);
 
-    authService.verifyIp(ip)
-        .then((valid: boolean) => {
-            if (!valid) {
-                res.status(400);
-                res.json('IP is not approved');
-            }
-        })
-        .catch(e => {
-            // TODO: catch return false doesnt actually catch falty logic, 
-            // just wrong syntax and maybe wrong typing. FIX
-            res.status(500);
-            res.json('Error: ' + e);
-        });
+  authService.verifyIp(ip)
+    .then((valid: boolean) => {
+      if (!valid) {
+        p_res.status(400);
+        p_res.json('IP is not approved');
+      }
+    })
+    .catch(e => {
+      // TODO: catch return false doesnt actually catch falty logic, 
+      // just wrong syntax and maybe wrong typing. FIX
+      p_res.status(500);
+      p_res.json('Error: ' + e);
+    });
 
-    next();
+  p_next();
 });
 
-router.get('/index', (req: Request, res: Response) => {
-    console.log('YO');
+router.get('/:id', (p_req: Request, p_res: Response) => {
+  const id = parseInt(p_req.params.id);
+  // Not sure what to do with this yet
+  const ftUserService = new FTUserService;
+  ftUserService.getUserData(id)
+    .then((user: any) => {
+      console.log('DONE');
+      p_res.json(user);
+    })
+    .catch(e => { //TODO: logging and error handling
+      console.log('ERRORRRR: ', e);
 
-    res.send('TEST');
+      p_res.status(500);
+      p_res.json('failed');
+    });
 });
 
-router.get('/:id', (req: Request, res: Response) => {
-    // Not sure what to do with this yet
-    const ftUserService = new FTUserService;
+router.get('/:id/families', (p_req: Request, p_res: Response) => {
+  const ftUserService = new FTUserService;
 
-    ftUserService.getRelatedFamilies(parseInt(req.params.id))
-        .then((fams: any) => {
-            console.log('DONE');
-            res.json({ "fams": fams });
-        })
-        .catch(e => { //TODO: logging and error handling
-            console.log('ERRORRRR: ', e);
+  ftUserService.getRelatedFamilies(parseInt(p_req.params.id))
+    .then((fams: any) => {
+      console.log('DONE');
+      p_res.json({ "relatedFamilies": fams });
+    })
+    .catch(e => { //TODO: logging and error handling
+      console.log('ERRORRRR: ', e);
 
-            res.status(500);
-            res.json('failed');
-        });
+      p_res.status(500);
+      p_res.json('failed');
+    });
 });
 
-router.get('/:id/families', (req: Request, res: Response) => {
-    console.log('HEHEHEHEE');
+router.get('/:id/extended-families', (p_req: Request, p_res: Response) => {
+  const ftUserService = new FTUserService;
 
-    const ftUserService = new FTUserService;
+  ftUserService.getExtendedFamiliesDetails(parseInt(p_req.params.id))
+    .then((fams: any) => {
+      console.log('DONE');
+      p_res.json({ "relatedFamilies": fams });
+    })
+    .catch(e => { //TODO: logging and error handling
+      console.log('ERRORRRR: ', e);
 
-    ftUserService.getRelatedFamilies(parseInt(req.params.id))
-        .then((fams: any) => {
-            console.log('DONE');
-            res.json({ "relatedFamilies": fams });
-        })
-        .catch(e => { //TODO: logging and error handling
-            console.log('ERRORRRR: ', e);
-
-            res.status(500);
-            res.json('failed');
-        });
+      p_res.status(500);
+      p_res.json('failed');
+    });
 });
+
 
 export default router;

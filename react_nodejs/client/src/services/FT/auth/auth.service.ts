@@ -2,23 +2,22 @@ import BaseService from "../../base/base.service";
 import { DUserDTO } from "./auth.definitions";
 
 class AuthService extends BaseService {
-    // const submitLoginForm = ({ email, name, password }) => {
-    //     return request.post('/login', { email, name, password });
-    // };
+  // TODO: axios response typing: Promise<Partial<DUserDTO | null>>
+  public submitLoginForm = async (p_values: Partial<DUserDTO>): Promise<any> => {
+    const currentUser = await this.request.post(`${this.APIBaseUrl}/auth/login`, p_values);
+    return currentUser;
+  };
 
-    // const submitRegistrationForm = ({ email, name, password }) => {
-    //     return request.post('api/register', { email, name, password });
-    // };
+  // TODO: create the front end common definition for a session and apply it here
+  public submitRegistrationForm = async (p_values: Partial<DUserDTO>): Promise<any> => {
+    const currentSession = await this.request.post(`${this.APIBaseUrl}/auth/register`, p_values);
 
-    register = async(p_values: Partial<DUserDTO>): Promise<boolean> => {
-        const success = await this.request.post(`${this.APIBaseUrl}/auth/register`, p_values);
-        
-        return !!success;
-    }
+    return currentSession;
+  }
 
-    validateRegistrationFields = (p_values: DUserDTO): boolean => {
-        return false;
-    }
+  public validateRegistrationFields = (p_values: DUserDTO): boolean => {
+    return false;
+  }
 }
 
 export default AuthService;

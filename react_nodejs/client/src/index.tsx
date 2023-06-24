@@ -1,35 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-// import App from './App';
-// import { BrowserRouter, Route, Routes } from "react-router-dom"
-// import pages from './components';
+import NotFound from './components/common/404NotFound';
+import FTAppContainer from './components/FT/common/FT.AppContainer';
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+} from "react-router-dom";
 
-// const routes = [
-//   {
-//     path: "/",
-//     component: pages.homepostcss-normalize
-//   },
-//   {
-//     path: "/households",
-//     component: pages.household,
-//   //   subroutes: [
-//   //     {
-//   //       path: "/households/index",
-//   //       component: household list
-//   //     },
-//   //     {
-//   //       path: "/households/:id",
-//   //       component: household form and household details
-//   //     }
-//   //   ]
-//   }
-// ];
 // @ts-ignore
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    {/* <RouterProvider router={router} /> */}
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<div>Tracker!</div>} />
+      <Route path="/ft/" element={<FTAppContainer />} />
+    </Routes>
+      
+    </BrowserRouter>
   </React.StrictMode>
 );
 

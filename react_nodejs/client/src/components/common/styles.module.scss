@@ -1,0 +1,49 @@
+// +++++=>TYPOGRAPHY<=+++++
+
+// +++++=>END<=+++++
+
+// +++++=>CONTAINERS<=+++++
+#FT {
+  background: purple;
+}
+
+#TR {
+  background: yellow;
+}
+
+.page {
+  position: relative;
+  height: 90vh;
+  width: 100vw;
+  background-blend-mode: overlay;
+  background-image: url(https://images.unsplash.com/photo-1633889222252-a79bdc892e5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80);
+}
+
+.transparent-bg {
+  &.op-50 {
+    background: #ffffff9e;
+  }
+
+  background-blend-mode: overlay;
+
+}
+
+.not-found {}
+
+// +++++=>END<=+++++
+.spinner-container {
+  //TODO: the container's width is a little off whhen it comes to the spinner container. EAsy fix, just not for now
+  position: absolute;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: #00000069;
+  z-index: 100000;
+
+  .spinner-grow {
+    background: #b2b2b299;
+    width: 10%;
+    height: 20%;
+    margin: auto;
+  }
+}

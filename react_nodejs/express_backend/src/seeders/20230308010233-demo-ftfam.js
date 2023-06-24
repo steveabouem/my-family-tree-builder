@@ -9,15 +9,18 @@ module.exports = {
      * Example:
     */
     let dummyJSON = [];
-    let dummyBoolean = [true, false, true, false];
+    let dummyMembers = [];
+    for (let i = 0; i < 5; i++) {
+      dummyMembers.push(Math.floor(Math.random() * 20));
+    }
     for (let i = 0; i < 50; i++) {
       dummyJSON.push({
         name: faker.name.lastName(),
         head_count: 6,
         profile_url: '',
-        members: '[1,10,5,7]', // FTFams
+        members: JSON.stringify(dummyMembers),
         description: faker.lorem.sentence(),
-        base_location: Math.floor(Math.random() * 40), // FTLoc
+        base_location: Math.floor(Math.random() * 40),
         head_1: 16, // FTUser
         head_2: 17, // FTUser
         created_by: 1,

@@ -24,16 +24,5 @@ app.use('/api/FT/families', FTFamilyHandler);
 app.use('/api/FT/users', FTUserHandler);
 /** END */
 
-/**
- ROUTE HANDLERS
- **/
-// app.get('/', (req: Request, res: Response, next) => {
-//     const test = new BaseController('Objectives');
-//     test.getById(1).then((r: any) => {
-//         res.send(r);
-//     });
-// });
-/** END */
-
 const port = 4000;
 app.listen(port, () => console.log(`Server running on port ${port}. .PLEASE CHECK TODOS`))

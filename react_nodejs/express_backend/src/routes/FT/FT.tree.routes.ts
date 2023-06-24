@@ -6,149 +6,149 @@ import { FTTreeService } from "../../services/FT/tree/FT.tree.service";
 
 const router = Router();
 
-router.use((req: Request, res: Response, next: NextFunction) => {
-    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+router.use((p_req: Request, p_res: Response, p_next: NextFunction) => {
+    const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;
     const authService = new FTAuthService();
 
     authService.verifyIp(ip)
         .then((valid: boolean) => {
             if (!valid) {
-                res.status(400);
-                res.json('IP is not approved');
+                p_res.status(400);
+                p_res.json('IP is not approved');
             }
         })
         .catch(e => {
             // TODO: catch return false doesnt actually catch falty logic, 
             // just wrong syntax and maybe wrong typing. FIX
-            res.status(400);
-            res.json('Error: ' + e);
+            p_res.status(400);
+            p_res.json('Error: ' + e);
         });
 
-    next()
+    p_next()
 })
 
-router.post('/create', (req: Request, res: Response) => {
+router.post('/create', (p_req: Request, p_res: Response) => {
     const ftTreeService = new FTTreeService;
     // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.create(req.body)
+    ftTreeService.create(p_req.body)
         .then((success: boolean) => {
             if (success) {
-                res.status(201);
-                res.json(true);
+                p_res.status(201);
+                p_res.json(true);
             } else {
-                res.status(400);
-                res.json(false);
+                p_res.status(400);
+                p_res.json(false);
             }
         })
         .catch(e => {
             console.log('ERROR: ', e);
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
-            res.status(500);
-            res.json(e);
+            p_res.status(500);
+            p_res.json(e);
         });
 });
 
-router.get('/:id', (req: Request, res: Response) => {
+router.get('/:id', (p_req: Request, p_res: Response) => {
     const ftTreeService = new FTTreeService;
 
-    ftTreeService.getTree(parseInt(req.params.id))
+    ftTreeService.getTree(parseInt(p_req.params.id))
         .then((r: FTTree | null) => {
-            res.status(200);
-            res.json(r);
+            p_res.status(200);
+            p_res.json(r);
         })
         .catch(e => {
-            res.status(500);
-            res.json(e);
+            p_res.status(500);
+            p_res.json(e);
         });
 });
 
-router.get('/:id/families', (req: Request, res: Response) => {
+router.get('/:id/families', (p_req: Request, p_res: Response) => {
     const ftTreeService = new FTTreeService;
     // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.getFamilies(parseInt(req.params.id))
+    ftTreeService.getFamilies(parseInt(p_req.params.id))
         .then((families: number[] | undefined) => {
             if (families) {
-                res.status(201);
-                res.json(families);
+                p_res.status(201);
+                p_res.json(families);
             } else {
-                res.status(400);
-                res.json(null);
+                p_res.status(400);
+                p_res.json(null);
             }
         })
         .catch(e => {
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             console.log('ERROR: ', e);
 
-            res.status(500);
-            res.json(e);
+            p_res.status(500);
+            p_res.json(e);
         });
 });
 
-router.put('/:id', (req: Request, res: Response) => {
+router.put('/:id', (p_req: Request, p_res: Response) => {
     const ftTreeService = new FTTreeService;
-    const values = { ...req.body };
+    const values = { ...p_req.body };
 
     // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.update(values, parseInt(req.params.id))
+    ftTreeService.update(values, parseInt(p_req.params.id))
         .then((success: boolean) => {
             if (success) {
-                res.status(201);
-                res.json(success);
+                p_res.status(201);
+                p_res.json(success);
             } else {
-                res.status(400);
-                res.json(null);
+                p_res.status(400);
+                p_res.json(null);
             }
         })
         .catch(e => {
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             console.log('ERROR: ', e);
 
-            res.status(500);
-            res.json(e);
+            p_res.status(500);
+            p_res.json(e);
         });
 });
 
-router.put('/:id/families', (req: Request, res: Response) => {
+router.put('/:id/families', (p_req: Request, p_res: Response) => {
     const ftTreeService = new FTTreeService;
     // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.addFamily(parseInt(req.params.id), req.body.id)
+    ftTreeService.addFamily(parseInt(p_req.params.id), p_req.body.id)
         .then((success: boolean) => {
             if (success) {
-                res.status(201);
-                res.json(success);
+                p_res.status(201);
+                p_res.json(success);
             } else {
-                res.status(400);
-                res.json(null);
+                p_res.status(400);
+                p_res.json(null);
             }
         })
         .catch(e => {
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             console.log('ERROR: ', e);
 
-            res.status(500);
-            res.json(e);
+            p_res.status(500);
+            p_res.json(e);
         });
 });
 
-router.put('/:id/families/remove', (req: Request, res: Response) => {
+router.put('/:id/families/remove', (p_req: Request, p_res: Response) => {
     const ftTreeService = new FTTreeService;
     // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.removeFamily(parseInt(req.params.id), req.body.id)
+    ftTreeService.removeFamily(parseInt(p_req.params.id), p_req.body.id)
         .then((success: boolean) => {
             if (success) {
-                res.status(201);
-                res.json(success);
+                p_res.status(201);
+                p_res.json(success);
             } else {
-                res.status(400);
-                res.json(null);
+                p_res.status(400);
+                p_res.json(null);
             }
         })
         .catch(e => {
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             console.log('ERROR: ', e);
 
-            res.status(500);
-            res.json(e);
+            p_res.status(500);
+            p_res.json(e);
         });
 });
 

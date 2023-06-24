@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {StyledUserMenu} from "./styles";
+import {StyledUserMenu} from "../styles";
 
 const UserMenu = ({opened, setOpened, user}) => {
 
