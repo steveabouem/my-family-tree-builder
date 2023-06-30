@@ -18,7 +18,7 @@ router.use((p_req: Request, p_res: Response, p_next: NextFunction) => {
         p_res.status(400);
         p_res.json({ ipIsValid: false });
       } else {
-        p_res.json({ session: { ipIsValid: true, ip } });
+        p_res.json({ session: { TEST: true, ip } });
       }
     })
     .catch(e => {

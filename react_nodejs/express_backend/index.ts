@@ -1,11 +1,11 @@
 import express, { Express } from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import FTFamilyHandler from './routes/FT/FT.family.routes';
-import FTUserHandler from './routes/FT/FT.user.routes';
-import userHandler from './routes/tracker/User.routes';
-import FTAuthHandler from './routes/FT/FT.auth.routes';
-import FTTreeHandler from './routes/FT/FT.tree.routes';
+import FTFamilyHandler from './src/routes/FT/FT.family.routes';
+import FTUserHandler from './src/routes/FT/FT.user.routes';
+import userHandler from './src/routes/tracker/User.routes';
+import FTAuthHandler from './src/routes/FT/FT.auth.routes';
+import FTTreeHandler from './src/routes/FT/FT.tree.routes';
 const app: Express = express();
 /**
  MIDDLEWARES SECTION

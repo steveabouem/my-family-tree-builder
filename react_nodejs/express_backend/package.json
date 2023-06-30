@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "tsc -w & nodemon dist/index.js",
-    "serve": "nodemon dist/index.js",
+    "serve": "nodemon dist/src/index.js",
     "build": "npx tsc"
   },
   "author": "Steve Abouem",
