@@ -7,7 +7,7 @@ export enum HTTPMethodEnum {
 
 export interface DSessionUser {
   type: string;
-  token: string;
+  token: string | null;
   ip?: string;
   ipIsValid?: boolean;
   id?: number;

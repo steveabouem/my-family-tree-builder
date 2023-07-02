@@ -1,12 +1,7 @@
 import { Op } from "sequelize";
 import { BaseService } from "../../base/base.service";
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { Jwt, JwtPayload } from 'jsonwebtoken';
 import FTSession from "../../../models/FT.session";
-import * as dotenv from 'dotenv';
-
-dotenv.config();
-
-const { JWT }: { [key: string]: string | undefined } = process.env;
 
 class FTSessionService<GSession> extends BaseService<GSession> {
   token: string;
@@ -18,22 +13,23 @@ class FTSessionService<GSession> extends BaseService<GSession> {
   }
 
   public setSessionToken = async (p_session: GSession): Promise<string | null> => {
-    if (!JWT) {
-      return null;
-    }
+    let encryptedSession = null;
 
-    const encryptedSession = jwt.sign(JSON.stringify(p_session), JWT, { expiresIn: '30mn' });
-    this.token = encryptedSession;
-    await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
+    if (process.env.PASS) {
+      encryptedSession = jwt.sign({ session: JSON.stringify(p_session) }, process.env.PASS, { expiresIn: '1800' });
+      this.token = encryptedSession;
+      // await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
+      return encryptedSession;
+    }
 
     return encryptedSession;
   }
 
   public getSessionObject = (p_keys?: string[]): JwtPayload | null => {
     let sessionData: { [key: string]: unknown } = {};
-    if (JWT) {
+    if (process.env.PASS) {
       try {
-        const sessionJWTObject = jwt.verify(this.token, JWT);
+        const sessionJWTObject = jwt.verify(this.token, process.env.PASS);
         if (typeof sessionJWTObject === 'object' && sessionJWTObject !== null) {
           if (p_keys) { // NOTE: If no key is provided, return all session (most likely used in the back)
             for (const sessionKey of p_keys) {
@@ -60,10 +56,10 @@ class FTSessionService<GSession> extends BaseService<GSession> {
   private updateSessionObject = async (p_session: GSession, p_keys: string[]): Promise<boolean> => {
     let currentSession = this.getSessionObject(p_keys);
 
-    if (currentSession && JWT) {
+    if (currentSession && process.env.PASS) {
       const existingValues = { ...currentSession };
       currentSession = { ...existingValues, ...p_session }; //replace all session keys that were updated
-      const newSessionKey = jwt.sign(JSON.stringify(currentSession), JWT); // TODO: check how to maintain the same expiration time even as you update the session. ANd check refresh token
+      const newSessionKey = jwt.sign(JSON.stringify(currentSession), process.env.PASS); // TODO: check how to maintain the same expiration time even as you update the session. ANd check refresh token
       await FTSession.update({ key: newSessionKey }, {
         where: {
           key: {

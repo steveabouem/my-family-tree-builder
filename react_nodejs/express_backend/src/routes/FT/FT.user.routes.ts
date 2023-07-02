@@ -1,11 +1,9 @@
 import { Router, Request, Response, NextFunction } from "express";
-import * as dotenv from 'dotenv';
 import FTSessionService from "../../services/FT/session/FT.session.service";
 import FTAuthService from "../../services/FT/auth/FT.auth.service";
 import { FTUserService } from "../../services/FT/user/FT.user.service";
 
 const router = Router();
-dotenv.config();
 
 router.use((p_req: Request, p_res: Response, p_next: NextFunction) => {
   const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;

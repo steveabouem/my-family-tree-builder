@@ -26,9 +26,9 @@ export class FTUserService extends BaseService<DFTUserRecord> {
         console.log(e); //TODO: LOGGING
         return null;
       });
+      return { ...newUser?.dataValues, password: undefined };
     }
-
-    return { ...newUser, password: undefined };
+    return null;
   }
 
   // TODO: No any. fix typing, should related_to be added to the dto?
