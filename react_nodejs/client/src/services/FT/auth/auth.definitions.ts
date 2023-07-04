@@ -15,4 +15,5 @@ export interface DUserDTO {
     description: string;
     imm_family: number;
     related_to: number[];
+    sessionToken?: string;
 }

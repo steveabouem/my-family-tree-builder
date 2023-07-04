@@ -26,85 +26,66 @@ router.use((p_req, p_res, p_next) => {
             p_res.status(400);
             p_res.json({ ipIsValid: false });
         }
-        else {
-            p_res.json({ session: { TEST: true, ip } });
-        }
     })
         .catch(e => {
         // TODO: catch return false doesnt actually catch falty logic, 
         // just wrong syntax and maybe wrong typing. FIX
         p_res.status(400);
-        p_res.json({ session: null, message: 'Error: ' + e });
+        p_res.json({ ipIsValid: false, message: e });
     });
     p_next();
 });
 // TODO: typing of req body for p_
 router.post('/register', (p_req, p_res) => {
-    const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;
-    const ftUserService = new FT_user_service_1.FTUserService();
-    const formattedValues = Object.assign(Object.assign({}, p_req.body), { assigned_ips: [ip], created_at: new Date });
     processRegister(p_req)
-        .then((session) => {
+        .then((sessionData) => {
+        p_res.set('Set-Cookie', `session=${sessionData === null || sessionData === void 0 ? void 0 : sessionData.token}`);
+        p_res.set('httpOnly', 'true');
         p_res.status(200);
-        p_res.json({ session });
+        p_res.json({ session: sessionData });
     });
-    ftUserService.create(formattedValues)
-        .then((p_user) => {
-        p_res.status(201);
-        p_res.json(p_user);
-    }).catch(e => {
-        // TODO: catch return false doesnt actually catch falty logic, 
-        // just wrong syntax and maybe wrong typing. FIX
-        p_res.status(400);
-        p_res.json('Error: ' + e);
-    }); // TODO: handle redirect in client
 });
 // TODO: req, res typing
 router.post('/login', (p_req, p_res) => {
-    const authService = new FT_auth_service_1.default();
-    console.log('SESSION STUFF', decodeURIComponent(p_req.cookies.FT.session));
-    authService.verifyUser(p_req.body)
-        .then((p_user) => {
-        if (p_user) {
-            p_res.status(200);
-        }
-        else {
-            p_res.status(400);
-        }
-        p_res.json({ user: p_user, type: 'user' });
+    processLogin(p_req)
+        .then((sessionData) => {
+        p_res.set('Set-Cookie', `session=${sessionData === null || sessionData === void 0 ? void 0 : sessionData.token}`);
+        p_res.set('httpOnly', 'true');
+        p_res.status(200);
+        p_res.json({ session: sessionData });
     });
 });
 router.get('/logout', (p_req, p_res) => {
-    // TODO: do I need to reinitialize anything here?
+    // TODO: Kill session, send back the guest session default
 });
 exports.default = router;
 // HELPERS
 const processRegister = (p_req) => __awaiter(void 0, void 0, void 0, function* () {
     const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;
     const ftUserService = new FT_user_service_1.FTUserService();
-    const ftSessionService = new FT_session_service_1.default(p_req.cookies.FT);
+    const ftSessionService = new FT_session_service_1.default(p_req.body.sessionToken);
     const formattedValues = Object.assign(Object.assign({}, p_req.body), { assigned_ips: [ip], created_at: new Date });
     // TODO: use ftuser service to match spouse's first and last name and return id here.
     // in the front, it will be some sort of dd that will use the ServiceWorker, and add the id to the form values
-    const newUSer = yield ftUserService.create(formattedValues); // TODO: catch error
-    if (newUSer) {
-        const sessionToken = yield ftSessionService.setSessionToken(newUSer);
+    const newUser = yield ftUserService.create(formattedValues); // TODO: catch error
+    if (newUser) {
+        const sessionToken = yield ftSessionService.setSessionToken(newUser);
         const currentSession = yield ftSessionService.getSessionObject(['id', 'email', 'first_name', 'last_name', 'gender']);
-        return Object.assign(Object.assign({}, currentSession), { type: 'user', token: sessionToken || '' });
+        return Object.assign(Object.assign({}, currentSession), { type: 'user', token: sessionToken });
     }
-    else {
-        return null;
-    }
+    return null;
 });
 const processLogin = (p_req) => __awaiter(void 0, void 0, void 0, function* () {
-    const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;
-    const ftUserService = new FT_user_service_1.FTUserService();
-    const ftSessionService = new FT_session_service_1.default(p_req.cookies.FT);
-    const currentUser = yield ftUserService.getById(p_req.cookies.FT.session.id);
-    if (currentUser) {
-        const sessionToken = yield ftSessionService.setSessionToken(currentUser);
+    const ftAuthService = new FT_auth_service_1.default();
+    const verifiedUser = yield ftAuthService.verifyUser(p_req.body)
+        .catch(e => {
+        console.log('Error checking user'); //TODO: notify, and proper logging
+    });
+    if (verifiedUser) {
+        const ftSessionService = new FT_session_service_1.default(p_req.body.sessionToken);
+        const sessionToken = yield ftSessionService.setSessionToken(verifiedUser);
         const currentSession = yield ftSessionService.getSessionObject(['id', 'email', 'first_name', 'last_name', 'gender']);
-        return Object.assign(Object.assign({}, currentSession), { type: 'user', token: sessionToken || '' });
+        return Object.assign(Object.assign({}, currentSession), { type: 'user', token: sessionToken });
     }
     else {
         return null;

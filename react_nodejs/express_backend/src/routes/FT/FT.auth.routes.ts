@@ -13,18 +13,16 @@ router.use((p_req: Request, p_res: Response, p_next: NextFunction) => {
 
   authService.verifyIp(ip)
     .then((valid: boolean) => {
-      // if (!valid) {
-      //   p_res.status(400);
-      //   p_res.json({ ipIsValid: false });
-      // } else {
-      //   p_res.json({ session: { TEST: true, ip } });
-      // }
+      if (!valid) {
+        p_res.status(400);
+        p_res.json({ ipIsValid: false });
+      }
     })
     .catch(e => {
       // TODO: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
       p_res.status(400);
-      p_res.json({ session: null, message: 'Error: ' + e });
+      p_res.json({ ipIsValid: false, message: e });
     });
 
 
@@ -39,27 +37,23 @@ router.post('/register', (p_req: Request, p_res: Response) => {
       p_res.set('httpOnly', 'true');
       p_res.status(200);
       p_res.json({ session: sessionData });
-    })
+    });
 });
 
 // TODO: req, res typing
 router.post('/login', (p_req: Request, p_res: Response) => {
-  const authService = new FTAuthService();
-
-
-  authService.verifyUser(p_req.body)
-    .then((p_user: Partial<DFTUserDTO> | null) => {
-      if (p_user) {
-        p_res.status(200);
-      } else {
-        p_res.status(400);
-      }
-      p_res.json({ user: p_user, type: 'user' });
+  processLogin(p_req)
+    .then((sessionData: DSessionUser | null) => {
+      p_res.set('Set-Cookie', `session=${sessionData?.token}`);
+      p_res.set('httpOnly', 'true');
+      p_res.status(200);
+      p_res.json({ session: sessionData });
     });
 });
 
 router.get('/logout', (p_req: Request, p_res: Response) => {
-  // TODO: do I need to reinitialize anything here?
+  // TODO: Kill session, send back the guest session default
+
 });
 
 export default router;
@@ -83,15 +77,18 @@ const processRegister = async (p_req: Request): Promise<DSessionUser | null> => 
 }
 
 const processLogin = async (p_req: Request): Promise<DSessionUser | null> => {
-  const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;
-  const ftUserService = new FTUserService();
-  const ftSessionService = new FTSessionService(p_req.cookies.FT);
-  const currentUser = await ftUserService.getById(p_req.cookies.FT.session.id);
+  const ftAuthService = new FTAuthService();
+  const verifiedUser = await ftAuthService.verifyUser(p_req.body)
+    .catch(e => {
+      console.log('Error checking user'); //TODO: notify, and proper logging
+    });
 
-  if (currentUser) {
-    const sessionToken = await ftSessionService.setSessionToken(currentUser);
+  if (verifiedUser) {
+    const ftSessionService = new FTSessionService(p_req.body.sessionToken);
+    const sessionToken = await ftSessionService.setSessionToken(verifiedUser);
     const currentSession = await ftSessionService.getSessionObject(['id', 'email', 'first_name', 'last_name', 'gender']);
-    return { ...currentSession, type: 'user', token: sessionToken || '' };
+
+    return { ...currentSession, type: 'user', token: sessionToken };
   } else {
     return null;
   }

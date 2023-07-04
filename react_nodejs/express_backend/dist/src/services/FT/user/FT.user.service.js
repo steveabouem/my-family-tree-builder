@@ -32,8 +32,9 @@ class FTUserService extends base_service_1.BaseService {
                     console.log(e); //TODO: LOGGING
                     return null;
                 });
+                return Object.assign(Object.assign({}, newUser === null || newUser === void 0 ? void 0 : newUser.dataValues), { password: undefined });
             }
-            return Object.assign(Object.assign({}, newUser), { password: undefined });
+            return null;
         });
         // TODO: No any. fix typing, should related_to be added to the dto?
         this.getUserData = (p_id) => __awaiter(this, void 0, void 0, function* () {

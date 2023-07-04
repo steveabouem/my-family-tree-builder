@@ -32,8 +32,6 @@ class FTAuthService extends BaseService<any> { // TODO: no any
     }
 
     verifyUser = async (p_values: DFTLoginFields): Promise<Partial<DFTUserDTO> | null> => {
-        console.log('HERE HERE HERE');
-
         const currentUser = await FTUser.findOne({ where: { email: p_values.email } });
         if (!currentUser) {
             return null;

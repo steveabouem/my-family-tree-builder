@@ -164,46 +164,55 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   };
 
   const submitForm = async (p_values: Partial<DUserDTO>, { setSubmitting }: FormikHelpers<Partial<DUserDTO>>) => {
-    const authService = new AuthService('auth');
-
     if (mode === 'login') {
-      const { data } = await authService.submitLoginForm(p_values)
-        .catch(e => {
-          // TODO: LOGGING AND PROPER HANDLING IN FRONT
-          console.log('Error loging in', e);
-          return false;
-        });
-      console.log({ success: data });
-      if (data.dataValues) {
-        // updateUser(currentUser);
-        setCookie('FT', JSON.stringify(data.dataValues))
-        // TODO: redux/session/ip/routing
-        changeMode(undefined);
-
-        if (updateUser) {
-          updateUser(data.dataValues);
-          navigate(`/ft/users/${data.dataValues.id}`);
-        }
-      } else {
-        console.log('bad');
-      }
+      processLogin(p_values);
     } else {
-      const success = await authService.submitRegistrationForm(p_values)
-        .catch(e => {
-          // TODO: LOGGING AND PROPER HANDLING IN FRONT
-          console.log('Error registering', e);
-          return false;
-        });
-
-      if (success) {
-        // TODO: redux/session/ip/routing
-        setCookie('FT', JSON.stringify(success.data.dataValues))
-        changeMode(undefined);
-      } else {
-        console.log('bad');
-      }
+      processRegister(p_values)
     }
   };
+
+  const processLogin = async (p_values: Partial<DUserDTO>) => {
+    const authService = new AuthService('auth');
+    const logedInUser = await authService.submitLoginForm({ ...p_values, sessionToken: 'example' })
+      .catch(e => {
+        // TODO: LOGGING AND PROPER HANDLING IN FRONT
+        console.log('Error loging in', e);
+        return false;
+      });
+
+    console.log({ success: logedInUser.data });
+    if (logedInUser.data.dataValues) {
+      // updateUser(currentUser);
+      setCookie('FT', JSON.stringify(logedInUser.data.dataValues))
+      // TODO: redux/session/ip/routing
+      changeMode(undefined);
+
+      updateUser(logedInUser.data.dataValues);
+      navigate(`/ft/users/${logedInUser.data.dataValues.id}`);
+    } else {
+      console.log('Error loging in');
+    }
+  }
+
+  const processRegister = async (p_values: Partial<DUserDTO>) => {
+    const authService = new AuthService('auth');
+    const registeredUser = await authService.submitRegistrationForm(p_values)
+      .catch(e => {
+        // TODO: LOGGING AND PROPER HANDLING IN FRONT
+        console.log('Error registering', e);
+        return false;
+      });
+
+    if (registeredUser) {
+      // TODO: redux/session/ip/routing
+      setCookie('FT', JSON.stringify(registeredUser.data.dataValues))
+      changeMode(undefined);
+    } else {
+      // TODO: on screen notification
+      console.log('Registration failure');
+    }
+
+  }
 
   return (
     <div className="form-container">

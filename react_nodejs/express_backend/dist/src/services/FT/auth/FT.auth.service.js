@@ -35,7 +35,6 @@ class FTAuthService extends base_service_1.BaseService {
             return !!ip;
         });
         this.verifyUser = (p_values) => __awaiter(this, void 0, void 0, function* () {
-            console.log('HERE HERE HERE');
             const currentUser = yield FT_user_1.default.findOne({ where: { email: p_values.email } });
             if (!currentUser) {
                 return null;

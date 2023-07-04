@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,26 +16,24 @@ const sequelize_1 = require("sequelize");
 const base_service_1 = require("../../base/base.service");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const FT_session_1 = __importDefault(require("../../../models/FT.session"));
-const dotenv = __importStar(require("dotenv"));
-dotenv.config();
-const { JWT } = process.env;
 class FTSessionService extends base_service_1.BaseService {
     constructor(p_token) {
         super('FTSessions');
         this.setSessionToken = (p_session) => __awaiter(this, void 0, void 0, function* () {
-            if (!JWT) {
-                return null;
+            let encryptedSession = null;
+            if (process.env.PASS) {
+                encryptedSession = jsonwebtoken_1.default.sign({ session: JSON.stringify(p_session) }, process.env.PASS, { expiresIn: '1800' });
+                this.token = encryptedSession;
+                // await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
+                return encryptedSession;
             }
-            const encryptedSession = jsonwebtoken_1.default.sign(JSON.stringify(p_session), JWT, { expiresIn: '30mn' });
-            this.token = encryptedSession;
-            yield FT_session_1.default.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
             return encryptedSession;
         });
         this.getSessionObject = (p_keys) => {
             let sessionData = {};
-            if (JWT) {
+            if (process.env.PASS) {
                 try {
-                    const sessionJWTObject = jsonwebtoken_1.default.verify(this.token, JWT);
+                    const sessionJWTObject = jsonwebtoken_1.default.verify(this.token, process.env.PASS);
                     if (typeof sessionJWTObject === 'object' && sessionJWTObject !== null) {
                         if (p_keys) { // NOTE: If no key is provided, return all session (most likely used in the back)
                             for (const sessionKey of p_keys) {
@@ -82,10 +57,10 @@ class FTSessionService extends base_service_1.BaseService {
         };
         this.updateSessionObject = (p_session, p_keys) => __awaiter(this, void 0, void 0, function* () {
             let currentSession = this.getSessionObject(p_keys);
-            if (currentSession && JWT) {
+            if (currentSession && process.env.PASS) {
                 const existingValues = Object.assign({}, currentSession);
                 currentSession = Object.assign(Object.assign({}, existingValues), p_session); //replace all session keys that were updated
-                const newSessionKey = jsonwebtoken_1.default.sign(JSON.stringify(currentSession), JWT); // TODO: check how to maintain the same expiration time even as you update the session. ANd check refresh token
+                const newSessionKey = jsonwebtoken_1.default.sign(JSON.stringify(currentSession), process.env.PASS); // TODO: check how to maintain the same expiration time even as you update the session. ANd check refresh token
                 yield FT_session_1.default.update({ key: newSessionKey }, {
                     where: {
                         key: {
