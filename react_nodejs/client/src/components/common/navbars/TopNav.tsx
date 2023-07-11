@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { DNavigationLink, DTopNavProps } from "../definitions";
+import logo from "../../../assets/logo.jpg";
+import ThemeSelector from "../../FT/common/ThemeSelector";
 
-const TopNav = ({ links, position }: DTopNavProps) => {
+const TopNav = ({ links, position, handleChangeTheme }: DTopNavProps) => {
   const [menuOpened, setMenuOpened] = useState(false);
 
+
   return (
-    <div>
-      <div className="position-relative topnav-section">
-        <div className="top-logo-label">lorem ipsum title</div>
+    <div className="navigation">
+      <div className="logo-container">
+        <span>Zogh</span><img src={logo} alt="app logo" />
       </div>
       <div className="topnav-section">
         {
-          links.map(({link, path}: DNavigationLink) => (
+          links.map(({ link, path }: DNavigationLink) => (
             <div>
               <Link to={path}>{link}</Link>
             </div>))
@@ -24,6 +27,7 @@ const TopNav = ({ links, position }: DTopNavProps) => {
           </div>
         </div>
       </div>
+      <ThemeSelector switchTheme={handleChangeTheme} />
       {menuOpened && (
         <div>MENU</div>
       )}

@@ -1,17 +1,21 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { DUserDTO } from "../../../services/FT/auth/auth.definitions";
-import { Form, Formik, FormikHelpers } from "formik";
+import { Formik, FormikHelpers } from "formik";
 import AuthService from "../../../services/FT";
 import { DAuthProps } from "./definitions";
 import BaseFormFields from "../../common/forms/BaseFormFields";
 import { useNavigate } from "react-router";
 import { useCookies } from "react-cookie";
 import FamilyTreeContext from "../../../context/FT/familyTree.context";
+import Page from "../../common/Page";
+import GlobalContext from "../../../context/global.context";
 
 const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
+  const [loading, setLoading] = useState<boolean>(true);
   const { updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(['FT'])
+  const { theme } = useContext(GlobalContext);
 
   const loginFormFields = [
     {
@@ -163,6 +167,10 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     email: '',
   };
 
+  useEffect(() => {
+    // setLoading(false);
+  }, []);
+
   const submitForm = async (p_values: Partial<DUserDTO>, { setSubmitting }: FormikHelpers<Partial<DUserDTO>>) => {
     if (mode === 'login') {
       processLogin(p_values);
@@ -180,7 +188,6 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         return false;
       });
 
-    console.log({ success: logedInUser.data });
     if (logedInUser.data.dataValues) {
       // updateUser(currentUser);
       setCookie('FT', JSON.stringify(logedInUser.data.dataValues))
@@ -190,7 +197,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       updateUser(logedInUser.data.dataValues);
       navigate(`/ft/users/${logedInUser.data.dataValues.id}`);
     } else {
-      console.log('Error loging in');
+      // console.log('Error loging in'); TODO logging
     }
   }
 
@@ -209,13 +216,13 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       changeMode(undefined);
     } else {
       // TODO: on screen notification
-      console.log('Registration failure');
+      // console.log('Registration failure');
     }
 
   }
 
   return (
-    <div className="form-container">
+    <Page title="Authentication Page" subTitle="Please verify yourself below" theme={theme} isLoading={loading}>
       <div>
         Already a member?
         {mode === 'register' ? <button onClick={() => changeMode('login')}>Login inst</button> : null}
@@ -224,18 +231,13 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         initialValues={mode === 'login' ? loginInitialValues : registerInitialValues}
         onSubmit={submitForm}
       >
-        <Form>
-          {mode === 'login' ? (
-            <BaseFormFields fields={loginFormFields} />
-          ) : (
-            <BaseFormFields fields={registrationFormFields} />
-          )}
-          <div>
-            <button type="submit">Submit</button>
-          </div>
-        </Form>
+        {({ handleSubmit, errors, isSubmitting }) => mode === 'login' ?
+          <BaseFormFields size="med" fields={loginFormFields} handleSubmit={handleSubmit} />
+          :
+          <BaseFormFields size="med" fields={registrationFormFields} handleSubmit={handleSubmit} />
+        }
       </Formik>
-    </div>
+    </Page>
   );
 }
 
