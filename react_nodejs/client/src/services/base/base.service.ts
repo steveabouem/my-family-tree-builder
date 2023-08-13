@@ -11,8 +11,8 @@ class BaseService {
         this.APIPath = apiPath;
     }
 
-    async getById(p_id: number | string)  {
-        const result = await this.request.get(`${this.APIBaseUrl}/${this.APIPath}/${p_id}`);
+    async getById(id: number | string) {
+        const result = await this.request.get(`${this.APIBaseUrl}/${this.APIPath}/${id}`);
         return result;
     }
 

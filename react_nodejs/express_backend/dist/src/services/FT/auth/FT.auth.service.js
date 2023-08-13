@@ -19,27 +19,27 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 class FTAuthService extends base_service_1.BaseService {
     constructor() {
         super('FTIPs');
-        // verifyUserIp = async (p_id: number): Promise<boolean> => {
+        // verifyUserIp = async (id: number): Promise<boolean> => {
         //     const ftUserService = new FTUserService();
         //     // TODO: catch return false doesnt actually catch falty logic, 
         //     // just wrong syntax and maybe wrong typing. FIX
-        //     const currentUser: DUserRecord = await ftUserService.getById(p_id);
+        //     const currentUser: DUserRecord = await ftUserService.getById(id);
         //     return this.authorized_ips.includes(currentUser.authorizedIps);
         // }
-        this.verifyIp = (p_ip) => __awaiter(this, void 0, void 0, function* () {
-            if (!p_ip) {
+        this.verifyIp = (currentIp) => __awaiter(this, void 0, void 0, function* () {
+            if (!currentIp) {
                 return false;
             }
             // TODO: SQL BINDINGS
-            const ip = FT_ip_1.default.findOne({ where: { value: p_ip } });
+            const ip = FT_ip_1.default.findOne({ where: { value: currentIp } });
             return !!ip;
         });
-        this.verifyUser = (p_values) => __awaiter(this, void 0, void 0, function* () {
-            const currentUser = yield FT_user_1.default.findOne({ where: { email: p_values.email } });
+        this.verifyUser = (values) => __awaiter(this, void 0, void 0, function* () {
+            const currentUser = yield FT_user_1.default.findOne({ where: { email: values.email } });
             if (!currentUser) {
                 return null;
             }
-            const passwordValid = bcryptjs_1.default.compareSync(p_values.password, currentUser.password);
+            const passwordValid = bcryptjs_1.default.compareSync(values.password, currentUser.password);
             if (passwordValid) {
                 return Object.assign(Object.assign({}, currentUser.dataValues), { password: '' });
             }

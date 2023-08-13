@@ -19,10 +19,10 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 class UserService extends base_service_1.BaseService {
     constructor() {
         super('Users');
-        this.create = (p_user) => __awaiter(this, void 0, void 0, function* () {
+        this.create = (user) => __awaiter(this, void 0, void 0, function* () {
             //TODO:validations
-            const hashedPwd = bcryptjs_1.default.hashSync(p_user.password, this.salt);
-            const values = Object.assign(Object.assign({}, p_user), { password: hashedPwd });
+            const hashedPwd = bcryptjs_1.default.hashSync(user.password, this.salt);
+            const values = Object.assign(Object.assign({}, user), { password: hashedPwd });
             const isUserValid = yield console.log({ values, valid: this.validateUserFields(values) });
             const insert = `
             INSERT INTO ${this.tableName} ${Object.keys(values).join(', ')}
@@ -31,14 +31,14 @@ class UserService extends base_service_1.BaseService {
             yield this.dataBase.query(insert).catch(() => false);
             return true;
         });
-        this.validateUserFields = (p_values) => {
-            console.log('ALL VALUES', Object.values(p_values));
-            const userHasAllValues = !Object.values(p_values).find((v) => !v);
+        this.validateUserFields = (values) => {
+            console.log('ALL VALUES', Object.values(values));
+            const userHasAllValues = !Object.values(values).find((v) => !v);
             // TODO: throw errors properly back to the front
             if (!userHasAllValues) {
                 return false;
             }
-            if (p_values.password.length < 14) {
+            if (values.password.length < 14) {
                 // TODO: throw errors properly back to the front
             }
             return true;

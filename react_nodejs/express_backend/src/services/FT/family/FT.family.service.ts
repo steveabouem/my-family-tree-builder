@@ -11,8 +11,8 @@ export class FTFamilyService extends BaseService<DFTFamDTO> {
     super('FTFams');
   }
 
-  create = async (p_values: DFTFamDTO): Promise<boolean> => {
-    const formattedValues = { ...p_values, created_at: new Date };
+  create = async (values: DFTFamDTO): Promise<boolean> => {
+    const formattedValues = { ...values, created_at: new Date };
     const fieldsValid = await this.validateFTFamFields(formattedValues);
 
     if (fieldsValid) {
@@ -27,12 +27,12 @@ export class FTFamilyService extends BaseService<DFTFamDTO> {
     return false;
   }
 
-  update = async (p_values: DFTFamUpdateDTO, p_id: number): Promise<boolean> => {
-    const currentFamily = await FTFam.findOne({ where: { id: p_id }, attributes: { exclude: ['id'] } });
+  update = async (values: DFTFamUpdateDTO, id: number): Promise<boolean> => {
+    const currentFamily = await FTFam.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
     if (currentFamily) {
-      const formattedValues = await this.formatUpdateValues(p_values, p_id);
+      const formattedValues = await this.formatUpdateValues(values, id);
 
-      await FTFam.update({ ...formattedValues }, { where: { id: p_id } })
+      await FTFam.update({ ...formattedValues }, { where: { id: id } })
         .catch(e => {
           console.log('Error updating: ', e);
           return false;
@@ -46,27 +46,27 @@ export class FTFamilyService extends BaseService<DFTFamDTO> {
     return false;
   }
 
-  getFamily = async (p_id: number): Promise<FTFam | null> => {
-    const fam = await this.getById(p_id);
+  getFamily = async (id: number): Promise<FTFam | null> => {
+    const fam = await this.getById(id);
     return fam;
   }
 
-  linkToTree = async (p_id: number, p_tree: number): Promise<boolean> => {
-    const currentFamily = await FTFam.findOne({ where: { id: p_id }, attributes: { exclude: ['id'] } });
-    const currentTree = await FTTree.findOne({ where: { id: p_tree }, attributes: { exclude: ['id'] } });
+  linkToTree = async (id: number, tree: number): Promise<boolean> => {
+    const currentFamily = await FTFam.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
+    const currentTree = await FTTree.findOne({ where: { id: tree }, attributes: { exclude: ['id'] } });
 
     if (!currentFamily || !currentTree) {
       console.log('Tree or family do not exist'); // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
       return false
     } else {
-      await currentFamily.update({ tree: p_tree });
+      await currentFamily.update({ tree: tree });
       currentFamily.save();
       return true;
     }
   }
 
-  getTree = async (p_id: number): Promise<number | undefined> => {
-    const currentFamily = await FTFam.findOne({ where: { id: p_id }, attributes: { exclude: ['id'] } });
+  getTree = async (id: number): Promise<number | undefined> => {
+    const currentFamily = await FTFam.findOne({ where: { id }, attributes: { exclude: ['id'] } });
     if (currentFamily) {
       const tree = currentFamily.tree;
       return tree;
@@ -76,8 +76,8 @@ export class FTFamilyService extends BaseService<DFTFamDTO> {
     return undefined;
   }
 
-  getBulkData = async (p_ids: string): Promise<Partial<DFTFamDTO>[]> => {
-    const parseIds = p_ids.split(',').map((id: string) => parseInt(id));
+  getBulkData = async (ids: string): Promise<Partial<DFTFamDTO>[]> => {
+    const parseIds = ids.split(',').map((id: string) => parseInt(id));
     const families: any = await FTFam.findAll({
       where: {
         id: {
@@ -89,45 +89,45 @@ export class FTFamilyService extends BaseService<DFTFamDTO> {
     return families;
   }
 
-  formatUpdateValues = async (p_values: DFTFamUpdateDTO, p_id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
-    const currentFamily = await FTFam.findOne({ where: { id: p_id }, attributes: { exclude: ['id'] } });
+  formatUpdateValues = async (values: DFTFamUpdateDTO, id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
+    const currentFamily = await FTFam.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
     let formattedValues = {};
     if (!currentFamily) {
       return;
     }
 
-    if (p_values.members) {
+    if (values.members) {
       const familyMembers = JSON.parse(currentFamily?.FTFamMembers || '');
-      const formattedMembers = JSON.stringify([...familyMembers, ...p_values.members]);
-      formattedValues = { ...p_values, members: formattedMembers };
+      const formattedMembers = JSON.stringify([...familyMembers, ...values.members]);
+      formattedValues = { ...values, members: formattedMembers };
     }
 
-    return ({ ...p_values, ...formattedValues, updated_at: new Date });
+    return ({ ...values, ...formattedValues, updated_at: new Date });
   }
 
-  validateFTFamFields = async (p_values: DFTFamDTO): Promise<boolean> => {
-    const currentUser = await FTUser.findOne({ where: { id: p_values.created_by }, attributes: { exclude: ['id'] } });
+  validateFTFamFields = async (values: DFTFamDTO): Promise<boolean> => {
+    const currentUser = await FTUser.findOne({ where: { id: values.created_by }, attributes: { exclude: ['id'] } });
 
-    if (currentUser?.FTUserImmediateFamily && currentUser?.last_name === p_values.name) {
+    if (currentUser?.FTUserImmediateFamily && currentUser?.last_name === values.name) {
       console.log("A nuclear family for user was already created");
       return false;
     }
-    if (!p_values.created_at) {
+    if (!values.created_at) {
       console.log('missing ceation date'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.created_by) {
+    if (!values.created_by) {
       console.log('missing creating user'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.head_1) {
+    if (!values.head_1) {
       console.log('missing head of family'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.name) {
+    if (!values.name) {
       console.log('missing family name'); //TODO: LOGGING
       return false;
     }

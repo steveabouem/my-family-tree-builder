@@ -23,13 +23,13 @@ class FTUserController extends BaseController<DFTUserRecord> {
 
     }
 
-    create = async (p_user: DFTUserDTO): Promise<boolean> => {
+    create = async (user: DFTUserDTO): Promise<boolean> => {
         const userService = new FTUserService();
         // TODO: catch return false doesnt actually catch falty logic, 
         // just wrong syntax and maybe wrong typing. FIX
-        console.log('NEW USER: ', p_user);
+        console.log('NEW USER: ', user);
 
-        await userService.create(p_user).catch(() => false);
+        await userService.create(user).catch(() => false);
         return true;
     }
 

@@ -2,7 +2,33 @@
 @keyframes drop {
   0% {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: rotateY(x);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+
+  25% {
+    opacity: .25;
+    transform: rotate(45deg);
+  }
+
+  50% {
+    opacity: .5;
+    transform: rotate(90deg);
+  }
+
+  75% {
+    opacity: .75;
+    transform: rotate(180deg);
+  }
+
+  100% {
+    opacity: 1;
+    transform: rotate(270deg);
   }
 }
 
@@ -26,6 +52,10 @@ body {
   padding: 0;
   margin: 0;
 
+  a {
+    text-decoration: none;
+  }
+
   #root {
     overflow: hidden;
     height: 100vh;
@@ -41,22 +71,24 @@ body {
       z-index: 2;
       display: flex;
       left: 0;
-      justify-content: space-between;
+      justify-content: flex-start;
       height: 60px;
       align-items: center;
       box-shadow: 1px 1px 0 grey;
+      background: #f5f6f4;
 
       .logo-container {
         height: 50px;
         height: 50px;
         display: inline-flex;
         flex: 0 1 15%;
-        justify-content: space-between;
+        justify-content: start;
         padding: 0 10px;
 
         img {
           height: 100%;
           border-radius: 40px;
+          border: .5px solid;
         }
 
         span {
@@ -66,6 +98,33 @@ body {
           height: 100%;
           padding: 0;
           font-weight: bolder;
+          margin-right: 10px;
+        }
+      }
+
+      .pages-links {
+        display: flex;
+        justify-content: end;
+        flex: 0 1 60%;
+        height: 100%;
+        align-items: center;
+
+        >div {
+          padding: 0 5px;
+        }
+      }
+
+      .avatar-container {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1;
+        padding: 0 10px;
+
+        svg {
+          font-size: 1.3em;
+
         }
       }
 
@@ -76,14 +135,26 @@ body {
         display: flex;
         justify-content: center;
         align-items: center;
+        flex: 1;
 
         svg {
           border: 0.5px solid;
-          border-radius: 10px;
+          border-radius: 20px;
           cursor: pointer !important;
+          font-size: 1.2em;
         }
 
-        .trigger {}
+        .trigger {
+          svg {
+            animation: spin 1s ease infinite;
+            animation-play-state: paused;
+            animation-fill-mode: forwards;
+
+            &:hover {
+              animation-play-state: running;
+            }
+          }
+        }
 
         .choices {
           animation: drop .4s ease;
@@ -111,8 +182,11 @@ body {
     }
 
     #FT {
+      height: 100vh;
+      width: 100vw;
+      padding: 0;
+      margin: 0;
       position: absolute;
-      height: calc(100vh - 60px);
       width: 100vw;
       margin: 0;
       overflow: hidden;
@@ -152,30 +226,30 @@ body {
       }
 
       &.LIGHT {
-        background: #fff;
+        background: rgba(206, 202, 202, 0.2392156863);
 
         .primary-bg {
-          background: #0e0c0e;
+          background: #604511;
         }
 
         .primary {
-          color: #0e0c0e;
+          color: #604511;
         }
 
         .secondary-bg {
-          background: #6c6c6c;
+          background: #d56792;
         }
 
         .secondary {
-          color: #6c6c6c;
+          color: #d56792;
         }
 
         .bg {
-          background: #fff;
+          background: rgba(206, 202, 202, 0.2392156863);
         }
 
         .accent-bg {
-          background: #A5D6A7;
+          background: #f5f6f4;
         }
 
         .accent {
@@ -240,10 +314,12 @@ body {
       }
 
       position: relative;
+      padding: 15px;
       height: calc(100vh - 60px);
       width: 100vw;
       margin-top: 60px;
       overflow: hidden scroll;
+      background: #cecaca3d;
     }
 
     #FT-SPINNER {

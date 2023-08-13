@@ -20,11 +20,11 @@ const bcryptjs_1 = __importDefault(require("bcryptjs"));
 class FTUserService extends base_service_1.BaseService {
     constructor() {
         super('FTUsers');
-        this.create = (p_values) => __awaiter(this, void 0, void 0, function* () {
-            const hashedPassword = bcryptjs_1.default.hashSync(p_values.password, this.salt);
+        this.create = (values) => __awaiter(this, void 0, void 0, function* () {
+            const hashedPassword = bcryptjs_1.default.hashSync(values.password, this.salt);
             // TODO: implement search by name as user enter their last name. 
             // Does it make sense to offer them choices given the security aspect?
-            const formattedValues = Object.assign(Object.assign({}, p_values), { related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date });
+            const formattedValues = Object.assign(Object.assign({}, values), { related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date });
             const fieldsValid = yield this.validateFTUserFields(formattedValues);
             let newUser = null;
             if (fieldsValid) {
@@ -37,14 +37,14 @@ class FTUserService extends base_service_1.BaseService {
             return null;
         });
         // TODO: No any. fix typing, should related_to be added to the dto?
-        this.getUserData = (p_id) => __awaiter(this, void 0, void 0, function* () {
-            const currentUser = yield FT_user_1.default.findByPk(p_id, { attributes: { exclude: ['id', 'password'] } });
+        this.getUserData = (id) => __awaiter(this, void 0, void 0, function* () {
+            const currentUser = yield FT_user_1.default.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
             if (currentUser === null || currentUser === void 0 ? void 0 : currentUser.dataValues) {
-                const relatedFamilies = yield this.getRelatedFamilies(p_id);
+                const relatedFamilies = yield this.getRelatedFamilies(id);
                 return (Object.assign(Object.assign({}, currentUser.dataValues), { relatedTo: [...relatedFamilies] }));
             }
         });
-        this.getRelatedFamilies = (p_id) => __awaiter(this, void 0, void 0, function* () {
+        this.getRelatedFamilies = (id) => __awaiter(this, void 0, void 0, function* () {
             const select = `
       SELECT id, name
       FROM FTFams 
@@ -52,13 +52,13 @@ class FTUserService extends base_service_1.BaseService {
     `;
             const relatedFamilies = yield this.dataBase.query(select, {
                 type: sequelize_1.QueryTypes.SELECT,
-                replacements: { id: `${p_id}` }
+                replacements: { id: `${id}` }
             }).catch(() => false);
             return relatedFamilies;
         });
         // TODO: no any
-        this.getExtendedFamiliesDetails = (p_id) => __awaiter(this, void 0, void 0, function* () {
-            const currentUser = yield this.getUserData(p_id)
+        this.getExtendedFamiliesDetails = (id) => __awaiter(this, void 0, void 0, function* () {
+            const currentUser = yield this.getUserData(id)
                 .catch((e) => {
                 // TODO: logging
                 console.log('ERROR', e);
@@ -83,50 +83,51 @@ class FTUserService extends base_service_1.BaseService {
             }).catch(() => false);
             return extendedFamilies;
         });
-        this.validateFTUserFields = (p_values) => {
+        this.validateFTUserFields = (values) => {
             var _a;
-            if (p_values.age < 0 || !p_values.age) {
+            console.log('RECEIVED VALUES: ', values);
+            if (values.age < 0 || !values.age) {
                 console.log('missing age'); //TODO: LOGGING
                 return false;
             }
-            if (!((_a = p_values === null || p_values === void 0 ? void 0 : p_values.assigned_ips) === null || _a === void 0 ? void 0 : _a.length) || !p_values.assigned_ips) {
+            if (!((_a = values === null || values === void 0 ? void 0 : values.assigned_ips) === null || _a === void 0 ? void 0 : _a.length) || !values.assigned_ips) {
                 console.log('missing .'); //TODO: LOGGING
                 return false;
             }
-            if (!p_values.description) {
+            if (!values.description) {
                 console.log('missing description'); //TODO: LOGGING
                 return false;
             }
-            if (!p_values.first_name) {
+            if (!values.first_name) {
                 console.log('missing first_name'); //TODO: LOGGING
                 return false;
             }
-            if (!p_values.gender) {
+            if (!values.gender) {
                 console.log('missing gender'); //TODO: LOGGING
                 return false;
             }
-            if (p_values.is_parent === null || p_values.is_parent === undefined) {
+            if (values.is_parent === null || values.is_parent === undefined) {
                 // must be explicitly identified
                 console.log('missing is_parent'); //TODO: LOGGING
                 return false;
             }
-            if (!p_values.email || !p_values.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+            if (!values.email || !values.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
                 console.log('missing email'); //TODO: LOGGING
                 return false;
             }
-            if (!p_values.last_name) {
+            if (!values.last_name) {
                 console.log('missing last_name'); //TODO: LOGGING
                 return false;
             }
-            if (!p_values.imm_family) {
+            if (!values.imm_family) {
                 console.log('missing imm_family'); //TODO: LOGGING
                 return false;
             }
-            if (!p_values.marital_status) {
+            if (!values.marital_status) {
                 console.log('missing marital_status'); //TODO: LOGGING
                 return false;
             }
-            if (!p_values.password || p_values.password.length < 14) {
+            if (!values.password || values.password.length < 14) {
                 console.log('missing password'); //TODO: LOGGING
                 return false;
             }

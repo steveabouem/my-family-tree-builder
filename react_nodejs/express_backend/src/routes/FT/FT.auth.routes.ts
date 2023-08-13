@@ -1,57 +1,59 @@
 import { Router, Request, Response, NextFunction } from "express";
 import FTAuthService from "../../services/FT/auth/FT.auth.service";
 import { FTUserService } from "../../services/FT/user/FT.user.service";
-import { DFTUserDTO } from "../../services/FT/user/FT.user..definitions";
 import FTSessionService from "../../services/FT/session/FT.session.service";
 import { DSessionUser } from "../definitions";
 
 const router = Router();
 
-router.use((p_req: Request, p_res: Response, p_next: NextFunction) => {
-  const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;
+router.use((req: Request, res: Response, next: NextFunction) => {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   const authService = new FTAuthService();
 
   authService.verifyIp(ip)
     .then((valid: boolean) => {
       if (!valid) {
-        p_res.status(400);
-        p_res.json({ ipIsValid: false });
+        res.status(400);
+        res.json({ ipIsValid: false });
       }
     })
     .catch(e => {
       // TODO: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
-      p_res.status(400);
-      p_res.json({ ipIsValid: false, message: e });
+      res.status(400);
+      res.json({ ipIsValid: false, message: e });
     });
-
-
-  p_next();
+  next();
 });
 
-// TODO: typing of req body for p_
-router.post('/register', (p_req: Request, p_res: Response) => {
-  processRegister(p_req)
+// TODO: typing of req body for 
+router.post('/register', (req: Request, res: Response) => {
+  processRegister(req)
     .then((sessionData: DSessionUser | null) => {
-      p_res.set('Set-Cookie', `session=${sessionData?.token}`);
-      p_res.set('httpOnly', 'true');
-      p_res.status(200);
-      p_res.json({ session: sessionData });
+      res.set('Set-Cookie', `session=${sessionData?.token}`);
+      res.set('httpOnly', 'true');
+      res.status(200);
+      res.json({ session: sessionData });
+    })
+    .catch(e => {
+      // TODO: error handling and logging
+      console.log('Register Error: ', e);
+
     });
 });
 
 // TODO: req, res typing
-router.post('/login', (p_req: Request, p_res: Response) => {
-  processLogin(p_req)
+router.post('/login', (req: Request, res: Response) => {
+  processLogin(req)
     .then((sessionData: DSessionUser | null) => {
-      p_res.set('Set-Cookie', `session=${sessionData?.token}`);
-      p_res.set('httpOnly', 'true');
-      p_res.status(200);
-      p_res.json({ session: sessionData });
+      res.set('Set-Cookie', `session=${sessionData?.token}`);
+      res.set('httpOnly', 'true');
+      res.status(200);
+      res.json({ session: sessionData });
     });
 });
 
-router.get('/logout', (p_req: Request, p_res: Response) => {
+router.get('/logout', (req: Request, res: Response) => {
   // TODO: Kill session, send back the guest session default
 
 });
@@ -59,34 +61,34 @@ router.get('/logout', (p_req: Request, p_res: Response) => {
 export default router;
 
 // HELPERS
-const processRegister = async (p_req: Request): Promise<DSessionUser | null> => {
-  const ip = p_req.headers['x-forwarded-for'] || p_req.socket.remoteAddress;
+const processRegister = async (req: Request): Promise<DSessionUser | null> => {
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   const ftUserService = new FTUserService();
-  const ftSessionService = new FTSessionService(p_req.body.sessionToken);
-  const formattedValues = { ...p_req.body, assigned_ips: [ip], created_at: new Date };
+  const ftSessionService = new FTSessionService();
+  const formattedValues = { ...req.body, assigned_ips: [ip], created_at: new Date };
   // TODO: use ftuser service to match spouse's first and last name and return id here.
   // in the front, it will be some sort of dd that will use the ServiceWorker, and add the id to the form values
   const newUser = await ftUserService.create(formattedValues);// TODO: catch error
 
   if (newUser) {
-    const sessionToken = await ftSessionService.setSessionToken(newUser);
-    const currentSession = await ftSessionService.getSessionObject(['id', 'email', 'first_name', 'last_name', 'gender']);
-    return { ...currentSession, type: 'user', token: sessionToken };
+    const sessionToken = await ftSessionService.setSessionUser(newUser);
+    return { ...formattedValues, password: '', type: 'user', token: sessionToken };
   }
   return null;
 }
 
-const processLogin = async (p_req: Request): Promise<DSessionUser | null> => {
+const processLogin = async (req: Request): Promise<DSessionUser | null> => {
   const ftAuthService = new FTAuthService();
-  const verifiedUser = await ftAuthService.verifyUser(p_req.body)
+  const verifiedUser = await ftAuthService.verifyUser(req.body)
     .catch(e => {
       console.log('Error checking user'); //TODO: notify, and proper logging
     });
 
   if (verifiedUser) {
-    const ftSessionService = new FTSessionService(p_req.body.sessionToken);
-    const sessionToken = await ftSessionService.setSessionToken(verifiedUser);
-    const currentSession = await ftSessionService.getSessionObject(['id', 'email', 'first_name', 'last_name', 'gender']);
+    const ftSessionService = new FTSessionService();
+    const sessionToken = await ftSessionService.setSessionUser(verifiedUser);
+    console.log('GOT TOKEN ', sessionToken);
+    const currentSession = await ftSessionService.getUserSessionData(sessionToken || '', ['id', 'email', 'first_name', 'last_name', 'gender']);
 
     return { ...currentSession, type: 'user', token: sessionToken };
   } else {

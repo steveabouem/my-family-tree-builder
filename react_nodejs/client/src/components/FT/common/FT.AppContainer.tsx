@@ -12,6 +12,7 @@ import FTUserProfilePage from "../user/FT.Profile";
 import FTFamily from "../family/FT.Family";
 import FamilyTreeContext from "../../../context/FT/familyTree.context";
 import GlobalContext, { applicationEnum, themeEnum } from "../../../context/global.context";
+import Footer from "../../common/navbars/Footer";
 import('../../common/styles.scss');
 
 const appLinks = [
@@ -25,6 +26,7 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
   const [mode, setMode] = useState<DAuthMode | undefined>();
   const [throwError, setThrowError] = useState<boolean>(false);
   const [currentTheme, setCurrentTheme] = useState<themeEnum>(themeEnum.light);
+  const [sessionData, setSessionData] = useState<string | undefined>();
 
   useEffect(() => {
     if (!currentUser.email && !mode) {
@@ -32,57 +34,58 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
     }
   }, [currentUser, mode]);
 
-  const updateFormMode = (p_mode?: DAuthMode) => {
-    setMode(p_mode);
+  const updateFormMode = (mode?: DAuthMode) => {
+    setMode(mode);
   }
 
-  const updateErrorStatus = (p_error: boolean) => {
-    setThrowError(p_error);
+  const updateErrorStatus = (error: boolean) => {
+    setThrowError(error);
   }
 
-  const updateUser = (p_user?: Partial<DUserDTO>) => {
-    if (p_user)
-      setCurrentUser(p_user);
+  const updateUser = (user?: Partial<DUserDTO>) => {
+    if (user)
+      setCurrentUser(user);
   }
 
-  const switchTheme = (p_selected: themeEnum) => {
-    setCurrentTheme(p_selected);
+  const switchTheme = (selected: themeEnum) => {
+    setCurrentTheme(selected);
   }
 
   return (
     <GlobalContext.Provider
       value={{
         app: applicationEnum.FT,
-        theme: currentTheme
+        theme: currentTheme,
+        session: sessionData
       }}>
-        <>
-      <TopNav links={appLinks} position="" handleChangeTheme={switchTheme} />
-      <div id="FT" className={currentTheme}>
-        <FamilyTreeContext.Provider
-          value={
-            {
-              currentUser: currentUser, family: {}, tree: {},
-              error: throwError, updateUser
-            }
-          }>
-          <div className="scroll">
-            <Routes>
-              <Route path="/" element={
-                <FTAuthentication
-                  changeMode={(mode: DAuthMode | undefined) => updateFormMode(mode)}
-                  mode={mode}
-                />
+      <>
+        <TopNav links={appLinks} position="" handleChangeTheme={switchTheme} />
+        <div id="FT" className={currentTheme}>
+          <FamilyTreeContext.Provider
+            value={
+              {
+                currentUser: currentUser, family: {}, tree: {},
+                error: throwError, updateUser
               }
-              />
-              <Route path="/ft" element={<FTLandingPage />} />
-              <Route path="/ft/users/:id" element={<FTUserProfilePage />} />
-              <Route path={`${FTLinkEnums.family}`} element={<FTFamily />} />
-            </Routes>
-          </div>
-        </FamilyTreeContext.Provider>
-      </div>
-        </>
-
+            }>
+            <div className="scroll">
+              <Routes>
+                <Route path="/home" element={<FTLandingPage />} />
+                <Route path="/users/:id" element={<FTUserProfilePage />} />
+                <Route path={`${FTLinkEnums.family}`} element={<FTFamily />} />
+                <Route path="/" element={
+                  <FTAuthentication
+                    changeMode={(mode: DAuthMode | undefined) => updateFormMode(mode)}
+                    mode={mode}
+                  />
+                }
+                />
+              </Routes>
+            </div>
+          </FamilyTreeContext.Provider>
+        </div>
+      </>
+      <Footer />
     </GlobalContext.Provider>
   );
 }

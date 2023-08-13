@@ -14,11 +14,13 @@ export enum themeEnum {
 interface DGlobalContext {
   app: applicationEnum;
   theme: themeEnum;
+  session?: string;
 }
 
 const GlobalContext = createContext<DGlobalContext>({
   app: applicationEnum.FT,
   theme: themeEnum.green,
+  session: undefined,
 });
 
 export default GlobalContext;

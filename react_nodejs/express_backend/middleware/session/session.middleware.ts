@@ -6,10 +6,10 @@ import FTSessionService from "../../src/services/FT/session/FT.session.service";
 dotenv.config();
 
 const { JWT }: { [key: string]: string | undefined } = process.env;
-export const verifyJWTRequestToken = (p_req: Request, p_res: Response, p_next: NextFunction) => {
-  const token = p_req.cookies.FT;
-  const sessionService = new FTSessionService(token);
-  const session = sessionService.getSessionObject();
+export const verifyJWTRequestToken = (req: Request, res: Response, next: NextFunction) => {
+  const token = req.cookies.FT;
+  const sessionService = new FTSessionService();
+  const session = sessionService.getUserSessionData(token);
 
   return session;
 }

@@ -13,31 +13,31 @@ class FTAuthService extends BaseService<any> { // TODO: no any
         super('FTIPs');
     }
 
-    // verifyUserIp = async (p_id: number): Promise<boolean> => {
+    // verifyUserIp = async (id: number): Promise<boolean> => {
     //     const ftUserService = new FTUserService();
     //     // TODO: catch return false doesnt actually catch falty logic, 
     //     // just wrong syntax and maybe wrong typing. FIX
-    //     const currentUser: DUserRecord = await ftUserService.getById(p_id);
+    //     const currentUser: DUserRecord = await ftUserService.getById(id);
     //     return this.authorized_ips.includes(currentUser.authorizedIps);
     // }
 
-    verifyIp = async (p_ip?: string | string[]): Promise<boolean> => {
-        if (!p_ip) {
+    verifyIp = async (currentIp?: string | string[]): Promise<boolean> => {
+        if (!currentIp) {
             return false;
         }
 
         // TODO: SQL BINDINGS
-        const ip = FTIP.findOne({ where: { value: p_ip } });
+        const ip = FTIP.findOne({ where: { value: currentIp } });
         return !!ip;
     }
 
-    verifyUser = async (p_values: DFTLoginFields): Promise<Partial<DFTUserDTO> | null> => {
-        const currentUser = await FTUser.findOne({ where: { email: p_values.email } });
+    verifyUser = async (values: DFTLoginFields): Promise<Partial<DFTUserDTO> | null> => {
+        const currentUser = await FTUser.findOne({ where: { email: values.email } });
         if (!currentUser) {
             return null;
         }
 
-        const passwordValid = bcrypt.compareSync(p_values.password, currentUser.password);
+        const passwordValid = bcrypt.compareSync(values.password, currentUser.password);
         if (passwordValid) {
 
             return { ...currentUser.dataValues, password: '' };

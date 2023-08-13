@@ -8,20 +8,20 @@ interface DFTContext {
   family: DeepPartial<DFTFamilyDTO>;
   // TODO: no any
   tree: any;
-  updateUser: (p_values?: Partial<DUserDTO>) => void;
+  updateUser: (values?: Partial<DUserDTO>) => void;
   error?: boolean;
 };
 
 export interface DContextMutator<GEntity> {
   entity: string;
-  action: (p_values?: Partial<GEntity>) => void;
+  action: (values?: Partial<GEntity>) => void;
 }
 
 const FamilyTreeContext = createContext<DFTContext>({
   currentUser: {},
   family: {},
   tree: undefined,
- updateUser: function() {}
+  updateUser: function () { }
 });
 
 export default FamilyTreeContext;

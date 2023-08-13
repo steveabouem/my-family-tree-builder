@@ -13,11 +13,11 @@ export class FTUserService extends BaseService<DFTUserRecord> {
   }
 
 
-  public create = async (p_values: DFTUserDTO): Promise<Partial<DFTUserDTO> | null> => {
-    const hashedPassword = bcrypt.hashSync(p_values.password, this.salt);
+  public create = async (values: DFTUserDTO): Promise<Partial<DFTUserDTO> | null> => {
+    const hashedPassword = bcrypt.hashSync(values.password, this.salt);
     // TODO: implement search by name as user enter their last name. 
     // Does it make sense to offer them choices given the security aspect?
-    const formattedValues = { ...p_values, related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date };
+    const formattedValues = { ...values, related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date };
     const fieldsValid = await this.validateFTUserFields(formattedValues);
     let newUser = null;
 
@@ -32,16 +32,16 @@ export class FTUserService extends BaseService<DFTUserRecord> {
   }
 
   // TODO: No any. fix typing, should related_to be added to the dto?
-  public getUserData = async (p_id: number): Promise<any> => {
-    const currentUser = await FTUser.findByPk(p_id, { attributes: { exclude: ['id', 'password'] } });
+  public getUserData = async (id: number): Promise<any> => {
+    const currentUser = await FTUser.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
     if (currentUser?.dataValues) {
-      const relatedFamilies = await this.getRelatedFamilies(p_id);
+      const relatedFamilies = await this.getRelatedFamilies(id);
 
       return ({ ...currentUser.dataValues, relatedTo: [...relatedFamilies] });
     }
   }
 
-  public getRelatedFamilies = async (p_id: number): Promise<any> => {
+  public getRelatedFamilies = async (id: number): Promise<any> => {
     const select = `
       SELECT id, name
       FROM FTFams 
@@ -50,14 +50,14 @@ export class FTUserService extends BaseService<DFTUserRecord> {
 
     const relatedFamilies = await this.dataBase.query(select, {
       type: QueryTypes.SELECT,
-      replacements: { id: `${p_id}` }
+      replacements: { id: `${id}` }
     }).catch(() => false);
 
     return relatedFamilies;
   }
   // TODO: no any
-  public getExtendedFamiliesDetails = async (p_id: number): Promise<any> => {
-    const currentUser: DFTUserDTO = await this.getUserData(p_id)
+  public getExtendedFamiliesDetails = async (id: number): Promise<any> => {
+    const currentUser: DFTUserDTO = await this.getUserData(id)
       .catch((e) => {
         // TODO: logging
         console.log('ERROR', e);
@@ -87,59 +87,61 @@ export class FTUserService extends BaseService<DFTUserRecord> {
 
   }
 
-  private validateFTUserFields = (p_values: DFTUserDTO): boolean => {
-    if (p_values.age < 0 || !p_values.age) {
+  private validateFTUserFields = (values: DFTUserDTO): boolean => {
+    console.log('RECEIVED VALUES: ', values);
+
+    if (values.age < 0 || !values.age) {
       console.log('missing age'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values?.assigned_ips?.length || !p_values.assigned_ips) {
+    if (!values?.assigned_ips?.length || !values.assigned_ips) {
       console.log('missing .'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.description) {
+    if (!values.description) {
       console.log('missing description'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.first_name) {
+    if (!values.first_name) {
       console.log('missing first_name'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.gender) {
+    if (!values.gender) {
       console.log('missing gender'); //TODO: LOGGING
       return false;
     }
 
-    if (p_values.is_parent === null || p_values.is_parent === undefined) {
+    if (values.is_parent === null || values.is_parent === undefined) {
       // must be explicitly identified
       console.log('missing is_parent'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.email || !p_values.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+    if (!values.email || !values.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
       console.log('missing email'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.last_name) {
+    if (!values.last_name) {
       console.log('missing last_name'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.imm_family) {
+    if (!values.imm_family) {
       console.log('missing imm_family'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.marital_status) {
+    if (!values.marital_status) {
       console.log('missing marital_status'); //TODO: LOGGING
       return false;
     }
 
-    if (!p_values.password || p_values.password.length < 14) {
+    if (!values.password || values.password.length < 14) {
       console.log('missing password'); //TODO: LOGGING
       return false;
     }

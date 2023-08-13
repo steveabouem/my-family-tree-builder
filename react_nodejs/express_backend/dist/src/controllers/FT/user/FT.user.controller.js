@@ -30,12 +30,12 @@ class FTUserController extends Base_controller_1.default {
     //   }, {
     constructor() {
         super('Users');
-        this.create = (p_user) => __awaiter(this, void 0, void 0, function* () {
+        this.create = (user) => __awaiter(this, void 0, void 0, function* () {
             const userService = new FT_user_service_1.FTUserService();
             // TODO: catch return false doesnt actually catch falty logic, 
             // just wrong syntax and maybe wrong typing. FIX
-            console.log('NEW USER: ', p_user);
-            yield userService.create(p_user).catch(() => false);
+            console.log('NEW USER: ', user);
+            yield userService.create(user).catch(() => false);
             return true;
         });
     }

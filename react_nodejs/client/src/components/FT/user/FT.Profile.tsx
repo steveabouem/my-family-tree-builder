@@ -3,7 +3,7 @@ import { DUserDTO } from "../../../services/FT/auth/auth.definitions";
 import FTUserService from "../../../services/FT/user/user.service";
 import NotFound from '../../common/404NotFound';
 import React from "react";
-import useUrlId from "../../hooks/useUrl.hooks";
+import useUrlId from "../../hooks/useUrl.hook";
 import FamilyService from "../../../services/FT/fam/family.service";
 import FamilyCard from "../family/FamilyCard";
 import { DFTFamilyDTO } from "../family/definitions";

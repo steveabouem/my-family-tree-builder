@@ -3,40 +3,40 @@
 
 // // TODO: no any, proper typing
 // const processHTTPReq = async (
-//   p_router: Router, p_callback: any, p_path: string,
-//   p_method: HTTPMethodEnum, p_res: Response,
-//   p_search?: string, p_params?: any) => {
-//   switch (p_method) {
+//   router: Router, callback: any, path: string,
+//   method: HTTPMethodEnum, res: Response,
+//   search?: string, params?: any) => {
+//   switch (method) {
 //     case HTTPMethodEnum.get:
-//       return await p_callback(p_search)
+//       return await callback(search)
 //         .then((success: boolean) => {
 //           if (success) {
-//             p_res.status(201);
-//             p_res.json(true);
+//             res.status(201);
+//             res.json(true);
 //           } else {
-//             p_res.status(400);
-//             p_res.json(false);
+//             res.status(400);
+//             res.json(false);
 //           }
 //         })
 //         .catch((e: any) => {
 //           // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
-//           p_res.status(500);
-//           p_res.json(e);
+//           res.status(500);
+//           res.json(e);
 //         });
 //     default:
-//       return await p_callback(p_params)
+//       return await callback(params)
 //         .then((success: boolean) => {
 //           if (success) {
-//             p_res.status(201);
-//             p_res.json(true);
+//             res.status(201);
+//             res.json(true);
 //           } else {
-//             p_res.status(400);
-//             p_res.json(false);
+//             res.status(400);
+//             res.json(false);
 //           }
 //         })
 //         .catch((e: any) => {
 //           // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
-//           p_res.status(500);
-//           p_res.json(e);
+//           res.status(500);
+//           res.json(e);
 //         }
 // }

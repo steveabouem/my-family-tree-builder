@@ -39,36 +39,36 @@ class BaseService {
         this.tableName = table;
         this.salt = bcryptjs_1.default.genSaltSync(8);
     }
-    index(p_limit) {
+    index(limit) {
         return __awaiter(this, void 0, void 0, function* () {
             // TODO: no any
             const select = `SELECT * FROM :tableName LIMIT :limit;`;
             const results = yield this.dataBase.query(select, {
-                replacements: { tableName: this.tableName, limit: p_limit },
+                replacements: { tableName: this.tableName, limit: limit },
                 type: sequelize_1.QueryTypes.SELECT
             });
             return results[0];
         });
     }
-    getList(p_columns, p_where, p_joins, p_limit) {
+    getList(columns, incomingWhere, incomingJoins, incomingLimit) {
         return __awaiter(this, void 0, void 0, function* () {
             let joins = '';
             let where = '';
             let limit = '';
             let selector = "*";
-            if (p_where) {
-                where = p_where;
+            if (where) {
+                where = incomingWhere || '';
             }
-            if (p_columns) {
-                selector = p_columns === null || p_columns === void 0 ? void 0 : p_columns.join(', ');
+            if (columns) {
+                selector = columns === null || columns === void 0 ? void 0 : columns.join(', ');
             }
-            if (p_joins) {
-                joins = p_joins.reduce((p_joinStatement, p_currentJoin) => {
-                    return `${p_joinStatement} JOIN ${p_currentJoin.tableName} ON ${p_currentJoin.on}`;
-                }, joins);
+            if (joins) {
+                joins = (incomingJoins === null || incomingJoins === void 0 ? void 0 : incomingJoins.reduce((joinStatement, currentJoin) => {
+                    return `${joinStatement} JOIN ${currentJoin.tableName} ON ${currentJoin.on}`;
+                }, joins)) || '';
             }
-            if (p_limit) {
-                limit = `LIMIT ${p_limit}`;
+            if (limit) {
+                limit = `LIMIT ${incomingLimit}`;
             }
             const select = `
             SELECT :selector
@@ -91,26 +91,26 @@ class BaseService {
             return results[0];
         });
     }
-    getById(p_id) {
+    getById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             // await this.dataBase.authenticate();
             // const select = `SELECT * FROM :tableName WHERE id = :id;`;
             // // TODO: no any
             // const record: any = await this.dataBase.query(select, {
             //   type: QueryTypes.SELECT,
-            //   replacements: { tableName: this.tableName, id: p_id }
+            //   replacements: { tableName: this.tableName, id: id }
             // });
             // return record[0][0];
         });
     }
-    disable(p_id, p_table) {
+    disable(id, table) {
         return __awaiter(this, void 0, void 0, function* () {
             const update = `UPDATE :table SET active = false WHERE id = :id;`;
             // TODO: catch return false doesnt actually catch falty logic, 
             // just wrong syntax and maybe wrong typing. FIX
             yield this.dataBase.query(update, {
                 type: sequelize_1.QueryTypes.UPDATE,
-                replacements: { table: p_table, id: p_id }
+                replacements: { table: table, id: id }
             }).catch(() => false);
             return true;
         });

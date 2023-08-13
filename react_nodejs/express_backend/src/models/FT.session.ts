@@ -9,7 +9,7 @@ class FTSession extends Model<InferAttributes<FTSession>, InferCreationAttribute
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare key: string;
+  declare key: string; // stringified session
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 

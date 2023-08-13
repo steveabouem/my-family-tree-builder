@@ -6,14 +6,14 @@
 //     constructor() {
 //         super('FTUser');
 //     }
-//     getUserData = async (p_memberId: number): Promise<DUserRecord> => {
+//     getUserData = async (memberId: number): Promise<DUserRecord> => {
 //         const userService = new UserService();
-//         const currentMember: DFamilyMemberRecord = await this.baseService.getById(p_memberId);
+//         const currentMember: DFamilyMemberRecord = await this.baseService.getById(memberId);
 //         const user: DUserRecord = await userService.getById(currentMember.user_id);
 //         return user;
 //     }
-//     getMemberAuthorizedIps = async (p_memberId: number): Promise<string[]> => {
-//         const currentMember: DFamilyMemberRecord = await this.getById(p_memberId);
+//     getMemberAuthorizedIps = async (memberId: number): Promise<string[]> => {
+//         const currentMember: DFamilyMemberRecord = await this.getById(memberId);
 //         const authorizedIps = JSON.parse(currentMember.assigned_ip);
 //         return authorizedIps;
 //     }

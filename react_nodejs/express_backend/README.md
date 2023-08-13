@@ -10,7 +10,6 @@ For the time being, given that the family tree requirement came along as the pro
 
 ## Naming conventions (WIP)
 - Types: `DTypeName`
-- Functions arguments: `p_arg`
 - Generics: `GTypeName`
 - Sql statement variables: `const select/insert/update/delete`
 - Queries: prioritize Sequelize, outside of Base classes (this is mainly because of automaticly generated associations get - set functions). `result` for single record, `results` for arrays

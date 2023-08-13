@@ -12,31 +12,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
 const base_service_1 = require("../../base/base.service");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const FT_session_1 = __importDefault(require("../../../models/FT.session"));
 class FTSessionService extends base_service_1.BaseService {
-    constructor(p_token) {
+    constructor() {
         super('FTSessions');
-        this.setSessionToken = (p_session) => __awaiter(this, void 0, void 0, function* () {
-            let encryptedSession = null;
-            if (process.env.PASS) {
-                encryptedSession = jsonwebtoken_1.default.sign({ session: JSON.stringify(p_session) }, process.env.PASS, { expiresIn: '1800' });
-                this.token = encryptedSession;
+        this.setSessionUser = (session) => __awaiter(this, void 0, void 0, function* () {
+            // receives safe user profile (no pwd or other sensitive info) and signs it, returns it as header to be set as a token in front
+            let signedUser = null;
+            console.log('SET SESSION USER: ', session);
+            if (process.env.JWT_KEY) {
+                signedUser = jsonwebtoken_1.default.sign({ session: JSON.stringify(session) }, process.env.JWT_KEY, { expiresIn: '1800' });
                 // await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
-                return encryptedSession;
+                console.log('PASS DETECTED: ', signedUser);
+                return signedUser;
             }
-            return encryptedSession;
+            return signedUser;
         });
-        this.getSessionObject = (p_keys) => {
+        this.getUserSessionData = (token, keys) => {
             let sessionData = {};
-            if (process.env.PASS) {
+            if (process.env.JWT_KEY) {
                 try {
-                    const sessionJWTObject = jsonwebtoken_1.default.verify(this.token, process.env.PASS);
+                    const sessionJWTObject = jsonwebtoken_1.default.verify(token, process.env.JWT_KEY);
                     if (typeof sessionJWTObject === 'object' && sessionJWTObject !== null) {
-                        if (p_keys) { // NOTE: If no key is provided, return all session (most likely used in the back)
-                            for (const sessionKey of p_keys) {
+                        if (keys) { // NOTE: If no key is provided, return all session (most likely used in the back)
+                            for (const sessionKey of keys) {
                                 sessionData[sessionKey] = sessionJWTObject[sessionKey];
                             }
                             return sessionData; // NOTE: I will have to ignore the jwt keys from the payload 
@@ -55,24 +55,7 @@ class FTSessionService extends base_service_1.BaseService {
             }
             return null;
         };
-        this.updateSessionObject = (p_session, p_keys) => __awaiter(this, void 0, void 0, function* () {
-            let currentSession = this.getSessionObject(p_keys);
-            if (currentSession && process.env.PASS) {
-                const existingValues = Object.assign({}, currentSession);
-                currentSession = Object.assign(Object.assign({}, existingValues), p_session); //replace all session keys that were updated
-                const newSessionKey = jsonwebtoken_1.default.sign(JSON.stringify(currentSession), process.env.PASS); // TODO: check how to maintain the same expiration time even as you update the session. ANd check refresh token
-                yield FT_session_1.default.update({ key: newSessionKey }, {
-                    where: {
-                        key: {
-                            [sequelize_1.Op.eq]: this.token
-                        }
-                    }
-                });
-                return true;
-            }
-            return false;
-        });
-        this.token = p_token;
+        // this.token = token; //stringified version of data to be hashed (no need if we always use the current user)
     }
 }
 exports.default = FTSessionService;

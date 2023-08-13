@@ -31,10 +31,10 @@ const dotenv = __importStar(require("dotenv"));
 const FT_session_service_1 = __importDefault(require("../../src/services/FT/session/FT.session.service"));
 dotenv.config();
 const { JWT } = process.env;
-const verifyJWTRequestToken = (p_req, p_res, p_next) => {
-    const token = p_req.cookies.FT;
-    const sessionService = new FT_session_service_1.default(token);
-    const session = sessionService.getSessionObject();
+const verifyJWTRequestToken = (req, res, next) => {
+    const token = req.cookies.FT;
+    const sessionService = new FT_session_service_1.default();
+    const session = sessionService.getUserSessionData(token);
     return session;
 };
 exports.verifyJWTRequestToken = verifyJWTRequestToken;

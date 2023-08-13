@@ -11,17 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const base_service_1 = require("../services/base/base.service");
 class BaseController {
-    constructor(p_table) {
-        this.getList = (p_columns, p_where, p_joins, p_limit) => __awaiter(this, void 0, void 0, function* () {
-            const records = yield this.baseService.getList(p_columns, p_where, p_joins, p_limit);
+    constructor(table) {
+        this.getList = (columns, where, joins, limit) => __awaiter(this, void 0, void 0, function* () {
+            const records = yield this.baseService.getList(columns, where, joins, limit);
             return records;
         });
-        this.getById = (p_id) => __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.baseService.getById(p_id);
+        this.getById = (id) => __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.baseService.getById(id);
             return result;
         });
-        this.tableName = p_table;
-        this.baseService = new base_service_1.BaseService(p_table);
+        this.tableName = table;
+        this.baseService = new base_service_1.BaseService(table);
     }
 }
 exports.default = BaseController;

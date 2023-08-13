@@ -11,10 +11,10 @@ export class UserService extends BaseService<DUserRecord> {
         this.salt = bcrypt.genSaltSync(8);
     }
 
-    create = async (p_user: DUserDTO): Promise<boolean> => {
+    create = async (user: DUserDTO): Promise<boolean> => {
         //TODO:validations
-        const hashedPwd = bcrypt.hashSync(p_user.password, this.salt);
-        const values = { ...p_user, password: hashedPwd };
+        const hashedPwd = bcrypt.hashSync(user.password, this.salt);
+        const values = { ...user, password: hashedPwd };
         const isUserValid = await
             console.log({ values, valid: this.validateUserFields(values) });
 
@@ -27,16 +27,16 @@ export class UserService extends BaseService<DUserRecord> {
         return true;
     }
 
-    validateUserFields = (p_values: DUserDTO): boolean => {
-        console.log('ALL VALUES', Object.values(p_values));
+    validateUserFields = (values: DUserDTO): boolean => {
+        console.log('ALL VALUES', Object.values(values));
 
-        const userHasAllValues = !Object.values(p_values).find((v: string | undefined) => !v);
+        const userHasAllValues = !Object.values(values).find((v: string | undefined) => !v);
         // TODO: throw errors properly back to the front
         if (!userHasAllValues) {
             return false;
         }
 
-        if (p_values.password.length < 14) {
+        if (values.password.length < 14) {
             // TODO: throw errors properly back to the front
 
         }
@@ -44,7 +44,7 @@ export class UserService extends BaseService<DUserRecord> {
 
         return true;
     };
-    // setIps = async (p_ips: [], p_id: number): Promise<boolean> {
-    //     const user = this.getById(p_id);
+    // setIps = async (ips: [], id: number): Promise<boolean> {
+    //     const user = this.getById(id);
     // }
 }

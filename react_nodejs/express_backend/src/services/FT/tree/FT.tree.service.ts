@@ -9,10 +9,10 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
     super('FTTrees');
   }
 
-  create = async (p_values: DFamilyTreeDTO): Promise<boolean> => {
+  create = async (values: DFamilyTreeDTO): Promise<boolean> => {
     // TODO: creation date has a default value in models. I might possibly skip this formatting,
     //  and adjust the DTO to make the prop optional. leaving it for now as it makes validation simpler
-    const formattedValues = { ...p_values, created_at: new Date, active: true };
+    const formattedValues = { ...values, created_at: new Date, active: true };
     const valid = this.validateFTTreeFields(formattedValues);
 
     if (valid) {
@@ -31,13 +31,13 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
     }
   }
 
-  getTree = async (p_id: number): Promise<FTTree | null> => {
-    const currentTree = await this.getById(p_id);
+  getTree = async (id: number): Promise<FTTree | null> => {
+    const currentTree = await this.getById(id);
     return currentTree;
   }
 
-  getFamilies = async (p_id: number): Promise<number[] | undefined> => {
-    const currentTree = await FTTree.findByPk(p_id, { attributes: { exclude: ['id'] } });
+  getFamilies = async (id: number): Promise<number[] | undefined> => {
+    const currentTree = await FTTree.findByPk(id, { attributes: { exclude: ['id'] } });
     if (currentTree) {
 
       const fams = currentTree.FTTreeFAmilies;
@@ -50,12 +50,12 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
   }
 
 
-  addFamily = async (p_id: number, p_family: number): Promise<boolean> => {
-    const currentTree = await FTTree.findByPk(p_id);
+  addFamily = async (id: number, family: number): Promise<boolean> => {
+    const currentTree = await FTTree.findByPk(id);
 
     if (currentTree) {
       const relatedFamilies = JSON.parse(currentTree.FTTreeFAmilies);
-      relatedFamilies.push(p_family);
+      relatedFamilies.push(family);
 
       console.log({ relatedFamilies });
 
@@ -68,11 +68,11 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
     return false;
   }
 
-  removeFamily = async (p_family: number, p_id: number): Promise<boolean> => {
-    const currentTree = await FTTree.findOne({ where: { id: p_id }, attributes: { exclude: ['id'] } });
+  removeFamily = async (family: number, id: number): Promise<boolean> => {
+    const currentTree = await FTTree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
 
     if (currentTree) {
-      const relatedFamilies = JSON.parse(currentTree.FTTreeFAmilies).filter((id: number) => id != p_family);
+      const relatedFamilies = JSON.parse(currentTree.FTTreeFAmilies).filter((id: number) => id != family);
       console.log({ relatedFamilies });
 
       await currentTree.update({ families: JSON.stringify(relatedFamilies) })
@@ -88,16 +88,16 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
     }
   }
 
-  update = async (p_values: DFamilyTreeUpdateDTO, p_id: number): Promise<boolean> => {
+  update = async (values: DFamilyTreeUpdateDTO, id: number): Promise<boolean> => {
     // TODO: once individual field validations are there, use it here
-    // const valid = this.validateFTTreeFields(p_values);
+    // const valid = this.validateFTTreeFields(values);
     // if (valid) {
 
-    const currentTree = await FTTree.findByPk(p_id);
-    const formattedValues = await this.formatUpdateValues(p_values, p_id);
+    const currentTree = await FTTree.findByPk(id);
+    const formattedValues = await this.formatUpdateValues(values, id);
 
     if (currentTree) {
-      await currentTree?.update({ ...formattedValues }, { where: { id: p_id } })
+      await currentTree?.update({ ...formattedValues }, { where: { id: id } })
         .catch(e => {
           console.log('Error updating tree');
           return false;
@@ -111,35 +111,35 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
     return false;
   }
 
-  validateFTTreeFields = (p_values: DFamilyTreeUpdateDTO | DFamilyTreeDTO): boolean => {
+  validateFTTreeFields = (values: DFamilyTreeUpdateDTO | DFamilyTreeDTO): boolean => {
     // TODO: you will need individual field validations, 
     // in order to validate any type of operation without worrying about required fields
-    if (!p_values.created_at || !dateValid(p_values.created_at)) {
+    if (!values.created_at || !dateValid(values.created_at)) {
       console.log('Missing or incorrect creation date');
       return false;
     }
 
-    if (!p_values.created_by) {
+    if (!values.created_by) {
       console.log('Missing creator value');
       return false;
     }
 
-    if (!p_values.name) {
+    if (!values.name) {
       console.log('Missing name');
       return false;
     }
 
-    if (p_values.public === undefined || p_values.public === null) {
+    if (values.public === undefined || values.public === null) {
       console.log('Missing public');
       return false;
     }
 
-    if (!dateValid(p_values.updated_at)) {
+    if (!dateValid(values.updated_at)) {
       console.log('Incorrect update date');
       return false;
     }
 
-    if (!p_values.active) {
+    if (!values.active) {
       console.log('Missing active');
       return false;
     }
@@ -148,23 +148,23 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
   }
 
   // return type uses a partial here to not have to deal with the id property present in the update DTO
-  formatUpdateValues = async (p_values: DFamilyTreeUpdateDTO, p_id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
-    const currentTree = await FTTree.findOne({ where: { id: p_id }, attributes: { exclude: ['id'] } });
+  formatUpdateValues = async (values: DFamilyTreeUpdateDTO, id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
+    const currentTree = await FTTree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
     let formattedValues = {};
     if (!currentTree) {
       return;
     }
 
-    if (p_values.authorized_ips) {
+    if (values.authorized_ips) {
       const treeIPs = JSON.parse(currentTree?.FTTreeAuthorized_ips || '');
-      const formattedIPs = JSON.stringify([...treeIPs, ...p_values.authorized_ips]);
-      formattedValues = { ...p_values, authorized_ips: formattedIPs };
+      const formattedIPs = JSON.stringify([...treeIPs, ...values.authorized_ips]);
+      formattedValues = { ...values, authorized_ips: formattedIPs };
     }
 
-    if (p_values.families) {
+    if (values.families) {
       const treeFamilies = JSON.parse(currentTree?.FTTreeFAmilies || '');
-      const formattedFamilies = JSON.stringify([...treeFamilies, ...p_values.families]);
-      formattedValues = { ...p_values, families: formattedFamilies };
+      const formattedFamilies = JSON.stringify([...treeFamilies, ...values.families]);
+      formattedValues = { ...values, families: formattedFamilies };
     }
 
     return ({ ...formattedValues, updated_at: new Date });

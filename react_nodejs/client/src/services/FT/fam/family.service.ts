@@ -5,14 +5,14 @@ class FamilyService extends BaseService {
     super('families');
   }
   // TODO: no any
-  getFamilyBullkData = async(p_ids: string): Promise<any> => {
+  public getFamilyBullkData = async (ids: string): Promise<any> => {
     // TODO: this request format can be turned into a dynamic  class property/method
-    const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/index?ids=${p_ids.split(',')}`);
+    const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/index?ids=${ids.split(',')}`);
     return results;
   }
-  
-  getFamilyMembersDetails = async(p_ids: string): Promise<any> => {
-    const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/index?ids=${p_ids.split(',')}`);
+
+  public getFamilyMembersDetails = async (ids: string): Promise<any> => {
+    const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/index?ids=${ids.split(',')}`);
     return results;
   }
 

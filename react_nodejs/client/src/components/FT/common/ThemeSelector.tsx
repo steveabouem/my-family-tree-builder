@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { DThemeSelectorProps } from "./common.definitions";
 import { themeEnum } from "../../../context/global.context";
 import { IoColorPaletteSharp } from "react-icons/io5";
-import usePrimary from "../../hooks/usePrimary.hooks";
+import usePrimary from "../../hooks/usePrimary.hook";
 
 const ThemeSelector = ({ switchTheme }: DThemeSelectorProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

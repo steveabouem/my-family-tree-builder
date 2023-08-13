@@ -1,11 +1,11 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { themeEnum } from "../../context/global.context";
 
 // +++++=> NAVIGATION <= +++++
 export interface DTopNavProps {
-links: DNavigationLink[];
-position: string;
-handleChangeTheme: (p_theme: themeEnum) => void;
+  links: DNavigationLink[];
+  position: string;
+  handleChangeTheme: (theme: themeEnum) => void;
 }
 
 export interface DNavigationLink {
@@ -38,13 +38,15 @@ export interface DFormField {
   class?: string;
   id?: string;
   required?: boolean;
+  type?: string;
+  subComponent?: React.ElementType<any>;
 }
 
 export interface DBaseFormProps {
   fields: DFormField[];
-  handleSubmit:  () => void;
+  handleSubmit: () => void;
   size: string;
-  initialValues?: {[key: string]: string | number};
+  initialValues?: { [key: string]: string | number };
   // TODO: No any, valiation types are not hard
   validations?: any;
 }

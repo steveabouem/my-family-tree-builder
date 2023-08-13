@@ -9,25 +9,25 @@ const router = (0, express_1.Router)();
 router.use((req, res, next) => {
     next();
 });
-router.get('/index', (p_req, p_res) => {
+router.get('/index', (req, res) => {
     const userController = new User_controller_1.default();
     // TODO: typing of returned json for line 11 and the result below
     userController.getList(undefined, undefined, undefined, 20).then((result) => {
-        p_res.json(result[0]);
+        res.json(result[0]);
     })
-        .catch(() => p_res.status(400).send());
+        .catch(() => res.status(400).send());
 });
-router.post('/create', (p_req, p_res) => {
+router.post('/create', (req, res) => {
     const userController = new User_controller_1.default();
     const ip = '';
-    const newUserFieldValues = Object.assign(Object.assign({}, p_req.body), { authorizedIps: [ip], roles: '[1]' });
-    p_res.send('ok');
+    const newUserFieldValues = Object.assign(Object.assign({}, req.body), { authorizedIps: [ip], roles: '[1]' });
+    res.send('ok');
     // userController.create(newUserFieldValues)
     //     .then((r: boolean) => {
-    //         p_res.json(r);
+    //         res.json(r);
     //     })
     //     .catch(() => {
-    //         p_res.status(400).send();
+    //         res.status(400).send();
     //     });
 });
 exports.default = router;

@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function () { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function () { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -55,7 +55,7 @@ var BaseService = /** @class */ (function () {
         this.dataBase = db_1["default"];
         this.tableName = table;
     }
-    BaseService.prototype.getById = function (p_select) {
+    BaseService.prototype.getById = function (select) {
         return __awaiter(this, void 0, void 0, function () {
             var record;
             return __generator(this, function (_a) {
@@ -63,7 +63,7 @@ var BaseService = /** @class */ (function () {
                     case 0: return [4 /*yield*/, this.dataBase.authenticate()];
                     case 1:
                         _a.sent();
-                        return [4 /*yield*/, this.dataBase.query(p_select)];
+                        return [4 /*yield*/, this.dataBase.query(select)];
                     case 2:
                         record = _a.sent();
                         return [2 /*return*/, record[0]];
@@ -71,7 +71,7 @@ var BaseService = /** @class */ (function () {
             });
         });
     };
-    BaseService.prototype.disable = function (p_id, p_table) {
+    BaseService.prototype.disable = function (id, p_table) {
         return __awaiter(this, void 0, void 0, function () {
             var update;
             return __generator(this, function (_a) {
@@ -88,7 +88,7 @@ var BaseService = /** @class */ (function () {
             });
         });
     };
-    BaseService.prototype.index = function (p_id) {
+    BaseService.prototype.index = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var select, results;
             return __generator(this, function (_a) {

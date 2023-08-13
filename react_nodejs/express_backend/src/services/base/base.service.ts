@@ -19,37 +19,37 @@ export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
     this.salt = bcrypt.genSaltSync(8);
   }
 
-  async index(p_limit: number): Promise<any> {
+  async index(limit: number): Promise<any> {
     // TODO: no any
     const select = `SELECT * FROM :tableName LIMIT :limit;`
     const results = await this.dataBase.query(select,
       {
-        replacements: { tableName: this.tableName, limit: p_limit },
+        replacements: { tableName: this.tableName, limit: limit },
         type: QueryTypes.SELECT
       }
     );
     return results[0];
   }
 
-  async getList(p_columns?: string[], p_where?: string, p_joins?: DTableJoin[], p_limit?: number): Promise<any> {
+  async getList(columns?: string[], incomingWhere?: string, incomingJoins?: DTableJoin[], incomingLimit?: number): Promise<any> {
     let joins = '';
     let where = '';
     let limit = '';
     let selector: string = "*";
 
-    if (p_where) {
-      where = p_where;
+    if (where) {
+      where = incomingWhere || '';
     }
-    if (p_columns) {
-      selector = p_columns?.join(', ');
+    if (columns) {
+      selector = columns?.join(', ');
     }
-    if (p_joins) {
-      joins = p_joins.reduce((p_joinStatement: string, p_currentJoin: DTableJoin) => {
-        return `${p_joinStatement} JOIN ${p_currentJoin.tableName} ON ${p_currentJoin.on}`
-      }, joins);
+    if (joins) {
+      joins = incomingJoins?.reduce((joinStatement: string, currentJoin: DTableJoin) => {
+        return `${joinStatement} JOIN ${currentJoin.tableName} ON ${currentJoin.on}`
+      }, joins) || '';
     }
-    if (p_limit) {
-      limit = `LIMIT ${p_limit}`;
+    if (limit) {
+      limit = `LIMIT ${incomingLimit}`;
     }
 
     const select = `
@@ -74,25 +74,25 @@ export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
     return results[0];
   }
 
-  async getById(p_id: number): Promise<any> {
+  async getById(id: number): Promise<any> {
     // await this.dataBase.authenticate();
     // const select = `SELECT * FROM :tableName WHERE id = :id;`;
     // // TODO: no any
     // const record: any = await this.dataBase.query(select, {
     //   type: QueryTypes.SELECT,
-    //   replacements: { tableName: this.tableName, id: p_id }
+    //   replacements: { tableName: this.tableName, id: id }
     // });
 
     // return record[0][0];
   }
 
-  async disable(p_id: number, p_table: string): Promise<boolean> {
+  async disable(id: number, table: string): Promise<boolean> {
     const update = `UPDATE :table SET active = false WHERE id = :id;`
     // TODO: catch return false doesnt actually catch falty logic, 
     // just wrong syntax and maybe wrong typing. FIX
     await this.dataBase.query(update, {
       type: QueryTypes.UPDATE,
-      replacements: { table: p_table, id: p_id }
+      replacements: { table: table, id: id }
     }).catch(() => false);
 
     return true;
@@ -114,12 +114,12 @@ export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
   }
 
   // TODO: ask around for this, chatGPT failed
-  // validateHasAllValues<G extends Record<string, unknown>>(p_values: MyType<G>): boolean {
-  //     // this uses the DTO for p_values, hence me using a different generatePrimeSync (the service accepts the record type).
-  //     const requiredKeys = Object.keys(p_values) as (keyof G)[];
+  // validateHasAllValues<G extends Record<string, unknown>>(values: MyType<G>): boolean {
+  //     // this uses the DTO for values, hence me using a different generatePrimeSync (the service accepts the record type).
+  //     const requiredKeys = Object.keys(values) as (keyof G)[];
 
   //     for (const key of requiredKeys) {
-  //         if (!p_values.hasOwnProperty(key) || p_values[key] === null) {
+  //         if (!values.hasOwnProperty(key) || values[key] === null) {
   //             return false;
   //         }
   //     }
