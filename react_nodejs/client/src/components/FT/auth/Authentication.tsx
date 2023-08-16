@@ -11,6 +11,7 @@ import GlobalContext from "../../../context/global.context";
 import useCookie from "../../hooks/useCookie.hook";
 import BaseDropDown from "../../common/dropdowns/BaseDropdown";
 import { DDropdownOption } from "../../common/dropdowns/definitions";
+import { DFormField } from "../../common/definitions";
 
 const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -83,6 +84,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     {
       fieldName: 'email',
       label: 'Email',
+      value: 'Enter value',
       type: 'email',
       // class: ,
       required: true
@@ -90,109 +92,50 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     {
       fieldName: 'password',
       label: 'Password',
+      value: 'Enter value',
       type: 'password',
-      // class: ,
       required: true
     },
 
   ];
 
-  const registrationFormFields = [
+  const registrationFormFields: DFormField[] = [
     {
       fieldName: 'first_name',
       label: 'First Name',
       // class: ,
       required: true
     },
-
     {
       fieldName: 'last_name',
       label: 'Last Name',
       // class: ,
       required: true
     },
-
-
     {
       fieldName: 'email',
       label: 'Email',
       // class: ,
       required: true
     },
-
     {
       fieldName: 'password',
       label: 'Password',
       // class: ,
       required: true,
+      type: 'password'
     },
-
     {
       fieldName: 'age',
       label: 'Age',
       // class: ,
       required: true
     },
-
     {
       fieldName: 'occupation',
       label: 'Occupation',
       // class: ,
       required: true
-    },
-    {
-      fieldName: 'marital_status',
-      label: 'Marital Status',
-      id: 'marital-status-field',
-      subComponent: () => (
-        <div className="field-wrap base">
-          <BaseDropDown
-            onOptionSelect={(option: string) => console.log('OPTION: ', option)}
-            options={maritalStatusOptions}
-            id="marital-status-dd"
-          />
-        </div>
-      ),
-      required: true
-    },
-
-    {
-      fieldName: 'email',
-      label: 'Email',
-      // class: ,
-      required: true
-    },
-
-    {
-      fieldName: 'is_parent',
-      label: 'Are you a Parent?',
-      // class: ,
-      required: true,
-      subComponent: () => (
-        <div className="field-wrap base">
-          <BaseDropDown
-            onOptionSelect={(option: string) => console.log('OPTION: ', option)}
-            options={parentOptions}
-            id="parent_status-dd"
-          />
-        </div>
-      ),
-    },
-
-    {
-      fieldName: 'gender',
-      label: 'Gender',
-      // class: ,
-      required: true,
-      subComponent: () => (
-        <div className="field-wrap base">
-          <BaseDropDown
-            onOptionSelect={(option: string) => console.log('OPTION: ', option)}
-            options={genderOptions}
-            id="marital-status-dd"
-          />
-        </div>
-      ),
     },
     {
       fieldName: 'description',
@@ -288,7 +231,11 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   }
 
   return (
-    <Page title="Authentication Page" subTitle="Please verify yourself below" theme={theme} isLoading={loading}>
+    <Page
+      title="Authentication Page"
+      subTitle="Please verify yourself below"
+      theme={theme} isLoading={loading}
+    >
       <div>
         Already a member?
         <button onClick={() => changeMode('login')}>Login inst</button>
@@ -297,10 +244,63 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         initialValues={mode === 'login' ? loginInitialValues : registerInitialValues}
         onSubmit={submitForm}
       >
-        {({ handleSubmit, errors, isSubmitting }) => mode === 'login' ?
+        {({ handleSubmit, errors, isSubmitting, setFieldValue, values }) => mode === 'login' ?
           <BaseFormFields size="med" fields={loginFormFields} handleSubmit={handleSubmit} />
           :
-          <BaseFormFields size="med" fields={registrationFormFields} handleSubmit={handleSubmit} />
+          <BaseFormFields size="med" fields={[
+            ...registrationFormFields,
+            {
+              fieldName: 'gender',
+              label: 'Gender',
+              value: values.gender,
+              required: true,
+              subComponent: () => (
+                <div className="field-wrap base">
+                  <BaseDropDown
+                    onValueChange={(option: string | number | boolean) => setFieldValue('gender', option)}
+                    options={genderOptions}
+                    id="marital-status-dd"
+                    val={values.gender}
+                  />
+                </div>
+              ),
+            },
+            {
+              fieldName: 'marital_status',
+              label: 'Marital Status',
+              value: values.marital_status,
+              id: 'marital-status-field',
+              subComponent: () => (
+                <div className="field-wrap base">
+                  <BaseDropDown
+                    onValueChange={(option: string | number | boolean) => setFieldValue('marital_status', option)}
+                    options={maritalStatusOptions}
+                    id="marital-status-dd"
+                    val={values.marital_status}
+                  />
+                </div>
+              ),
+              required: true,
+
+            },
+            {
+              fieldName: 'is_parent',
+              label: 'Are you a Parent?',
+              value: values.is_parent,
+              // class: ,
+              required: true,
+              subComponent: () => (
+                <div className="field-wrap base">
+                  <BaseDropDown
+                    onValueChange={(option: string | number | boolean) => setFieldValue('is_parent', option)}
+                    options={parentOptions}
+                    id="parent_status-dd"
+                    val={values.is_parent}
+                  />
+                </div>
+              ),
+            },
+          ]} handleSubmit={handleSubmit} handleFieldValueChange={(field: string, value: string | number | boolean) => setFieldValue(field, value)} />
         }
       </Formik>
     </Page>

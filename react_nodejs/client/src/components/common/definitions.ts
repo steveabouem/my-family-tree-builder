@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { themeEnum } from "../../context/global.context";
 
 // +++++=> NAVIGATION <= +++++
@@ -37,9 +37,11 @@ export interface DFormField {
   label: string;
   class?: string;
   id?: string;
+  value?: string | number | boolean;
   required?: boolean;
   type?: string;
-  subComponent?: React.ElementType<any>;
+  subComponent?: any;
+  updateValue?: () => void;
 }
 
 export interface DBaseFormProps {
@@ -47,6 +49,7 @@ export interface DBaseFormProps {
   handleSubmit: () => void;
   size: string;
   initialValues?: { [key: string]: string | number };
+  handleFieldValueChange?: (field: string, value: string | number | boolean) => void;
   // TODO: No any, valiation types are not hard
   validations?: any;
 }

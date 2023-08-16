@@ -1,9 +1,10 @@
 export interface DBaseDropDownProps {
   options: DDropdownOption[];
-  onOptionSelect: (option: string) => void;
+  onValueChange: (option: string | boolean | number) => void;
   id?: string;
   additionalClass?: string;
   label?: string;
+  val: any;
 }
 
 export interface DDropdownOption {
