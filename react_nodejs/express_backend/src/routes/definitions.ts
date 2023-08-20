@@ -9,7 +9,7 @@ export interface DSessionUser {
   type: string;
   token: string | null;
   ip?: string;
-  ipIsValid?: boolean;
+  ipIsValid?: number;
   id?: number;
   email?: string;
   firstName?: string;

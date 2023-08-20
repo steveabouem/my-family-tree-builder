@@ -9,7 +9,7 @@ class FTSessionService<GSession> extends BaseService<GSession> {
     // this.token = token; //stringified version of data to be hashed (no need if we always use the current user)
   }
 
-  public setSessionUser = async (session: GSession): Promise<string | null> => {
+  public setSession = async (session: GSession): Promise<string | null> => {
     // receives safe user profile (no pwd or other sensitive info) and signs it, returns it as header to be set as a token in front
     let signedUser = null;
     console.log('SET SESSION USER: ', session);
@@ -24,7 +24,7 @@ class FTSessionService<GSession> extends BaseService<GSession> {
     return signedUser;
   }
 
-  public getUserSessionData = (token: string, keys?: string[]): JwtPayload | null => {
+  public getSessionData = (token: string, keys?: string[]): JwtPayload | null => {
     let sessionData: { [key: string]: unknown } = {};
 
     if (process.env.JWT_KEY) {
@@ -73,3 +73,22 @@ class FTSessionService<GSession> extends BaseService<GSession> {
   // }
 }
 export default FTSessionService;
+
+// INSERT INTO FTUsers(age, assigned_ips, description, first_name, gender, is_parent, email, last_name, imm_family, marital_status, occupation, partner, profile_url, password, related_to, createdAt)
+// VALUES(
+//   '23',
+//   '["::1"]',
+//   'fdasfsa',
+//   'abfa',
+//   'Male',
+//   'yes',
+//   'ab@de.com',
+//   'fdadsfa',
+//   2,
+//   'divorced',
+//   'fasfda',
+//   0,
+//   '',
+//   '$2a$08$YE3z9/3y5pgQXYxb1yl8xOeVzjOHHK/fcGqc36gnpxc1vh4RzURwC',
+//   '[1]',
+//   '2023-08-19 03:07:03');

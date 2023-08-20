@@ -68,12 +68,22 @@ const processRegister = async (req: Request): Promise<DSessionUser | null> => {
   const formattedValues = { ...req.body, assigned_ips: [ip], created_at: new Date };
   // TODO: use ftuser service to match spouse's first and last name and return id here.
   // in the front, it will be some sort of dd that will use the ServiceWorker, and add the id to the form values
-  const newUser = await ftUserService.create(formattedValues);// TODO: catch error
+  // This will go in the profile Selection, no need to crowd registration w it
+  const duplicate = await ftUserService.getByEmail(req.body.email);
+  if (duplicate) {
+    // TODO: throw error + logging
+    return null;
+  }
+
+  const newUser = await ftUserService.create(formattedValues).catch(e => console.log('Error creating U: ', e));// TODO: catch error logging
 
   if (newUser) {
-    const sessionToken = await ftSessionService.setSessionUser(newUser);
+    console.log('NEW USER AFTER REG: ', newUser);
+
+    const sessionToken = await ftSessionService.setSession(newUser);
     return { ...formattedValues, password: '', type: 'user', token: sessionToken };
   }
+
   return null;
 }
 
@@ -86,9 +96,9 @@ const processLogin = async (req: Request): Promise<DSessionUser | null> => {
 
   if (verifiedUser) {
     const ftSessionService = new FTSessionService();
-    const sessionToken = await ftSessionService.setSessionUser(verifiedUser);
+    const sessionToken = await ftSessionService.setSession(verifiedUser);
     console.log('GOT TOKEN ', sessionToken);
-    const currentSession = await ftSessionService.getUserSessionData(sessionToken || '', ['id', 'email', 'first_name', 'last_name', 'gender']);
+    const currentSession = await ftSessionService.getSessionData(sessionToken || '', ['id', 'email', 'first_name', 'last_name', 'gender']);
 
     return { ...currentSession, type: 'user', token: sessionToken };
   } else {

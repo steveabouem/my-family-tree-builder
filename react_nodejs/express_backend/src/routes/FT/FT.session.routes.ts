@@ -31,14 +31,14 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 // TODO: req, res typing
 router.post('/get-data', (req: Request, res: Response) => {
   const ftSessionService = new FTSessionService();
-  const sessionData = ftSessionService.getUserSessionData(req.body.data);
+  const sessionData = ftSessionService.getSessionData(req.body.data);
   res.json(sessionData);
 });
 
 router.post('/set-data', (req: Request, res: Response) => {
   // TODO: Kill session, send back the guest session default
   const ftSessionService = new FTSessionService();
-  const sessionData = ftSessionService.setSessionUser(req.body.data);
+  const sessionData = ftSessionService.setSession(req.body.data);
   res.json(sessionData);
 });
 

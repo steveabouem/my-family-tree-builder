@@ -16,7 +16,7 @@
 //   }
 //   FTTree.init({
 //     authorized_ips: DataTypes.JSON,
-//     public: DataTypes.BOOLEAN,
+//     public: DataTypes.INTEGER,
 //     name: DataTypes.STRING,
 //   }, {
 //     sequelize,
@@ -46,9 +46,9 @@ class FTTree extends Model<InferAttributes<FTTree>, InferCreationAttributes<FTTr
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
   declare authorized_ips: string;
-  declare public: boolean;
+  declare public: number;
   declare name: string;
-  declare active: boolean;
+  declare active: number;
   declare created_by: number; //FTUser
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
@@ -89,7 +89,7 @@ class FTTree extends Model<InferAttributes<FTTree>, InferCreationAttributes<FTTr
   get FTTreeAuthorized_ips(): NonAttribute<string> {
     return this.authorized_ips;
   };
-  get FTTreePublic(): NonAttribute<boolean> {
+  get FTTreePublic(): NonAttribute<number> {
     return this.public;
   };
   get FTTreeName(): NonAttribute<string> {
@@ -98,7 +98,7 @@ class FTTree extends Model<InferAttributes<FTTree>, InferCreationAttributes<FTTr
   get FTTreeCreated_by(): NonAttribute<number> { //FTUser
     return this.created_by;
   }
-  get FTTreeActive(): NonAttribute<boolean> {
+  get FTTreeActive(): NonAttribute<number> {
     return this.active;
   }
   get FTTreeCreatedAt(): NonAttribute<Date> {
@@ -154,14 +154,14 @@ FTTree.init(
       defaultValue: '[]'
     },
     public: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     updated_at: {
       type: DataTypes.DATE
     },
     active: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       allowNull: false
     }
   },

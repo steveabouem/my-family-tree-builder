@@ -7,8 +7,8 @@ export interface DUserDTO {
     marital_status: string;
     password: string;
     email: string;
-    is_parent: boolean;
-    has_ipa?: boolean;
+    is_parent: number;
+    has_ipa?: number;
     gender: number; // 1: M; 2:F
     assigned_ips: string[];
     profile_url: string;

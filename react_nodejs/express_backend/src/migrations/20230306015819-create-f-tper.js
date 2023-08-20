@@ -40,10 +40,10 @@ module.exports = {
       },
       is_parent: {
         allowNull: false,
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER
       },
       has_ipa: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER
       },
       gender: {
         allowNull: false,

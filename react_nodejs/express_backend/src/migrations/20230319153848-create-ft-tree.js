@@ -16,11 +16,11 @@ module.exports = {
         type: Sequelize.JSON
       },
       public: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       active: {
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.INTEGER,
         allowNull: false,
         defaultValue: true
       },

@@ -19,7 +19,7 @@ const BaseFormFields = ({
           </label>
           {field.subComponent ? (
             <Field 
-              id={field?.id || ''} name={field.fieldName} value={field.value}
+              id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
               required={!!field.required} component={field.subComponent}/>
           ) : (
             <Field 

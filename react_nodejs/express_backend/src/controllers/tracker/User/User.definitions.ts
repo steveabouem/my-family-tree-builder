@@ -6,5 +6,5 @@ export interface DUserRecord { //as defined in model
     tasks: string;
     roles: string;
     authorizedIps: string;
-    ip_authority: boolean;
+    ip_authority: number;
 }

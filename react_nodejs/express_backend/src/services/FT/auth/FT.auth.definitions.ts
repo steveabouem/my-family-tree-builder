@@ -11,7 +11,7 @@ export interface DFTRegistrationFields { //registration form fields
     occupation?: string;
     partner?: string;
     maritalStatus?: string;
-    isParent: boolean;
+    isParent: number; //1/0
     description: string;
     gender: string;
     profileUrl?: string;

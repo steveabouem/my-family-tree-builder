@@ -37,7 +37,7 @@ export interface DFormField {
   label: string;
   class?: string;
   id?: string;
-  value?: string | number | boolean;
+  value?: string | number;
   required?: boolean;
   type?: string;
   subComponent?: any;
@@ -49,7 +49,7 @@ export interface DBaseFormProps {
   handleSubmit: () => void;
   size: string;
   initialValues?: { [key: string]: string | number };
-  handleFieldValueChange?: (field: string, value: string | number | boolean) => void;
+  handleFieldValueChange?: (field: string, value: string | number) => void;
   // TODO: No any, valiation types are not hard
   validations?: any;
 }

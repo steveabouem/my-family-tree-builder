@@ -10,7 +10,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       active: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER
       },
       first_name: {
         allowNull: false,

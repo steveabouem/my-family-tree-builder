@@ -41,6 +41,12 @@ export class FTUserService extends BaseService<DFTUserRecord> {
     }
   }
 
+  public getByEmail = async (email: string): Promise<any> => {
+    const currentUser = await FTUser.findOne({ where: { email: email } });
+
+    return (currentUser);
+  }
+
   public getRelatedFamilies = async (id: number): Promise<any> => {
     const select = `
       SELECT id, name

@@ -9,7 +9,7 @@ const { JWT }: { [key: string]: string | undefined } = process.env;
 export const verifyJWTRequestToken = (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies.FT;
   const sessionService = new FTSessionService();
-  const session = sessionService.getUserSessionData(token);
+  const session = sessionService.getSessionData(token);
 
   return session;
 }

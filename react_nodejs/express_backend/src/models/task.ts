@@ -49,7 +49,7 @@ class Task extends Model<InferAttributes<Task>, InferCreationAttributes<Task>> {
     // by branding them using the `ForeignKey` type, `Project.init` will know it does not need to
     // display an error if created_by is missing.
     declare created_by: ForeignKey<User['id']>;
-    declare status: boolean;
+    declare status: number;
     declare updated_by: number;
     declare created_at: CreationOptional<Date>;
     declare updated_at: CreationOptional<Date>;
@@ -98,7 +98,7 @@ class Task extends Model<InferAttributes<Task>, InferCreationAttributes<Task>> {
     get taskUpdatedAt(): NonAttribute<Date> {
         return this.updated_at;
     }
-    get taskStatus(): NonAttribute<boolean> {
+    get taskStatus(): NonAttribute<number> {
         return this.status;
     }
 

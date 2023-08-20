@@ -25,8 +25,8 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
   declare description: string;
   declare email: string;
   declare gender: number; // 1:m 2:f"
-  declare has_ipa: CreationOptional<boolean>; //has authority to update authorized ips"
-  declare is_parent: boolean;
+  declare has_ipa: CreationOptional<number>; //has authority to update authorized ips"
+  declare is_parent: number; // 1/0
   declare imm_family: number; // FTFam: immediate family
   declare marital_status: string;
   declare profile_url: CreationOptional<string>;
@@ -86,11 +86,11 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
     return this.gender;
   }
 
-  get FTUserHas_ipa(): NonAttribute<boolean> {
+  get FTUserHas_ipa(): NonAttribute<number> {
     return this.has_ipa;
   }
 
-  get FTUserIsParent(): NonAttribute<boolean> {
+  get FTUserIsParent(): NonAttribute<number> {
     return this.is_parent;
   }
 
@@ -160,10 +160,10 @@ FTUser.init(
       allowNull: false,
     },
     has_ipa: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
     },
     is_parent: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     email: {

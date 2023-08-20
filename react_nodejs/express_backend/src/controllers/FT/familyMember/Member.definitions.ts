@@ -5,7 +5,7 @@ export interface DFamilyMemberRecord {
     occupation: string;
     partner: string; // FTUser
     marital_status: string;
-    is_parent: number; // dto boolean
+    is_parent: number;
     description: string;
     gender: string; // 1:m 2:f
     profile_url: string;

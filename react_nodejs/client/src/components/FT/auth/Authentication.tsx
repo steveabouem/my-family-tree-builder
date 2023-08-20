@@ -15,6 +15,10 @@ import { DFormField } from "../../common/definitions";
 
 const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
+  const [displayValues, setDisplayValues] = useState<{[key: string]: string | number}>({
+    is_parent: 'Yes' ,
+    gender: 'Male',
+  });
   const { updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
   const cookie = useCookie();
@@ -22,46 +26,46 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
 
   const maritalStatusOptions: DDropdownOption[] = [
     {
-      label: 'single',
-      value: 'single',
+      label: 'Single',
+      value: 'Single',
       id: 'single-option',
     },
     {
-      label: 'married',
-      value: 'married',
+      label: 'Married',
+      value: 'Married',
       id: 'married-option',
     },
     {
-      label: 'divorced',
-      value: 'divorced',
+      label: 'Divorced',
+      value: 'Divorced',
       id: 'divorced-option',
     },
     {
-      label: 'separated',
-      value: 'separated',
+      label: 'Separated',
+      value: 'Separated',
       id: 'separated-option',
     },
     {
-      label: 'widowed',
-      value: 'widowed',
+      label: 'Widowed',
+      value: 'Widowed',
       id: 'widowed-option',
     },
     {
-      label: 'not telling',
-      value: 'not telling',
+      label: 'Not telling',
+      value: 'Not telling',
       id: 'not-telling-option',
     },
   ];
 
   const parentOptions: DDropdownOption[] = [
     {
-      label: 'yes',
-      value: true,
+      label: 'Yes',
+      value: 1,
       id: 'is-parent-option',
     },
     {
-      label: 'no',
-      value: false,
+      label: 'No',
+      value: 0,
       id: 'not-parent-option',
     },
   ];
@@ -154,7 +158,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     marital_status: '',
     password: '',
     email: '',
-    is_parent: false,
+    is_parent: 0,
     gender: 1,
     profile_url: '',
     description: '',
@@ -237,8 +241,11 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       theme={theme} isLoading={loading}
     >
       <div>
-        Already a member?
-        <button onClick={() => changeMode('login')}>Login inst</button>
+        {mode === 'register' ? (
+            <button onClick={() => changeMode('login')}>Login</button>
+          ) : (
+            <button onClick={() => changeMode('register')}>Register</button>
+        )}
       </div>
       <Formik
         initialValues={mode === 'login' ? loginInitialValues : registerInitialValues}
@@ -257,10 +264,14 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
               subComponent: () => (
                 <div className="field-wrap base">
                   <BaseDropDown
-                    onValueChange={(option: string | number | boolean) => setFieldValue('gender', option)}
+                    onValueChange={(option: DDropdownOption) => {
+                      setFieldValue('gender', option.value);
+                      setDisplayValues((prev) => ({...prev, gender: option.label}))
+                    }}
                     options={genderOptions}
                     id="marital-status-dd"
                     val={values.gender}
+                    displayVal={displayValues.gender}
                   />
                 </div>
               ),
@@ -273,10 +284,11 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
               subComponent: () => (
                 <div className="field-wrap base">
                   <BaseDropDown
-                    onValueChange={(option: string | number | boolean) => setFieldValue('marital_status', option)}
+                    onValueChange={(option: DDropdownOption) => setFieldValue('marital_status', option.value)}
                     options={maritalStatusOptions}
                     id="marital-status-dd"
                     val={values.marital_status}
+                    displayVal={values.marital_status}
                   />
                 </div>
               ),
@@ -292,15 +304,21 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
               subComponent: () => (
                 <div className="field-wrap base">
                   <BaseDropDown
-                    onValueChange={(option: string | number | boolean) => setFieldValue('is_parent', option)}
+                    onValueChange={(option: DDropdownOption) => {
+                      setFieldValue('is_parent', option.value);
+                      setDisplayValues((prev) => ({...prev, is_parent: option.label}))
+                    }}
                     options={parentOptions}
                     id="parent_status-dd"
                     val={values.is_parent}
+                    displayVal={displayValues.is_parent}
                   />
                 </div>
               ),
             },
-          ]} handleSubmit={handleSubmit} handleFieldValueChange={(field: string, value: string | number | boolean) => setFieldValue(field, value)} />
+          ]} 
+          handleSubmit={handleSubmit}
+          handleFieldValueChange={(field: string, value: string | number) => setFieldValue(field, value)} />
         }
       </Formik>
     </Page>

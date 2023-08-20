@@ -12,7 +12,7 @@ export class FTTreeService extends BaseService<DFamilyTreeDTO> {
   create = async (values: DFamilyTreeDTO): Promise<boolean> => {
     // TODO: creation date has a default value in models. I might possibly skip this formatting,
     //  and adjust the DTO to make the prop optional. leaving it for now as it makes validation simpler
-    const formattedValues = { ...values, created_at: new Date, active: true };
+    const formattedValues = { ...values, created_at: new Date, active: 1 };
     const valid = this.validateFTTreeFields(formattedValues);
 
     if (valid) {

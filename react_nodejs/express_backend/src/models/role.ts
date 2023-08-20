@@ -15,7 +15,7 @@
 //     }
 //   }
 //   Role.init({
-//     assigned: DataTypes.BOOLEAN,
+//     assigned: DataTypes.INTEGER,
 //     code: DataTypes.STRING, // 3: admin (tracker/FT), 2:user (tracker)
 //   }, {
 //     sequelize,
@@ -38,7 +38,7 @@ class Role extends Model<InferAttributes<Role>, InferCreationAttributes<Role>> {
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare assigned: boolean;
+  declare assigned: number;
   declare code: string;
   /**
    * End
@@ -68,7 +68,7 @@ class Role extends Model<InferAttributes<Role>, InferCreationAttributes<Role>> {
   get roleCode(): NonAttribute<string> {
     return this.code;
   }
-  get roleAssigned(): NonAttribute<boolean> {
+  get roleAssigned(): NonAttribute<number> {
     return this.assigned;
   }
 
@@ -89,7 +89,7 @@ Role.init(
       primaryKey: true
     },
     assigned: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.INTEGER,
       allowNull: false
     },
     code: {

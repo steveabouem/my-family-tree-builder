@@ -1,5 +1,5 @@
 export interface DFamilyTreeRecord {
-    public: boolean;
+    public: number;
     name: string;
     authorizedIPs: string[];
 

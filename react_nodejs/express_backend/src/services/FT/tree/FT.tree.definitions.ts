@@ -1,8 +1,8 @@
 export interface DFamilyTreeDTO {
     authorized_ips: string;
-    public: boolean;
+    public: number;
     name: string;
-    active: boolean;
+    active: number;
     families: string;
     created_by: number; //FTUser
     created_at: Date;
