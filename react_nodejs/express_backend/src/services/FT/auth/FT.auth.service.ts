@@ -38,7 +38,9 @@ class FTAuthService extends BaseService<any> { // TODO: no any
         }
 
         const passwordValid = bcrypt.compareSync(values.password, currentUser.password);
+
         if (passwordValid) {
+            console.log('User is verified', currentUser);
 
             return { ...currentUser.dataValues, password: '' };
         }

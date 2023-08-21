@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
 import NotFound from './components/common/404NotFound';
 import FTAppContainer from './components/FT/common/FT.AppContainer';
 import {
@@ -8,6 +7,7 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+import FTUserProfilePage from './components/FT/user/FT.Profile';
 
 // @ts-ignore
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -18,6 +18,7 @@ root.render(
     <Routes>
       <Route path="/" element={<div>Tracker!</div>} />
       <Route path="/ft/" element={<FTAppContainer />} />
+      <Route path="/ft/users/:id" element={<FTUserProfilePage />} />
     </Routes>
       
     </BrowserRouter>

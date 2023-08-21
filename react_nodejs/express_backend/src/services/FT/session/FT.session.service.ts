@@ -12,12 +12,10 @@ class FTSessionService<GSession> extends BaseService<GSession> {
   public setSession = async (session: GSession): Promise<string | null> => {
     // receives safe user profile (no pwd or other sensitive info) and signs it, returns it as header to be set as a token in front
     let signedUser = null;
-    console.log('SET SESSION USER: ', session);
-
     if (process.env.JWT_KEY) {
       signedUser = jwt.sign({ session: JSON.stringify(session) }, process.env.JWT_KEY, { expiresIn: '1800' });
       // await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
-      console.log('PASS DETECTED: ', signedUser);
+      console.log('PASS DETECTED: ');
       return signedUser;
     }
 
@@ -26,18 +24,21 @@ class FTSessionService<GSession> extends BaseService<GSession> {
 
   public getSessionData = (token: string, keys?: string[]): JwtPayload | null => {
     let sessionData: { [key: string]: unknown } = {};
-
     if (process.env.JWT_KEY) {
       try {
-        const sessionJWTObject = jwt.verify(token, process.env.JWT_KEY);
-        if (typeof sessionJWTObject === 'object' && sessionJWTObject !== null) {
-          if (keys) { // NOTE: If no key is provided, return all session (most likely used in the back)
+        const signedSessionJWTObject = jwt.verify(token, process.env.JWT_KEY);
+        if (typeof signedSessionJWTObject === 'object' && signedSessionJWTObject !== null) {
+          if (keys) { // NOTE: If no key is provided, return all session (will most likely be used in the back)
+            // @ts-ignore
+            const sessionValues = JSON.parse(signedSessionJWTObject.session);
             for (const sessionKey of keys) {
-              sessionData[sessionKey] = sessionJWTObject[sessionKey];
+              sessionData[sessionKey] = sessionValues[sessionKey];
             }
+            console.log('Resulting sess data ', sessionData);
+
             return sessionData; // NOTE: I will have to ignore the jwt keys from the payload 
           } else {
-            return sessionJWTObject;
+            return signedSessionJWTObject;
           }
         }
 
@@ -73,22 +74,3 @@ class FTSessionService<GSession> extends BaseService<GSession> {
   // }
 }
 export default FTSessionService;
-
-// INSERT INTO FTUsers(age, assigned_ips, description, first_name, gender, is_parent, email, last_name, imm_family, marital_status, occupation, partner, profile_url, password, related_to, createdAt)
-// VALUES(
-//   '23',
-//   '["::1"]',
-//   'fdasfsa',
-//   'abfa',
-//   'Male',
-//   'yes',
-//   'ab@de.com',
-//   'fdadsfa',
-//   2,
-//   'divorced',
-//   'fasfda',
-//   0,
-//   '',
-//   '$2a$08$YE3z9/3y5pgQXYxb1yl8xOeVzjOHHK/fcGqc36gnpxc1vh4RzURwC',
-//   '[1]',
-//   '2023-08-19 03:07:03');

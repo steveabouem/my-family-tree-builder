@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   console.log('CURRENT SESSION TOKEN sess: ', req.cookies?.FT);
 
   const ftSessionService = new FTSessionService();
-  const currentUserSession = ftSessionService.getUserSessionData(req.cookies.FT);
+  const currentUserSession = ftSessionService.getSessionData(req.cookies.FT);
   console.log({ currentUserSession });
 
   next();

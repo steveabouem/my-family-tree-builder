@@ -15,8 +15,8 @@ import { DFormField } from "../../common/definitions";
 
 const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [displayValues, setDisplayValues] = useState<{[key: string]: string | number}>({
-    is_parent: 'Yes' ,
+  const [displayValues, setDisplayValues] = useState<{ [key: string]: string | number }>({
+    is_parent: 'Yes',
     gender: 'Male',
   });
   const { updateUser } = useContext(FamilyTreeContext);
@@ -88,7 +88,6 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     {
       fieldName: 'email',
       label: 'Email',
-      value: 'Enter value',
       type: 'email',
       // class: ,
       required: true
@@ -96,7 +95,6 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     {
       fieldName: 'password',
       label: 'Password',
-      value: 'Enter value',
       type: 'password',
       required: true
     },
@@ -184,10 +182,10 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const submitForm = async (values: Partial<DUserDTO>, { resetForm }: FormikHelpers<Partial<DUserDTO>>) => {
     if (mode === 'login') {
       processLogin(values);
-      // resetForm();
+      resetForm();
     } else {
       processRegister(values)
-      // resetForm();
+      resetForm();
     }
   };
 
@@ -203,11 +201,11 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     console.log({ logedInUser });
 
     if (logedInUser.data.session) {
-      console.log('Succesful login');
+      console.log('Succesful login', logedInUser);
       // TODO: redux/session/ip/routing
       changeMode(undefined);
-      updateUser(logedInUser.data.dataValues);
-      navigate(`/ft/users/${logedInUser.data.dataValues.id}`);
+      updateUser(logedInUser.data.session);
+      navigate(`/ft/users/${logedInUser.data.session.id}`);
     } else {
       console.log('Error loging in'); // TODO logging
     }
@@ -242,9 +240,9 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     >
       <div>
         {mode === 'register' ? (
-            <button onClick={() => changeMode('login')}>Login</button>
-          ) : (
-            <button onClick={() => changeMode('register')}>Register</button>
+          <button onClick={() => changeMode('login')}>Login</button>
+        ) : (
+          <button onClick={() => changeMode('register')}>Register</button>
         )}
       </div>
       <Formik
@@ -254,71 +252,72 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         {({ handleSubmit, errors, isSubmitting, setFieldValue, values }) => mode === 'login' ?
           <BaseFormFields size="med" fields={loginFormFields} handleSubmit={handleSubmit} />
           :
-          <BaseFormFields size="med" fields={[
-            ...registrationFormFields,
-            {
-              fieldName: 'gender',
-              label: 'Gender',
-              value: values.gender,
-              required: true,
-              subComponent: () => (
-                <div className="field-wrap base">
-                  <BaseDropDown
-                    onValueChange={(option: DDropdownOption) => {
-                      setFieldValue('gender', option.value);
-                      setDisplayValues((prev) => ({...prev, gender: option.label}))
-                    }}
-                    options={genderOptions}
-                    id="marital-status-dd"
-                    val={values.gender}
-                    displayVal={displayValues.gender}
-                  />
-                </div>
-              ),
-            },
-            {
-              fieldName: 'marital_status',
-              label: 'Marital Status',
-              value: values.marital_status,
-              id: 'marital-status-field',
-              subComponent: () => (
-                <div className="field-wrap base">
-                  <BaseDropDown
-                    onValueChange={(option: DDropdownOption) => setFieldValue('marital_status', option.value)}
-                    options={maritalStatusOptions}
-                    id="marital-status-dd"
-                    val={values.marital_status}
-                    displayVal={values.marital_status}
-                  />
-                </div>
-              ),
-              required: true,
+          <BaseFormFields size="med"
+            fields={[
+              ...registrationFormFields,
+              {
+                fieldName: 'gender',
+                label: 'Gender',
+                value: values.gender,
+                required: true,
+                subComponent: () => (
+                  <div className="field-wrap base">
+                    <BaseDropDown
+                      onValueChange={(option: DDropdownOption) => {
+                        setFieldValue('gender', option.value);
+                        setDisplayValues((prev) => ({ ...prev, gender: option.label }))
+                      }}
+                      options={genderOptions}
+                      id="marital-status-dd"
+                      val={values.gender}
+                      displayVal={displayValues.gender}
+                    />
+                  </div>
+                ),
+              },
+              {
+                fieldName: 'marital_status',
+                label: 'Marital Status',
+                value: values.marital_status,
+                id: 'marital-status-field',
+                subComponent: () => (
+                  <div className="field-wrap base">
+                    <BaseDropDown
+                      onValueChange={(option: DDropdownOption) => setFieldValue('marital_status', option.value)}
+                      options={maritalStatusOptions}
+                      id="marital-status-dd"
+                      val={values.marital_status}
+                      displayVal={values.marital_status}
+                    />
+                  </div>
+                ),
+                required: true,
 
-            },
-            {
-              fieldName: 'is_parent',
-              label: 'Are you a Parent?',
-              value: values.is_parent,
-              // class: ,
-              required: true,
-              subComponent: () => (
-                <div className="field-wrap base">
-                  <BaseDropDown
-                    onValueChange={(option: DDropdownOption) => {
-                      setFieldValue('is_parent', option.value);
-                      setDisplayValues((prev) => ({...prev, is_parent: option.label}))
-                    }}
-                    options={parentOptions}
-                    id="parent_status-dd"
-                    val={values.is_parent}
-                    displayVal={displayValues.is_parent}
-                  />
-                </div>
-              ),
-            },
-          ]} 
-          handleSubmit={handleSubmit}
-          handleFieldValueChange={(field: string, value: string | number) => setFieldValue(field, value)} />
+              },
+              {
+                fieldName: 'is_parent',
+                label: 'Are you a Parent?',
+                value: values.is_parent,
+                // class: ,
+                required: true,
+                subComponent: () => (
+                  <div className="field-wrap base">
+                    <BaseDropDown
+                      onValueChange={(option: DDropdownOption) => {
+                        setFieldValue('is_parent', option.value);
+                        setDisplayValues((prev) => ({ ...prev, is_parent: option.label }))
+                      }}
+                      options={parentOptions}
+                      id="parent_status-dd"
+                      val={values.is_parent}
+                      displayVal={displayValues.is_parent}
+                    />
+                  </div>
+                ),
+              },
+            ]}
+            handleSubmit={handleSubmit}
+            handleFieldValueChange={(field: string, value: string | number) => setFieldValue(field, value)} />
         }
       </Formik>
     </Page>

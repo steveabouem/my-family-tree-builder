@@ -1,39 +1,28 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DUserDTO } from "../../../services/FT/auth/auth.definitions";
 import FTUserService from "../../../services/FT/user/user.service";
 import NotFound from '../../common/404NotFound';
 import React from "react";
-import useUrlId from "../../hooks/useUrl.hook";
 import FamilyService from "../../../services/FT/fam/family.service";
 import FamilyCard from "../family/FamilyCard";
 import { DFTFamilyDTO } from "../family/definitions";
 import { useCookies } from "react-cookie";
+import Page from "../../common/Page";
+import GlobalContext from "../../../context/global.context";
+import { useNavigate } from "react-router";
 
 const FTUserProfilePage = (): JSX.Element => {
   const [userData, setUserData] = useState<DUserDTO | undefined>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [userFamilies, setUserFamilies] = useState([]);
-  const [cookies, setCookie] = useCookies(['FT'])
-
-  const path = useUrlId('/ft/user/');
+  const { theme, session } = useContext(GlobalContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO: get all this data from redux/context to avoid url injection (might not be necessary given the ip restrictions)
-    if (path) {
-      console.log(cookies);
-      
-      // const populateUser = async () => {
-      //   const ftUserService = new FTUserService('users');
-      //   // TODO: no any
-      //   const { data }: any = await ftUserService.getById(parseInt(path));
-      //   return (data);
-      // }
-      // populateUser()
-      //   .then((user: any) => {
-      //     console.log({ user });
-      //     setUserData(user);
-      //   });
-    }
-  }, []);
+    console.log(document.cookie);
+    if (!document.cookie)
+    navigate(`/ft`);
+  });
 
   useEffect(() => {
     const getUserFamilies = async (): Promise<any> => {
@@ -43,7 +32,7 @@ const FTUserProfilePage = (): JSX.Element => {
       return families
     }
 
-    if (userData && path) {
+    if (userData) {
       getUserFamilies()
         .then(({data}) => {
           console.log(data);
@@ -51,10 +40,10 @@ const FTUserProfilePage = (): JSX.Element => {
           setUserFamilies(data);
         })
     }
-  }, [userData, path]);
+  }, [userData]);
 
   return userData ? (
-    <div>
+    <Page title="My profile" isLoading={loading} theme={theme} subTitle="">
       Welcome {userData.first_name}
       <div>
         <h2>Your Profile:</h2>
@@ -74,7 +63,7 @@ const FTUserProfilePage = (): JSX.Element => {
 
         </div>
       </div>
-    </div>
+    </Page>
   ) : (
     <NotFound title="Profile Not Found!" />
   );
