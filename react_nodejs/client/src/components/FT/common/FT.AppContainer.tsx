@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { DAppProps } from "./common.definitions"
 import FTLandingPage from "../FT.Landing";
-import { Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { DUserDTO } from "../../../services/FT/auth/auth.definitions";
 import FTAuthentication from "../auth/Authentication";
 import { DeepPartial } from "redux";
@@ -43,8 +43,17 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
   }
 
   const updateUser = (user?: Partial<DUserDTO>) => {
-    if (user)
-      setCurrentUser(user);
+    // console.log('REceiving user: ', user);
+
+    if (user) {
+      // @ts-ignore
+      setCurrentUser(prev => {
+        if (prev !== user) {
+
+          return {...user};
+        }
+      });
+    }
   }
 
   const switchTheme = (selected: themeEnum) => {
@@ -58,24 +67,24 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
         theme: currentTheme,
         session: sessionData
       }}>
-      <>
+      <BrowserRouter>
         <TopNav links={appLinks} position="" handleChangeTheme={switchTheme} />
         <div id="FT" className={currentTheme}>
           <FamilyTreeContext.Provider
             value={
               {
                 currentUser: currentUser, family: {}, tree: {},
-                error: throwError, updateUser
+                error: throwError, updateUser: updateUser
               }
             }>
             <div className="scroll">
               <Routes>
-                <Route path="/home" element={<FTLandingPage />} />
-                <Route path="/users/:id" element={<FTUserProfilePage />} />
+                <Route path="ft/users/:id" element={<FTUserProfilePage updateUser={updateUser}/>} />
+                <Route path="ft/home" element={<FTLandingPage />} />
                 <Route path={`${FTLinkEnums.family}`} element={<FTFamily />} />
-                <Route path="/" element={
+                <Route path="/ft" element={
                   <FTAuthentication
-                    changeMode={(mode: DAuthMode | undefined) => updateFormMode(mode)}
+                    changeMode={updateFormMode}
                     mode={mode}
                   />
                 }
@@ -84,7 +93,7 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
             </div>
           </FamilyTreeContext.Provider>
         </div>
-      </>
+      </BrowserRouter>
       <Footer />
     </GlobalContext.Provider>
   );

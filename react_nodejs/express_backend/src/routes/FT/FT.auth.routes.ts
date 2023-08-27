@@ -30,7 +30,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 router.post('/register', (req: Request, res: Response) => {
   processRegister(req)
     .then((sessionData: DSessionUser | null) => {
-      res.set('Set-Cookie', `session=${sessionData?.token}`);
+      res.set('Set-Cookie', `${sessionData?.token}`);
       res.set('httpOnly', 'true');
       res.status(200);
       res.json({ session: sessionData });
@@ -46,7 +46,7 @@ router.post('/register', (req: Request, res: Response) => {
 router.post('/login', (req: Request, res: Response) => {
   processLogin(req)
     .then((sessionData: DSessionUser | null) => {
-      res.set('Set-Cookie', `session=${sessionData?.token}`);
+      res.set('Set-Cookie', `${sessionData?.token}`);
       res.set('httpOnly', 'true');
       res.status(200);
       res.json({ session: sessionData });

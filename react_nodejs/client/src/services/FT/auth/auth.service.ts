@@ -5,19 +5,19 @@ class AuthService extends BaseService {
   // TODO: axios response typing: Promise<Partial<DUserDTO | null>>
   public submitLoginForm = async (values: Partial<DUserDTO>): Promise<any> => {
     console.log('Submitted values', values);
-    
-//     const formattedValues = {
-//       ...values, 
-//       age: Number(values.age),
-//       is_parent: boolean;
-//       gender: number; // 1: M; 2:F
-//       assigned_ips: string[];
-//       profile_url: string;
-//       description: string;
-//       imm_family: number;
-//       related_to: number[];
-//       sessionToken?: string;
-// }
+
+    //     const formattedValues = {
+    //       ...values, 
+    //       age: Number(values.age),
+    //       is_parent: boolean;
+    //       gender: number; // 1: M; 2:F
+    //       assigned_ips: string[];
+    //       profile_url: string;
+    //       description: string;
+    //       imm_family: number;
+    //       related_to: number[];
+    //       sessionToken?: string;
+    // }
     const currentUser = await this.request.post(`${this.APIBaseUrl}/auth/login`, values);
     return currentUser;
   };

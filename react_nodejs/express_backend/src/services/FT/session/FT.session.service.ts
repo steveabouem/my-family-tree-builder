@@ -13,7 +13,7 @@ class FTSessionService<GSession> extends BaseService<GSession> {
     // receives safe user profile (no pwd or other sensitive info) and signs it, returns it as header to be set as a token in front
     let signedUser = null;
     if (process.env.JWT_KEY) {
-      signedUser = jwt.sign({ session: JSON.stringify(session) }, process.env.JWT_KEY, { expiresIn: '1800' });
+      signedUser = jwt.sign({ session: JSON.stringify(session) }, process.env.JWT_KEY);
       // await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
       console.log('PASS DETECTED: ');
       return signedUser;
@@ -26,8 +26,14 @@ class FTSessionService<GSession> extends BaseService<GSession> {
     let sessionData: { [key: string]: unknown } = {};
     if (process.env.JWT_KEY) {
       try {
-        const signedSessionJWTObject = jwt.verify(token, process.env.JWT_KEY);
+        const signedSessionJWT = jwt.verify(token, process.env.JWT_KEY);
+        // console.log('Session JSON: ', signedSessionJWT);
+        // @ts-ignore
+        const signedSessionJWTObject = JSON.parse(signedSessionJWT.session);
+        // console.log('VaLUE OF OBJ: ', signedSessionJWTObject);
+
         if (typeof signedSessionJWTObject === 'object' && signedSessionJWTObject !== null) {
+          // console.log('SIGNED SESSION OBJECT: ', signedSessionJWTObject);
           if (keys) { // NOTE: If no key is provided, return all session (will most likely be used in the back)
             // @ts-ignore
             const sessionValues = JSON.parse(signedSessionJWTObject.session);

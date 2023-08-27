@@ -223,7 +223,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     if (registeredUser) {
       // TODO: redux/session/ip/routing
       // console.log({registeredUser});
-      document.cookie = `FT=${registeredUser.data.session.token}`;
+      document.cookie = registeredUser.data.session.token;
       changeMode(undefined);
     } else {
       // TODO: on screen notification

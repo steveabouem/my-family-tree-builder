@@ -1,50 +1,72 @@
 import { useContext, useEffect, useState } from "react";
 import { DUserDTO } from "../../../services/FT/auth/auth.definitions";
 import FTUserService from "../../../services/FT/user/user.service";
+import FTSessionService from "../../../services/FT/session/session.service";
 import NotFound from '../../common/404NotFound';
 import React from "react";
 import FamilyService from "../../../services/FT/fam/family.service";
 import FamilyCard from "../family/FamilyCard";
 import { DFTFamilyDTO } from "../family/definitions";
-import { useCookies } from "react-cookie";
 import Page from "../../common/Page";
 import GlobalContext from "../../../context/global.context";
 import { useNavigate } from "react-router";
+import FamilyTreeContext from "../../../context/FT/familyTree.context";
+import { DProfileProps } from "./definitions";
 
-const FTUserProfilePage = (): JSX.Element => {
-  const [userData, setUserData] = useState<DUserDTO | undefined>();
+const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userFamilies, setUserFamilies] = useState([]);
-  const { theme, session } = useContext(GlobalContext);
+  const { theme } = useContext(GlobalContext);
+  const { currentUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(document.cookie);
-    if (!document.cookie)
-    navigate(`/ft`);
+    // console.log(document.cookie);
+    if (!document.cookie) {
+      navigate(`/ft`);
+    }
+
   });
+
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
 
   useEffect(() => {
     const getUserFamilies = async (): Promise<any> => {
       const ftFamilyService = new FamilyService();
-      const families = await ftFamilyService.getFamilyBullkData(`${userData?.related_to?.join(',') || ''} `);
+      const families = await ftFamilyService.getFamilyBullkData(`${currentUser?.related_to?.join(',') || ''} `);
 
       return families
     }
 
-    if (userData) {
+    if (currentUser) {
       getUserFamilies()
-        .then(({data}) => {
+        .then(({ data }) => {
           console.log(data);
 
           setUserFamilies(data);
         })
     }
-  }, [userData]);
+  }, [currentUser]);
 
-  return userData ? (
+  const getCurrentUser = () => {
+    const sessionService = new FTSessionService();
+    sessionService.getCurrentUser(document.cookie)
+      .then(({ data }) => {
+        if (data) {
+          updateUser(data);
+          setLoading(false);
+        }
+      })
+      .catch(e => {
+        console.log('Error getting user: ', e);
+      });
+  }
+
+  return currentUser ? (
     <Page title="My profile" isLoading={loading} theme={theme} subTitle="">
-      Welcome {userData.first_name}
+      Welcome {currentUser.first_name}
       <div>
         <h2>Your Profile:</h2>
         <div>
