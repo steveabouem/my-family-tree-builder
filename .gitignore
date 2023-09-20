@@ -52,3 +52,14 @@ react_nodejs/express_backend/dist/services/FT/family/FT.family.service.js
 react_nodejs/express_backend/dist/services/FT/tree/FT.tree.definitions.js
 react_nodejs/express_backend/dist/services/FT/tree/FT.tree.service.js
 react_nodejs/express_backend/dist/utils/FT/date.utils.js
+react_nodejs/express_backend/dist/middleware/session/session.middleware.js
+react_nodejs/express_backend/dist/src/models/FT.tree..js
+react_nodejs/express_backend/dist/src/models/FT.user.js
+react_nodejs/express_backend/dist/src/models/role.js
+react_nodejs/express_backend/dist/src/routes/FT/FT.auth.routes.js
+react_nodejs/express_backend/dist/src/routes/FT/FT.session.routes.js
+react_nodejs/express_backend/dist/src/services/FT/auth/FT.auth.service.js
+react_nodejs/express_backend/dist/src/services/FT/session/FT.session.service.js
+react_nodejs/express_backend/dist/src/services/FT/tree/FT.tree.service.js
+react_nodejs/express_backend/dist/src/services/FT/user/FT.user.service.js
+react_nodejs/express_backend/src/services/FT/user/FT.user.service.ts

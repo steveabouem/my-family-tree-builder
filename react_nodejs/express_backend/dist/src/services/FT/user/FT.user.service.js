@@ -32,6 +32,7 @@ class FTUserService extends base_service_1.BaseService {
                     console.log(e); //TODO: LOGGING
                     return null;
                 });
+                yield (newUser === null || newUser === void 0 ? void 0 : newUser.save());
                 return Object.assign(Object.assign({}, newUser === null || newUser === void 0 ? void 0 : newUser.dataValues), { password: undefined });
             }
             return null;
@@ -43,6 +44,10 @@ class FTUserService extends base_service_1.BaseService {
                 const relatedFamilies = yield this.getRelatedFamilies(id);
                 return (Object.assign(Object.assign({}, currentUser.dataValues), { relatedTo: [...relatedFamilies] }));
             }
+        });
+        this.getByEmail = (email) => __awaiter(this, void 0, void 0, function* () {
+            const currentUser = yield FT_user_1.default.findOne({ where: { email: email } });
+            return (currentUser);
         });
         this.getRelatedFamilies = (id) => __awaiter(this, void 0, void 0, function* () {
             const select = `

@@ -8,7 +8,7 @@ const Page = ({ title, subTitle, children, theme, isLoading }: DPageProps): JSX.
       <h1 className="secondary">{title}</h1>
       {subTitle ? <h2 className="secondary">{subTitle}</h2> : ''}
       {isLoading ? <FTSpinner /> : null}
-      {children}
+      {children || null}
     </div>
   );
 }

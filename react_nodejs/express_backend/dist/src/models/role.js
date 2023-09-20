@@ -16,7 +16,7 @@
 //     }
 //   }
 //   Role.init({
-//     assigned: DataTypes.BOOLEAN,
+//     assigned: DataTypes.INTEGER,
 //     code: DataTypes.STRING, // 3: admin (tracker/FT), 2:user (tracker)
 //   }, {
 //     sequelize,
@@ -66,7 +66,7 @@ Role.init({
         primaryKey: true
     },
     assigned: {
-        type: sequelize_1.DataTypes.BOOLEAN,
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
     code: {

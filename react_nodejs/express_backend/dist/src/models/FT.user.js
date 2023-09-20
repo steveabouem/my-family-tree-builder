@@ -104,10 +104,10 @@ FTUser.init({
         allowNull: false,
     },
     has_ipa: {
-        type: sequelize_1.DataTypes.BOOLEAN,
+        type: sequelize_1.DataTypes.INTEGER,
     },
     is_parent: {
-        type: sequelize_1.DataTypes.BOOLEAN,
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false,
     },
     email: {

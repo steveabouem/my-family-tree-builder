@@ -4,7 +4,7 @@ import { DUserDTO } from "./auth.definitions";
 class AuthService extends BaseService {
   // TODO: axios response typing: Promise<Partial<DUserDTO | null>>
   public submitLoginForm = async (values: Partial<DUserDTO>): Promise<any> => {
-    console.log('Submitted values', values);
+    // console.log('Submitted values', values);
 
     //     const formattedValues = {
     //       ...values, 
@@ -22,7 +22,7 @@ class AuthService extends BaseService {
     return currentUser;
   };
 
-  // TODO: create the front end common definition for a session and apply it here
+  // TODO: create the front end common definition for a session and apply it here AND NO ANY
   public submitRegistrationForm = async (values: Partial<DUserDTO>): Promise<any> => {
     const currentSession = await this.request.post(`${this.APIBaseUrl}/auth/register`, values);
 

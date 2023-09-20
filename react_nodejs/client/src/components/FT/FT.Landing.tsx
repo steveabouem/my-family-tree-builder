@@ -1,18 +1,11 @@
-import React, { useEffect } from "react"
-import FTAppContainer from "./common/FT.AppContainer";
-import { applicationEnum } from "../../context/global.context";
+import React, { useContext } from "react";
+import Page from "../common/Page";
+import GlobalContext from "../../context/global.context";
 
 const FTLandingPage = (): JSX.Element => {
-  useEffect(() => {
-    console.log('READY');
-
-  }, []);
-
-  return  (
-    <FTAppContainer app={applicationEnum.FT}>
-     <h1>FT Landing</h1>
-     
-    </FTAppContainer>
+  const {theme} = useContext(GlobalContext);
+  return (
+    <Page title="Welcome to  your Tree Manager" subTitle="Use nav bar for now" isLoading={false} theme={theme} />
   );
 }
 

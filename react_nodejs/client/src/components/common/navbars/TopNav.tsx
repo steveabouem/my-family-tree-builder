@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DTopNavProps } from "../definitions";
 import logo from "../../../assets/logo.jpg";
 import { LiaUserSecretSolid } from "react-icons/lia";
-import {RiUser5Fill} from "react-icons/ri";
+import { RiUser5Fill } from "react-icons/ri";
 import ThemeSelector from "../../FT/common/ThemeSelector";
 import usePrimary from "../../hooks/usePrimary.hook";
 import GlobalContext from "../../../context/global.context";
@@ -14,6 +14,12 @@ const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
   const linkColor = usePrimary();
   const { theme } = useContext(GlobalContext);
   const { currentUser } = useContext(FamilyTreeContext);
+  const navigate = useNavigate();
+
+  const processLogout = () => {
+    document.cookie = '';
+    navigate('/');
+  }
 
   return (
     <div className={"navigation " + theme}>
@@ -42,12 +48,12 @@ const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
           <Link to="/connect" color={linkColor}>Connect</Link>
         </div>
       </div>
-      <div className="avatar-container" onClick={() => setMenuOpened(!menuOpened)}>
-        {currentUser?.first_name ? <div><RiUser5Fill / >  {currentUser?.first_name}</div> : <LiaUserSecretSolid />}
+      <div className="avatar-container">
+        {currentUser?.first_name ? <div onClick={() => setMenuOpened(!menuOpened)}><RiUser5Fill />   {currentUser.first_name}</div> : <LiaUserSecretSolid />}
       </div>
       <ThemeSelector switchTheme={handleChangeTheme} />
       {menuOpened && (
-        <div>MENU</div>
+        <div className="cursor-pointer" onClick={processLogout}>LOGOUT</div>
       )}
     </div>
   );

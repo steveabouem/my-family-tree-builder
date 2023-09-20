@@ -181,6 +181,107 @@ body {
       }
     }
 
+    .footer {
+      height: 30px;
+
+      &.DARK-GREEN {
+        background: #003231;
+
+        .primary-bg {
+          background: #dd9732;
+        }
+
+        .primary {
+          color: #dd9732;
+        }
+
+        .secondary-bg {
+          background: #cc3468;
+        }
+
+        .secondary {
+          color: #cc3468;
+        }
+
+        .bg {
+          color: #003231;
+        }
+
+        .accent-bg {
+          background: white;
+        }
+
+        .accent {
+          color: white;
+        }
+      }
+
+      &.LIGHT {
+        background: rgba(206, 202, 202, 0.2392156863);
+
+        .primary-bg {
+          background: #604511;
+        }
+
+        .primary {
+          color: #604511;
+        }
+
+        .secondary-bg {
+          background: #d56792;
+        }
+
+        .secondary {
+          color: #d56792;
+        }
+
+        .bg {
+          background: rgba(206, 202, 202, 0.2392156863);
+        }
+
+        .accent-bg {
+          background: #f5f6f4;
+        }
+
+        .accent {
+          color: #A5D6A7;
+        }
+      }
+
+      &.DARK {
+
+        background: #070707;
+
+        .primary-bg {
+          background: #fdfdfd;
+        }
+
+        .primary {
+          color: #fdfdfd;
+        }
+
+        .secondary-bg {
+          background: #c37ed2;
+        }
+
+        .secondary {
+          color: #c37ed2;
+        }
+
+        .bg {
+          background: #4cd693;
+        }
+
+        .accent-bg {
+          background: #ffcc4a;
+        }
+
+        .accent {
+          color: #ffcc4a;
+        }
+      }
+    }
+
     #FT {
       height: 100vh;
       width: 100vw;
@@ -315,7 +416,7 @@ body {
 
       position: relative;
       padding: 15px;
-      height: calc(100vh - 60px);
+      height: calc(100vh - 80px);
       width: 100vw;
       margin-top: 60px;
       overflow: hidden scroll;
@@ -326,7 +427,7 @@ body {
       position: absolute;
       top: 0;
       margin: 0;
-      height: calc(100% - 60px);
+      height: calc(100% - 80px);
       width: 100%;
       padding: 0;
       z-index: 7;

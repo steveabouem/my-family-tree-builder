@@ -13,7 +13,7 @@ class FTSessionService<GSession> extends BaseService<GSession> {
     if (process.env.JWT_KEY) {
       signedUser = jwt.sign({ session: JSON.stringify(session) }, process.env.JWT_KEY);
       // await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
-      console.log('PASS DETECTED: signedUser');
+      console.log('PASS DETECTED: ', signedUser);
       return signedUser;
     }
 

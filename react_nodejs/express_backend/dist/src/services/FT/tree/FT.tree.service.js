@@ -22,7 +22,7 @@ class FTTreeService extends base_service_1.BaseService {
         this.create = (values) => __awaiter(this, void 0, void 0, function* () {
             // TODO: creation date has a default value in models. I might possibly skip this formatting,
             //  and adjust the DTO to make the prop optional. leaving it for now as it makes validation simpler
-            const formattedValues = Object.assign(Object.assign({}, values), { created_at: new Date, active: true });
+            const formattedValues = Object.assign(Object.assign({}, values), { created_at: new Date, active: 1 });
             const valid = this.validateFTTreeFields(formattedValues);
             if (valid) {
                 yield FT_tree_1.default.create(Object.assign({}, formattedValues))

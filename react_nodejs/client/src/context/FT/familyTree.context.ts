@@ -2,6 +2,7 @@ import { createContext } from "react";
 import { DUserDTO } from "../../services/FT/auth/auth.definitions";
 import { DeepPartial } from "redux";
 import { DFTFamilyDTO } from "../../components/FT/family/definitions";
+import { yupToFormErrors } from "formik";
 
 interface DFTContext {
   currentUser: DeepPartial<DUserDTO>;
@@ -21,7 +22,11 @@ const FamilyTreeContext = createContext<DFTContext>({
   currentUser: {},
   family: {},
   tree: undefined,
-  updateUser: function () { }
+  updateUser: function (user?: Partial<DUserDTO>) {
+    console.log('Reference in context', this.currentUser);
+    if (user)
+    this.currentUser = user;
+  }
 });
 
 export default FamilyTreeContext;

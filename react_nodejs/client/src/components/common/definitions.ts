@@ -19,7 +19,7 @@ export interface DPageProps {
   theme: themeEnum;
   title: string;
   subTitle: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 // +++++=> FORMS <= +++++

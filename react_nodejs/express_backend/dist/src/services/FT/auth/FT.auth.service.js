@@ -41,6 +41,7 @@ class FTAuthService extends base_service_1.BaseService {
             }
             const passwordValid = bcryptjs_1.default.compareSync(values.password, currentUser.password);
             if (passwordValid) {
+                console.log('User is verified', currentUser);
                 return Object.assign(Object.assign({}, currentUser.dataValues), { password: '' });
             }
             return null;

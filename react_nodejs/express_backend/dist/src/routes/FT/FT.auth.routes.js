@@ -39,7 +39,7 @@ router.use((req, res, next) => {
 router.post('/register', (req, res) => {
     processRegister(req)
         .then((sessionData) => {
-        res.set('Set-Cookie', `session=${sessionData === null || sessionData === void 0 ? void 0 : sessionData.token}`);
+        res.set('Set-Cookie', `${sessionData === null || sessionData === void 0 ? void 0 : sessionData.token}`);
         res.set('httpOnly', 'true');
         res.status(200);
         res.json({ session: sessionData });
@@ -53,7 +53,7 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res) => {
     processLogin(req)
         .then((sessionData) => {
-        res.set('Set-Cookie', `session=${sessionData === null || sessionData === void 0 ? void 0 : sessionData.token}`);
+        res.set('Set-Cookie', `${sessionData === null || sessionData === void 0 ? void 0 : sessionData.token}`);
         res.set('httpOnly', 'true');
         res.status(200);
         res.json({ session: sessionData });
@@ -71,9 +71,16 @@ const processRegister = (req) => __awaiter(void 0, void 0, void 0, function* () 
     const formattedValues = Object.assign(Object.assign({}, req.body), { assigned_ips: [ip], created_at: new Date });
     // TODO: use ftuser service to match spouse's first and last name and return id here.
     // in the front, it will be some sort of dd that will use the ServiceWorker, and add the id to the form values
-    const newUser = yield ftUserService.create(formattedValues); // TODO: catch error
+    // This will go in the profile Selection, no need to crowd registration w it
+    const duplicate = yield ftUserService.getByEmail(req.body.email);
+    if (duplicate) {
+        // TODO: throw error + logging
+        return null;
+    }
+    const newUser = yield ftUserService.create(formattedValues).catch(e => console.log('Error creating U: ', e)); // TODO: catch error logging
     if (newUser) {
-        const sessionToken = yield ftSessionService.setSessionUser(newUser);
+        console.log('NEW USER AFTER REG: ', newUser);
+        const sessionToken = yield ftSessionService.setSession(newUser);
         return Object.assign(Object.assign({}, formattedValues), { password: '', type: 'user', token: sessionToken });
     }
     return null;
@@ -85,10 +92,11 @@ const processLogin = (req) => __awaiter(void 0, void 0, void 0, function* () {
         console.log('Error checking user'); //TODO: notify, and proper logging
     });
     if (verifiedUser) {
+        console.log('User was verified succesfuly');
         const ftSessionService = new FT_session_service_1.default();
-        const sessionToken = yield ftSessionService.setSessionUser(verifiedUser);
+        const sessionToken = yield ftSessionService.setSession(verifiedUser);
         console.log('GOT TOKEN ', sessionToken);
-        const currentSession = yield ftSessionService.getUserSessionData(sessionToken || '', ['id', 'email', 'first_name', 'last_name', 'gender']);
+        const currentSession = yield ftSessionService.getSessionData(sessionToken || '', ['id', 'email', 'first_name', 'last_name', 'gender']);
         return Object.assign(Object.assign({}, currentSession), { type: 'user', token: sessionToken });
     }
     else {

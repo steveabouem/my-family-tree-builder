@@ -34,7 +34,7 @@ const { JWT } = process.env;
 const verifyJWTRequestToken = (req, res, next) => {
     const token = req.cookies.FT;
     const sessionService = new FT_session_service_1.default();
-    const session = sessionService.getUserSessionData(token);
+    const session = sessionService.getSessionData(token);
     return session;
 };
 exports.verifyJWTRequestToken = verifyJWTRequestToken;

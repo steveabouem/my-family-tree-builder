@@ -11,6 +11,8 @@ import FTFamily from "../family/FT.Family";
 import FamilyTreeContext from "../../../context/FT/familyTree.context";
 import GlobalContext, { applicationEnum, themeEnum } from "../../../context/global.context";
 import Footer from "../../common/navbars/Footer";
+import FTLandingPage from "../FT.Landing";
+import FTTree from "../tree/FT.Tree";
 import('../../common/styles.scss');
 
 const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
@@ -70,6 +72,7 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
           }>
           <div className="scroll">
             <Routes>
+              <Route path="/" element={<FTLandingPage />} />
               <Route path="/connect" element={
                 <FTAuthentication
                   changeMode={updateFormMode}
@@ -77,8 +80,9 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
                 />
               }
               />
-              <Route path="/users/:id" element={<FTUserProfilePage updateUser={updateUser} />} />
+              <Route path="users/:id" element={<FTUserProfilePage updateUser={updateUser} />} />
               <Route path="/family" element={<FTFamily />} />
+              <Route path="/tree" element={<FTTree />} />
             </Routes>
           </div>
         </FamilyTreeContext.Provider>

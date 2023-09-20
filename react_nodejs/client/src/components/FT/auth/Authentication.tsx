@@ -24,6 +24,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const cookie = useCookie();
   const { theme, session } = useContext(GlobalContext);
 
+
   const maritalStatusOptions: DDropdownOption[] = [
     {
       label: 'Single',
@@ -220,16 +221,19 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         return false;
       });
 
-    if (registeredUser) {
+    if (registeredUser.data.session) {
       // TODO: redux/session/ip/routing
       // console.log({registeredUser});
-      document.cookie = registeredUser.data.session.token;
+      console.log('Succesful registration', registeredUser);
+      // TODO: redux/session/ip/routing
       changeMode(undefined);
+      updateUser(registeredUser.data.session);
+      document.cookie = registeredUser.data.session.token;
+      navigate(`/ft/users/${registeredUser.data.session.id}`);
     } else {
       // TODO: on screen notification
-      // console.log('Registration failure');
+      console.log('Registration failure');
     }
-
   }
 
   return (
@@ -238,13 +242,13 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       subTitle="Please verify yourself below"
       theme={theme} isLoading={loading}
     >
-              <div className="m-auto w-100">
-               {mode === 'register' ? (
-                 <button onClick={() => changeMode('login')}>Login</button>
-               ) : (
-                 <button onClick={() => changeMode('register')}>Register</button>
-               )}
-             </div>
+      <div className="m-auto w-100">
+        {mode === 'register' ? (
+          <button onClick={() => changeMode('login')}>Login</button>
+        ) : (
+          <button onClick={() => changeMode('register')}>Register</button>
+        )}
+      </div>
       <Formik
         initialValues={mode === 'login' ? loginInitialValues : registerInitialValues}
         onSubmit={submitForm}

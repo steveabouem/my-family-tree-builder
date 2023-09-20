@@ -17,7 +17,7 @@
 //   }
 //   FTTree.init({
 //     authorized_ips: DataTypes.JSON,
-//     public: DataTypes.BOOLEAN,
+//     public: DataTypes.INTEGER,
 //     name: DataTypes.STRING,
 //   }, {
 //     sequelize,
@@ -116,14 +116,14 @@ FTTree.init({
         defaultValue: '[]'
     },
     public: {
-        type: sequelize_1.DataTypes.BOOLEAN,
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     },
     updated_at: {
         type: sequelize_1.DataTypes.DATE
     },
     active: {
-        type: sequelize_1.DataTypes.BOOLEAN,
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: false
     }
 }, {
