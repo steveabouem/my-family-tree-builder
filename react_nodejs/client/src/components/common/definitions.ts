@@ -3,7 +3,7 @@ import { themeEnum } from "../../context/global.context";
 
 // +++++=> NAVIGATION <= +++++
 export interface DTopNavProps {
-  links: DNavigationLink[];
+  links?: DNavigationLink[];
   position: string;
   handleChangeTheme: (theme: themeEnum) => void;
 }
@@ -11,15 +11,6 @@ export interface DTopNavProps {
 export interface DNavigationLink {
   link: string;
   path: string;
-}
-
-export enum FTLinkEnums {
-  home = '/ft/',
-  user = 'users/',
-  family = 'families/',
-  familyTree = 'trees/',
-  login = 'login',
-  register = 'register',
 }
 
 // +++++=> PAGES <= +++++

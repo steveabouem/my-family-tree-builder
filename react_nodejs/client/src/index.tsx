@@ -1,12 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import FTAppContainer from './components/FT/common/FT.AppContainer';
+import { BrowserRouter } from 'react-router-dom';
+
 
 // @ts-ignore
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <FTAppContainer /> //TODO: if we end up joining tracker, deal w it here
+  <BrowserRouter>
+    <FTAppContainer />
+  </BrowserRouter>
 );
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

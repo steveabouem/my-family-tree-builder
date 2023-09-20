@@ -23,9 +23,8 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
   useEffect(() => {
     // console.log(document.cookie);
     if (!document.cookie) {
-      navigate(`/ft`);
+      navigate('/connect');
     }
-
   });
 
   useEffect(() => {
@@ -87,7 +86,8 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
       </div>
     </Page>
   ) : (
-    <NotFound title="Profile Not Found!" />
+    <NotFound title="Profile Not Found!" /> // this probably wont be necesarry given redirect
+
   );
 
 }

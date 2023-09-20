@@ -26,6 +26,7 @@ export class FTUserService extends BaseService<DFTUserRecord> {
         console.log(e); //TODO: LOGGING
         return null;
       });
+      await newUser?.save();
       return { ...newUser?.dataValues, password: undefined };
     }
     return null;

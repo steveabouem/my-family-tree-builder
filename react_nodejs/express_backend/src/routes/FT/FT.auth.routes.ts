@@ -95,6 +95,8 @@ const processLogin = async (req: Request): Promise<DSessionUser | null> => {
     });
 
   if (verifiedUser) {
+    console.log('User was verified succesfuly');
+
     const ftSessionService = new FTSessionService();
     const sessionToken = await ftSessionService.setSession(verifiedUser);
     console.log('GOT TOKEN ', sessionToken);

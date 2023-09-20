@@ -170,12 +170,12 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
 
   useEffect(() => {
     //NOTE: if cookie status changes or is clearImmediate, present loading screen and adjust display (hence no second argument)
-    if (!cookie) {
-      setLoading(true);
-      changeMode('register');
-    } else {
-      changeMode('login');
-    }
+    // if (!cookie) {
+    //   setLoading(true);
+    //   changeMode('register');
+    // } else {
+    //   changeMode('login');
+    // }
     setLoading(false)
   });
 
@@ -238,13 +238,13 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       subTitle="Please verify yourself below"
       theme={theme} isLoading={loading}
     >
-      <div>
-        {mode === 'register' ? (
-          <button onClick={() => changeMode('login')}>Login</button>
-        ) : (
-          <button onClick={() => changeMode('register')}>Register</button>
-        )}
-      </div>
+              <div className="m-auto w-100">
+               {mode === 'register' ? (
+                 <button onClick={() => changeMode('login')}>Login</button>
+               ) : (
+                 <button onClick={() => changeMode('register')}>Register</button>
+               )}
+             </div>
       <Formik
         initialValues={mode === 'login' ? loginInitialValues : registerInitialValues}
         onSubmit={submitForm}

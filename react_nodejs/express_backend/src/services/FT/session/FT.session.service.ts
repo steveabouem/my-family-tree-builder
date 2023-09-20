@@ -1,7 +1,5 @@
-import { Op } from "sequelize";
 import { BaseService } from "../../base/base.service";
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import FTSession from "../../../models/FT.session";
 
 class FTSessionService<GSession> extends BaseService<GSession> {
   constructor() {
@@ -15,7 +13,7 @@ class FTSessionService<GSession> extends BaseService<GSession> {
     if (process.env.JWT_KEY) {
       signedUser = jwt.sign({ session: JSON.stringify(session) }, process.env.JWT_KEY);
       // await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
-      console.log('PASS DETECTED: ');
+      console.log('PASS DETECTED: signedUser');
       return signedUser;
     }
 
@@ -27,23 +25,23 @@ class FTSessionService<GSession> extends BaseService<GSession> {
     if (process.env.JWT_KEY) {
       try {
         const signedSessionJWT = jwt.verify(token, process.env.JWT_KEY);
-        // console.log('Session JSON: ', signedSessionJWT);
+        console.log('Session JSON: ', signedSessionJWT);
         // @ts-ignore
         const signedSessionJWTObject = JSON.parse(signedSessionJWT.session);
-        // console.log('VaLUE OF OBJ: ', signedSessionJWTObject);
+        console.log('VaLUE OF OBJ: ', signedSessionJWTObject);
 
-        if (typeof signedSessionJWTObject === 'object' && signedSessionJWTObject !== null) {
-          // console.log('SIGNED SESSION OBJECT: ', signedSessionJWTObject);
+        if (signedSessionJWTObject !== null) {
+          console.log('SIGNED SESSION OBJECT: ', signedSessionJWTObject);
           if (keys) { // NOTE: If no key is provided, return all session (will most likely be used in the back)
             // @ts-ignore
             const sessionValues = JSON.parse(signedSessionJWTObject.session);
             for (const sessionKey of keys) {
               sessionData[sessionKey] = sessionValues[sessionKey];
             }
-            console.log('Resulting sess data ', sessionData);
 
             return sessionData; // NOTE: I will have to ignore the jwt keys from the payload 
           } else {
+            console.log('sess data no keys ', signedSessionJWTObject);
             return signedSessionJWTObject;
           }
         }
