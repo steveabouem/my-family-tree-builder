@@ -37,8 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 var db_1 = require("../../db");
-var BaseService = /** @class */ (function () {
-    function BaseService(table) {
+var BaseMiddleware = /** @class */ (function () {
+    function BaseMiddleware(table) {
         this.getDTOMapping = function () {
             // TODO: figure out how to map the generic type's keys to retur an object and use that as return getById and the likes
             // @ts-expect-error
@@ -55,7 +55,7 @@ var BaseService = /** @class */ (function () {
         this.dataBase = db_1["default"];
         this.tableName = table;
     }
-    BaseService.prototype.getById = function (select) {
+    BaseMiddleware.prototype.getById = function (select) {
         return __awaiter(this, void 0, void 0, function () {
             var record;
             return __generator(this, function (_a) {
@@ -71,7 +71,7 @@ var BaseService = /** @class */ (function () {
             });
         });
     };
-    BaseService.prototype.disable = function (id, p_table) {
+    BaseMiddleware.prototype.disable = function (id, p_table) {
         return __awaiter(this, void 0, void 0, function () {
             var update;
             return __generator(this, function (_a) {
@@ -88,7 +88,7 @@ var BaseService = /** @class */ (function () {
             });
         });
     };
-    BaseService.prototype.index = function (id) {
+    BaseMiddleware.prototype.index = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var select, results;
             return __generator(this, function (_a) {
@@ -103,6 +103,6 @@ var BaseService = /** @class */ (function () {
             });
         });
     };
-    return BaseService;
+    return BaseMiddleware;
 }());
-exports.BaseService = BaseService;
+exports.BaseMiddleware = BaseMiddleware;

@@ -8,7 +8,7 @@ import userHandler from './src/routes/tracker/User.routes';
 import FTAuthHandler from './src/routes/FT/FT.auth.routes';
 import FTTreeHandler from './src/routes/FT/FT.tree.routes';
 import FTSessionHandler from './src/routes/FT/FT.session.routes';
-import FTSessionService from './src/services/FT/session/FT.session.service';
+import FTSessionMiddleware from './src/middleware-classes/FT/session/FT.session.middleware';
 const app: Express = express();
 /**
  MIDDLEWARES SECTION
@@ -25,8 +25,8 @@ app.use('/api/users', userHandler);
 app.use((req, res, next) => {
   console.log('CURRENT SESSION TOKEN sess: ', req.cookies?.FT);
 
-  const ftSessionService = new FTSessionService();
-  const currentUserSession = ftSessionService.getSessionData(req.cookies.FT);
+  const ftSessionMiddleware = new FTSessionMiddleware();
+  const currentUserSession = ftSessionMiddleware.getSessionData(req.cookies.FT);
   console.log({ currentUserSession });
 
   next();

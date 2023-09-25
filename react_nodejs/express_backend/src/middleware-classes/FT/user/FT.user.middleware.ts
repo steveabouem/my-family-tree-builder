@@ -1,13 +1,13 @@
 import { QueryTypes } from "sequelize";
 import { DFTUserRecord } from "../../../controllers/FT/user/FT.user.definitions";
 import FTUser from "../../../models/FT.user";
-import { BaseService } from "../../base/base.service";
+import { BaseMiddleware } from "../../base/base.middleware";
 import { DFTUserDTO } from "./FT.user..definitions";
 import bcrypt from "bcryptjs";
 import { DFTFamDTO, DRelatedFamily } from "../family/FT.family.definitions";
 import { DUserDTO } from "../../tracker/user/user.definitions";
 
-export class FTUserService extends BaseService<DFTUserRecord> {
+export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
   constructor() {
     super('FTUsers');
   }
@@ -27,6 +27,8 @@ export class FTUserService extends BaseService<DFTUserRecord> {
         return null;
       });
       await newUser?.save();
+      console.log('SAVED newUser', newUser);
+
       return { ...newUser?.dataValues, password: undefined };
     }
     return null;

@@ -1,10 +1,10 @@
 import FTFam from "../../../models/FT.family";
 import FTTree from "../../../models/FT.tree.";
 import { dateValid } from "../../../utils/FT/date.utils";
-import { BaseService } from "../../base/base.service";
+import { BaseMiddleware } from "../../base/base.middleware";
 import { DFamilyTreeDTO, DFamilyTreeUpdateDTO } from "./FT.tree.definitions";
 
-export class FTTreeService extends BaseService<DFamilyTreeDTO> {
+export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
   constructor() {
     super('FTTrees');
   }

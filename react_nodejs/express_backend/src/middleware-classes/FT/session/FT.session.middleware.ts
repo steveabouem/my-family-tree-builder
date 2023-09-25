@@ -1,15 +1,16 @@
-import { BaseService } from "../../base/base.service";
+import { BaseMiddleware } from "../../base/base.middleware";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
-class FTSessionService<GSession> extends BaseService<GSession> {
+class FTSessionMiddleware<GSession> extends BaseMiddleware<GSession> {
   constructor() {
     super('FTSessions');
-    // this.token = token; //stringified version of data to be hashed (no need if we always use the current user)
   }
 
   public setSession = async (session: GSession): Promise<string | null> => {
-    // receives safe user profile (no pwd or other sensitive info) and signs it, returns it as header to be set as a token in front
+    // INFO: receives safe user profile (no pwd or other sensitive info) and signs it, returns it as header to be set as a token in front
     let signedUser = null;
+    console.log('session value before encryption: ', session);
+
     if (process.env.JWT_KEY) {
       signedUser = jwt.sign({ session: JSON.stringify(session) }, process.env.JWT_KEY);
       // await FTSession.create({ key: encryptedSession, createdAt: new Date }); // not sure yet if I will ever need this
@@ -32,14 +33,14 @@ class FTSessionService<GSession> extends BaseService<GSession> {
 
         if (signedSessionJWTObject !== null) {
           console.log('SIGNED SESSION OBJECT: ', signedSessionJWTObject);
-          if (keys) { // NOTE: If no key is provided, return all session (will most likely be used in the back)
+          if (keys) { // INFO: If no key is provided, return all session (will most likely be used in the back)
             // @ts-ignore
             const sessionValues = JSON.parse(signedSessionJWTObject.session);
             for (const sessionKey of keys) {
               sessionData[sessionKey] = sessionValues[sessionKey];
             }
 
-            return sessionData; // NOTE: I will have to ignore the jwt keys from the payload 
+            return sessionData; // INFO: I will have to ignore the jwt keys from the payload 
           } else {
             console.log('sess data no keys ', signedSessionJWTObject);
             return signedSessionJWTObject;
@@ -77,4 +78,4 @@ class FTSessionService<GSession> extends BaseService<GSession> {
   //   return false;
   // }
 }
-export default FTSessionService;
+export default FTSessionMiddleware;

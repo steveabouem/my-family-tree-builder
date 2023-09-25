@@ -1,10 +1,10 @@
 import { DUserRecord } from "../../../controllers/tracker/User/User.definitions";
-import { BaseService } from "../../base/base.service";
+import { BaseMiddleware } from "../../base/base.middleware";
 import { DUserDTO } from "./user.definitions";
 import bcrypt from 'bcryptjs';
 
-// TODO: I feel like the controlle should use a generic of the DTO and the service a generic of the record, somtheing like that
-export class UserService extends BaseService<DUserRecord> {
+// TODO: I feel like the controlle should use a generic of the DTO and the middleware a generic of the record, somtheing like that
+export class UserMiddleware extends BaseMiddleware<DUserRecord> {
     salt: string;
     constructor() {
         super('Users');

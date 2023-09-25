@@ -1,5 +1,5 @@
-import { DFTUserDTO } from "../../../services/FT/user/FT.user..definitions";
-import { FTUserService } from "../../../services/FT/user/FT.user.service";
+import { DFTUserDTO } from "../../../middleware-classes/FT/user/FT.user..definitions";
+import { FTUserMiddleware } from "../../../middleware-classes/FT/user/FT.user.middleware";
 import BaseController from "../../Base.controller";
 import { DFTUserRecord } from "./FT.user.definitions";
 
@@ -24,12 +24,12 @@ class FTUserController extends BaseController<DFTUserRecord> {
     }
 
     create = async (user: DFTUserDTO): Promise<boolean> => {
-        const userService = new FTUserService();
+        const userMiddleware = new FTUserMiddleware();
         // TODO: catch return false doesnt actually catch falty logic, 
         // just wrong syntax and maybe wrong typing. FIX
         console.log('NEW USER: ', user);
 
-        await userService.create(user).catch(() => false);
+        await userMiddleware.create(user).catch(() => false);
         return true;
     }
 

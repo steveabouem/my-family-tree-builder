@@ -1,16 +1,16 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTSessionService from "../../services/FT/session/FT.session.service";
+import FTSessionMiddleware from "../../middleware-classes/FT/session/FT.session.middleware";
 import { DSessionUser } from "../definitions";
-import FTAuthService from "../../services/FT/auth/FT.auth.service";
+import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
 import cookieParser from "cookie-parser";
 
 const router = Router();
 router.use(cookieParser());
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const authService = new FTAuthService();
+  const authMiddleware = new FTAuthMiddleware();
 
-  authService.verifyIp(ip)
+  authMiddleware.verifyIp(ip)
     .then((valid: boolean) => {
       if (!valid) {
         res.status(400);
@@ -30,15 +30,15 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 // TODO: req, res typing
 router.post('/get-data', (req: Request, res: Response) => {
-  const ftSessionService = new FTSessionService();
-  const sessionData = ftSessionService.getSessionData(req.body.data);
+  const ftSessionMiddleware = new FTSessionMiddleware();
+  const sessionData = ftSessionMiddleware.getSessionData(req.body.data);
   res.json(sessionData);
 });
 
 router.post('/set-data', (req: Request, res: Response) => {
   // TODO: Kill session, send back the guest session default
-  const ftSessionService = new FTSessionService();
-  const sessionData = ftSessionService.setSession(req.body.data);
+  const ftSessionMiddleware = new FTSessionMiddleware();
+  const sessionData = ftSessionMiddleware.setSession(req.body.data);
   res.json(sessionData);
 });
 

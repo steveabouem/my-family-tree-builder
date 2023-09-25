@@ -6,11 +6,11 @@ export enum HTTPMethodEnum {
 }
 
 export interface DSessionUser {
+  id: number;
   type: string;
   token: string | null;
   ip?: string;
   ipIsValid?: number;
-  id?: number;
   email?: string;
   firstName?: string;
   lastName?: string;

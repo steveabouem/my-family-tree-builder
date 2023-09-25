@@ -13,15 +13,15 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 exports.__esModule = true;
-var base_service_1 = require("../base/base.service");
-// TODO: I feel like the controlle should use a generic of the DTO and the service a generic of the record, somtheing like that
-var UserService = /** @class */ (function (_super) {
-    __extends(UserService, _super);
-    function UserService() {
+var base_middleware_1 = require("../base/base.middleware");
+// TODO: I feel like the controlle should use a generic of the DTO and the middleware a generic of the record, somtheing like that
+var UserMiddleware = /** @class */ (function (_super) {
+    __extends(UserMiddleware, _super);
+    function UserMiddleware() {
         return _super.call(this, 'Users') || this;
     }
-    return UserService;
-}(base_service_1.BaseService));
-exports.UserService = UserService;
-var test = new UserService();
+    return UserMiddleware;
+}(base_middleware_1.BaseMiddleware));
+exports.UserMiddleware = UserMiddleware;
+var test = new UserMiddleware();
 console.log(test.tableName);

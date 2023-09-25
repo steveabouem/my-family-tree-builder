@@ -4,11 +4,11 @@ import bcrypt from "bcryptjs";
 import db from '../../db';
 
 /**
- * A service receives data of type D...Record and returns data of type D...DTO
- * All the sql queries amd business logic are handled inside the service, the controller is 
+ * A middleware receives data of type D...Record and returns data of type D...DTO
+ * All the sql queries amd business logic are handled inside the middleware, the controller is 
  * simply a gateway for the express endpoint to go through to get the data requested
  */
-export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
+export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlewares
   dataBase: Sequelize;
   tableName: string;
   salt: string;
@@ -115,7 +115,7 @@ export class BaseService<T> {// NO MATHING MODEL, base fof all of our services
 
   // TODO: ask around for this, chatGPT failed
   // validateHasAllValues<G extends Record<string, unknown>>(values: MyType<G>): boolean {
-  //     // this uses the DTO for values, hence me using a different generatePrimeSync (the service accepts the record type).
+  //     // this uses the DTO for values, hence me using a different generatePrimeSync (the middleware accepts the record type).
   //     const requiredKeys = Object.keys(values) as (keyof G)[];
 
   //     for (const key of requiredKeys) {

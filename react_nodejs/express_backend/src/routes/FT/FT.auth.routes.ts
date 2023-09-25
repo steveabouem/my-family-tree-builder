@@ -1,16 +1,16 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTAuthService from "../../services/FT/auth/FT.auth.service";
-import { FTUserService } from "../../services/FT/user/FT.user.service";
-import FTSessionService from "../../services/FT/session/FT.session.service";
+import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
+import { FTUserMiddleware } from "../../middleware-classes/FT/user/FT.user.middleware";
+import FTSessionMiddleware from "../../middleware-classes/FT/session/FT.session.middleware";
 import { DSessionUser } from "../definitions";
 
 const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const authService = new FTAuthService();
+  const authMiddleware = new FTAuthMiddleware();
 
-  authService.verifyIp(ip)
+  authMiddleware.verifyIp(ip)
     .then((valid: boolean) => {
       if (!valid) {
         res.status(400);
@@ -53,9 +53,12 @@ router.post('/login', (req: Request, res: Response) => {
     });
 });
 
-router.get('/logout', (req: Request, res: Response) => {
+router.post('/logout', (req: Request, res: Response) => {
   // TODO: Kill session, send back the guest session default
-
+  res.set('Set-Cookie', 'FT=;');
+  res.set('httpOnly', 'true');
+  res.status(200);
+  res.json({ session: undefined });
 });
 
 export default router;
@@ -63,33 +66,31 @@ export default router;
 // HELPERS
 const processRegister = async (req: Request): Promise<DSessionUser | null> => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const ftUserService = new FTUserService();
-  const ftSessionService = new FTSessionService();
+  const ftUserMiddleware = new FTUserMiddleware();
+  const ftSessionMiddleware = new FTSessionMiddleware();
   const formattedValues = { ...req.body, assigned_ips: [ip], created_at: new Date };
-  // TODO: use ftuser service to match spouse's first and last name and return id here.
-  // in the front, it will be some sort of dd that will use the ServiceWorker, and add the id to the form values
+  // TODO: use ftuser middleware to match spouse's first and last name and return id here.
+  // in the front, it will be some sort of dd that will use the MiddlewareWorker, and add the id to the form values
   // This will go in the profile Selection, no need to crowd registration w it
-  const duplicate = await ftUserService.getByEmail(req.body.email);
+  const duplicate = await ftUserMiddleware.getByEmail(req.body.email);
   if (duplicate) {
     // TODO: throw error + logging
     return null;
   }
 
-  const newUser = await ftUserService.create(formattedValues).catch(e => console.log('Error creating U: ', e));// TODO: catch error logging
+  const newUser = await ftUserMiddleware.create(formattedValues).catch(e => console.log('Error creating U: ', e));// TODO: catch error logging
 
   if (newUser) {
-    console.log('NEW USER AFTER REG: ', newUser);
-
-    const sessionToken = await ftSessionService.setSession(newUser);
-    return { ...formattedValues, password: '', type: 'user', token: sessionToken };
+    const sessionToken = await ftSessionMiddleware.setSession(newUser);
+    return { type: 'user', token: sessionToken, id: newUser?.id || 0 }; // INFO: only send back the id, the token holds the rest and will be dealt with in the front
   }
 
   return null;
 }
 
 const processLogin = async (req: Request): Promise<DSessionUser | null> => {
-  const ftAuthService = new FTAuthService();
-  const verifiedUser = await ftAuthService.verifyUser(req.body)
+  const ftAuthMiddleware = new FTAuthMiddleware();
+  const verifiedUser = await ftAuthMiddleware.verifyUser(req.body)
     .catch(e => {
       console.log('Error checking user'); //TODO: notify, and proper logging
     });
@@ -97,12 +98,12 @@ const processLogin = async (req: Request): Promise<DSessionUser | null> => {
   if (verifiedUser) {
     console.log('User was verified succesfuly');
 
-    const ftSessionService = new FTSessionService();
-    const sessionToken = await ftSessionService.setSession(verifiedUser);
+    const ftSessionMiddleware = new FTSessionMiddleware();
+    const sessionToken = await ftSessionMiddleware.setSession(verifiedUser);
     console.log('GOT TOKEN ', sessionToken);
-    const currentSession = await ftSessionService.getSessionData(sessionToken || '', ['id', 'email', 'first_name', 'last_name', 'gender']);
+    const currentSession = await ftSessionMiddleware.getSessionData(sessionToken || '', ['id', 'email', 'first_name', 'last_name', 'gender']);
 
-    return { ...currentSession, type: 'user', token: sessionToken };
+    return { ...currentSession, id: 1, type: 'user', token: sessionToken };
   } else {
     return null;
   }

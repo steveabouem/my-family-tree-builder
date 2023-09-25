@@ -1,16 +1,16 @@
 import { Router, Request, Response, NextFunction } from "express";
 import FTFam from "../../models/FT.family";
 import FTTree from "../../models/FT.tree.";
-import FTAuthService from "../../services/FT/auth/FT.auth.service";
-import { FTTreeService } from "../../services/FT/tree/FT.tree.service";
+import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
+import { FTTreeMiddleware } from "../../middleware-classes/FT/tree/FT.tree.middleware";
 
 const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) => {
     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const authService = new FTAuthService();
+    const authMiddleware = new FTAuthMiddleware();
 
-    authService.verifyIp(ip)
+    authMiddleware.verifyIp(ip)
         .then((valid: boolean) => {
             if (!valid) {
                 res.status(400);
@@ -28,9 +28,9 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 })
 
 router.post('/create', (req: Request, res: Response) => {
-    const ftTreeService = new FTTreeService;
-    // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.create(req.body)
+    const ftTreeMiddleware = new FTTreeMiddleware;
+    // TODO: there's definitely to add the create function to the base middleware instead
+    ftTreeMiddleware.create(req.body)
         .then((success: boolean) => {
             if (success) {
                 res.status(201);
@@ -49,9 +49,9 @@ router.post('/create', (req: Request, res: Response) => {
 });
 
 router.get('/:id', (req: Request, res: Response) => {
-    const ftTreeService = new FTTreeService;
+    const ftTreeMiddleware = new FTTreeMiddleware;
 
-    ftTreeService.getTree(parseInt(req.params.id))
+    ftTreeMiddleware.getTree(parseInt(req.params.id))
         .then((r: FTTree | null) => {
             res.status(200);
             res.json(r);
@@ -63,9 +63,9 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.get('/:id/families', (req: Request, res: Response) => {
-    const ftTreeService = new FTTreeService;
-    // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.getFamilies(parseInt(req.params.id))
+    const ftTreeMiddleware = new FTTreeMiddleware;
+    // TODO: there's definitely to add the create function to the base middleware instead
+    ftTreeMiddleware.getFamilies(parseInt(req.params.id))
         .then((families: number[] | undefined) => {
             if (families) {
                 res.status(201);
@@ -85,11 +85,11 @@ router.get('/:id/families', (req: Request, res: Response) => {
 });
 
 router.put('/:id', (req: Request, res: Response) => {
-    const ftTreeService = new FTTreeService;
+    const ftTreeMiddleware = new FTTreeMiddleware;
     const values = { ...req.body };
 
-    // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.update(values, parseInt(req.params.id))
+    // TODO: there's definitely to add the create function to the base middleware instead
+    ftTreeMiddleware.update(values, parseInt(req.params.id))
         .then((success: boolean) => {
             if (success) {
                 res.status(201);
@@ -109,9 +109,9 @@ router.put('/:id', (req: Request, res: Response) => {
 });
 
 router.put('/:id/families', (req: Request, res: Response) => {
-    const ftTreeService = new FTTreeService;
-    // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.addFamily(parseInt(req.params.id), req.body.id)
+    const ftTreeMiddleware = new FTTreeMiddleware;
+    // TODO: there's definitely to add the create function to the base middleware instead
+    ftTreeMiddleware.addFamily(parseInt(req.params.id), req.body.id)
         .then((success: boolean) => {
             if (success) {
                 res.status(201);
@@ -131,9 +131,9 @@ router.put('/:id/families', (req: Request, res: Response) => {
 });
 
 router.put('/:id/families/remove', (req: Request, res: Response) => {
-    const ftTreeService = new FTTreeService;
-    // TODO: there's definitely to add the create function to the base service instead
-    ftTreeService.removeFamily(parseInt(req.params.id), req.body.id)
+    const ftTreeMiddleware = new FTTreeMiddleware;
+    // TODO: there's definitely to add the create function to the base middleware instead
+    ftTreeMiddleware.removeFamily(parseInt(req.params.id), req.body.id)
         .then((success: boolean) => {
             if (success) {
                 res.status(201);

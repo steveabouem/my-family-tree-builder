@@ -1,3 +1,3 @@
-export interface DTrackerService {
+export interface DTrackerMiddleware {
     validateByIp: (ip: string) => boolean;
 }

@@ -1,4 +1,4 @@
-// import { UserService } from "../../services/user/user.service";
+// import { UserMiddleware } from "../../middlewares/user/user.middleware";
 // import BaseController from "../../Base.controller";
 // import { DUserRecord } from "../../tracker/User/User.definitions";
 
@@ -9,9 +9,9 @@
 
 
 //     getUserData = async (memberId: number): Promise<DUserRecord> => {
-//         const userService = new UserService();
-//         const currentMember: DFamilyMemberRecord = await this.baseService.getById(memberId);
-//         const user: DUserRecord = await userService.getById(currentMember.user_id);
+//         const userMiddleware = new UserMiddleware();
+//         const currentMember: DFamilyMemberRecord = await this.baseMiddleware.getById(memberId);
+//         const user: DUserRecord = await userMiddleware.getById(currentMember.user_id);
 
 //         return user;
 //     }

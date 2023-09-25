@@ -44,7 +44,7 @@ import Task from './task';
 
 // order of InferAttributes & InferCreationAttributes is important.
 class Objective extends Model<InferAttributes<Objective, { omit: 'tasks' }>, InferCreationAttributes<Objective>> {
-  // TODO: Objective status will be calculated in the service by the sum of related tasks statuses
+  // TODO: Objective status will be calculated in the middleware by the sum of related tasks statuses
   /**
    * Attributes
    * */

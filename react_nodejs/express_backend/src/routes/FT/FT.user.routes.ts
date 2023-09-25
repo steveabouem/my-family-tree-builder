@@ -1,16 +1,16 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTSessionService from "../../services/FT/session/FT.session.service";
-import FTAuthService from "../../services/FT/auth/FT.auth.service";
-import { FTUserService } from "../../services/FT/user/FT.user.service";
+import FTSessionMiddleware from "../../middleware-classes/FT/session/FT.session.middleware";
+import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
+import { FTUserMiddleware } from "../../middleware-classes/FT/user/FT.user.middleware";
 
 const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const authService = new FTAuthService();
-  // const sessionService = new FTSessionService();
+  const authMiddleware = new FTAuthMiddleware();
+  // const sessionMiddleware = new FTSessionMiddleware();
 
-  authService.verifyIp(ip)
+  authMiddleware.verifyIp(ip)
     .then((valid: boolean) => {
       if (!valid) {
         res.status(400);
@@ -30,8 +30,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 router.get('/:id', (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   // Not sure what to do with this yet
-  const ftUserService = new FTUserService;
-  ftUserService.getUserData(id)
+  const ftUserMiddleware = new FTUserMiddleware;
+  ftUserMiddleware.getUserData(id)
     .then((user: any) => {
       console.log('DONE');
       res.json(user);
@@ -45,9 +45,9 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.get('/:id/families', (req: Request, res: Response) => {
-  const ftUserService = new FTUserService;
+  const ftUserMiddleware = new FTUserMiddleware;
 
-  ftUserService.getRelatedFamilies(parseInt(req.params.id))
+  ftUserMiddleware.getRelatedFamilies(parseInt(req.params.id))
     .then((fams: any) => {
       console.log('DONE');
       res.json({ "relatedFamilies": fams });
@@ -61,9 +61,9 @@ router.get('/:id/families', (req: Request, res: Response) => {
 });
 
 router.get('/:id/extended-families', (req: Request, res: Response) => {
-  const ftUserService = new FTUserService;
+  const ftUserMiddleware = new FTUserMiddleware;
 
-  ftUserService.getExtendedFamiliesDetails(parseInt(req.params.id))
+  ftUserMiddleware.getExtendedFamiliesDetails(parseInt(req.params.id))
     .then((fams: any) => {
       console.log('DONE');
       res.json({ "relatedFamilies": fams });

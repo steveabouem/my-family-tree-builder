@@ -2,11 +2,11 @@ import { Op } from "sequelize";
 import FTFam from "../../../models/FT.family";
 import FTTree from "../../../models/FT.tree.";
 import FTUser from "../../../models/FT.user";
-import { BaseService } from "../../base/base.service";
+import { BaseMiddleware } from "../../base/base.middleware";
 import { DFamilyTreeUpdateDTO } from "../tree/FT.tree.definitions";
 import { DFTFamDTO, DFTFamUpdateDTO } from "./FT.family.definitions";
 
-export class FTFamilyService extends BaseService<DFTFamDTO> {
+export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   constructor() {
     super('FTFams');
   }

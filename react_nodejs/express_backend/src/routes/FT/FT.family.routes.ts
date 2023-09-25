@@ -1,17 +1,17 @@
 import { Router, Request, Response, NextFunction } from "express";
 import FTFam from "../../models/FT.family";
-import FTAuthService from "../../services/FT/auth/FT.auth.service";
-import { DFTFamDTO } from "../../services/FT/family/FT.family.definitions";
-import { FTFamilyService } from "../../services/FT/family/FT.family.service";
-import { DFamilyTreeDTO } from "../../services/FT/tree/FT.tree.definitions";
+import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
+import { DFTFamDTO } from "../../middleware-classes/FT/family/FT.family.definitions";
+import { FTFamilyMiddleware } from "../../middleware-classes/FT/family/FT.family.middleware";
+import { DFamilyTreeDTO } from "../../middleware-classes/FT/tree/FT.tree.definitions";
 
 const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const ftAuthService = new FTAuthService();
+  const ftAuthMiddleware = new FTAuthMiddleware();
 
-  ftAuthService.verifyIp(ip)
+  ftAuthMiddleware.verifyIp(ip)
     .then((valid: boolean) => {
       if (!valid) {
         res.status(400);
@@ -32,10 +32,10 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 // Ideally make a base route handlers class that will accept generics in request 
 // and return appropriate types...maybe generics as well ?
 router.get('/index', (req: Request, res: Response) => {
-  const ftFamService = new FTFamilyService();
+  const ftFamMiddleware = new FTFamilyMiddleware();
   const idList = `${req.query.ids}`;
 
-  ftFamService.getBulkData(idList)
+  ftFamMiddleware.getBulkData(idList)
     .then((data) => {
       res.status(200);
       res.json(data)
@@ -48,9 +48,9 @@ router.get('/index', (req: Request, res: Response) => {
 });
 
 router.post('/create', (req: Request, res: Response) /**TODO: return type */ => {
-  const ftFamService = new FTFamilyService;
+  const ftFamMiddleware = new FTFamilyMiddleware;
 
-  ftFamService.create(req.body)
+  ftFamMiddleware.create(req.body)
     .then((success: boolean) => {
       if (success) {
         res.status(201);
@@ -68,8 +68,8 @@ router.post('/create', (req: Request, res: Response) /**TODO: return type */ => 
 });
 
 router.get('/:id', (req: Request, res: Response) => {
-  const ftFamService = new FTFamilyService;
-  ftFamService.getFamily(parseInt(req.params.id))
+  const ftFamMiddleware = new FTFamilyMiddleware;
+  ftFamMiddleware.getFamily(parseInt(req.params.id))
     .then((r: FTFam | null) => {
       res.status(200);
       res.json(r);
@@ -81,10 +81,10 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.put('/:id', (req: Request, res: Response) => {
-  const ftFamService = new FTFamilyService;
+  const ftFamMiddleware = new FTFamilyMiddleware;
   console.log('RUNNING');
 
-  ftFamService.update(req.body, parseInt(req.params.id))
+  ftFamMiddleware.update(req.body, parseInt(req.params.id))
     .then((success: boolean) => {
       if (success) {
         res.status(201);
@@ -103,8 +103,8 @@ router.put('/:id', (req: Request, res: Response) => {
 });
 
 router.post('/:id/tree', (req: Request, res: Response) => {
-  const ftFamService = new FTFamilyService;
-  ftFamService.linkToTree(parseInt(req.params.id), req.body.id)
+  const ftFamMiddleware = new FTFamilyMiddleware;
+  ftFamMiddleware.linkToTree(parseInt(req.params.id), req.body.id)
     .then((success: boolean) => {
       if (success) {
         res.status(201);
@@ -123,8 +123,8 @@ router.post('/:id/tree', (req: Request, res: Response) => {
 });
 
 router.get('/:id/tree', (req: Request, res: Response) => {
-  const ftFamService = new FTFamilyService;
-  ftFamService.getTree(parseInt(req.params.id))
+  const ftFamMiddleware = new FTFamilyMiddleware;
+  ftFamMiddleware.getTree(parseInt(req.params.id))
     .then((tree?: number) => {
       if (tree) {
         res.status(200);
