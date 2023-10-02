@@ -21,13 +21,6 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // console.log(document.cookie);
-    if (!document.cookie) {
-      navigate('/connect');
-    }
-  });
-
-  useEffect(() => {
     getCurrentUser();
   }, []);
 
@@ -50,24 +43,26 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
   }, [currentUser]);
 
   const getCurrentUser = () => {
-    const sessionService = new FTSessionService();
-    sessionService.getCurrentUser(document.cookie)
-      .then(({ data }) => {
-        if (data) {
-          updateUser(data);
-          setLoading(false);
-        }
-      })
-      .catch(e => {
-        console.log('Error getting user: ', e);
-      });
+    if (!document.cookie) {
+      navigate('/connect');
+    } else {
+      const sessionService = new FTSessionService();
+      sessionService.getCurrentUser(document.cookie)
+        .then(({ data }) => {
+          if (data) {
+            updateUser(data);
+            setLoading(false);
+          }
+        })
+        .catch(e => {
+          console.log('Error getting user: ', e);
+        });
+    }
   }
 
   return currentUser ? (
-    <Page title="My profile" isLoading={loading} theme={theme} subTitle="">
-      Welcome {currentUser.first_name}
+    <Page subtitle="My profile" isLoading={loading} theme={theme} title={`Welcome ${currentUser?.first_name}`}>
       <div>
-        <h2>Your Profile:</h2>
         <div>
           <label>Your Families ({userFamilies.length})</label>
           <div>{

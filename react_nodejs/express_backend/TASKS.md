@@ -15,19 +15,19 @@
 - Setup swagger
 
 ## To test fully
-- Create IP checker in service
+- Create IP checker in middleware
 - Create FTUser create route
 - Implement FTuser.create field validations
 - Create FTUser login route
 
 - create FTFAM record interface
-- create FTFAM service
+- create FTFAM middleware
 - Implement FTFAM.create field validations
 - Create  FTFam create route
 - Create FTFam update route
 
 - create FTTree record interface
-- create FTTree service
+- create FTTree middleware
 - Implement FTTree.create field validations
 - Create  FTTree create route
 - Create FTTree update route
@@ -40,14 +40,14 @@
 - TODO: catch return false doesnt actually catch falty logic, 
 just wrong syntax and maybe wrong typing. FIX
 
-- TODO: set user for both below? should this be more ov a service task?
+- TODO: set user for both below? should this be more ov a middleware task?
 
 - TODO: catch return false doesnt actually catch falty logic, 
 just wrong syntax and maybe wrong typing. FIX
 
 - TODO: CHANGE ALL MODELS TO TS. UNABLE TO USE BUILT IN QUERIES OTHERWISE
 
-- TODO: Objective status will be calculated in the service by the sum of related tasks statuses
+- TODO: Objective status will be calculated in the middleware by the sum of related tasks statuses
 
 - TODO: typing of req body for post requst
 
@@ -82,7 +82,7 @@ just wrong syntax and maybe wrong typing. FIX
 
 - TODO: handle redirect in client
 
-TODO: use ftuser service to match spouse's first and last name and return id here. In the front, it will be some sort of dd that will use the ServiceWorker, and add the id to the form values
+TODO: use ftuser middleware to match spouse's first and last name and return id here. In the front, it will be some sort of dd that will use the MiddlewareWorker, and add the id to the form values
 
 # Question
 

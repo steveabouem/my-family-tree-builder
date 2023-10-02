@@ -5,7 +5,7 @@ import GlobalContext from '../../../context/global.context';
 const FTTree = (): JSX.Element => {
   const { theme } = useContext(GlobalContext);
   return (
-    <Page title="My Tree" subTitle="" isLoading={false} theme={theme} />
+    <Page title="My Tree" subtitle="" isLoading={false} theme={theme} />
   )
 }
 

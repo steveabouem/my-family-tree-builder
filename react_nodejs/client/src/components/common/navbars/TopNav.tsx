@@ -8,6 +8,8 @@ import ThemeSelector from "../../FT/common/ThemeSelector";
 import usePrimary from "../../hooks/usePrimary.hook";
 import GlobalContext from "../../../context/global.context";
 import FamilyTreeContext from "../../../context/FT/familyTree.context";
+import ButtonRounded from "../buttons/Rounded";
+import AuthService from "../../../services/FT";
 
 const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -16,8 +18,11 @@ const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
   const { currentUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
 
-  const processLogout = () => {
-    document.cookie = '';
+  const processLogout = async () => {
+    const authService = new AuthService('auth');
+    // document.cookie = '=;=;=; path=/'
+    // console.log(document.cookie.split(';'));
+    await authService.logout();
     navigate('/');
   }
 
@@ -48,13 +53,15 @@ const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
           <Link to="/connect" color={linkColor}>Connect</Link>
         </div>
       </div>
-      <div className="avatar-container">
-        {currentUser?.first_name ? <div onClick={() => setMenuOpened(!menuOpened)}><RiUser5Fill />   {currentUser.first_name}</div> : <LiaUserSecretSolid />}
+      <div className="avatar-container" onClick={() => setMenuOpened(!menuOpened)}>
+        {currentUser?.first_name ? (
+          <>
+            <RiUser5Fill />   {currentUser.first_name}
+          </>
+        ) : <LiaUserSecretSolid />}
       </div>
+      {menuOpened && <ButtonRounded text="LOGOUT" action={() => processLogout()} />}
       <ThemeSelector switchTheme={handleChangeTheme} />
-      {menuOpened && (
-        <div className="cursor-pointer" onClick={processLogout}>LOGOUT</div>
-      )}
     </div>
   );
 };

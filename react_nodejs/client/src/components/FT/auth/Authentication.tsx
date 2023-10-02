@@ -11,7 +11,7 @@ import GlobalContext from "../../../context/global.context";
 import useCookie from "../../hooks/useCookie.hook";
 import BaseDropDown from "../../common/dropdowns/BaseDropdown";
 import { DDropdownOption } from "../../common/dropdowns/definitions";
-import { DFormField } from "../../common/definitions";
+import { DFormField, cookieRoot } from "../../common/definitions";
 
 const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -21,8 +21,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   });
   const { updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
-  const cookie = useCookie();
-  const { theme, session } = useContext(GlobalContext);
+  const { theme } = useContext(GlobalContext);
 
 
   const maritalStatusOptions: DDropdownOption[] = [
@@ -170,15 +169,8 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   };
 
   useEffect(() => {
-    //NOTE: if cookie status changes or is clearImmediate, present loading screen and adjust display (hence no second argument)
-    // if (!cookie) {
-    //   setLoading(true);
-    //   changeMode('register');
-    // } else {
-    //   changeMode('login');
-    // }
     setLoading(false)
-  });
+  }, []);
 
   const submitForm = async (values: Partial<DUserDTO>, { resetForm }: FormikHelpers<Partial<DUserDTO>>) => {
     if (mode === 'login') {
@@ -202,7 +194,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     console.log({ logedInUser });
 
     if (logedInUser.data.session) {
-      console.log('Succesful login', logedInUser);
+      console.log('Succesful login', logedInUser.data.session);
       // TODO: redux/session/ip/routing
       changeMode(undefined);
       updateUser(logedInUser.data.session);
@@ -228,7 +220,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       // TODO: redux/session/ip/routing
       changeMode(undefined);
       updateUser(registeredUser.data.session);
-      document.cookie = registeredUser.data.session.token;
+      document.cookie = cookieRoot + registeredUser.data.session.token;
       navigate(`/ft/users/${registeredUser.data.session.id}`);
     } else {
       // TODO: on screen notification
@@ -239,7 +231,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   return (
     <Page
       title="Authentication Page"
-      subTitle="Please verify yourself below"
+      subtitle="Please verify yourself below"
       theme={theme} isLoading={loading}
     >
       <div className="m-auto w-100">

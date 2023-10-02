@@ -18,7 +18,7 @@ export interface DPageProps {
   isLoading: boolean;
   theme: themeEnum;
   title: string;
-  subTitle: string;
+  subtitle: string;
   children?: React.ReactNode;
 }
 
@@ -44,3 +44,5 @@ export interface DBaseFormProps {
   // TODO: No any, valiation types are not hard
   validations?: any;
 }
+
+export const cookieRoot = 'FT=';

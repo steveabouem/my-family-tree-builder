@@ -22,3 +22,4 @@ TBD
 - Create the session object and use it to pass the current user to the backend
 
 ### BUGS
+- after registration need to refresh the page in order to get the user, even though the cookie is set (url is /ft/users/undefined)

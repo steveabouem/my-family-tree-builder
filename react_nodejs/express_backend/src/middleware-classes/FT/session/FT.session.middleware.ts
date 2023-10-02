@@ -21,8 +21,8 @@ class FTSessionMiddleware<GSession> extends BaseMiddleware<GSession> {
     return signedUser;
   }
 
-  public getSessionData = (token: string, keys?: string[]): JwtPayload | null => {
-    let sessionData: { [key: string]: unknown } = {};
+  public getSessionData = (token: string, keys?: string[]): JwtPayload & { id: number } | null => {
+    let sessionData: { [key: string]: unknown, id: number } = { id: 0 };
     if (process.env.JWT_KEY) {
       try {
         const signedSessionJWT = jwt.verify(token, process.env.JWT_KEY);
