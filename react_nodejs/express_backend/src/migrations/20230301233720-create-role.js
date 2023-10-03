@@ -15,7 +15,7 @@ module.exports = {
       },
       assigned: {
         allowNull: false,
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER
       },
     });
   },

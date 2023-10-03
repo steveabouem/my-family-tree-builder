@@ -16,14 +16,22 @@ module.exports = {
         type: Sequelize.JSON
       },
       public: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER,
+        allowNull: false
       },
       active: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: true
+      },
+      families: {
+        type: Sequelize.JSON,
+        defaultValue: '[]'
       },
       created_at: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: new Date
       },
       created_by: {
         type: Sequelize.INTEGER
@@ -35,6 +43,9 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
+    // deal with foreign key constraints
+    await queryInterface.dropTable('FTUsers');
+    await queryInterface.dropTable('FTFams');
     await queryInterface.dropTable('FTTrees');
   }
 };

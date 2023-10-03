@@ -6,5 +6,5 @@ export interface DFTUserRecord {
     tasks: string;
     roles: string;
     authorizedIps: string;
-    ip_authority: boolean;
+    ip_authority: number;
 }

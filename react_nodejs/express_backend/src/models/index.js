@@ -1,5 +1,5 @@
 'use strict';
-// TODO: CHANGE ALL MODELS TO TS. UNABLE TO USE BUILT IN QUERIES OTHERWISE
+
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');

@@ -11,11 +11,16 @@ module.exports = {
     let dummyJSON = [];
     let dummyBoolean = [true, false, true, false];
     const dummyGender = [1, 2];
+    const dummyFams = [];
+    for (let i = 0; i < 5; i++) {
+      dummyFams.push(Math.floor(Math.random() * 20));
+    }
     for (let i = 0; i < 50; i++) {
       dummyJSON.push({
         first_name: faker.name.firstName(),
         last_name: faker.name.lastName(),
         age: Math.floor(Math.random() * 80),
+        email: 'abcd@efg.com',
         occupation: faker.name.jobArea(),
         partner: Math.floor(Math.random() * 100),
         marital_status: faker.lorem.word(),
@@ -24,13 +29,15 @@ module.exports = {
         has_ipa: dummyBoolean[Math.floor(Math.random() * 3)],
         gender: dummyGender[Math.floor(Math.random() * 2)],
         assigned_ips: '["123", "456"]',
-        profile_url: '',
+        profile_url: 'https://i.pravatar.cc/',
         description: faker.lorem.sentence(),
         imm_family: Math.floor(Math.random() * 90),
-        created_at: faker.date.past(),
-        updated_at: faker.date.past(),
+        related_to: JSON.stringify(dummyFams),
+        // createdAt: faker.date.past(),
+        // updatedAt: faker.date.past(),
       });
     }
+
     await queryInterface.bulkInsert('FTUsers', dummyJSON, {});
   },
 

@@ -1,5 +1,5 @@
-import styled, {keyframes} from "styled-components";
-import {Nav} from "react-bootstrap";
+import styled, { keyframes } from "styled-components";
+import { Nav } from "react-bootstrap";
 // TODO: global design system might not be really compatible with styled components
 const revealCircle = keyframes`
   from {
@@ -12,7 +12,7 @@ const revealCircle = keyframes`
 
 const revealTranslate = keyframes`
   from {
-    transform: translateX(-10%);
+    transform: translateX(-10px);
     width: 1px;
     overflow: hidden;
   }
@@ -53,7 +53,7 @@ export const StyledNav = styled(Nav)`
       display: inline-flex;
       font-size: 1.5em;
       vertical-align: middle;
-      margin: 0 10%;
+      margin: 0 10px;
       color: #fb9f73;//orange
       animation: ${revealTranslate} .5s ease;
     }
@@ -61,7 +61,7 @@ export const StyledNav = styled(Nav)`
     .top-logo-main {
       height: 80%;
       position: absolute;
-      top: 10%;
+      top: 10px;
       left: 2%;
       animation: ${revealCircle} .5s ease;
     }

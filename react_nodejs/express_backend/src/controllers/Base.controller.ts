@@ -1,23 +1,23 @@
-import { BaseService } from "../services/base/base.service";
+import { BaseMiddleware } from "../middleware-classes/base/base.middleware";
 import { DTableJoin } from "./common.definitions";
 
 class BaseController<GClassAttributes> {
     tableName: string;
-    baseService: any;
+    baseMiddleware: any;
 
-    constructor(p_table: string) {
-        this.tableName = p_table;
-        this.baseService = new BaseService(p_table);
+    constructor(table: string) {
+        this.tableName = table;
+        this.baseMiddleware = new BaseMiddleware(table);
     }
 
-    getList = async (p_columns?: string, p_where?: string, p_joins?: DTableJoin[], p_limit?: number): Promise<any> => {
-        const records = await this.baseService.getList(p_columns, p_where, p_joins, p_limit);
+    getList = async (columns?: string, where?: string, joins?: DTableJoin[], limit?: number): Promise<any> => {
+        const records = await this.baseMiddleware.getList(columns, where, joins, limit);
 
         return records;
     };
 
-    getById = async (p_id: number): Promise<any> => {
-        const result = await this.baseService.getById(p_id);
+    getById = async (id: number): Promise<any> => {
+        const result = await this.baseMiddleware.getById(id);
         return result;
     };
 
