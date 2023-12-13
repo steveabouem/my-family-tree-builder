@@ -1,21 +1,21 @@
-import React, { useContext, useEffect, useState } from "react";
-import { DAppProps } from "./common.definitions"
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { DUserDTO } from "../../../services/FT/auth/auth.definitions";
-import FTAuthentication from "../auth/Authentication";
+import React, { ReactNode, useEffect, useState } from "react";
+import { Route, Routes } from "react-router-dom";
+import { DUserDTO } from "../../services/FT/auth/auth.definitions";
+import FTAuthentication from "../auth/FT.Authentication";
 import { DeepPartial } from "redux";
-import TopNav from "../../common/navbars/TopNav";
+import TopNav from "./navbars/TopNav";
 import { DAuthMode } from "../auth/definitions";
 import FTUserProfilePage from "../user/FT.Profile";
-import FTFamily from "../family/FT.Family";
-import FamilyTreeContext from "../../../context/FT/familyTree.context";
-import GlobalContext, { applicationEnum, themeEnum } from "../../../context/global.context";
-import Footer from "../../common/navbars/Footer";
-import FTLandingPage from "../FT.Landing";
+import FamilyTreeContext from "../../context/familyTree.context";
+import Footer from "./navbars/Footer";
 import FTTree from "../tree/FT.Tree";
-import('../../common/styles.scss');
+import FTFamily from "../family/FT.Family";
+import { applicationEnum, themeEnum } from "../../context/definitions";
+import GlobalContext from "../../context/global.context";
+import FTLandingPage from "../FT/FT.Landing";
+import('./styles.scss');
 
-const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
+const FTAppContainer = ({ children }: { children?: ReactNode}): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<DeepPartial<DUserDTO>>({});
   const [mode, setMode] = useState<DAuthMode | undefined>();
   const [throwError, setThrowError] = useState<boolean>(false);
@@ -72,7 +72,7 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
           }>
           <div className="scroll">
             <Routes>
-              <Route path="/" element={<FTLandingPage />} />
+            <Route path="/" element={<FTLandingPage />} />
               <Route path="/connect" element={
                 <FTAuthentication
                   changeMode={updateFormMode}
@@ -81,8 +81,8 @@ const FTAppContainer = ({ children }: DAppProps): JSX.Element => {
               }
               />
               <Route path="users/:id" element={<FTUserProfilePage updateUser={updateUser} />} />
-              <Route path="/family" element={<FTFamily />} />
-              <Route path="/tree" element={<FTTree />} />
+              <Route path="family" element={<FTFamily updateUser={updateUser} />}  />
+              <Route path="family-tree" element={<FTTree updateUser={updateUser} />}  />
             </Routes>
           </div>
         </FamilyTreeContext.Provider>

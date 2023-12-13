@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import FTAppContainer from './components/FT/common/FT.AppContainer';
+import FTAppContainer from './components/common/FT.AppContainer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 

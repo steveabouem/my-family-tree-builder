@@ -1,10 +1,8 @@
-import FTAuthentication from "./FT/auth/Authentication";
-import FTLandingPage from "./FT/FT.Landing";
 import "../components/common/"
+import FTAuthentication from "./auth/FT.Authentication";
 
 const pages = {
   tree: {
-    landing: FTLandingPage,
     login: FTAuthentication
   }
 };

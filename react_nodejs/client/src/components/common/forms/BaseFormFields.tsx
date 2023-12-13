@@ -1,5 +1,5 @@
 import React from "react";
-import { Field } from "formik";
+import { Field, FieldArray } from "formik";
 import { DBaseFormProps, DFormField } from "../definitions";
 import ButtonRounded from "../buttons/Rounded";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
@@ -7,11 +7,12 @@ import('./styles.scss');
 
 const BaseFormFields = ({ 
   fields, handleSubmit, 
-  size, handleFieldValueChange 
+  size, handleFieldValueChange, title 
 }: DBaseFormProps): JSX.Element => {
 
   return (
     <div className={`base-form-fields accent-bg primary ${size}`}>
+      {title ? <div className="form-title">{title}</div> : null}
       {fields.map((field: DFormField, i: number) => (
         <div key={`${i}-${field.fieldName}`} className="field-wrap base">
           <label htmlFor={field.fieldName} className="primary">
@@ -21,6 +22,8 @@ const BaseFormFields = ({
             <Field 
               id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
               required={!!field.required} component={field.subComponent}/>
+          ) : field.type === 'array' ? (
+            <FieldArray name={field.fieldName} render={fields => field.subComponent} />
           ) : (
             <Field 
               id={field?.id || ''} name={field.fieldName} value={field.value}

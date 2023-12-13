@@ -5,8 +5,9 @@ import {
   CreationOptional, NonAttribute, Association,
 } from 'sequelize';
 import db from "../db";
-import FTUser from './FT.user';
-
+/***
+INFO: 
+***/
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>> {

@@ -27,12 +27,14 @@
 .dropdown-container {}
 
 .dd-trigger {
-  height: 20px;
+  position: relative;
+  border: 2.5px solid;
+  padding: 5px;
+  height: 35px;
   display: flex;
   border-radius: 5px;
   border: 1px solid;
   justify-content: space-between;
-  padding: 5px;
   align-items: center;
   cursor: pointer;
   background: white;
@@ -45,28 +47,35 @@
     transition: 1s ease;
   }
 }
-
-.dd-options {
-  animation: goAway .5s ease;
-  border-bottom: 2px solid;
-  padding: 2px;
-  display: flex;
-  align-items: center;
-  height: 20px;
-  cursor: pointer;
-
-  &:hover {
-    background: #d3a9ba9c;
-    color: #8c6d6d;
-  }
-
-  /* background: #eae8e8; */
-  .dd-option-inner {
+.dd-options-container {
+  position: absolute;
+  width: 100%;
+  top: 35px;
+  z-index: 1;
+  max-height: 150px;
+  overflow: hidden scroll;
+  .dd-options {
+    animation: goAway .5s ease;
+    border-bottom: 2px solid;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    height: 35px;
     cursor: pointer;
-
-  }
-
-  &.selected {
-    background: #d39a4930;
+  
+    &:hover {
+      background: #d3a9ba9c;
+      color: #8c6d6d;
+    }
+  
+    /* background: #eae8e8; */
+    .dd-option-inner {
+      cursor: pointer;
+  
+    }
+  
+    &.selected {
+      background: #d39a4930;
+    }
   }
 }

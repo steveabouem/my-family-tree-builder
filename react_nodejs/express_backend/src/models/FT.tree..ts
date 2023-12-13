@@ -166,16 +166,10 @@ FTTree.init(
     }
   },
   {
+    timestamps: false,
     tableName: 'FTTrees',
     sequelize: db // passing the `sequelize` instance is required
   }
 );
-
-
-// FTTree.hasMany(FTFam, {
-//   as: 'families',
-//   sourceKey: 'id',
-//   foreignKey: 'families'
-// });
 
 export default FTTree;

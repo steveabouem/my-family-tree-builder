@@ -82,7 +82,7 @@ const processRegister = async (req: Request): Promise<DSessionUser | null> => {
 
   if (newUser) {
     const sessionToken = await ftSessionMiddleware.setSession(newUser);
-    return { type: 'user', token: sessionToken, id: newUser?.id || 0 }; // INFO: only send back the id, the token holds the rest and will be dealt with in the front
+    return { type: 'user', token: sessionToken, id: newUser?.id || 0 }; // ** INFO: only send back the id, the token holds the rest and will be dealt with in the front
   }
 
   return null;

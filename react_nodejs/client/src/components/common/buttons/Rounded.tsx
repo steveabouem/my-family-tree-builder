@@ -3,7 +3,7 @@ import { DButtonProps } from "./definitions";
 
 const ButtonRounded = ({active = true, action, text = 'Submit'}: DButtonProps) => {
   return (
-    <button className="button rounded" disabled={!active} onClick={action}>{text}</button>
+    <button className="button rounded" type="submit" disabled={!active} onClick={action}>{text}</button>
   )
 }
 

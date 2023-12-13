@@ -19,7 +19,7 @@ const BaseDropDown = ({ id, label, options, additionalClass, onValueChange, val,
         <div>{displayVal || ''}</div>
         {isOpen ? <HiBarsArrowUp className={isOpen ? 'accent' : ''} /> : <HiBarsArrowDown className={isOpen ? 'accent' : ''} />}
       </div>
-      {isOpen ? <div>
+      {isOpen ? <div className="dd-options-container accent-bg">
         {options.map((option: DDropdownOption, i: number) => {
           return (
             <div

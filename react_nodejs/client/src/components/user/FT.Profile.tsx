@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from "react";
+import NotFound from '../common/404NotFound';
 import React from "react";
-import { DProfileProps } from "../../user/definitions";
-import GlobalContext from "../../../context/global.context";
-import FamilyTreeContext from "../../../context/familyTree.context";
-import FamilyService from "../../../services/FT/fam/family.service";
-import Page from "../../common/Page";
-import FamilyCard from "../../family/FamilyCard";
-import { DFTFamilyDTO } from "../../family/definitions";
-import NotFound from "../../common/404NotFound";
+import FamilyService from "../../services/FT/fam/family.service";
+import FamilyCard from "../family/FamilyCard";
+import { DFTFamilyDTO } from "../family/definitions";
+import Page from "../common/Page";
+import GlobalContext from "../../context/global.context";
+import FamilyTreeContext from "../../context/familyTree.context";
+import { DProfileProps } from "./definitions";
 
 const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);

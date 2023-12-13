@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import GlobalContext, { themeEnum } from "../../context/global.context";
+import GlobalContext from "../../context/global.context";
+import { themeEnum } from "../../context/definitions";
 
 const usePrimary = (): string => {
   const [primaryColor, setPrimaryColor] = useState<string>('white');

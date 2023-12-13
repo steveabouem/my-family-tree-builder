@@ -4,10 +4,10 @@ import { DTopNavProps } from "../definitions";
 import logo from "../../../assets/logo.jpg";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
-import ThemeSelector from "../../FT/common/ThemeSelector";
+import ThemeSelector from "../ThemeSelector";
 import usePrimary from "../../hooks/usePrimary.hook";
 import GlobalContext from "../../../context/global.context";
-import FamilyTreeContext from "../../../context/FT/familyTree.context";
+import FamilyTreeContext from "../../../context/familyTree.context";
 import ButtonRounded from "../buttons/Rounded";
 import AuthService from "../../../services/FT";
 
@@ -46,7 +46,7 @@ const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
         </div>
 
         <div className="accent">
-          <Link to="/familyTree" color={linkColor}>Trees</Link>
+          <Link to="/family-tree" color={linkColor}>Trees</Link>
         </div>
 
         <div className="accent">

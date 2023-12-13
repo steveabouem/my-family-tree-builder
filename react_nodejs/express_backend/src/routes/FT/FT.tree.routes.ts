@@ -29,7 +29,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 router.post('/create', (req: Request, res: Response) => {
     const ftTreeMiddleware = new FTTreeMiddleware;
-    // TODO: there's definitely to add the create function to the base middleware instead
+    // TODO: there's definitely a way to add the create function to the base middleware instead
     ftTreeMiddleware.create(req.body)
         .then((success: boolean) => {
             if (success) {
@@ -64,7 +64,7 @@ router.get('/:id', (req: Request, res: Response) => {
 
 router.get('/:id/families', (req: Request, res: Response) => {
     const ftTreeMiddleware = new FTTreeMiddleware;
-    // TODO: there's definitely to add the create function to the base middleware instead
+    // TODO: there's definitely a way to add the create function to the base middleware instead
     ftTreeMiddleware.getFamilies(parseInt(req.params.id))
         .then((families: number[] | undefined) => {
             if (families) {
@@ -88,7 +88,7 @@ router.put('/:id', (req: Request, res: Response) => {
     const ftTreeMiddleware = new FTTreeMiddleware;
     const values = { ...req.body };
 
-    // TODO: there's definitely to add the create function to the base middleware instead
+    // TODO: there's definitely a way to add the create function to the base middleware instead
     ftTreeMiddleware.update(values, parseInt(req.params.id))
         .then((success: boolean) => {
             if (success) {
@@ -110,7 +110,7 @@ router.put('/:id', (req: Request, res: Response) => {
 
 router.put('/:id/families', (req: Request, res: Response) => {
     const ftTreeMiddleware = new FTTreeMiddleware;
-    // TODO: there's definitely to add the create function to the base middleware instead
+    // TODO: there's definitely a way to add the create function to the base middleware instead
     ftTreeMiddleware.addFamily(parseInt(req.params.id), req.body.id)
         .then((success: boolean) => {
             if (success) {
@@ -132,7 +132,7 @@ router.put('/:id/families', (req: Request, res: Response) => {
 
 router.put('/:id/families/remove', (req: Request, res: Response) => {
     const ftTreeMiddleware = new FTTreeMiddleware;
-    // TODO: there's definitely to add the create function to the base middleware instead
+    // TODO: there's definitely a way to add the create function to the base middleware instead
     ftTreeMiddleware.removeFamily(parseInt(req.params.id), req.body.id)
         .then((success: boolean) => {
             if (success) {

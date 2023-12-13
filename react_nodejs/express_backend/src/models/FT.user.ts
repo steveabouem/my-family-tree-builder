@@ -1,8 +1,5 @@
 import {
-  Association, DataTypes, HasManyCountAssociationsMixin,
-  HasManyGetAssociationsMixin, HasManySetAssociationsMixin,
-  HasManyAddAssociationsMixin, HasManyHasAssociationsMixin,
-  HasManyRemoveAssociationsMixin, Model, InferAttributes,
+  DataTypes, Model, InferAttributes,
   InferCreationAttributes, CreationOptional, NonAttribute, ForeignKey,
 } from 'sequelize';
 import db from "../db";
@@ -16,6 +13,8 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
   declare first_name: string;
   declare last_name: string;
   declare age: number;
+  declare parent_1: number | null;
+  declare parent_2: number | null;
   declare occupation: string;
   // foreign keys are automatically added by associations methods (like Project.belongsTo)
   // by branding them using the `ForeignKey` type, `Project.init` will know it does not need to
@@ -63,6 +62,12 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
   }
 
   get FTUserAge(): NonAttribute<number> {
+    return this.age;
+  }
+  get FTUserParent_1(): NonAttribute<number> {
+    return this.age;
+  }
+  get FTUserParent_2(): NonAttribute<number> {
     return this.age;
   }
 
@@ -162,7 +167,14 @@ FTUser.init(
     has_ipa: {
       type: DataTypes.INTEGER,
     },
-    is_parent: {
+    parent_1: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    }, is_parent: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    parent_2: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },

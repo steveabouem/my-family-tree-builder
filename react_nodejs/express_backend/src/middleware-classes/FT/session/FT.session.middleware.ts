@@ -7,7 +7,7 @@ class FTSessionMiddleware<GSession> extends BaseMiddleware<GSession> {
   }
 
   public setSession = async (session: GSession): Promise<string | null> => {
-    // INFO: receives safe user profile (no pwd or other sensitive info) and signs it, returns it as header to be set as a token in front
+    // ** INFO: receives safe user profile (no pwd or other sensitive info) and signs it, returns it as header to be set as a token in front
     let signedUser = null;
     console.log('session value before encryption: ', session);
 
@@ -33,14 +33,14 @@ class FTSessionMiddleware<GSession> extends BaseMiddleware<GSession> {
 
         if (signedSessionJWTObject !== null) {
           console.log('SIGNED SESSION OBJECT: ', signedSessionJWTObject);
-          if (keys) { // INFO: If no key is provided, return all session (will most likely be used in the back)
+          if (keys) { // ** INFO: If no key is provided, return all session (will most likely be used in the back)
             // @ts-ignore
             const sessionValues = JSON.parse(signedSessionJWTObject.session);
             for (const sessionKey of keys) {
               sessionData[sessionKey] = sessionValues[sessionKey];
             }
 
-            return sessionData; // INFO: I will have to ignore the jwt keys from the payload 
+            return sessionData; // ** INFO: I will have to ignore the jwt keys from the payload 
           } else {
             console.log('sess data no keys ', signedSessionJWTObject);
             return signedSessionJWTObject;

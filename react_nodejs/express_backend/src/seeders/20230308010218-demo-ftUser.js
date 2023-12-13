@@ -20,6 +20,8 @@ module.exports = {
         first_name: faker.name.firstName(),
         last_name: faker.name.lastName(),
         age: Math.floor(Math.random() * 80),
+        parent_1: Math.floor(Math.random() * 80),
+        parent_2: Math.floor(Math.random() * 80),
         email: 'abcd@efg.com',
         occupation: faker.name.jobArea(),
         partner: Math.floor(Math.random() * 100),

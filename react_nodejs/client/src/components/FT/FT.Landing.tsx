@@ -5,7 +5,10 @@ import GlobalContext from "../../context/global.context";
 const FTLandingPage = (): JSX.Element => {
   const {theme} = useContext(GlobalContext);
   return (
-    <Page title="Welcome to  your Tree Manager" subtitle="Use nav bar for now" isLoading={false} theme={theme} />
+    <div>
+      <h2>Welcome to  your Tree Manager</h2>
+      <h3>Use nav bar for now</h3>
+    </div> 
   );
 }
 

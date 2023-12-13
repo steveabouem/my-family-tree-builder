@@ -11,7 +11,11 @@
     border-radius: 5px;
     box-shadow: 0px 0px 10px 0px #8f631f52;
 
-
+    .form-title{ 
+      height: 30px;
+      font-weight: bold;
+      border-bottom: 1px solid white;
+    }
     .field-wrap {
       display: flex;
       flex-direction: column;

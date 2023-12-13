@@ -1,8 +1,7 @@
 import { createContext } from "react";
-import { DUserDTO } from "../../services/FT/auth/auth.definitions";
+import { DUserDTO } from "../services/FT/auth/auth.definitions";
 import { DeepPartial } from "redux";
-import { DFTFamilyDTO } from "../../components/FT/family/definitions";
-import { yupToFormErrors } from "formik";
+import { DFTFamilyDTO } from "../components/family/definitions";
 
 interface DFTContext {
   currentUser: DeepPartial<DUserDTO>;

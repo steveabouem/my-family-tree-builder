@@ -1,7 +1,7 @@
-import React from "react";
-import { themeEnum } from "../../context/global.context";
+import React, { ReactNode } from "react";
+import { applicationEnum, themeEnum } from "../../context/definitions";
 
-// +++++=> NAVIGATION <= +++++
+/* +++++=> NAVIGATION <= +++++ */
 export interface DTopNavProps {
   links?: DNavigationLink[];
   position: string;
@@ -13,7 +13,7 @@ export interface DNavigationLink {
   path: string;
 }
 
-// +++++=> PAGES <= +++++
+/* +++++=> PAGES <= +++++ */
 export interface DPageProps {
   isLoading: boolean;
   theme: themeEnum;
@@ -22,7 +22,7 @@ export interface DPageProps {
   children?: React.ReactNode;
 }
 
-// +++++=> FORMS <= +++++
+/* +++++=> FORMS <= +++++ */
 export interface DFormField {
   fieldName: string;
   label: string;
@@ -36,6 +36,7 @@ export interface DFormField {
 }
 
 export interface DBaseFormProps {
+  title?: string;
   fields: DFormField[];
   handleSubmit: () => void;
   size: string;
@@ -45,4 +46,8 @@ export interface DBaseFormProps {
   validations?: any;
 }
 
-export const cookieRoot = 'FT=';
+/* +++++=> APP <= +++++ */
+
+export interface DThemeSelectorProps {
+  switchTheme: (theme: themeEnum) => void;
+}

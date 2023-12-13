@@ -1,61 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import { DUserDTO } from "../../../services/FT/auth/auth.definitions";
 import { Formik, FormikHelpers } from "formik";
-import AuthService from "../../../services/FT";
 import { DAuthProps } from "./definitions";
-import BaseFormFields from "../../common/forms/BaseFormFields";
 import { useNavigate } from "react-router";
-import FamilyTreeContext from "../../../context/FT/familyTree.context";
-import Page from "../../common/Page";
-import GlobalContext from "../../../context/global.context";
-import useCookie from "../../hooks/useCookie.hook";
-import BaseDropDown from "../../common/dropdowns/BaseDropdown";
-import { DDropdownOption } from "../../common/dropdowns/definitions";
-import { DFormField, cookieRoot } from "../../common/definitions";
+import FamilyTreeContext from "../../context/familyTree.context";
+import GlobalContext from "../../context/global.context";
+import { DDropdownOption } from "../common/dropdowns/definitions";
+import { DFormField } from "../common/definitions";
+import { DUserDTO } from "../../services/FT/auth/auth.definitions";
+import AuthService from "../../services/FT";
+import BaseFormFields from "../common/forms/BaseFormFields";
+import Page from "../common/Page";
+import BaseDropDown from "../common/dropdowns/BaseDropdown";
+import MaritalStatusDropdown from "../common/dropdowns/MaritalStatusDropdown";
 
 const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [displayValues, setDisplayValues] = useState<{ [key: string]: string | number }>({
+  const [displayValues, setDisplayValues] = useState<{ [key: string]: string | number }>({ //format dropdown values for client
     is_parent: 'Yes',
     gender: 'Male',
   });
   const { updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
   const { theme } = useContext(GlobalContext);
-
-
-  const maritalStatusOptions: DDropdownOption[] = [
-    {
-      label: 'Single',
-      value: 'Single',
-      id: 'single-option',
-    },
-    {
-      label: 'Married',
-      value: 'Married',
-      id: 'married-option',
-    },
-    {
-      label: 'Divorced',
-      value: 'Divorced',
-      id: 'divorced-option',
-    },
-    {
-      label: 'Separated',
-      value: 'Separated',
-      id: 'separated-option',
-    },
-    {
-      label: 'Widowed',
-      value: 'Widowed',
-      id: 'widowed-option',
-    },
-    {
-      label: 'Not telling',
-      value: 'Not telling',
-      id: 'not-telling-option',
-    },
-  ];
 
   const parentOptions: DDropdownOption[] = [
     {
@@ -220,7 +186,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       // TODO: redux/session/ip/routing
       changeMode(undefined);
       updateUser(registeredUser.data.session);
-      document.cookie = cookieRoot + registeredUser.data.session.token;
+      document.cookie = 'FT' + registeredUser.data.session.token;
       navigate(`/ft/users/${registeredUser.data.session.id}`);
     } else {
       // TODO: on screen notification
@@ -278,9 +244,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                 id: 'marital-status-field',
                 subComponent: () => (
                   <div className="field-wrap base">
-                    <BaseDropDown
-                      onValueChange={(option: DDropdownOption) => setFieldValue('marital_status', option.value)}
-                      options={maritalStatusOptions}
+                    <MaritalStatusDropdown
                       id="marital-status-dd"
                       val={values.marital_status}
                       displayVal={values.marital_status}
