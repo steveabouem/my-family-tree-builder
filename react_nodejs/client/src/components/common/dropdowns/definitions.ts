@@ -16,36 +16,29 @@ export interface DDropdownOption {
   id?: string;
 }
 
-export const maritalStatusOptions: DDropdownOption[] = [
+export const genderOptions: DDropdownOption[] = [
   {
-    label: 'Single',
-    value: 'Single',
-    id: 'single-option',
+    label: 'Male',
+    value: 1,
+    id: 'male-option',
   },
   {
-    label: 'Married',
-    value: 'Married',
-    id: 'married-option',
+    label: 'Female',
+    value: 2,
+    id: 'female-option',
+  },
+];
+
+export const parentOptions: DDropdownOption[] = [
+  {
+    label: 'Yes',
+    value: 1,
+    id: 'is-parent-option',
   },
   {
-    label: 'Divorced',
-    value: 'Divorced',
-    id: 'divorced-option',
-  },
-  {
-    label: 'Separated',
-    value: 'Separated',
-    id: 'separated-option',
-  },
-  {
-    label: 'Widowed',
-    value: 'Widowed',
-    id: 'widowed-option',
-  },
-  {
-    label: 'Not telling',
-    value: 'Not telling',
-    id: 'not-telling-option',
+    label: 'No',
+    value: 0,
+    id: 'not-parent-option',
   },
 ];
 
@@ -99,5 +92,38 @@ export const relationOptions: DDropdownOption[] = [
     label: 'Wife',
     value: 'Wife',
     id: 'is-wife-option',
+  },
+];
+
+export const maritalStatusOptions: DDropdownOption[] = [
+  {
+    label: 'Single',
+    value: 'Single',
+    id: 'single-option',
+  },
+  {
+    label: 'Married',
+    value: 'Married',
+    id: 'married-option',
+  },
+  {
+    label: 'Divorced',
+    value: 'Divorced',
+    id: 'divorced-option',
+  },
+  {
+    label: 'Separated',
+    value: 'Separated',
+    id: 'separated-option',
+  },
+  {
+    label: 'Widowed',
+    value: 'Widowed',
+    id: 'widowed-option',
+  },
+  {
+    label: 'Not telling',
+    value: 'Not telling',
+    id: 'not-telling-option',
   },
 ];

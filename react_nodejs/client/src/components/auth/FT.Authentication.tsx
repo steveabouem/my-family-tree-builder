@@ -4,14 +4,13 @@ import { DAuthProps } from "./definitions";
 import { useNavigate } from "react-router";
 import FamilyTreeContext from "../../context/familyTree.context";
 import GlobalContext from "../../context/global.context";
-import { DDropdownOption } from "../common/dropdowns/definitions";
+import { DDropdownOption, genderOptions, maritalStatusOptions, parentOptions } from "../common/dropdowns/definitions";
 import { DFormField } from "../common/definitions";
 import { DUserDTO } from "../../services/FT/auth/auth.definitions";
 import AuthService from "../../services/FT";
 import BaseFormFields from "../common/forms/BaseFormFields";
 import Page from "../common/Page";
 import BaseDropDown from "../common/dropdowns/BaseDropdown";
-import MaritalStatusDropdown from "../common/dropdowns/MaritalStatusDropdown";
 
 const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -23,39 +22,11 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const navigate = useNavigate();
   const { theme } = useContext(GlobalContext);
 
-  const parentOptions: DDropdownOption[] = [
-    {
-      label: 'Yes',
-      value: 1,
-      id: 'is-parent-option',
-    },
-    {
-      label: 'No',
-      value: 0,
-      id: 'not-parent-option',
-    },
-  ];
-
-  const genderOptions: DDropdownOption[] = [
-    {
-      label: 'Male',
-      value: 1,
-      id: 'male-option',
-    },
-    {
-      label: 'Female',
-      value: 2,
-      id: 'female-option',
-    },
-  ];
-
-
   const loginFormFields = [
     {
       fieldName: 'email',
       label: 'Email',
       type: 'email',
-      // class: ,
       required: true
     },
     {
@@ -71,44 +42,37 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     {
       fieldName: 'first_name',
       label: 'First Name',
-      // class: ,
       required: true
     },
     {
       fieldName: 'last_name',
       label: 'Last Name',
-      // class: ,
       required: true
     },
     {
       fieldName: 'email',
       label: 'Email',
-      // class: ,
       required: true
     },
     {
       fieldName: 'password',
       label: 'Password',
-      // class: ,
       required: true,
       type: 'password'
     },
     {
       fieldName: 'age',
       label: 'Age',
-      // class: ,
       required: true
     },
     {
       fieldName: 'occupation',
       label: 'Occupation',
-      // class: ,
       required: true
     },
     {
       fieldName: 'description',
       label: 'Describe Yourself',
-      // class: ,
       // required: true 
     },
   ];
@@ -244,7 +208,9 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                 id: 'marital-status-field',
                 subComponent: () => (
                   <div className="field-wrap base">
-                    <MaritalStatusDropdown
+                    <BaseDropDown
+                     onValueChange={(option: DDropdownOption) => setFieldValue('marital_status', option.value)}
+                     options={maritalStatusOptions}
                       id="marital-status-dd"
                       val={values.marital_status}
                       displayVal={values.marital_status}
@@ -252,13 +218,11 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                   </div>
                 ),
                 required: true,
-
               },
               {
                 fieldName: 'is_parent',
                 label: 'Are you a Parent?',
                 value: values.is_parent,
-                // class: ,
                 required: true,
                 subComponent: () => (
                   <div className="field-wrap base">

@@ -5,7 +5,6 @@ import { DSibling, DTreeManagerFields, DTreeManagerProps, relationType } from ".
 import { DFormField } from "../common/definitions";
 import BaseDropDown from "../common/dropdowns/BaseDropdown";
 import { DDropdownOption, relationOptions } from "../common/dropdowns/definitions";
-import MaritalStatusDropdown from "../common/dropdowns/MaritalStatusDropdown";
 
 const ManageTreeForm = ({ hasSiblings, hasSpouse }: DTreeManagerProps): JSX.Element => {
   // !: For now I will not distinguish between the 2.Will use fam as central entity (seen README)

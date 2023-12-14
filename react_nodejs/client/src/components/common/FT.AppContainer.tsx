@@ -12,7 +12,7 @@ import FTTree from "../tree/FT.Tree";
 import FTFamily from "../family/FT.Family";
 import { applicationEnum, themeEnum } from "../../context/definitions";
 import GlobalContext from "../../context/global.context";
-import FTLandingPage from "../FT/FT.Landing";
+import FTLandingPage from "../FT.Landing";
 import('./styles.scss');
 
 const FTAppContainer = ({ children }: { children?: ReactNode}): JSX.Element => {
