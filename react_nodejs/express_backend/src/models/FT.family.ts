@@ -6,7 +6,7 @@ import {
 } from 'sequelize';
 import db from "../db";
 /***
-INFO: 
+?: 
 ***/
 
 // order of InferAttributes & InferCreationAttributes is important.

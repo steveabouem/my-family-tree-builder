@@ -1,11 +1,9 @@
 import { QueryTypes } from "sequelize";
-import { DFTUserRecord } from "../../../controllers/FT/user/FT.user.definitions";
-import FTUser from "../../../models/FT.user";
-import { BaseMiddleware } from "../../base/base.middleware";
+import FTUser from "../../models/FT.user";
+import { BaseMiddleware } from "../base/base.middleware";
 import { DFTUserDTO } from "./FT.user..definitions";
 import bcrypt from "bcryptjs";
-import { DFTFamDTO, DRelatedFamily } from "../family/FT.family.definitions";
-import { DUserDTO } from "../../tracker/user/user.definitions";
+import { DFTUserRecord } from "../../controllers/FT/user/FT.user.definitions";
 
 export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
   constructor() {

@@ -63,3 +63,8 @@ react_nodejs/express_backend/dist/src/services/FT/session/FT.session.service.js
 react_nodejs/express_backend/dist/src/services/FT/tree/FT.tree.service.js
 react_nodejs/express_backend/dist/src/services/FT/user/FT.user.service.js
 react_nodejs/express_backend/src/services/FT/user/FT.user.service.ts
+react_nodejs/client/.env
+react_nodejs/express_backend/yarn.lock
+react_nodejs/express_backend/package-lock.json
+react_nodejs/schema.sql
+schema.sql

@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTFam from "../../models/FT.family";
-import FTTree from "../../models/FT.tree.";
-import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
-import { FTTreeMiddleware } from "../../middleware-classes/FT/tree/FT.tree.middleware";
+import FTTree from "../models/FT.tree.";
+import winston from "winston";
+import { FTTreeMiddleware } from "../middleware-classes/tree/FT.tree.middleware";
+import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
 
 const router = Router();
 
@@ -17,7 +17,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
                 res.json('IP is not approved');
             }
         })
-        .catch(e => {
+        .catch((e: unknown) => {
+    winston.log('error' ,  e);
             // TODO: catch return false doesnt actually catch falty logic, 
             // just wrong syntax and maybe wrong typing. FIX
             res.status(400);
@@ -40,7 +41,8 @@ router.post('/create', (req: Request, res: Response) => {
                 res.json(false);
             }
         })
-        .catch(e => {
+        .catch((e: unknown) => {
+    winston.log('error' ,  e);
             console.log('ERROR: ', e);
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             res.status(500);
@@ -56,7 +58,8 @@ router.get('/:id', (req: Request, res: Response) => {
             res.status(200);
             res.json(r);
         })
-        .catch(e => {
+        .catch((e: unknown) => {
+    winston.log('error' ,  e);
             res.status(500);
             res.json(e);
         });
@@ -75,7 +78,8 @@ router.get('/:id/families', (req: Request, res: Response) => {
                 res.json(null);
             }
         })
-        .catch(e => {
+        .catch((e: unknown) => {
+    winston.log('error' ,  e);
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             console.log('ERROR: ', e);
 
@@ -99,7 +103,8 @@ router.put('/:id', (req: Request, res: Response) => {
                 res.json(null);
             }
         })
-        .catch(e => {
+        .catch((e: unknown) => {
+    winston.log('error' ,  e);
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             console.log('ERROR: ', e);
 
@@ -121,7 +126,8 @@ router.put('/:id/families', (req: Request, res: Response) => {
                 res.json(null);
             }
         })
-        .catch(e => {
+        .catch((e: unknown) => {
+    winston.log('error' ,  e);
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             console.log('ERROR: ', e);
 
@@ -143,7 +149,8 @@ router.put('/:id/families/remove', (req: Request, res: Response) => {
                 res.json(null);
             }
         })
-        .catch(e => {
+        .catch((e: unknown) => {
+    winston.log('error' ,  e);
             // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
             console.log('ERROR: ', e);
 

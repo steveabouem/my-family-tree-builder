@@ -1,5 +1,5 @@
-import { DFTUserDTO } from "../../../middleware-classes/FT/user/FT.user..definitions";
-import { FTUserMiddleware } from "../../../middleware-classes/FT/user/FT.user.middleware";
+import { DFTUserDTO } from "../../../middleware-classes/user/FT.user..definitions";
+import { FTUserMiddleware } from "../../../middleware-classes/user/FT.user.middleware";
 import BaseController from "../../Base.controller";
 import { DFTUserRecord } from "./FT.user.definitions";
 

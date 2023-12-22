@@ -2,6 +2,7 @@ import { Sequelize, QueryTypes } from 'sequelize';
 import { DTableJoin } from '../../controllers/common.definitions';
 import bcrypt from "bcryptjs";
 import db from '../../db';
+import winston from 'winston';
 
 /**
  * A middleware receives data of type D...Record and returns data of type D...DTO
@@ -88,12 +89,14 @@ export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlew
 
   async disable(id: number, table: string): Promise<boolean> {
     const update = `UPDATE :table SET active = false WHERE id = :id;`
-    // TODO: catch return false doesnt actually catch falty logic, 
-    // just wrong syntax and maybe wrong typing. FIX
+
     await this.dataBase.query(update, {
       type: QueryTypes.UPDATE,
       replacements: { table: table, id: id }
-    }).catch(() => false);
+    }).catch((e: unknown) => {
+      winston.log('Disable error' ,  e);
+      return false;
+    });
 
     return true;
   }

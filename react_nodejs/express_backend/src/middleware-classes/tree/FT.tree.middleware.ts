@@ -1,8 +1,8 @@
 import winston from "winston";
-import { BaseMiddleware } from "../../base/base.middleware";
-import FTTree from "../../../models/FT.tree.";
-import { dateValid } from "../../../utils/validators";
 import { DFamilyTreeDTO, DFamilyTreeUpdateDTO } from "./FT.tree.definitions";
+import { BaseMiddleware } from "../base/base.middleware";
+import FTTree from "../../models/FT.tree.";
+import { dateValid } from "../../utils/validators";
 
 export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
   constructor() {

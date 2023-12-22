@@ -1,10 +1,11 @@
 import { Op } from "sequelize";
-import FTFam from "../../../models/FT.family";
-import FTTree from "../../../models/FT.tree.";
-import FTUser from "../../../models/FT.user";
-import { BaseMiddleware } from "../../base/base.middleware";
+import winston from "winston";
 import { DFamilyTreeUpdateDTO } from "../tree/FT.tree.definitions";
 import { DFTFamDTO, DFTFamUpdateDTO } from "./FT.family.definitions";
+import { BaseMiddleware } from "../base/base.middleware";
+import FTFam from "../../models/FT.family";
+import FTTree from "../../models/FT.tree.";
+import FTUser from "../../models/FT.user";
 
 export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   constructor() {
@@ -16,7 +17,7 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
     const fieldsValid = await this.validateFTFamFields(formattedValues);
 
     if (fieldsValid) {
-      await FTFam.create(formattedValues).catch((e) => { //TODO: Error typing and catch
+      await FTFam.create(formattedValues).catch((e: unknown) => {
         console.log(e); //TODO: LOGGING
         return false;
       });
@@ -33,7 +34,8 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
       const formattedValues = await this.formatUpdateValues(values, id);
 
       await FTFam.update({ ...formattedValues }, { where: { id: id } })
-        .catch(e => {
+        .catch((e: unknown) => {
+          winston.log('error', e);
           console.log('Error updating: ', e);
           return false;
         });
@@ -47,8 +49,8 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   }
 
   getFamily = async (id: number): Promise<FTFam | null> => {
-    const fam = await this.getById(id);
-    return fam;
+    // const fam = await this.getById(id);
+    return null;
   }
 
   linkToTree = async (id: number, tree: number): Promise<boolean> => {

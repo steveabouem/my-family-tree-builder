@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTSessionMiddleware from "../../middleware-classes/FT/session/FT.session.middleware";
-import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
-import { FTUserMiddleware } from "../../middleware-classes/FT/user/FT.user.middleware";
+import winston from "winston";
+import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
+import { FTUserMiddleware } from "../middleware-classes/user/FT.user.middleware";
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
         res.json('IP is not approved');
       }
     })
-    .catch(e => {
+    .catch((e: unknown) => {
       // TODO: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
       res.status(500);
@@ -36,7 +36,8 @@ router.get('/:id', (req: Request, res: Response) => {
       console.log('DONE');
       res.json(user);
     })
-    .catch(e => { //TODO: logging and error handling
+    .catch((e: unknown) => {
+      winston.log('error', e); //TODO: logging and error handling
       console.log('ERRORRRR: ', e);
 
       res.status(500);
@@ -52,7 +53,8 @@ router.get('/:id/families', (req: Request, res: Response) => {
       console.log('DONE');
       res.json({ "relatedFamilies": fams });
     })
-    .catch(e => { //TODO: logging and error handling
+    .catch((e: unknown) => {
+      winston.log('error', e); //TODO: logging and error handling
       console.log('ERRORRRR: ', e);
 
       res.status(500);
@@ -68,7 +70,8 @@ router.get('/:id/extended-families', (req: Request, res: Response) => {
       console.log('DONE');
       res.json({ "relatedFamilies": fams });
     })
-    .catch(e => { //TODO: logging and error handling
+    .catch((e: unknown) => {
+      winston.log('error', e); //TODO: logging and error handling
       console.log('ERRORRRR: ', e);
 
       res.status(500);

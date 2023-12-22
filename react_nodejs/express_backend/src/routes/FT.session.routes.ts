@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTSessionMiddleware from "../../middleware-classes/FT/session/FT.session.middleware";
-import { DSessionUser } from "../definitions";
-import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
+import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
 import cookieParser from "cookie-parser";
+import FTSessionMiddleware from "../middleware-classes/session/FT.session.middleware";
+import winston from "winston";
 
 const router = Router();
 router.use(cookieParser());
@@ -17,7 +17,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
         res.json({ ipIsValid: false });
       }
     })
-    .catch(e => {
+    .catch((e: unknown) => {
+    winston.log('error' ,  e);
       // TODO: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
       res.status(400);
@@ -37,9 +38,9 @@ router.post('/get-data', (req: Request, res: Response) => {
 
 router.post('/set-data', (req: Request, res: Response) => {
   // TODO: Kill session, send back the guest session default
-  const ftSessionMiddleware = new FTSessionMiddleware();
-  const sessionData = ftSessionMiddleware.setSession(req.body.data);
-  res.json(sessionData);
+  // const ftSessionMiddleware = new FTSessionMiddleware();
+  // const sessionData = ftSessionMiddleware.createSession(req.body.data);
+  // res.json(sessionData);
 });
 
 export default router;

@@ -1,9 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTFam from "../../models/FT.family";
-import FTAuthMiddleware from "../../middleware-classes/FT/auth/FT.auth.middleware";
-import { DFTFamDTO } from "../../middleware-classes/FT/family/FT.family.definitions";
-import { FTFamilyMiddleware } from "../../middleware-classes/FT/family/FT.family.middleware";
-import { DFamilyTreeDTO } from "../../middleware-classes/FT/tree/FT.tree.definitions";
+import FTFam from "../models/FT.family";
+import winston from "winston";
+import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
+import { FTFamilyMiddleware } from "../middleware-classes/family/FT.family.middleware";
 
 const router = Router();
 
@@ -18,7 +17,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
         res.json('IP is not approved');
       }
     })
-    .catch(e => {
+    .catch((e: unknown) => {
+    winston.log('error' ,  e);
       // TODO: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
       res.status(500);
@@ -40,7 +40,8 @@ router.get('/index', (req: Request, res: Response) => {
       res.status(200);
       res.json(data)
     })
-    .catch(e => {
+    .catch((e: unknown) => {
+    winston.log('error' ,  e);
       console.log('Error getting tree', e); // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
       res.status(500);
       res.json(undefined);
@@ -60,7 +61,8 @@ router.post('/create', (req: Request, res: Response) /**TODO: return type */ => 
         res.json(false);
       }
     })
-    .catch(e => {
+    .catch((e: unknown) => {
+    winston.log('error' ,  e);
       // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
       res.status(500);
       res.json(e);
@@ -74,7 +76,8 @@ router.get('/:id', (req: Request, res: Response) => {
       res.status(200);
       res.json(r);
     })
-    .catch(e => {
+    .catch((e: unknown) => {
+    winston.log('error' ,  e);
       res.status(500);
       res.json(e);
     });
@@ -94,7 +97,8 @@ router.put('/:id', (req: Request, res: Response) => {
         res.json(false);
       }
     })
-    .catch(e => {
+    .catch((e: unknown) => {
+    winston.log('error' ,  e);
       console.log(e); //TODO: LOGGING
       res.status(500);
       res.json(e)
@@ -114,7 +118,8 @@ router.post('/:id/tree', (req: Request, res: Response) => {
         res.json(false);
       }
     })
-    .catch(e => {
+    .catch((e: unknown) => {
+    winston.log('error' ,  e);
       console.log('Error linking tree', e); // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
       res.status(500);
       res.json(false);
@@ -134,7 +139,8 @@ router.get('/:id/tree', (req: Request, res: Response) => {
         res.json(null);
       }
     })
-    .catch(e => {
+    .catch((e: unknown) => {
+    winston.log('error' ,  e);
       console.log('Error getting tree', e); // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
       res.status(500);
       res.json(undefined);

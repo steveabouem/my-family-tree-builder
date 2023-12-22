@@ -5,7 +5,7 @@ import {
 import db from "../db";
 
 
-// ** INFO: a representation of family members reserved for non registered users
+// ?: a representation of family members reserved for non registered users
 class FTNode extends Model<InferAttributes<FTNode>, InferCreationAttributes<FTNode>> {
   declare id: CreationOptional<number>;
   declare ft_id: number; //FTUser.id

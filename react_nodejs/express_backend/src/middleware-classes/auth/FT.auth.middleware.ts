@@ -1,12 +1,9 @@
-import { DUserRecord } from "../../../controllers/tracker/User/User.definitions";
-import { BaseMiddleware } from "../../base/base.middleware";
-// import { FTUserMiddleware } from "../user/FT.user.middleware";
-import db from "../../../db";
-import FTIP from "../../../models/FT.ip";
-import { DFTLoginFields } from "./FT.auth.definitions";
-import FTUser from "../../../models/FT.user";
 import bcrypt from "bcryptjs";
+import { DFTLoginFields } from "./FT.auth.definitions";
 import { DFTUserDTO } from "../user/FT.user..definitions";
+import { BaseMiddleware } from "../base/base.middleware";
+import FTUser from "../../models/FT.user";
+import FTIP from "../../models/FT.ip";
 
 class FTAuthMiddleware extends BaseMiddleware<any> { // TODO: no any
     constructor() {
