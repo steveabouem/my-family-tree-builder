@@ -9,7 +9,7 @@ import usePrimary from "../../hooks/usePrimary.hook";
 import GlobalContext from "../../../context/global.context";
 import FamilyTreeContext from "../../../context/familyTree.context";
 import ButtonRounded from "../buttons/Rounded";
-import AuthService from "../../../services/FT";
+import AuthService from "../../../services";
 
 const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
   const [menuOpened, setMenuOpened] = useState(false);

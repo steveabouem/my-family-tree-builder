@@ -1,11 +1,11 @@
 import { createContext } from "react";
-import { DUserDTO } from "../services/FT/auth/auth.definitions";
+import { DUserDTO } from "../services/auth/auth.definitions";
 import { DeepPartial } from "redux";
-import { DFTFamilyDTO } from "../components/family/definitions";
+import { DFamilyDTO } from "../components/family/definitions";
 
 interface DFTContext {
   currentUser: DeepPartial<DUserDTO>;
-  family: DeepPartial<DFTFamilyDTO>;
+  family: DeepPartial<DFamilyDTO>;
   // TODO: no any
   tree: any;
   updateUser: (values?: Partial<DUserDTO>) => void;

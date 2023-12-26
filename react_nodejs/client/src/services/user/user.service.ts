@@ -1,4 +1,4 @@
-import BaseService from "../../base/base.service";
+import BaseService from "../base/base.service";
 import { DUserRelatedFamily } from "./user.definitions";
 
 class FTUserService extends BaseService {

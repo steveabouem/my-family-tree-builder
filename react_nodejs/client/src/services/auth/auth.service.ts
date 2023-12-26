@@ -1,4 +1,4 @@
-import BaseService from "../../base/base.service";
+import BaseService from "../base/base.service";
 import { DUserDTO } from "./auth.definitions";
 
 class AuthService extends BaseService {

@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import NotFound from '../common/404NotFound';
 import React from "react";
-import FamilyService from "../../services/FT/fam/family.service";
+import FamilyService from "../../services/fam/family.service";
 import FamilyCard from "../family/FamilyCard";
-import { DFTFamilyDTO } from "../family/definitions";
+import { DFamilyDTO } from "../family/definitions";
 import Page from "../common/Page";
 import GlobalContext from "../../context/global.context";
 import FamilyTreeContext from "../../context/familyTree.context";
@@ -17,8 +17,8 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
 
   useEffect(() => {
     const getUserFamilies = async (): Promise<any> => {
-      const ftFamilyService = new FamilyService();
-      const families = await ftFamilyService.getFamilyBullkData(`${currentUser?.related_to?.join(',') || ''} `);
+      const familyService = new FamilyService();
+      const families = await familyService.getFamilyBullkData(`${currentUser?.related_to?.join(',') || ''} `);
 
       return families
     }
@@ -39,7 +39,7 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
         <div>
           <label>Your Families ({userFamilies.length})</label>
           <div>{
-            userFamilies.length ? userFamilies.map((family: DFTFamilyDTO) => (
+            userFamilies.length ? userFamilies.map((family: DFamilyDTO) => (
               <FamilyCard {...family} />
             ))
               : null

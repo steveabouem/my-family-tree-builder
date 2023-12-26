@@ -1,6 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import { DUserDTO } from "../../services/FT/auth/auth.definitions";
 import FTAuthentication from "../auth/FT.Authentication";
 import { DeepPartial } from "redux";
 import TopNav from "./navbars/TopNav";
@@ -8,11 +7,12 @@ import { DAuthMode } from "../auth/definitions";
 import FTUserProfilePage from "../user/FT.Profile";
 import FamilyTreeContext from "../../context/familyTree.context";
 import Footer from "./navbars/Footer";
-import FTTree from "../tree/FT.Tree";
-import FTFamily from "../family/FT.Family";
+import Tree from "../tree/FT.Tree";
+import Family from "../family/FT.Family";
 import { applicationEnum, themeEnum } from "../../context/definitions";
 import GlobalContext from "../../context/global.context";
 import FTLandingPage from "../FT.Landing";
+import { DUserDTO } from "../../services/auth/auth.definitions";
 import('./styles.scss');
 
 const FTAppContainer = ({ children }: { children?: ReactNode}): JSX.Element => {
@@ -81,8 +81,8 @@ const FTAppContainer = ({ children }: { children?: ReactNode}): JSX.Element => {
               }
               />
               <Route path="users/:id" element={<FTUserProfilePage updateUser={updateUser} />} />
-              <Route path="family" element={<FTFamily updateUser={updateUser} />}  />
-              <Route path="family-tree" element={<FTTree updateUser={updateUser} />}  />
+              <Route path="family" element={<Family updateUser={updateUser} />}  />
+              <Route path="family-tree" element={<Tree updateUser={updateUser} />}  />
             </Routes>
           </div>
         </FamilyTreeContext.Provider>

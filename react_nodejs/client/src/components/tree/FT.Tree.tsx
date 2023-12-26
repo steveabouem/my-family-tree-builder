@@ -4,11 +4,11 @@ import GlobalContext from '../../context/global.context';
 import ManageTreeForm from './FT.ManageTreeForm';
 import { useNavigate } from 'react-router';
 import FamilyTreeContext from '../../context/familyTree.context';
-import FTSessionService from '../../services/FT/session/session.service';
+import SessionService from '../../services/session/session.service';
 import { DProfileProps } from '../user/definitions';
 import useAuthValidation from '../hooks/useAuthValidation';
 
-const FTTree = ({ updateUser }: DProfileProps): JSX.Element => {
+const Tree = ({ updateUser }: DProfileProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [hasSiblings, setHasSiblings] = useState<boolean>(true);
   const [hasSpouse, setHasSpouse] = useState<boolean>(true);
@@ -54,4 +54,4 @@ const FTTree = ({ updateUser }: DProfileProps): JSX.Element => {
   )
 }
 
-export default FTTree;
+export default Tree;

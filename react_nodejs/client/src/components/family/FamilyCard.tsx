@@ -1,7 +1,7 @@
 import React from "react";
-import { DFTFamilyDTO } from "./definitions";
+import { DFamilyDTO } from "./definitions";
 
-const FamilyCard = (props: DFTFamilyDTO): JSX.Element => {
+const FamilyCard = (props: DFamilyDTO): JSX.Element => {
   return (
     <div className="">
       <h3>{props.name} Family</h3>

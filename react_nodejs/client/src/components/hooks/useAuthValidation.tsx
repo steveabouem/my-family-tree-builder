@@ -1,32 +1,27 @@
-import React, { useContext, useEffect } from "react";
-import useCookie from "./useCookie.hook";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import FTSessionService from "../../services/FT/session/session.service";
+import SessionService from "../../services/session/session.service";
 import FamilyTreeContext from "../../context/familyTree.context";
 
 const useAuthValidation = (): void => {
-  const cookie = useCookie();
   const navigate = useNavigate();
   const {updateUser} = useContext(FamilyTreeContext);
   
   useEffect(() => {
-    if (!(cookie)) {
-      navigate('/connect');
-    } else {
-      const signedUserData = cookie;
-      const sessionService = new FTSessionService();
-      
-      sessionService.getCurrentUser(signedUserData)
-        .then(({ data }) => {
-          if (data) {
-            updateUser(data);
-          }
-        })
-        .catch(e => {
-          console.log('Error getting user: ', e);
-        });
-    }
-  }, [cookie]);
+    const sessionService = new SessionService();
+    const id = document.cookie;
+    sessionService.getCurrent(1)
+      .then(({ data }) => {
+        if (data) {
+          updateUser(data);
+          } else {
+          navigate('/connect');
+        }
+      })
+      .catch((e: unknown) => {
+        console.log('Error getting user: ', e);
+      });
+  }, []);
 }
 
 export default useAuthValidation;

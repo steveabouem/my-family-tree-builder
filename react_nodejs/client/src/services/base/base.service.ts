@@ -7,7 +7,7 @@ class BaseService {
 
     constructor(apiPath: string) {
         this.request = axios.create();
-        this.APIBaseUrl = 'http://localhost:4000/api/FT';
+        this.APIBaseUrl = 'http://localhost:4000/api';
         this.APIPath = apiPath;
     }
 

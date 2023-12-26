@@ -6,11 +6,11 @@ import FamilyTreeContext from "../../context/familyTree.context";
 import GlobalContext from "../../context/global.context";
 import { DDropdownOption, genderOptions, maritalStatusOptions, parentOptions } from "../common/dropdowns/definitions";
 import { DFormField } from "../common/definitions";
-import { DUserDTO } from "../../services/FT/auth/auth.definitions";
-import AuthService from "../../services/FT";
+import AuthService from "../../services";
 import BaseFormFields from "../common/forms/BaseFormFields";
 import Page from "../common/Page";
 import BaseDropDown from "../common/dropdowns/BaseDropdown";
+import { DUserDTO } from "../../services/auth/auth.definitions";
 
 const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -116,7 +116,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     const authService = new AuthService('auth');
     const envToken: string | undefined = process.env.REACT_APP_JWT_TOKEN;
     const logedInUser = await authService.submitLoginForm({ ...values, sessionToken: envToken as string })
-      .catch(e => {
+      .catch((e: unknown) => {
         // TODO: LOGGING AND PROPER HANDLING IN FRONT
         console.log('Error loging in', e);
         return false;
@@ -128,7 +128,7 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       // TODO: redux/session/ip/routing
       changeMode(undefined);
       updateUser(logedInUser.data.session);
-      navigate(`/ft/users/${logedInUser.data.session.id}`);
+      navigate(`/users/${logedInUser.data.session.id}`);
     } else {
       console.log('Error loging in'); // TODO logging
     }
@@ -137,21 +137,18 @@ const FTAuthentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const processRegister = async (values: Partial<DUserDTO>) => {
     const authService = new AuthService('auth');
     const registeredUser = await authService.submitRegistrationForm(values)
-      .catch(e => {
+      .catch((e: unknown) => {
         // TODO: LOGGING AND PROPER HANDLING IN FRONT
         console.log('Error registering', e);
         return false;
       });
 
-    if (registeredUser.data.session) {
-      // TODO: redux/session/ip/routing
-      // console.log({registeredUser});
+    if (registeredUser?.data?.userId ) {
       console.log('Succesful registration', registeredUser);
       // TODO: redux/session/ip/routing
       changeMode(undefined);
-      updateUser(registeredUser.data.session);
-      document.cookie = 'FT' + registeredUser.data.session.token;
-      navigate(`/ft/users/${registeredUser.data.session.id}`);
+      updateUser(registeredUser.data);
+      navigate(`/users/${registeredUser.data.userId}`);
     } else {
       // TODO: on screen notification
       console.log('Registration failure');
