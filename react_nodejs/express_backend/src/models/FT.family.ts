@@ -10,7 +10,7 @@ import db from "../db";
 ***/
 
 // order of InferAttributes & InferCreationAttributes is important.
-class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>> {
+class Family extends Model<InferAttributes<Family>, InferCreationAttributes<Family>> {
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
@@ -87,11 +87,11 @@ class FTFam extends Model<InferAttributes<FTFam>, InferCreationAttributes<FTFam>
   // TODO: uncomment once you figure out how to set and fetch associations, 
   // an array of IDs is a little pedestrian. Don't forget the omit param
   // declare static associations: {
-  //   members: Association<FTFam, FTUser>;
+  //   members: Association<Family, FTUser>;
   // };
 }
 
-FTFam.init(
+Family.init(
   {
     id: {
       type: DataTypes.INTEGER(),
@@ -129,9 +129,9 @@ FTFam.init(
   }
 );
 
-// FTFam.hasMany(FTUser, {
+// Family.hasMany(FTUser, {
 //   as: 'users',
 //   foreignKey: 'members'
 // });
 
-export default FTFam;
+export default Family;

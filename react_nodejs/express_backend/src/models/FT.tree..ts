@@ -1,32 +1,3 @@
-// 'use strict';
-// const {
-//   Model
-// } = require('sequelize');
-// module.exports = (sequelize, DataTypes) => {
-//   class FTTree extends Model {
-//     /**
-//      * Helper method for defining associations.
-//      * This method is not a part of Sequelize lifecycle.
-//      * The `models/index` file will call this method automatically.
-//      */
-//     static associate(models) {
-//       // define association here
-//       // FTTree.hasMany(models.FTFam);
-//     }
-//   }
-//   FTTree.init({
-//     authorized_ips: DataTypes.JSON,
-//     public: DataTypes.INTEGER,
-//     name: DataTypes.STRING,
-//   }, {
-//     sequelize,
-//     modelName: 'FTTree',
-//   });
-//   return FTTree;
-// };
-
-
-
 import {
   Association, DataTypes, Model, InferAttributes, InferCreationAttributes,
   CreationOptional, NonAttribute, HasManyGetAssociationsMixin, HasManySetAssociationsMixin,
@@ -34,11 +5,9 @@ import {
   HasManyCountAssociationsMixin,
 } from 'sequelize';
 import db from "../db";
-import FTFam from './FT.family';
-
 
 // order of InferAttributes & InferCreationAttributes is important.
-class FTTree extends Model<InferAttributes<FTTree>, InferCreationAttributes<FTTree>> {
+class Tree extends Model<InferAttributes<Tree>, InferCreationAttributes<Tree>> {
   /**
    * Attributes
    * */
@@ -63,12 +32,12 @@ class FTTree extends Model<InferAttributes<FTTree>, InferCreationAttributes<FTTr
   /**
    * Association Getters/Setters
    * */
-  // FTFAM 
-  // declare getFamilies: HasManyGetAssociationsMixin<FTFam>; // Note the null assertions!
-  // declare setFamilies: HasManySetAssociationsMixin<FTFam, number>;
-  // declare addFamilies: HasManyAddAssociationsMixin<FTFam, number>;
-  // declare removeFamilies: HasManyRemoveAssociationsMixin<FTFam, number>;
-  // declare hasFamilies: HasManyHasAssociationsMixin<FTFam, number>;
+  // FAMILY 
+  // declare getFamilies: HasManyGetAssociationsMixin<Family>; // Note the null assertions!
+  // declare setFamilies: HasManySetAssociationsMixin<Family, number>;
+  // declare addFamilies: HasManyAddAssociationsMixin<Family, number>;
+  // declare removeFamilies: HasManyRemoveAssociationsMixin<Family, number>;
+  // declare hasFamilies: HasManyHasAssociationsMixin<Family, number>;
   // declare countFamilies: HasManyCountAssociationsMixin;
   /**
    * End
@@ -76,45 +45,45 @@ class FTTree extends Model<InferAttributes<FTTree>, InferCreationAttributes<FTTr
 
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
-  // declare families?: NonAttribute<FTFam[]>; // Note this is optional since it's only populated when explicitly requested in code
+  // declare families?: NonAttribute<Family[]>; // Note this is optional since it's only populated when explicitly requested in code
 
   /**
    * Attributes Getters/Setters
    * */
   // getters that are not attributes should be tagged using NonAttribute
   // to remove them from the model's Attribute Typings.
-  get FTTreeId(): NonAttribute<number> {
+  get treeId(): NonAttribute<number> {
     return this.id;
   }
-  get FTTreeAuthorized_ips(): NonAttribute<string> {
+  get treeAuthorized_ips(): NonAttribute<string> {
     return this.authorized_ips;
   };
-  get FTTreePublic(): NonAttribute<number> {
+  get treePublic(): NonAttribute<number> {
     return this.public;
   };
-  get FTTreeName(): NonAttribute<string> {
+  get treeName(): NonAttribute<string> {
     return this.name;
   };
-  get FTTreeCreated_by(): NonAttribute<number> { //FTUser
+  get treeCreated_by(): NonAttribute<number> { //FTUser
     return this.created_by;
   }
-  get FTTreeActive(): NonAttribute<number> {
+  get treeActive(): NonAttribute<number> {
     return this.active;
   }
-  get FTTreeCreatedAt(): NonAttribute<Date> {
+  get treeCreatedAt(): NonAttribute<Date> {
     return this.created_at;
   }
-  get FTTreeUpdatedAt(): NonAttribute<Date> {
+  get treeUpdatedAt(): NonAttribute<Date> {
     return this.updated_at;
   }
 
-  get FTTreeFAmilies(): NonAttribute<string> {
+  get treeFAmilies(): NonAttribute<string> {
     return this.families;
   };
 
   // TODO: uncomment once you figure out how to set and fetch associations, 
   // an array of IDs is a little pedestrian. Don't forget the omit param
-  // public getFams(): FTFam[] | undefined {
+  // public getFams(): Family[] | undefined {
   //   return this.families;
   // }
   /**
@@ -122,11 +91,11 @@ class FTTree extends Model<InferAttributes<FTTree>, InferCreationAttributes<FTTr
    * */
 
   // declare static associations: {
-  //   families: Association<FTTree, FTFam>;
+  //   families: Association<FTTree, Family>;
   // };
 }
 
-FTTree.init(
+Tree.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -167,9 +136,9 @@ FTTree.init(
   },
   {
     timestamps: false,
-    tableName: 'FTTrees',
+    tableName: 'Trees',
     sequelize: db // passing the `sequelize` instance is required
   }
 );
 
-export default FTTree;
+export default Tree;

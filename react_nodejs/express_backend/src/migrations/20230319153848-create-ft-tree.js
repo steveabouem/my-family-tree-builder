@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('FTTrees', {
+    await queryInterface.createTable('Trees', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -44,8 +44,8 @@ module.exports = {
   },
   async down(queryInterface, Sequelize) {
     // deal with foreign key constraints
-    await queryInterface.dropTable('FTUsers');
-    await queryInterface.dropTable('FTFams');
-    await queryInterface.dropTable('FTTrees');
+    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable('Families');
+    await queryInterface.dropTable('Trees');
   }
 };

@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('FTUsers', {
+    await queryInterface.createTable('Users', {
       id: {
         autoIncrement: true,
         type: Sequelize.INTEGER,
@@ -30,6 +30,9 @@ module.exports = {
         type: Sequelize.STRING
       },
       partner: { type: Sequelize.INTEGER },
+      parent_1: { type: Sequelize.INTEGER },
+      parent_2: { type: Sequelize.INTEGER },
+      siblings: { type: Sequelize.JSON },
       marital_status: {
         allowNull: false,
         type: Sequelize.STRING
@@ -72,6 +75,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('FTUsers');
+    await queryInterface.dropTable('Users');
   }
 };

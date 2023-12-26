@@ -5,10 +5,10 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(t => {
       return Promise.all([
-        queryInterface.addColumn('FTSessions', 'time', {
+        queryInterface.addColumn('Sessions', 'time', {
           type: Sequelize.DataTypes.DATE
         }, { transaction: t }),
-        queryInterface.addColumn('FTSessions', 'user_id', {
+        queryInterface.addColumn('Sessions', 'user_id', {
           type: Sequelize.DataTypes.INTEGER
         }, { transaction: t }),
       ]);
@@ -18,8 +18,8 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(t => {
       return Promise.all([
-        queryInterface.removeColumn('FTSessions', 'time', { transaction: t }),
-        queryInterface.removeColumn('FTSessions', 'user_id', { transaction: t }),
+        queryInterface.removeColumn('Sessions', 'time', { transaction: t }),
+        queryInterface.removeColumn('Sessions', 'user_id', { transaction: t }),
       ]);
     });
   }

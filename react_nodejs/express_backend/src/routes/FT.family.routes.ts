@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTFam from "../models/FT.family";
+import Family from "../models/FT.family";
 import winston from "winston";
 import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
-import { FTFamilyMiddleware } from "../middleware-classes/family/FT.family.middleware";
+import { FamilyMiddleware } from "../middleware-classes/family/FT.family.middleware";
 
 const router = Router();
 
@@ -32,7 +32,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 // Ideally make a base route handlers class that will accept generics in request 
 // and return appropriate types...maybe generics as well ?
 router.get('/index', (req: Request, res: Response) => {
-  const ftFamMiddleware = new FTFamilyMiddleware();
+  const ftFamMiddleware = new FamilyMiddleware();
   const idList = `${req.query.ids}`;
 
   ftFamMiddleware.getBulkData(idList)
@@ -49,7 +49,7 @@ router.get('/index', (req: Request, res: Response) => {
 });
 
 router.post('/create', (req: Request, res: Response) /**TODO: return type */ => {
-  const ftFamMiddleware = new FTFamilyMiddleware;
+  const ftFamMiddleware = new FamilyMiddleware;
 
   ftFamMiddleware.create(req.body)
     .then((success: boolean) => {
@@ -70,9 +70,9 @@ router.post('/create', (req: Request, res: Response) /**TODO: return type */ => 
 });
 
 router.get('/:id', (req: Request, res: Response) => {
-  const ftFamMiddleware = new FTFamilyMiddleware;
+  const ftFamMiddleware = new FamilyMiddleware;
   ftFamMiddleware.getFamily(parseInt(req.params.id))
-    .then((r: FTFam | null) => {
+    .then((r: Family | null) => {
       res.status(200);
       res.json(r);
     })
@@ -84,7 +84,7 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.put('/:id', (req: Request, res: Response) => {
-  const ftFamMiddleware = new FTFamilyMiddleware;
+  const ftFamMiddleware = new FamilyMiddleware;
   console.log('RUNNING');
 
   ftFamMiddleware.update(req.body, parseInt(req.params.id))
@@ -107,7 +107,7 @@ router.put('/:id', (req: Request, res: Response) => {
 });
 
 router.post('/:id/tree', (req: Request, res: Response) => {
-  const ftFamMiddleware = new FTFamilyMiddleware;
+  const ftFamMiddleware = new FamilyMiddleware;
   ftFamMiddleware.linkToTree(parseInt(req.params.id), req.body.id)
     .then((success: boolean) => {
       if (success) {
@@ -128,7 +128,7 @@ router.post('/:id/tree', (req: Request, res: Response) => {
 });
 
 router.get('/:id/tree', (req: Request, res: Response) => {
-  const ftFamMiddleware = new FTFamilyMiddleware;
+  const ftFamMiddleware = new FamilyMiddleware;
   ftFamMiddleware.getTree(parseInt(req.params.id))
     .then((tree?: number) => {
       if (tree) {

@@ -24,13 +24,11 @@ router.use((req: Request, res: Response, next: NextFunction) => {
       res.status(400);
       res.json({ ipIsValid: false, message: e });
     });
-
-
   next();
 });
 
 // TODO: req, res typing
-router.post('/get-data', (req: Request, res: Response) => {
+router.get('/get-data', (req: Request, res: Response) => {
   const ftSessionMiddleware = new FTSessionMiddleware();
   const sessionData = ftSessionMiddleware.getSessionData(req.body.data);
   res.json(sessionData);

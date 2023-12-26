@@ -3,11 +3,11 @@ import winston from "winston";
 import { DFamilyTreeUpdateDTO } from "../tree/FT.tree.definitions";
 import { DFTFamDTO, DFTFamUpdateDTO } from "./FT.family.definitions";
 import { BaseMiddleware } from "../base/base.middleware";
-import FTFam from "../../models/FT.family";
-import FTTree from "../../models/FT.tree.";
+import Family from "../../models/FT.family";
+import Tree from "../../models/FT.tree.";
 import FTUser from "../../models/FT.user";
 
-export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
+export class FamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   constructor() {
     super('FTFams');
   }
@@ -17,7 +17,7 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
     const fieldsValid = await this.validateFTFamFields(formattedValues);
 
     if (fieldsValid) {
-      await FTFam.create(formattedValues).catch((e: unknown) => {
+      await Family.create(formattedValues).catch((e: unknown) => {
         console.log(e); //TODO: LOGGING
         return false;
       });
@@ -29,11 +29,11 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   }
 
   update = async (values: DFTFamUpdateDTO, id: number): Promise<boolean> => {
-    const currentFamily = await FTFam.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
+    const currentFamily = await Family.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
     if (currentFamily) {
       const formattedValues = await this.formatUpdateValues(values, id);
 
-      await FTFam.update({ ...formattedValues }, { where: { id: id } })
+      await Family.update({ ...formattedValues }, { where: { id: id } })
         .catch((e: unknown) => {
           winston.log('error', e);
           console.log('Error updating: ', e);
@@ -48,14 +48,14 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
     return false;
   }
 
-  getFamily = async (id: number): Promise<FTFam | null> => {
+  getFamily = async (id: number): Promise<Family | null> => {
     // const fam = await this.getById(id);
     return null;
   }
 
   linkToTree = async (id: number, tree: number): Promise<boolean> => {
-    const currentFamily = await FTFam.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
-    const currentTree = await FTTree.findOne({ where: { id: tree }, attributes: { exclude: ['id'] } });
+    const currentFamily = await Family.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
+    const currentTree = await Tree.findOne({ where: { id: tree }, attributes: { exclude: ['id'] } });
 
     if (!currentFamily || !currentTree) {
       console.log('Tree or family do not exist'); // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
@@ -68,7 +68,7 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   }
 
   getTree = async (id: number): Promise<number | undefined> => {
-    const currentFamily = await FTFam.findOne({ where: { id }, attributes: { exclude: ['id'] } });
+    const currentFamily = await Family.findOne({ where: { id }, attributes: { exclude: ['id'] } });
     if (currentFamily) {
       const tree = currentFamily.tree;
       return tree;
@@ -80,7 +80,7 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
 
   getBulkData = async (ids: string): Promise<Partial<DFTFamDTO>[]> => {
     const parseIds = ids.split(',').map((id: string) => parseInt(id));
-    const families: any = await FTFam.findAll({
+    const families: any = await Family.findAll({
       where: {
         id: {
           [Op.in]: parseIds
@@ -92,7 +92,7 @@ export class FTFamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   }
 
   formatUpdateValues = async (values: DFTFamUpdateDTO, id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
-    const currentFamily = await FTFam.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
+    const currentFamily = await Family.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
     let formattedValues = {};
     if (!currentFamily) {
       return;

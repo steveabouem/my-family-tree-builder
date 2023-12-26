@@ -2,15 +2,21 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('FTSessions', {
-      id: {
+    await queryInterface.createTable('Sessions', {
+      sid: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      key: {
+      userId: {
+        type: Sequelize.INTEGER
+      },
+      expires: {
         allowNull: false,
+        type: Sequelize.DATE
+      },
+      data: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -25,6 +31,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('FTSessions');
+    await queryInterface.dropTable('Sessions');
   }
 };

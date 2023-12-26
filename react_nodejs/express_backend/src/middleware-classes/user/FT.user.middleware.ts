@@ -3,11 +3,11 @@ import FTUser from "../../models/FT.user";
 import { BaseMiddleware } from "../base/base.middleware";
 import { DFTUserDTO } from "./FT.user..definitions";
 import bcrypt from "bcryptjs";
-import { DFTUserRecord } from "../../controllers/FT/user/FT.user.definitions";
+import { DFTUserRecord } from "../../controllers/user/User.definitions";
 
 export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
   constructor() {
-    super('FTUsers');
+    super('Users');
   }
 
 
@@ -25,8 +25,6 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
         return null;
       });
       await newUser?.save();
-      console.log('SAVED newUser', newUser);
-
       return { ...newUser?.dataValues, password: undefined };
     }
     return null;
@@ -71,16 +69,9 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
       });
     console.log(currentUser.partner);
 
-    // using user partner id
-    // const select = `
-    //   SELECT * 
-    //   FROM FTUsers user 
-    //   JOIN FTFams family ON family.id = user.imm_family 
-    //   WHERE JSON_CONTAINS(family.members, :partner)) 
-    // `;
     const select = `
       SELECT * 
-      FROM FTUsers user 
+      FROM Users user 
       JOIN FTFams family ON family.id = user.imm_family 
       WHERE JSON_CONTAINS(family.members, :partner) ;
     `;
@@ -157,17 +148,3 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
     return true;
   }
 }
-
-// // ME
-// INSERT INTO FTUsers VALUES(1, 'Steve', 'Abouem', 40, 'sabo@cc', 'Admin', 2, 'Married', '123456789012', 1, 1, 1, '[]', 'Admin URL', 'Admin desc', 1, '[1, 2]', '2023-06-07', NULL);
-
-// // JO
-// INSERT INTO FTUsers VALUES(2, 'JOhane', 'Nouala', 33, 'j.n@cc', 'Spouse', 1, 'Married', '123456789012', 1, 0, 2, '[]', 'Spouse URL', 'Spouse desc', 2, '[1, 2]', '2023-06-07', NULL);
-
-// // Abouem
-// INSERT INTO FTFams VALUES(1, 'Abouem', 'Abouem URL', 10, 'Abouems DEsc', 1, 3, 4, 1, '[1]', 1, '2023-06-07', NULL);
-
-// // Nouala
-// INSERT INTO FTFams VALUES(2, 'Nouala', 'Nouala URL', 5, 'Noualas DEsc', 1, 5, 6, 2, '[2]', 2, '2023-06-07', NULL);
-
-// INSERT INTO FTFams VALUES(3, 'Bouchard', 'Boucahrd URL', 2, 'Bouchard DEsc', 1, 10, 12, 10, '[1, 10]', 3, '2023-06-07', NULL);

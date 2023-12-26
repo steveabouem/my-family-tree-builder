@@ -1,26 +1,68 @@
-import { BaseMiddleware } from "../middleware-classes/base/base.middleware";
-import { DTableJoin } from "./common.definitions";
+import bcrypt from "bcryptjs";
+import { QueryTypes, Sequelize } from "sequelize";
+import { DTableJoin } from "./controllers.definitions";
+import db from "../db";
 
-class BaseController<GClassAttributes> {
+class BaseController<GProps> {
     tableName: string;
-    baseMiddleware: any;
+    dataBase: Sequelize;
+    salt: string;
 
     constructor(table: string) {
+        this.dataBase = db;
         this.tableName = table;
-        this.baseMiddleware = new BaseMiddleware(table);
+        this.salt = bcrypt.genSaltSync(8);
     }
 
-    getList = async (columns?: string, where?: string, joins?: DTableJoin[], limit?: number): Promise<any> => {
-        const records = await this.baseMiddleware.getList(columns, where, joins, limit);
+    public async getList(columns?: string[], incomingWhere?: string, incomingJoins?: DTableJoin[], incomingLimit?: number): Promise<any> {
+        let joins = '';
+        let where = '';
+        let limit = '';
+        let selector: string = "*";
 
-        return records;
+        if (where) {
+            where = incomingWhere || '';
+        }
+        if (columns) {
+            selector = columns?.join(', ');
+        }
+        if (joins) {
+            joins = incomingJoins?.reduce((joinStatement: string, currentJoin: DTableJoin) => {
+                return `${joinStatement} JOIN ${currentJoin.tableName} ON ${currentJoin.on}`
+            }, joins) || '';
+        }
+        if (limit) {
+            limit = `LIMIT ${incomingLimit}`;
+        }
+
+        const select = `
+                SELECT :selector
+                FROM :tableName
+                :joins
+                :where
+                :limit
+                ;
+            `;
+
+        const results = await this.dataBase.query(select, {
+            type: QueryTypes.SELECT,
+            replacements: {
+                selector,
+                tableName: this.tableName,
+                joins,
+                where,
+                limit
+            }
+        });
+        return results[0];
+    }
+
+    public async getById(id: number): Promise<GProps> {
+        const results: any = {}; // TODO: no any
+        return results;
     };
 
-    getById = async (id: number): Promise<any> => {
-        const result = await this.baseMiddleware.getById(id);
-        return result;
-    };
-
+    
 }
 
 export default BaseController;

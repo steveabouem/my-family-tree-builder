@@ -1,22 +1,22 @@
 import winston from "winston";
 import { BaseMiddleware } from "../../base/base.middleware";
-import FTTree from "../../../models/FT.tree.";
+import Tree from "../../../models/FT.tree.";
 import { dateValid } from "../../../utils/validators";
 import { DFamilyTreeDTO, DFamilyTreeUpdateDTO } from "./FT.tree.definitions";
 
-export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
+export class TreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
   constructor() {
-    super('FTTrees');
+    super('Trees');
   }
 
   create = async (values: DFamilyTreeDTO): Promise<boolean> => {
     // TODO: creation date has a default value in models. I might possibly skip this formatting,
     //  and adjust the DTO to make the prop optional. leaving it for now as it makes validation simpler
     const formattedValues = { ...values, created_at: new Date, active: 1 };
-    const valid = this.validateFTTreeFields(formattedValues);
+    const valid = this.validateTreeFields(formattedValues);
 
     if (valid) {
-      await FTTree.create({ ...formattedValues })
+      await Tree.create({ ...formattedValues })
         .catch((e: unknown) => {
     winston.log('error' ,  e);
           console.log('Error creating tree'); // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
@@ -32,16 +32,16 @@ export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
     }
   }
 
-  getTree = async (id: number): Promise<FTTree | null> => {
+  getTree = async (id: number): Promise<Tree | null> => {
     const currentTree = await this.getById(id);
     return currentTree;
   }
 
   getFamilies = async (id: number): Promise<number[] | undefined> => {
-    const currentTree = await FTTree.findByPk(id, { attributes: { exclude: ['id'] } });
+    const currentTree = await Tree.findByPk(id, { attributes: { exclude: ['id'] } });
     if (currentTree) {
 
-      const fams = currentTree.FTTreeFAmilies;
+      const fams = currentTree.treeFAmilies;
       console.log({ fams });
       return JSON.parse(fams);
     }
@@ -52,10 +52,10 @@ export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
 
 
   addFamily = async (id: number, family: number): Promise<boolean> => {
-    const currentTree = await FTTree.findByPk(id);
+    const currentTree = await Tree.findByPk(id);
 
     if (currentTree) {
-      const relatedFamilies = JSON.parse(currentTree.FTTreeFAmilies);
+      const relatedFamilies = JSON.parse(currentTree.treeFAmilies);
       relatedFamilies.push(family);
 
       console.log({ relatedFamilies });
@@ -70,10 +70,10 @@ export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
   }
 
   removeFamily = async (family: number, id: number): Promise<boolean> => {
-    const currentTree = await FTTree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
+    const currentTree = await Tree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
 
     if (currentTree) {
-      const relatedFamilies = JSON.parse(currentTree.FTTreeFAmilies).filter((id: number) => id != family);
+      const relatedFamilies = JSON.parse(currentTree.treeFAmilies).filter((id: number) => id != family);
       console.log({ relatedFamilies });
 
       await currentTree.update({ families: JSON.stringify(relatedFamilies) })
@@ -92,10 +92,10 @@ export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
 
   update = async (values: DFamilyTreeUpdateDTO, id: number): Promise<boolean> => {
     // TODO: once individual field validations are there, use it here
-    // const valid = this.validateFTTreeFields(values);
+    // const valid = this.validateTreeFields(values);
     // if (valid) {
 
-    const currentTree = await FTTree.findByPk(id);
+    const currentTree = await Tree.findByPk(id);
     const formattedValues = await this.formatUpdateValues(values, id);
 
     if (currentTree) {
@@ -114,7 +114,7 @@ export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
     return false;
   }
 
-  validateFTTreeFields = (values: DFamilyTreeUpdateDTO | DFamilyTreeDTO): boolean => {
+  validateTreeFields = (values: DFamilyTreeUpdateDTO | DFamilyTreeDTO): boolean => {
     // TODO: you will need individual field validations, 
     // in order to validate any type of operation without worrying about required fields
     if (!values.created_at || !dateValid(values.created_at)) {
@@ -152,20 +152,20 @@ export class FTTreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
 
   // return type uses a partial here to not have to deal with the id property present in the update DTO
   formatUpdateValues = async (values: DFamilyTreeUpdateDTO, id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
-    const currentTree = await FTTree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
+    const currentTree = await Tree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
     let formattedValues = {};
     if (!currentTree) {
       return;
     }
 
     if (values.authorized_ips) {
-      const treeIPs = JSON.parse(currentTree?.FTTreeAuthorized_ips || '');
+      const treeIPs = JSON.parse(currentTree?.treeAuthorized_ips || '');
       const formattedIPs = JSON.stringify([...treeIPs, ...values.authorized_ips]);
       formattedValues = { ...values, authorized_ips: formattedIPs };
     }
 
     if (values.families) {
-      const treeFamilies = JSON.parse(currentTree?.FTTreeFAmilies || '');
+      const treeFamilies = JSON.parse(currentTree?.treeFAmilies || '');
       const formattedFamilies = JSON.stringify([...treeFamilies, ...values.families]);
       formattedValues = { ...values, families: formattedFamilies };
     }

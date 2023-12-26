@@ -8,8 +8,18 @@ const logger = winston.createLogger({
     new winston.transports.File({ filename: 'error.log', level: 'error' }),
     new winston.transports.File({ filename: 'combined.log' }),
   ],
+  levels: {
+    info: 0,
+    warning: 1,
+    error: 2,
+  }
 });
 
+winston.addColors({
+  info: 'blue',
+  warning: 'yellow',
+  error: 'red'
+});
 //
 // If we're not in production then log to the `console` with the format:
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `

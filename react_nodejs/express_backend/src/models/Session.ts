@@ -5,7 +5,7 @@ import {
 import db from "../db";
 
 // order of InferAttributes & InferCreationAttributes is important.
-class FTSession extends Model<InferAttributes<FTSession>, InferCreationAttributes<FTSession>> {
+class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Session>> {
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
@@ -15,21 +15,21 @@ class FTSession extends Model<InferAttributes<FTSession>, InferCreationAttribute
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
-  get FTSessionId(): NonAttribute<number> {
+  get SessionId(): NonAttribute<number> {
     return this.id;
   }
-  get FTSessionKey(): NonAttribute<string> {
+  get SessionKey(): NonAttribute<string> {
     return this.key;
   }
-  get FTSessionCreatedAt(): NonAttribute<Date> {
+  get SessionCreatedAt(): NonAttribute<Date> {
     return this.createdAt;
   }
-  get FTSessionUpdatedAt(): NonAttribute<Date> {
+  get SessionUpdatedAt(): NonAttribute<Date> {
     return this.updatedAt;
   }
 }
 
-FTSession.init(
+Session.init(
   {
     id: {
       type: DataTypes.INTEGER(),
@@ -50,9 +50,9 @@ FTSession.init(
   },
   {
     timestamps: false,
-    tableName: 'FTSessions',
+    tableName: 'Sessions',
     sequelize: db // passing the `sequelize` instance is required
   }
 );
 
-export default FTSession;
+export default Session;

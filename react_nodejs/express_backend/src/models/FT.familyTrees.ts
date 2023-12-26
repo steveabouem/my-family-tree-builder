@@ -5,7 +5,7 @@
 //     HasManyRemoveAssociationsMixin, Model, InferAttributes,
 //     InferCreationAttributes, CreationOptional, NonAttribute, ForeignKey,
 // } from 'sequelize';
-// import FTFam from './FT.family';
+// import Family from './FT.family';
 // import db from "../db";
 
 
@@ -37,7 +37,7 @@
 //         },
 //     },
 //     {
-//         tableName: 'FTUsers',
+//         tableName: 'Users',
 //         sequelize: db, // passing the `sequelize` instance is required
 //     }
 // );

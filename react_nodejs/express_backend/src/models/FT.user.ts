@@ -26,7 +26,7 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
   declare gender: number; // 1:m 2:f"
   declare has_ipa: CreationOptional<number>; //has authority to update authorized ips"
   declare is_parent: number; // 1/0
-  declare imm_family: number; // FTFam: immediate family
+  declare imm_family: number; // Family: immediate family
   declare marital_status: string;
   declare profile_url: CreationOptional<string>;
   declare password: string;
@@ -36,12 +36,12 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
   // TODO: replace with association
   declare related_to: number[];
 
-  // // FTFAM
-  // declare getFamilies: HasManyGetAssociationsMixin<FTFam>; // Note the null assertions!
-  // declare setFamilies: HasManySetAssociationsMixin<FTFam, number>;
-  // declare addFamilies: HasManyAddAssociationsMixin<FTFam, number>;
-  // declare removeFamilies: HasManyRemoveAssociationsMixin<FTFam, number>;
-  // declare hasFamilies: HasManyHasAssociationsMixin<FTFam, number>;
+  // // FAMILY
+  // declare getFamilies: HasManyGetAssociationsMixin<Family>; // Note the null assertions!
+  // declare setFamilies: HasManySetAssociationsMixin<Family, number>;
+  // declare addFamilies: HasManyAddAssociationsMixin<Family, number>;
+  // declare removeFamilies: HasManyRemoveAssociationsMixin<Family, number>;
+  // declare hasFamilies: HasManyHasAssociationsMixin<Family, number>;
   // declare countFamilies: HasManyCountAssociationsMixin;
 
   // FTIP
@@ -53,7 +53,7 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
 
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
-  // declare families?: NonAttribute<FTFam[]>; // Note this is optional since it's only populated when explicitly requested in code
+  // declare families?: NonAttribute<Family[]>; // Note this is optional since it's only populated when explicitly requested in code
 
   // getters that are not attributes should be tagged using NonAttribute
   // to remove them from the model's Attribute Typings.
@@ -133,7 +133,7 @@ class FTUser extends Model<InferAttributes<FTUser>, InferCreationAttributes<FTUs
   // TODO: uncomment once you figure out how to set and fetch associations, 
   // an array of IDs is a little pedestrian. Don't forget the omit param
   // declare static associations: {
-  //   families: Association<FTUser, FTFam>;
+  //   families: Association<FTUser, Family>;
   // };
 }
 
@@ -222,7 +222,7 @@ FTUser.init(
   },
   {
     timestamps: false,
-    tableName: 'FTUsers',
+    tableName: 'Users',
     sequelize: db, // passing the `sequelize` instance is required
   }
 );

@@ -1,5 +1,5 @@
 import { Sequelize, QueryTypes } from 'sequelize';
-import { DTableJoin } from '../../controllers/common.definitions';
+import { DTableJoin } from '../../controllers/controllers.definitions';
 import bcrypt from "bcryptjs";
 import db from '../../db';
 import winston from 'winston';

@@ -80,7 +80,7 @@ FTNode.init(
   },
   {
     timestamps: false,
-    tableName: 'FTNodes',
+    tableName: 'Nodes',
     sequelize: db, // passing the `sequelize` instance is required
   }
 );

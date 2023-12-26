@@ -1,5 +1,16 @@
-// TODO: move this to controller defs
 import { Cookie, Session } from "express-session";
+export interface DTableJoin {
+    tableName: string;
+    on: string;
+}
+
+// Augment express-session with a custom SessionData object
+declare module "express-session" {
+  interface SessionData {
+    user_id: number;
+    authenticated: boolean;
+  }
+}
 
 export enum HTTPMethodEnum {
   get = 'get',
@@ -9,7 +20,8 @@ export enum HTTPMethodEnum {
 }
 
 export interface DSessionUser {
-  id: number;
+  userId: number;
+  authenticated: boolean;
   ip?: string;
   ipIsValid?: number;
   email?: string;
@@ -27,9 +39,6 @@ export interface DEndpointResponse {
   status: number,
   session: string,
   error: boolean;
+  data?: unknown;
   message?: string
-}
-export interface DHelperResponse {
-  error: boolean;
-  data: unknown;
 }

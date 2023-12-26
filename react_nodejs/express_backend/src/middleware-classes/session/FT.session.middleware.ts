@@ -1,10 +1,11 @@
 import { Session } from "express-session";
-import FTSession from "../../models/FT.session";
+import FTSession from "../../models/Session";
 import { DSessionUser } from "../../routes/definitions";
 import { BaseMiddleware } from "../base/base.middleware";
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { userExists } from "../../utils/validators";
 import { NextFunction } from "express";
+import logger from "../../utils/logger";
 
 class FTSessionMiddleware<GSession> extends BaseMiddleware<GSession> {
   constructor() {
@@ -19,7 +20,7 @@ class FTSessionMiddleware<GSession> extends BaseMiddleware<GSession> {
         if (process.env.JWT_KEY) {
           const token = jwt.sign({ session: JSON.stringify(user) }, process.env.JWT_KEY);
           const newSession = await FTSession.create({ key: token, time: new Date, user_id:  user.id});
-          console.log(newSession);
+          console.log({newSession});
           return newSession;
         }
       } else {

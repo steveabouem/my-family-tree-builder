@@ -2,36 +2,56 @@ import express, { Express } from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import FTFamilyHandler from './src/routes/FT.family.routes';
+import FamilyHandler from './src/routes/FT.family.routes';
 import FTUserHandler from './src/routes/FT.user.routes';
 import userHandler from './src/routes/User.routes';
 import FTAuthHandler from './src/routes/FT.auth.routes';
 import FTTreeHandler from './src/routes/FT.tree.routes';
 import FTSessionHandler from './src/routes/FT.session.routes';
 import FTSessionMiddleware from './src/middleware-classes/session/FT.session.middleware';
+import { DSessionUser } from './src/controllers/controllers.definitions';
+import sequelize from './src/db';
 const app: Express = express();
-/**
- MIDDLEWARES SECTION
- **/
-app.use(cors());
-app.use(bodyParser.json());
-app.use(session({
-  secret: 'alloman',
-  cookie: {
-    sameSite: 'strict',
-    httpOnly: true,
-    secure: true,
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+
+// Augment express-session with a custom SessionData object
+declare module "express-session" {
+  // see https://akoskm.com/how-to-use-express-session-with-custom-sessiondata-typescript
+  interface SessionData {
+    data: Partial<DSessionUser>
   }
-}));
+}
+
+/**
+ MIDDLEWARES
+ **/
+app.use(cors({
+  credentials: true,
+  optionsSuccessStatus: 200,
+  origin: 'http://localhost:3000'
+}
+));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// TRACKER APP
+app.use(session({
+  secret: `${process.env.JWT_KEY}`,
+  resave: false,
+  saveUninitialized: true,
+  name: 'FT',
+  cookie: {
+    sameSite: 'none',
+    httpOnly: true,
+    secure: false, //TODO: change to true for PROD
+    maxAge: 300000,
+    // path: "/FT"
+  },
+  store: new SequelizeStore({
+    db: sequelize,
+  }),
+}));
 app.use('/api/users', userHandler);
-
-// FT APP
 app.use((req, res, next) => {
-  console.log('CURRENT SESSION TOKEN sess: ', req.cookies?.FT);
-
+  console.log('CURRENT SESSION TOKEN sess: ', req.cookies);
   const ftSessionMiddleware = new FTSessionMiddleware();
   // const currentUserSession = ftSessionMiddleware.getSessionData(req.cookies.FT);
   // console.log({ currentUserSession });
@@ -41,7 +61,7 @@ app.use((req, res, next) => {
 app.use('/api/session', FTSessionHandler);
 app.use('/api/auth', FTAuthHandler);
 app.use('/api/trees', FTTreeHandler);
-app.use('/api/families', FTFamilyHandler);
+app.use('/api/families', FamilyHandler);
 app.use('/api/users', FTUserHandler);
 /** END */
 

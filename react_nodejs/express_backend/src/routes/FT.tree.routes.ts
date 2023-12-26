@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTTree from "../models/FT.tree.";
+import Tree from "../models/FT.tree.";
 import winston from "winston";
-import { FTTreeMiddleware } from "../middleware-classes/tree/FT.tree.middleware";
+import { TreeMiddleware } from "../middleware-classes/tree/FT.tree.middleware";
 import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
 
 const router = Router();
@@ -29,9 +29,9 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 })
 
 router.post('/create', (req: Request, res: Response) => {
-    const ftTreeMiddleware = new FTTreeMiddleware;
+    const treeMiddleware = new TreeMiddleware;
     // TODO: there's definitely a way to add the create function to the base middleware instead
-    ftTreeMiddleware.create(req.body)
+    treeMiddleware.create(req.body)
         .then((success: boolean) => {
             if (success) {
                 res.status(201);
@@ -51,10 +51,10 @@ router.post('/create', (req: Request, res: Response) => {
 });
 
 router.get('/:id', (req: Request, res: Response) => {
-    const ftTreeMiddleware = new FTTreeMiddleware;
+    const treeMiddleware = new TreeMiddleware;
 
-    ftTreeMiddleware.getTree(parseInt(req.params.id))
-        .then((r: FTTree | null) => {
+    treeMiddleware.getTree(parseInt(req.params.id))
+        .then((r: Tree | null) => {
             res.status(200);
             res.json(r);
         })
@@ -66,9 +66,9 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.get('/:id/families', (req: Request, res: Response) => {
-    const ftTreeMiddleware = new FTTreeMiddleware;
+    const treeMiddleware = new TreeMiddleware;
     // TODO: there's definitely a way to add the create function to the base middleware instead
-    ftTreeMiddleware.getFamilies(parseInt(req.params.id))
+    treeMiddleware.getFamilies(parseInt(req.params.id))
         .then((families: number[] | undefined) => {
             if (families) {
                 res.status(201);
@@ -89,11 +89,11 @@ router.get('/:id/families', (req: Request, res: Response) => {
 });
 
 router.put('/:id', (req: Request, res: Response) => {
-    const ftTreeMiddleware = new FTTreeMiddleware;
+    const treeMiddleware = new TreeMiddleware;
     const values = { ...req.body };
 
     // TODO: there's definitely a way to add the create function to the base middleware instead
-    ftTreeMiddleware.update(values, parseInt(req.params.id))
+    treeMiddleware.update(values, parseInt(req.params.id))
         .then((success: boolean) => {
             if (success) {
                 res.status(201);
@@ -114,9 +114,9 @@ router.put('/:id', (req: Request, res: Response) => {
 });
 
 router.put('/:id/families', (req: Request, res: Response) => {
-    const ftTreeMiddleware = new FTTreeMiddleware;
+    const treeMiddleware = new TreeMiddleware;
     // TODO: there's definitely a way to add the create function to the base middleware instead
-    ftTreeMiddleware.addFamily(parseInt(req.params.id), req.body.id)
+    treeMiddleware.addFamily(parseInt(req.params.id), req.body.id)
         .then((success: boolean) => {
             if (success) {
                 res.status(201);
@@ -137,9 +137,9 @@ router.put('/:id/families', (req: Request, res: Response) => {
 });
 
 router.put('/:id/families/remove', (req: Request, res: Response) => {
-    const ftTreeMiddleware = new FTTreeMiddleware;
+    const treeMiddleware = new TreeMiddleware;
     // TODO: there's definitely a way to add the create function to the base middleware instead
-    ftTreeMiddleware.removeFamily(parseInt(req.params.id), req.body.id)
+    treeMiddleware.removeFamily(parseInt(req.params.id), req.body.id)
         .then((success: boolean) => {
             if (success) {
                 res.status(201);
