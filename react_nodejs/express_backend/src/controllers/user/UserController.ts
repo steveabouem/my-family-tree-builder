@@ -1,27 +1,27 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes } from "sequelize";
-import { DFTUserDTO } from "../../middleware-classes/user/FT.user..definitions";
 import BaseController from "../Base.controller";
-import { DFTUserRecord } from "./User.definitions";
-import FTUser from "../../models/FT.user";
+import { DUserRecord, DUserDTO } from "./User.definitions";
+import User from "../../models/User";
 import logger from "../../utils/logger";
 
-class UserController extends BaseController<DFTUserRecord> {
+class UserController extends BaseController<DUserRecord> {
     constructor() {
         super('Users');
     }
 
-    public async create (values: DFTUserDTO): Promise<Partial<DFTUserDTO> | null>  {
+    public async create (values: DUserDTO): Promise<Partial<DUserDTO> | null>  {
         const hashedPassword = bcrypt.hashSync(values.password, this.salt);
         // TODO: implement search by name as user enter their last name. 
         // Does it make sense to offer them choices given the security aspect?
         const formattedValues = { ...values, related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date };
-        // const fieldsValid = await this.validateFTUserFields(formattedValues);
+        // TODO: uncommen validation
+        // const fieldsValid = await this.validateUserFields(formattedValues); 
         let newUser = null;
 
         // if (fieldsValid) {
-            newUser = await FTUser.create(formattedValues).catch((e) => { //TODO: Error typing and catch
-                console.log(e); //TODO: LOGGING
+            newUser = await User.create(formattedValues).catch((e) => { //TODO: Error typing and catch
+                logger.log(e);
                 return null;
             });
             await newUser?.save();
@@ -32,7 +32,7 @@ class UserController extends BaseController<DFTUserRecord> {
 
     // TODO: No any. fix typing, should related_to be added to the dto?
     public async getUserData (id: number): Promise<any> {
-        const currentUser = await FTUser.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
+        const currentUser = await User.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
         if (currentUser?.dataValues) {
             const relatedFamilies = await this.getRelatedFamilies(id);
 
@@ -41,7 +41,7 @@ class UserController extends BaseController<DFTUserRecord> {
     }
 
     public async getByEmail(email: string): Promise<any> {
-        const currentUser = await FTUser.findOne({ where: { email: email } });
+        const currentUser = await User.findOne({ where: { email: email } });
 
         return (currentUser);
     }
@@ -49,7 +49,7 @@ class UserController extends BaseController<DFTUserRecord> {
     public async getRelatedFamilies(id: number): Promise<any> {
         const select = `
       SELECT id, name
-      FROM FTFams 
+      FROM Families 
       WHERE JSON_CONTAINS(members, :id);
     `;
 
@@ -62,7 +62,7 @@ class UserController extends BaseController<DFTUserRecord> {
     }
     // TODO: no any
     public async getExtendedFamiliesDetails(id: number): Promise<any> {
-        const currentUser: DFTUserDTO = await this.getUserData(id)
+        const currentUser: DUserDTO = await this.getUserData(id)
             .catch((e) => {
                 // TODO: logging
                 console.log('ERROR', e);
@@ -72,7 +72,7 @@ class UserController extends BaseController<DFTUserRecord> {
         const select = `
       SELECT * 
       FROM Users user 
-      JOIN FTFams family ON family.id = user.imm_family 
+      JOIN Families family ON family.id = user.imm_family 
       WHERE JSON_CONTAINS(family.members, :partner) ;
     `;
 
@@ -85,7 +85,7 @@ class UserController extends BaseController<DFTUserRecord> {
 
     }
 
-    private validateFTUserFields (values: DFTUserDTO): boolean {
+    private validateUserFields (values: DUserDTO): boolean {
         console.log('RECEIVED VALUES: ', values);
     
         if (values.age < 0 || !values.age) {

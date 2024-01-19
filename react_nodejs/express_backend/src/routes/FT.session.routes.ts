@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
+import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import cookieParser from "cookie-parser";
-import FTSessionMiddleware from "../middleware-classes/session/FT.session.middleware";
 import winston from "winston";
+import SessionController from "../controllers/session/SessionController";
 
 const router = Router();
 router.use(cookieParser());
@@ -29,9 +29,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 // TODO: req, res typing
 router.get('/get-data', (req: Request, res: Response) => {
-  const ftSessionMiddleware = new FTSessionMiddleware();
-  const sessionData = ftSessionMiddleware.getSessionData(req.body.data);
-  res.json(sessionData);
+  const sessionController = new SessionController();
+  sessionController.getCurrent(req, res);
 });
 
 router.post('/set-data', (req: Request, res: Response) => {

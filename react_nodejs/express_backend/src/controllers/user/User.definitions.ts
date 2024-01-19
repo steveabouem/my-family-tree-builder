@@ -1,4 +1,4 @@
-export interface DFTUserRecord {
+export interface DUserRecord {
     first_name: string;
     last_name: string;
     email: string;
@@ -9,7 +9,7 @@ export interface DFTUserRecord {
     ip_authority: number;
 }
 
-export interface DFTUserDTO {
+export interface DUserDTO {
     first_name: string,
     last_name: string,
     age: number,

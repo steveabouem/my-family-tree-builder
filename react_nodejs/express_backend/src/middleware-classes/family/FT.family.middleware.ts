@@ -1,15 +1,15 @@
 import { Op } from "sequelize";
 import winston from "winston";
-import { DFamilyTreeUpdateDTO } from "../tree/FT.tree.definitions";
+import { DFamilyTreeUpdateDTO } from "../tree/familyTree.definitions";
 import { DFTFamDTO, DFTFamUpdateDTO } from "./FT.family.definitions";
 import { BaseMiddleware } from "../base/base.middleware";
-import Family from "../../models/FT.family";
-import Tree from "../../models/FT.tree.";
-import FTUser from "../../models/FT.user";
+import Family from "../../models/Family";
+import FamilyTree from "../../models/FamilyTree";
+import User from "../../models/User";
 
 export class FamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   constructor() {
-    super('FTFams');
+    super('families');
   }
 
   create = async (values: DFTFamDTO): Promise<boolean> => {
@@ -55,7 +55,7 @@ export class FamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
 
   linkToTree = async (id: number, tree: number): Promise<boolean> => {
     const currentFamily = await Family.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
-    const currentTree = await Tree.findOne({ where: { id: tree }, attributes: { exclude: ['id'] } });
+    const currentTree = await FamilyTree.findOne({ where: { id: tree }, attributes: { exclude: ['id'] } });
 
     if (!currentFamily || !currentTree) {
       console.log('Tree or family do not exist'); // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
@@ -108,9 +108,9 @@ export class FamilyMiddleware extends BaseMiddleware<DFTFamDTO> {
   }
 
   validateFTFamFields = async (values: DFTFamDTO): Promise<boolean> => {
-    const currentUser = await FTUser.findOne({ where: { id: values.created_by }, attributes: { exclude: ['id'] } });
+    const currentUser = await User.findOne({ where: { id: values.created_by }, attributes: { exclude: ['id'] } });
 
-    if (currentUser?.FTUserImmediateFamily && currentUser?.last_name === values.name) {
+    if (currentUser?.UserImmediateFamily && currentUser?.last_name === values.name) {
       console.log("A nuclear family for user was already created");
       return false;
     }

@@ -1,12 +1,12 @@
 import winston from "winston";
-import { DFamilyTreeDTO, DFamilyTreeUpdateDTO } from "./FT.tree.definitions";
+import { DFamilyTreeDTO, DFamilyTreeUpdateDTO } from "./familyTree.definitions";
 import { BaseMiddleware } from "../base/base.middleware";
-import Tree from "../../models/FT.tree.";
+import FamilyTree from "../../models/FamilyTree";
 import { dateValid } from "../../utils/validators";
 
 export class TreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
   constructor() {
-    super('Trees');
+    super('family_trees');
   }
 
   create = async (values: DFamilyTreeDTO): Promise<boolean> => {
@@ -16,7 +16,7 @@ export class TreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
     const valid = this.validateTreeFields(formattedValues);
 
     if (valid) {
-      await Tree.create({ ...formattedValues })
+      await FamilyTree.create({ ...formattedValues })
         .catch((e: unknown) => {
     winston.log('error' ,  e);
           console.log('Error creating tree'); // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
@@ -32,57 +32,57 @@ export class TreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
     }
   }
 
-  getTree = async (id: number): Promise<Tree | null> => {
+  getTree = async (id: number): Promise<FamilyTree | null> => {
     const currentTree = await this.getById(id);
     return currentTree;
   }
 
   getFamilies = async (id: number): Promise<number[] | undefined> => {
-    const currentTree = await Tree.findByPk(id, { attributes: { exclude: ['id'] } });
-    if (currentTree) {
+    // const currentTree = await FamilyTree.findByPk(id, { attributes: { exclude: ['id'] } });
+    // if (currentTree) {
 
-      const fams = currentTree.treeFAmilies;
-      console.log({ fams });
-      return JSON.parse(fams);
-    }
-    console.log('No tree matching');
+    //   const fams = currentTree.treeFAmilies;
+    //   console.log({ fams });
+    //   return JSON.parse(fams);
+    // }
+    // console.log('No tree matching');
     return undefined;
 
   }
 
 
-  addFamily = async (id: number, family: number): Promise<boolean> => {
-    const currentTree = await Tree.findByPk(id);
+  // addFamily = async (id: number, family: number): Promise<boolean> => {
+  //   const currentTree = await FamilyTree.findByPk(id);
 
-    if (currentTree) {
-      const relatedFamilies = JSON.parse(currentTree.treeFAmilies);
-      relatedFamilies.push(family);
+  //   if (currentTree) {
+  //     const relatedFamilies = JSON.parse(currentTree.treeFAmilies);
+  //     relatedFamilies.push(family);
 
-      console.log({ relatedFamilies });
+  //     console.log({ relatedFamilies });
 
-      await currentTree.update({ families: JSON.stringify(relatedFamilies) });
-      await currentTree.save();
+  //     await currentTree.update({ families: JSON.stringify(relatedFamilies) });
+  //     await currentTree.save();
 
-      return true;
-    }
+  //     return true;
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   removeFamily = async (family: number, id: number): Promise<boolean> => {
-    const currentTree = await Tree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
+    const currentTree = await FamilyTree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
 
     if (currentTree) {
-      const relatedFamilies = JSON.parse(currentTree.treeFAmilies).filter((id: number) => id != family);
-      console.log({ relatedFamilies });
+      // const relatedFamilies = JSON.parse(currentTree.treeFAmilies).filter((id: number) => id != family);
+    //   console.log({ relatedFamilies });
 
-      await currentTree.update({ families: JSON.stringify(relatedFamilies) })
-        .catch((e: unknown) => {
-    winston.log('error' ,  e);
-          // TODO: LOGGING
-          console.log('Error while updating ', e);
-        });
-      currentTree.save();
+    //   await currentTree.update({ families: JSON.stringify(relatedFamilies) })
+    //     .catch((e: unknown) => {
+    // winston.log('error' ,  e);
+    //       // TODO: LOGGING
+    //       console.log('Error while updating ', e);
+    //     });
+    //   currentTree.save();
       return true;
     } else {
       console.log('No tree found for update');
@@ -95,7 +95,7 @@ export class TreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
     // const valid = this.validateTreeFields(values);
     // if (valid) {
 
-    const currentTree = await Tree.findByPk(id);
+    const currentTree = await FamilyTree.findByPk(id);
     const formattedValues = await this.formatUpdateValues(values, id);
 
     if (currentTree) {
@@ -152,22 +152,22 @@ export class TreeMiddleware extends BaseMiddleware<DFamilyTreeDTO> {
 
   // return type uses a partial here to not have to deal with the id property present in the update DTO
   formatUpdateValues = async (values: DFamilyTreeUpdateDTO, id: number): Promise<Partial<DFamilyTreeUpdateDTO> | undefined> => {
-    const currentTree = await Tree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
+    const currentTree = await FamilyTree.findOne({ where: { id: id }, attributes: { exclude: ['id'] } });
     let formattedValues = {};
     if (!currentTree) {
       return;
     }
 
     if (values.authorized_ips) {
-      const treeIPs = JSON.parse(currentTree?.treeAuthorized_ips || '');
+      const treeIPs = JSON.parse(currentTree?.familyTreeAuthorized_ips || '');
       const formattedIPs = JSON.stringify([...treeIPs, ...values.authorized_ips]);
       formattedValues = { ...values, authorized_ips: formattedIPs };
     }
 
     if (values.families) {
-      const treeFamilies = JSON.parse(currentTree?.treeFAmilies || '');
-      const formattedFamilies = JSON.stringify([...treeFamilies, ...values.families]);
-      formattedValues = { ...values, families: formattedFamilies };
+      // const treeFamilies = JSON.parse(currentTree?.treeFAmilies || '');
+      // const formattedFamilies = JSON.stringify([...treeFamilies, ...values.families]);
+      // formattedValues = { ...values, families: formattedFamilies };
     }
 
     return ({ ...formattedValues, updated_at: new Date });

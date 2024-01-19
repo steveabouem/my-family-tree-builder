@@ -4,7 +4,7 @@ export interface DFamilyTreeDTO {
     name: string;
     active: number;
     families: string;
-    created_by: number; //FTUser
+    created_by: number; //User
     created_at: Date;
     updated_at: Date;
 }

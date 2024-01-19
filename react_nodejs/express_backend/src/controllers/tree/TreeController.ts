@@ -1,7 +1,7 @@
 import BaseController from "../Base.controller";
-import { DFamilyTreeRecord } from "./Tree.definitions";
+import { NextFunction, Request, Response } from "express";
 
-class FamilyTreeController extends BaseController<DFamilyTreeRecord> {
+class FamilyTreeController extends BaseController<null> {
 
 }
 

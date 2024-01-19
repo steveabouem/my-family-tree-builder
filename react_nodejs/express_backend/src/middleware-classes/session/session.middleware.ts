@@ -9,7 +9,7 @@ import logger from "../../utils/logger";
 
 class FTSessionMiddleware<GSession> extends BaseMiddleware<GSession> {
   constructor() {
-    super('FTSessions');
+    super('Sessions');
   }
 
   // ?: creates session secret and initial session record

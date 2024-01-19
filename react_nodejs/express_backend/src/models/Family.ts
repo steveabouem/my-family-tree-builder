@@ -1,7 +1,5 @@
 import {
-  DataTypes, HasManyCountAssociationsMixin, HasManyGetAssociationsMixin,
-  HasManySetAssociationsMixin, HasManyAddAssociationsMixin, HasManyHasAssociationsMixin,
-  HasManyRemoveAssociationsMixin, Model, InferAttributes, InferCreationAttributes,
+  DataTypes, Model, InferAttributes, InferCreationAttributes,
   CreationOptional, NonAttribute, Association,
 } from 'sequelize';
 import db from "../db";
@@ -16,30 +14,30 @@ class Family extends Model<InferAttributes<Family>, InferCreationAttributes<Fami
   declare id: CreationOptional<number>;
   declare base_location: string; // google api
   declare description: string;
-  declare head_1: number; // FTUser
-  declare head_2: number; // ?FTUser
+  declare head_1: number; // User
+  declare head_2: number; // ?User
   declare head_count: number;
   declare tree: number; // FTTree
   declare name: string;
   declare profile_url: string;
-  declare created_by: number; // FTUser
+  declare created_by: number; // User
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
   // TODO: replace with association
   declare members: string;
 
-  // FTUser
-  // declare getMembers: HasManyGetAssociationsMixin<FTUser>; // Note the null assertions!
-  // declare setMembers: HasManySetAssociationsMixin<FTUser, number>;
-  // declare addMembers: HasManyAddAssociationsMixin<FTUser, number>;
-  // declare removeMembers: HasManyRemoveAssociationsMixin<FTUser, number>;
-  // declare hasMembers: HasManyHasAssociationsMixin<FTUser, number>;
+  // User
+  // declare getMembers: HasManyGetAssociationsMixin<User>; // Note the null assertions!
+  // declare setMembers: HasManySetAssociationsMixin<User, number>;
+  // declare addMembers: HasManyAddAssociationsMixin<User, number>;
+  // declare removeMembers: HasManyRemoveAssociationsMixin<User, number>;
+  // declare hasMembers: HasManyHasAssociationsMixin<User, number>;
   // declare countMembers: HasManyCountAssociationsMixin;
 
   // You can also pre-declare possible inclusions, these will only be populated if you
   // actively include a relation.
-  // declare members?: NonAttribute<FTUser[]>; // Note this is optional since it's only populated when explicitly requested in code
+  // declare members?: NonAttribute<User[]>; // Note this is optional since it's only populated when explicitly requested in code
 
   // getters that are not attributes should be tagged using NonAttribute
   // to remove them from the model's Attribute Typings.
@@ -87,7 +85,7 @@ class Family extends Model<InferAttributes<Family>, InferCreationAttributes<Fami
   // TODO: uncomment once you figure out how to set and fetch associations, 
   // an array of IDs is a little pedestrian. Don't forget the omit param
   // declare static associations: {
-  //   members: Association<Family, FTUser>;
+  //   members: Association<Family, User>;
   // };
 }
 
@@ -124,12 +122,12 @@ Family.init(
   },
   {
     timestamps: false,
-    tableName: 'FTFams',
+    tableName: 'families',
     sequelize: db // passing the `sequelize` instance is required
   }
 );
 
-// Family.hasMany(FTUser, {
+// Family.hasMany(User, {
 //   as: 'users',
 //   foreignKey: 'members'
 // });

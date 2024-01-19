@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
-import Family from "../models/FT.family";
+import Family from "../models/Family";
 import winston from "winston";
-import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
+import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import { FamilyMiddleware } from "../middleware-classes/family/FT.family.middleware";
 
 const router = Router();

@@ -1,26 +1,26 @@
 import { QueryTypes } from "sequelize";
-import FTUser from "../../models/FT.user";
+import User from "../../models/User";
 import { BaseMiddleware } from "../base/base.middleware";
-import { DFTUserDTO } from "./FT.user..definitions";
+import { DUserDTO } from "./user..definitions";
 import bcrypt from "bcryptjs";
-import { DFTUserRecord } from "../../controllers/user/User.definitions";
+import { DUserRecord } from "../../controllers/user/User.definitions";
 
-export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
+export class UserMiddleware extends BaseMiddleware<DUserRecord> {
   constructor() {
-    super('Users');
+    super('users');
   }
 
 
-  public create = async (values: DFTUserDTO): Promise<Partial<DFTUserDTO> | null> => {
+  public create = async (values: DUserDTO): Promise<Partial<DUserDTO> | null> => {
     const hashedPassword = bcrypt.hashSync(values.password, this.salt);
     // TODO: implement search by name as user enter their last name. 
     // Does it make sense to offer them choices given the security aspect?
     const formattedValues = { ...values, related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date };
-    const fieldsValid = await this.validateFTUserFields(formattedValues);
+    const fieldsValid = await this.validateUserFields(formattedValues);
     let newUser = null;
 
     if (fieldsValid) {
-      newUser = await FTUser.create(formattedValues).catch((e) => { //TODO: Error typing and catch
+      newUser = await User.create(formattedValues).catch((e) => { //TODO: Error typing and catch
         console.log(e); //TODO: LOGGING
         return null;
       });
@@ -32,7 +32,7 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
 
   // TODO: No any. fix typing, should related_to be added to the dto?
   public getUserData = async (id: number): Promise<any> => {
-    const currentUser = await FTUser.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
+    const currentUser = await User.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
     if (currentUser?.dataValues) {
       const relatedFamilies = await this.getRelatedFamilies(id);
 
@@ -41,7 +41,7 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
   }
 
   public getByEmail = async (email: string): Promise<any> => {
-    const currentUser = await FTUser.findOne({ where: { email: email } });
+    const currentUser = await User.findOne({ where: { email: email } });
 
     return (currentUser);
   }
@@ -49,7 +49,7 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
   public getRelatedFamilies = async (id: number): Promise<any> => {
     const select = `
       SELECT id, name
-      FROM FTFams 
+      FROM families 
       WHERE JSON_CONTAINS(members, :id);
     `;
 
@@ -62,7 +62,7 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
   }
   // TODO: no any
   public getExtendedFamiliesDetails = async (id: number): Promise<any> => {
-    const currentUser: DFTUserDTO = await this.getUserData(id)
+    const currentUser: DUserDTO = await this.getUserData(id)
       .catch((e) => {
         // TODO: logging
         console.log('ERROR', e);
@@ -71,8 +71,8 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
 
     const select = `
       SELECT * 
-      FROM Users user 
-      JOIN FTFams family ON family.id = user.imm_family 
+      FROM users user 
+      JOIN families family ON family.id = user.imm_family 
       WHERE JSON_CONTAINS(family.members, :partner) ;
     `;
 
@@ -85,7 +85,7 @@ export class FTUserMiddleware extends BaseMiddleware<DFTUserRecord> {
 
   }
 
-  private validateFTUserFields = (values: DFTUserDTO): boolean => {
+  private validateUserFields = (values: DUserDTO): boolean => {
     console.log('RECEIVED VALUES: ', values);
 
     if (values.age < 0 || !values.age) {

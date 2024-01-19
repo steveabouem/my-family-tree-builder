@@ -1,10 +1,11 @@
 import { DSession } from "../../routes/definitions";
 import BaseController from "../Base.controller";
-import { DSessionUser } from "../controllers.definitions";
+import { DEndpointResponse, DSessionUser } from "../controllers.definitions";
 import logger from "../../utils/logger";
 import Session from "../../models/Session";
-import { userExists } from "../../utils/validators";
-import jwt from 'jsonwebtoken';
+import { Request, Response } from "express";
+import { QueryTypes } from "sequelize";
+import dayjs from "dayjs";
 
 /** 
 // ?: Used to  manage session records, in case we dont use the default express-session (and session store)
@@ -16,31 +17,47 @@ class SessionController extends BaseController<DSession> {
 
     // ?: creates session secret and initial session record
     public async create(user: DSessionUser): Promise<Session | void> {
-        const userIsValid = await userExists(user.userId);
-        if (userIsValid) {
-            if (process.env.JWT_KEY) { //TODO: migration add_refresh_token Session
-                // access token is send back, refresh token is kept in db. 
-                // TODO: add session middleware checking if access token is expired or notDeepEqual, and refreshing (longer life) the token if user allowed for specific end point
-
-                const accessToken = jwt.sign({ session: JSON.stringify(user) }, process.env.JWT_KEY, { expiresIn: "1h" });
-                const newSession = await Session.create({ key: accessToken, time: new Date, user_id: user.userId });
-                console.log({ newSession });
-                return newSession;
-            }
-        } else {
-            logger.error('Create User not found');
-            throw new Error('User not found');
-        }
+        
     }
 
-    public async getCurrent(id: number): Promise<any> { //TODO no any
+    public async getCurrent(req: Request, res: Response) {
+        const response: DEndpointResponse = { error: true, status: 400, session: '' };
         try {
-            const current = {};
-          
+            if (req.query?.id) {
+                const sessionId = `${req.query.id}`;
+                //   @ts-ignore either find a way to use the store, or refactor migration
+                const currentSession = await this.dataBase
+                    .query("SELECT * FROM `Sessions` WHERE `sid` = :s limit 1", { replacements: { s: sessionId }, type: QueryTypes.SELECT })
+                    .catch((e: any) => {
+                        logger.error('get current session: ', e);
+                        response.status = 400;
+                        response.error = true;
+                        response.data = 'Unable to find session' + e;
+                        res.status(400);
+                    });
+
+                res.status(200);
+                response.error = false;
+
+                if (currentSession?.length) {
+                    //   TODO: FIX TS IGNORES
+                    //   @ts-ignore either find a way to use the store, or refactor migration
+                    response.data = currentSession[0];
+                } else {
+                    response.message = 'No existing session.';
+                }
+            } else {
+                throw new Error('Missing mandatory parameters.');
+            }
         } catch (e) {
-            console.log(`Token error: ${e}`);
-            return null;
+            response.status = 400;
+            response.error = true;
+            response.data = 'Unable to find session' + e;
+            res.status(400);
         }
+        console.log({ response });
+
+        res.json(response);
     }
 }
 

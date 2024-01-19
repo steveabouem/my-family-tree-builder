@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
-import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
-import { FTUserMiddleware } from "../middleware-classes/user/FT.user.middleware";
+import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
+import { UserMiddleware } from "../middleware-classes/user/user.middleware";
 
 const router = Router();
 
@@ -30,8 +30,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 router.get('/:id', (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   // Not sure what to do with this yet
-  const ftUserMiddleware = new FTUserMiddleware;
-  ftUserMiddleware.getUserData(id)
+  const userMiddleware = new UserMiddleware;
+  userMiddleware.getUserData(id)
     .then((user: any) => {
       console.log('DONE');
       res.json(user);
@@ -46,9 +46,9 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.get('/:id/families', (req: Request, res: Response) => {
-  const ftUserMiddleware = new FTUserMiddleware;
+  const userMiddleware = new UserMiddleware;
 
-  ftUserMiddleware.getRelatedFamilies(parseInt(req.params.id))
+  userMiddleware.getRelatedFamilies(parseInt(req.params.id))
     .then((fams: any) => {
       console.log('DONE');
       res.json({ "relatedFamilies": fams });
@@ -63,9 +63,9 @@ router.get('/:id/families', (req: Request, res: Response) => {
 });
 
 router.get('/:id/extended-families', (req: Request, res: Response) => {
-  const ftUserMiddleware = new FTUserMiddleware;
+  const userMiddleware = new UserMiddleware;
 
-  ftUserMiddleware.getExtendedFamiliesDetails(parseInt(req.params.id))
+  userMiddleware.getExtendedFamiliesDetails(parseInt(req.params.id))
     .then((fams: any) => {
       console.log('DONE');
       res.json({ "relatedFamilies": fams });

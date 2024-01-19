@@ -1,14 +1,10 @@
 import bcrypt from "bcryptjs";
 import { DFTLoginFields } from "./Auth.definitions";
-import FTUser from "../../models/FT.user";
-import FTIP from "../../models/FT.ip";
 import BaseController from "../Base.controller";
 import { NextFunction, Request, Response } from "express";
-import logger from "../../utils/logger";
-import { DEndpointResponse } from "../controllers.definitions";
+import { DEndpointResponse, DSessionUser } from "../controllers.definitions";
 import dayjs from "dayjs";
 import UserController from "../user/UserController";
-import SessionController from "../session/SessionController";
 
 class AuthController extends BaseController<any> { // TODO: no any
     constructor() {
@@ -16,10 +12,10 @@ class AuthController extends BaseController<any> { // TODO: no any
     }
 
     // verifyUserIp = async (id: number): Promise<boolean> => {
-    //     const ftUserMiddleware = new FTUserMiddleware();
+    //     const userMiddleware = new UserMiddleware();
     //     // TODO: catch return false doesnt actually catch falty logic, 
     //     // just wrong syntax and maybe wrong typing. FIX
-    //     const currentUser: DUserRecord = await ftUserMiddleware.getById(id);
+    //     const currentUser: DUserRecord = await userMiddleware.getById(id);
     //     return this.authorized_ips.includes(currentUser.authorizedIps);
     // }
 
@@ -33,8 +29,8 @@ class AuthController extends BaseController<any> { // TODO: no any
     //     return !!ip;
     // }
 
-    // verifyUser = async (values: DFTLoginFields): Promise<Partial<DFTUserDTO> | null> => {
-    //     const currentUser = await FTUser.findOne({ where: { email: values.email } });
+    // verifyUser = async (values: DFTLoginFields): Promise<Partial<DUserDTO> | null> => {
+    //     const currentUser = await User.findOne({ where: { email: values.email } });
     //     if (!currentUser) {
     //         return null;
     //     }
@@ -53,15 +49,9 @@ class AuthController extends BaseController<any> { // TODO: no any
     public register = async (req: Request, res: Response) => {
         const response: DEndpointResponse = { error: true, status: 400, session: '' };
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const formattedValues = { ...req.body, assigned_ips: [ip], created_at: dayjs() };
-        console.log('SESH', req.session);
+        const formattedValues = { ...req.body, assigned_ips: [ip], created_at: dayjs(), parent_2: 2 };
 
         try {
-            // const registrationPayload: DApiResponse | void = await this.processRegister(req).catch((e: unknown) => {
-            //     logger.log('error', 'Registration: ' + e);
-            //     response.status = 400;
-            //     response.message = 'Unable to create session.' + e;
-            // });
             const userController = new UserController();
             const duplicate = await userController.getByEmail(req.body.email);
             if (duplicate) {
@@ -79,88 +69,92 @@ class AuthController extends BaseController<any> { // TODO: no any
             });
 
             if (newUser) {
-
                 req.session.data = {
-                        userId: newUser.id || 0,
-                        authenticated: true,
-                        email: req.body.email
+                    userId: newUser.id,
+                    authenticated: true,
+                    email: req.body.email
                 };
                 res.status(200);
                 response.error = false;
-                response.data = newUser.id;
+                response.data = {
+                    userId: newUser.id,
+                    authenticated: true,
+                    email: req.body.email
+                };
                 response.status = 200;
-                console.log('SESSION TABLE', req.session);
+                // console.log('SESSION TABLE', req.session);
             }
         } catch (e: unknown) {
             response.status = 400;
             response.message = `Caught ERR ${e}`;
             res.status(400);
         }
-        console.log('rEADY TO SEND: ', response);
-        
+        // console.log('rEADY TO SEND: ', response);
+
         res.json(response);
     }
 
+    public login = async (req: Request, res: Response) => {
+        const response: DEndpointResponse = { error: true, status: 400, session: '' };
 
-    // private processRegister = async (req: Request): Promise<Partial<DEndpointResponse>> => {
-    //     const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    //     const formattedValues = { ...req.body, assigned_ips: [ip], created_at: dayjs() };
-    //     // const expiration = dayjs().add(1, 'days').toDate();
-    //     const payload: Partial<DEndpointResponse> = { error: true, data: undefined };
+        try {
+            const userController = new UserController();
+            const currentUser = await userController.getByEmail(req.body.email).catch(e => {
+                response.status = 400;
+                response.error = true;
+                response.data = 'Unable to find user';
+                res.status(400);
+            });
 
-    //     try {
-    //         // TODO: use user controller or helper function to match spouse's first and last name and return id here.
-    //         // in the front, it will be some sort of dd that will use the MiddlewareWorker, and add the id to the form values
-    //         // This will go in the profile Selection, no need to crowd registration w it
-    //         const userController = new UserController();
-    //         const duplicate = await userController.getByEmail(req.body.email);
-    //         if (duplicate) {
-    //             payload.error = true;
-    //             payload.data = 'Email address is already in use';
-    //         }
+            if (currentUser) {
+                const passwordIsValid = bcrypt.compareSync(req.body.password, currentUser.password);
 
-    //         const newUser = await userController.create(formattedValues).catch(e => {
-    //             payload.error = true;
-    //             payload.data = 'Unable to create user';
-    //         });
+                if (passwordIsValid) {
+                    req.session.data = {
+                        userId: currentUser.id,
+                        authenticated: true,
+                        email: req.body.email,
+                    };
+                    res.status(200);
+                    response.error = false;
+                    response.data = {
+                        sessionId: req.sessionID,
+                        userId: currentUser.id,
+                        authenticated: true,
+                        email: req.body.email
+                    };
+                    response.status = 200;
+                } else {
+                    response.status = 400;
+                    response.error = true;
+                    response.data = 'Unable to authenticate user';
+                    res.status(400);
+                }
+            }
+        } catch (e: unknown) {
+            response.status = 400;
+            response.message = `Login failed - ${e}`;
+            res.status(400);
+        }
+        // console.log('rEADY TO SEND: ', response);
 
-    //         if (newUser) {
-    //             // const sessionController = new SessionController();
-    //             // create session record and get id
-    //             // const newSession = await sessionController.create({
-    //             //     id: newUser.id || 0,
-    //             //     email: newUser.email,
-    //             //     firstName: newUser.first_name,
-    //             //     lastName: newUser.last_name,
-    //             // });
+        res.json(response);
+    }
 
-    //             req.session.user_id = newUser.id || 0; 
-    //             req.session.authenticated = true;
-    //             payload.error = false;
-    //             payload.data = newUser.id;
-    //             // if (newSession) {
-    //             //     payload.error = false;
-    //             //     payload.data = {
-    //             //         id: newSession.id.toString(),
-    //             //         cookie: {
-    //             //             originalMaxAge: 86400000,
-    //             //             expires: expiration,
-    //             //         },
-    //             //     }
-    //             // } else {
-    //             //     payload.error = true;
-    //             //     payload.data = 'Failed creating a session';
-    //             // }
-    //         }
-    //     } catch (e: unknown) {
-    //         logger.log('error', 'Process register failed', e);
-    //         payload.error = true;
-    //         payload.data = `Process register failed ${e}`;
-    //     }
-
-    //     return payload;
-    // }
-
+    public logout = async (req: Request, res: Response) => {
+        const response: DEndpointResponse = { error: true, status: 400, session: '' };
+        req.session.destroy(() => { });
+        res.status(200);
+        response.error = false;
+        response.data = {
+            userId: 0,
+            authenticated: false,
+            email: req.body.email
+        };
+        response.status = 200;
+        // console.log('RESPONSE: ', response);
+        res.json(response);
+    }
 }
 
 export default AuthController;

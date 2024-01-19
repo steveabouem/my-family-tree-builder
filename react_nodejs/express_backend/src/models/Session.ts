@@ -15,16 +15,16 @@ class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Se
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 
-  get SessionId(): NonAttribute<number> {
+  get sessionId(): NonAttribute<number> {
     return this.id;
   }
-  get SessionKey(): NonAttribute<string> {
+  get sessionKey(): NonAttribute<string> {
     return this.key;
   }
-  get SessionCreatedAt(): NonAttribute<Date> {
+  get sessionCreatedAt(): NonAttribute<Date> {
     return this.createdAt;
   }
-  get SessionUpdatedAt(): NonAttribute<Date> {
+  get sessionUpdatedAt(): NonAttribute<Date> {
     return this.updatedAt;
   }
 }
@@ -50,7 +50,7 @@ Session.init(
   },
   {
     timestamps: false,
-    tableName: 'Sessions',
+    tableName: 'Sessions', // using the default session table. 
     sequelize: db // passing the `sequelize` instance is required
   }
 );

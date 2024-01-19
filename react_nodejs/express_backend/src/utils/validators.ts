@@ -1,4 +1,4 @@
-import FTUser from "../models/FT.user";
+import User from "../models/User";
 
 export const dateValid = (date: any) => {
     // @ts-ignore
@@ -6,6 +6,6 @@ export const dateValid = (date: any) => {
 };
 
 export const userExists = async (id: number): Promise<boolean> => {
-    const currentUser = await FTUser.findOne({where: {id: id}});
+    const currentUser = await User.findOne({where: {id: id}});
     return !!currentUser;
 }; 

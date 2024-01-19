@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import * as dotenv from 'dotenv';
-import FTSessionMiddleware from "../../src/middleware-classes/session/FT.session.middleware";
+import FTSessionMiddleware from "../../src/middleware-classes/session/session.middleware";
 
 dotenv.config();
 

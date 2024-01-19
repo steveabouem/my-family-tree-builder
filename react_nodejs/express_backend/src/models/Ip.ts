@@ -1,35 +1,8 @@
-// 'use strict';
-// const {
-//     Model
-// } = require('sequelize');
-// module.exports = (sequelize, DataTypes) => {
-//     class FTIP extends Model {
-//         /**
-//          * Helper method for defining associations.
-//          * This method is not a part of Sequelize lifecycle.
-//          * The `models/index` file will call this method automatically.
-//          */
-//         static associate(models) {
-//             FTIP.belongsTo(models.FTUser);
-//         }
-//     }
-//     FTIP.init({
-//         value: DataTypes.STRING,
-//         owners: DataTypes.STRING, // '[FTUser.id]', can be shared
-//     }, {
-//         sequelize,
-//         modelName: 'FTIP',
-//     });
-//     return FTIP;
-// };
-
-
-
 import {
     Association, DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute,
 } from 'sequelize';
 import db from "../db";
-import FTUser from './FT.user';
+import User from './User';
 
 
 // order of InferAttributes & InferCreationAttributes is important.
@@ -41,7 +14,7 @@ class FTIP extends Model<InferAttributes<FTIP>, InferCreationAttributes<FTIP>> {
     // when creating an instance of the model (such as using Model.create()).
     declare id: CreationOptional<number>;
     declare value: string;
-    declare owners: number[]; // FTUser[]
+    declare owners: number[]; // User[]
     /**
      * End
      * */
@@ -57,7 +30,7 @@ class FTIP extends Model<InferAttributes<FTIP>, InferCreationAttributes<FTIP>> {
 
     // You can also pre-declare possible inclusions, these will only be populated if you
     // actively include a relation.
-    declare members?: NonAttribute<FTUser[]>; // Note this is optional since it's only populated when explicitly requested in code
+    declare members?: NonAttribute<User[]>; // Note this is optional since it's only populated when explicitly requested in code
 
     /**
      * Attributes Getters/Setters
@@ -96,7 +69,7 @@ FTIP.init(
     },
     {
         timestamps: false,
-        tableName: 'FTIPs',
+        tableName: 'ip_addresses',
         sequelize: db // passing the `sequelize` instance is required
     }
 );

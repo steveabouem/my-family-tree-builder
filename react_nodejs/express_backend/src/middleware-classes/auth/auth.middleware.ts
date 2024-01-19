@@ -1,20 +1,20 @@
 import bcrypt from "bcryptjs";
-import { DFTLoginFields } from "./FT.auth.definitions";
-import { DFTUserDTO } from "../user/FT.user..definitions";
+import { DFTLoginFields } from "./auth.definitions";
+import { DUserDTO } from "../user/user..definitions";
 import { BaseMiddleware } from "../base/base.middleware";
-import FTUser from "../../models/FT.user";
-import FTIP from "../../models/FT.ip";
+import User from "../../models/User";
+import FTIP from "../../models/Ip";
 
 class FTAuthMiddleware extends BaseMiddleware<any> { // TODO: no any
     constructor() {
-        super('FTIPs');
+        super('ip_addresses');
     }
 
     // verifyUserIp = async (id: number): Promise<boolean> => {
-    //     const ftUserMiddleware = new FTUserMiddleware();
+    //     const userMiddleware = new UserMiddleware();
     //     // TODO: catch return false doesnt actually catch falty logic, 
     //     // just wrong syntax and maybe wrong typing. FIX
-    //     const currentUser: DUserRecord = await ftUserMiddleware.getById(id);
+    //     const currentUser: DUserRecord = await userMiddleware.getById(id);
     //     return this.authorized_ips.includes(currentUser.authorizedIps);
     // }
 
@@ -28,8 +28,8 @@ class FTAuthMiddleware extends BaseMiddleware<any> { // TODO: no any
         return !!ip;
     }
 
-    verifyUser = async (values: DFTLoginFields): Promise<Partial<DFTUserDTO> | null> => {
-        const currentUser = await FTUser.findOne({ where: { email: values.email } });
+    verifyUser = async (values: DFTLoginFields): Promise<Partial<DUserDTO> | null> => {
+        const currentUser = await User.findOne({ where: { email: values.email } });
         if (!currentUser) {
             return null;
         }

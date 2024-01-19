@@ -21,14 +21,14 @@ module.exports = {
         members: JSON.stringify(dummyMembers),
         description: faker.lorem.sentence(),
         base_location: Math.floor(Math.random() * 40),
-        head_1: 16, // FTUser
-        head_2: 17, // FTUser
+        head_1: 16, // User
+        head_2: 17, // User
         created_by: 1,
         // created_at: faker.date.past(),
         // updated_at: faker.date.past(),
       });
     }
-    await queryInterface.bulkInsert('FTFams', dummyJSON, {});
+    await queryInterface.bulkInsert('Families', dummyJSON, {});
   },
 
   async down(queryInterface, Sequelize) {
@@ -38,7 +38,7 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
     */
-    await queryInterface.bulkDelete('FTFams', null, {});
+    await queryInterface.bulkDelete('Families', null, {});
   }
 };
 

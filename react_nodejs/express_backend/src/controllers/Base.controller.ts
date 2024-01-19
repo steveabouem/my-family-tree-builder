@@ -62,7 +62,7 @@ class BaseController<GProps> {
         return results;
     };
 
-    
+
 }
 
 export default BaseController;

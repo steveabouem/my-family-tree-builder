@@ -1,8 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
-import Tree from "../models/FT.tree.";
+import FamilyTree from "../models/FamilyTree";
 import winston from "winston";
-import { TreeMiddleware } from "../middleware-classes/tree/FT.tree.middleware";
-import FTAuthMiddleware from "../middleware-classes/auth/FT.auth.middleware";
+import { TreeMiddleware } from "../middleware-classes/tree/familytree.middleware";
+import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 
 const router = Router();
 
@@ -54,7 +54,7 @@ router.get('/:id', (req: Request, res: Response) => {
     const treeMiddleware = new TreeMiddleware;
 
     treeMiddleware.getTree(parseInt(req.params.id))
-        .then((r: Tree | null) => {
+        .then((r: FamilyTree | null) => {
             res.status(200);
             res.json(r);
         })
@@ -116,24 +116,24 @@ router.put('/:id', (req: Request, res: Response) => {
 router.put('/:id/families', (req: Request, res: Response) => {
     const treeMiddleware = new TreeMiddleware;
     // TODO: there's definitely a way to add the create function to the base middleware instead
-    treeMiddleware.addFamily(parseInt(req.params.id), req.body.id)
-        .then((success: boolean) => {
-            if (success) {
-                res.status(201);
-                res.json(success);
-            } else {
-                res.status(400);
-                res.json(null);
-            }
-        })
-        .catch((e: unknown) => {
-    winston.log('error' ,  e);
-            // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
-            console.log('ERROR: ', e);
+    // treeMiddleware.addFamily(parseInt(req.params.id), req.body.id)
+    //     .then((success: boolean) => {
+    //         if (success) {
+    //             res.status(201);
+    //             res.json(success);
+    //         } else {
+    //             res.status(400);
+    //             res.json(null);
+    //         }
+    //     })
+    //     .catch((e: unknown) => {
+    // winston.log('error' ,  e);
+    //         // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
+    //         console.log('ERROR: ', e);
 
-            res.status(500);
-            res.json(e);
-        });
+    //         res.status(500);
+    //         res.json(e);
+    //     });
 });
 
 router.put('/:id/families/remove', (req: Request, res: Response) => {
