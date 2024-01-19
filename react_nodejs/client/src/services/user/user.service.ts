@@ -1,7 +1,7 @@
 import BaseService from "../base/base.service";
 import { DUserRelatedFamily } from "./user.definitions";
 
-class FTUserService extends BaseService {
+class UserService extends BaseService {
   async getRelatedFamilies(id?: string): Promise<DUserRelatedFamily[]> {
     if (!id) {
       // TODO: Logging
@@ -21,4 +21,4 @@ class FTUserService extends BaseService {
   }
 }
 
-export default FTUserService;
+export default UserService;

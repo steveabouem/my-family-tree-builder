@@ -9,18 +9,33 @@ const useAuthValidation = (): void => {
   
   useEffect(() => {
     const sessionService = new SessionService();
-    const id = document.cookie;
-    sessionService.getCurrent(1)
-      .then(({ data }) => {
-        if (data) {
-          updateUser(data);
-          } else {
-          navigate('/connect');
-        }
-      })
-      .catch((e: unknown) => {
-        console.log('Error getting user: ', e);
-      });
+    if (localStorage.length) {
+      const currentSession = JSON.parse(localStorage.getItem('FT') || '');
+      console.log(currentSession);
+      
+      if (currentSession?.sessionId) {
+        
+        sessionService.getCurrent(currentSession.sessionId)
+          .then(({data} ) => {
+            console.log({data});
+            //TODO: "there's got to be a better way!"
+            if (data.error) {
+              navigate('/connect');
+            } else {
+              if (data?.data?.data) {
+                const currentUser = JSON.parse(data.data.data); // ! <=
+                console.log(currentUser);
+                updateUser(data);
+              }
+            }
+          })
+          .catch((e: unknown) => {
+            console.log('Error getting user: ', e);
+          });
+      }
+    } else {
+      navigate('/connect');
+    }
   }, []);
 }
 

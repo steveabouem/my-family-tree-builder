@@ -1,8 +1,8 @@
 import BaseService from "../base/base.service";
 
-class SessionService extends BaseService {
+class FamilyTreeService extends BaseService {
   constructor() {
-    super('session');
+    super('Trees');
   }
 
   // TODO: ensure previous session is closed, so that this actually returns only the latest, non expired session
@@ -19,4 +19,4 @@ class SessionService extends BaseService {
   }
 }
 
-export default SessionService;
+export default FamilyTreeService;

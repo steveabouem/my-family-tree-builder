@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Trans } from "@lingui/macro";
 import { DTopNavProps } from "../definitions";
 import logo from "../../../assets/logo.jpg";
 import { LiaUserSecretSolid } from "react-icons/lia";
@@ -15,14 +16,15 @@ const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
   const [menuOpened, setMenuOpened] = useState(false);
   const linkColor = usePrimary();
   const { theme } = useContext(GlobalContext);
-  const { currentUser } = useContext(FamilyTreeContext);
+  const { currentUser, updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
 
   const processLogout = async () => {
     const authService = new AuthService('auth');
-    // document.cookie = '=;=;=; path=/'
-    // console.log(document.cookie.split(';'));
     await authService.logout();
+    // TODO: handle error
+    // .catch;
+    updateUser({});
     navigate('/');
   }
 
@@ -34,23 +36,23 @@ const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
       <div className="pages-links">
 
         <div className="accent">
-          <Link to="/" color={linkColor}>Home</Link>
+          <Link to="/" color={linkColor}><Trans>Home</Trans></Link>
         </div>
 
         <div className="accent">
-          <Link to="/users/:id" color={linkColor}>Profile</Link>
+          <Link to="/users/:id" color={linkColor}><Trans>Profile</Trans></Link>
         </div>
 
         <div className="accent">
-          <Link to="/family" color={linkColor}>Families</Link>
+          <Link to="/family" color={linkColor}><Trans>Families</Trans></Link>
         </div>
 
         <div className="accent">
-          <Link to="/family-tree" color={linkColor}>Trees</Link>
+          <Link to="/family-tree" color={linkColor}><Trans>Trees</Trans></Link>
         </div>
 
         <div className="accent">
-          <Link to="/connect" color={linkColor}>Connect</Link>
+          <Link to="/connect" color={linkColor}><Trans>Connect</Trans></Link>
         </div>
       </div>
       <div className="avatar-container" onClick={() => setMenuOpened(!menuOpened)}>

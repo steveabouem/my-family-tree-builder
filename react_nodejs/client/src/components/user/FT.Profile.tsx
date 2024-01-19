@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import NotFound from '../common/404NotFound';
 import React from "react";
-import FamilyService from "../../services/fam/family.service";
 import FamilyCard from "../family/FamilyCard";
 import { DFamilyDTO } from "../family/definitions";
 import Page from "../common/Page";
@@ -9,7 +8,7 @@ import GlobalContext from "../../context/global.context";
 import FamilyTreeContext from "../../context/familyTree.context";
 import { DProfileProps } from "./definitions";
 
-const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
+const UserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const [userFamilies, setUserFamilies] = useState([]);
   const { theme } = useContext(GlobalContext);
@@ -17,15 +16,12 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
 
   useEffect(() => {
     const getUserFamilies = async (): Promise<any> => {
-      const familyService = new FamilyService();
-      const families = await familyService.getFamilyBullkData(`${currentUser?.related_to?.join(',') || ''} `);
 
-      return families
     }
 
     if (currentUser) {
       getUserFamilies()
-        .then(({ data }) => {
+        .then((data ) => {
           console.log(data);
 
           setUserFamilies(data);
@@ -48,8 +44,6 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
           <div>
 
           </div>
-
-
         </div>
       </div>
     </Page>
@@ -60,4 +54,4 @@ const FTUserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
 
 }
 
-export default FTUserProfilePage;
+export default UserProfilePage;

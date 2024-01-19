@@ -18,7 +18,7 @@ export interface DSibling {
     last_name: string;
     age: string;
     occupation: string;
-    partner?: string; // FTUser
+    partner?: string; // User
     marital_status: string;
     is_parent: number;
     description: string;

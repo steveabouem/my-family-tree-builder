@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import Page from '../common/Page';
 import GlobalContext from '../../context/global.context';
-import ManageTreeForm from './FT.ManageTreeForm';
+import ManageTreeForm from './ManageTreeForm';
 import { useNavigate } from 'react-router';
 import FamilyTreeContext from '../../context/familyTree.context';
 import SessionService from '../../services/session/session.service';

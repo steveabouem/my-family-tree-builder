@@ -17,6 +17,7 @@ class AuthService extends BaseService {
 
   public logout = async (): Promise<void> => {
     await this.request.post(`${this.APIBaseUrl}/auth/logout`);
+    localStorage.clear();
     return;
   }
   public validateRegistrationFields = (values: DUserDTO): boolean => {

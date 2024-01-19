@@ -1,9 +1,9 @@
 import "../components/common/"
-import FTAuthentication from "./auth/FT.Authentication";
+import Authentication from "./auth/Authentication";
 
 const pages = {
   tree: {
-    login: FTAuthentication
+    login: Authentication
   }
 };
 
