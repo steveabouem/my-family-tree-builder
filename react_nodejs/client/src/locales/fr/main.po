@@ -1,0 +1,29 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: \n"
+"X-Generator: @lingui/cli\n"
+"Content-Transfer-Encoding: \n"
+"Content-Type: \n"
+"Plural-Forms: \n"
+
+#: src/components/auth/Authentication.tsx:119
+#: src/components/auth/Authentication.tsx:165
+msgid "login_failure"
+msgstr "Erreur de Connection!"
+
+#~ msgid "login_failure_msg {attempts}"
+#~ msgstr "Échec de connection.Veuillez vérifier vos infos et rééssayer.({attempts} tentatives)"
+
+#~ msgid "login_success"
+#~ msgstr "Connection Réussie!"
+
+#. js-lingui-explicit-id
+#: src/components/auth/Authentication.tsx:38
+msgid "marital.status"
+msgstr "État Civil"

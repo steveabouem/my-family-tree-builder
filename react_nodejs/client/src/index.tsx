@@ -1,17 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import FTAppContainer from './components/common/FT.AppContainer';
+import AppContainer from './components/common/AppContainer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { i18n } from "@lingui/core";
+import { I18nProvider } from "@lingui/react";
+import  * as baseEN from "./locales/en/main.js";
+import  * as baseFR from "./locales/fr/main.js";
 
+i18n.load({
+  en: baseEN,
+  fr: baseFR,
+});
+i18n.activate("fr");
 
-// @ts-ignore
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root') as Element);
 root.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/*" element={<FTAppContainer />} />
-    </Routes>
-  </BrowserRouter>
+  <I18nProvider i18n={i18n}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/*" element={<AppContainer />} />
+      </Routes>
+    </BrowserRouter>
+  </I18nProvider>
 );
 
 
