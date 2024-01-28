@@ -1,57 +1,69 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactNode, useContext, useEffect, useState } from 'react';
+import { Trans } from '@lingui/macro';
 import Page from '../common/Page';
-import GlobalContext from '../../context/global.context';
+import GlobalContext from '../../context/creators/global.context';
 import ManageTreeForm from './ManageTreeForm';
-import { useNavigate } from 'react-router';
-import FamilyTreeContext from '../../context/familyTree.context';
-import SessionService from '../../services/session/session.service';
+import FamilyTreeContext from '../../context/creators/familyTree.context';
+import service from '../../services';
 import { DProfileProps } from '../user/definitions';
-import useAuthValidation from '../hooks/useAuthValidation';
 
 const Tree = ({ updateUser }: DProfileProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [hasSiblings, setHasSiblings] = useState<boolean>(true);
+  const [numberOfSiblings, setNumberOfSiblings] = useState<number>(0);
   const [hasSpouse, setHasSpouse] = useState<boolean>(true);
   const { theme } = useContext(GlobalContext);
-  const { currentUser } = useContext(FamilyTreeContext); // TODO: this should even be done directly in the Page component
+  const { currentUser } = useContext(FamilyTreeContext); // ! -TOFIX: this should even be done directly in the Page component
+
+  useEffect(() => {
+    // ! load anything you need
+    setLoading(false);
+  }, []);
 
   const countSiblings = (e: ChangeEvent<HTMLInputElement>) => {
     if (Number(e.target.value) && Number(e.target.value) > 0) {
-      setHasSiblings(true);
+      setNumberOfSiblings(Number(e.target.value));
     } else {
-      setHasSiblings(false);
+      setNumberOfSiblings(0);
     }
-  }
+  };
 
   const getMotherData = (e: ChangeEvent<HTMLInputElement>) => {
-    return 
-  }
+    return
+  };
+
+  const submitForm = (values: any) => {
+    const familyTreeService = new service.familyTre();
+    familyTreeService.create(values)
+      .then((data) => {
+        console.log('TREE DONE? ', data);
+      })
+      .catch((e: unknown) => {
+        console.log('Error loging in', e);
+        return false;
+      });
+  };
 
   return (
-    <Page title="My Family Tree" subtitle="Describe your Family" isLoading={loading} theme={theme} >
+    <Page title={<Trans>my_tree_page_title</Trans>} subtitle="Describe your Family" isLoading={loading} >
       <div className="row text-center">
         <div className="col">
-          <label>Do you have a spouse/partner?</label>
-          <label aria-label="hasSpouse">Yes</label><input type="radio" value='1' onClick={() => setHasSpouse(true)} />
-          <label aria-label="noSpouse">No</label><input type="radio" value='0' onClick={() => setHasSpouse(false)} />
+          <label><Trans>marital_status_question_label</Trans></label>
+          <label aria-label="hasSpouse"><Trans>yes</Trans></label><input type="radio" value='1' onClick={() => setHasSpouse(true)} />
+          <label aria-label="noSpouse"><Trans>no</Trans></label><input type="radio" value='0' onClick={() => setHasSpouse(false)} />
         </div>
       </div>
       <div className="row text-center pb-4">
         <div className="col">
-          <label>How many siblings do you have?</label>
+          <label><Trans>how_many_siblings</Trans></label>
           <input type="number" onChange={countSiblings} />
         </div>
       </div>
+
       <div className="row text-center pb-4">
-        <div className="col">
-          <label>What is your mother's full name?</label>
-          {/* TODO: use 2 inputs first/last */}
-          <input name="mothers_name" onChange={getMotherData} />
-        </div>
+        <ManageTreeForm numberOfSiblings={numberOfSiblings} hasSpouse={hasSpouse} />
       </div>
-      <ManageTreeForm hasSiblings={hasSiblings} hasSpouse={hasSpouse} />
     </Page>
-  )
+  );
 }
 
 export default Tree;

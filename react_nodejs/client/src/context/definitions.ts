@@ -1,7 +1,6 @@
-export enum applicationEnum {
-  FT = 'FT',
-  TR = 'TR',
-}
+import { ReactNode } from "react";
+import { DModalProps } from "../components/common/alerts/definitions";
+import { DFamilyTree } from "../components/tree/definitions";
 
 export enum themeEnum {
   green = 'DARK-GREEN',
@@ -10,7 +9,15 @@ export enum themeEnum {
 }
 
 export interface DGlobalContext {
-  app: applicationEnum;
   theme: themeEnum;
   session?: string;
+  modal?: Partial<DModalProps>;
+  tree?: Partial<DFamilyTree>;
+  updateTheme?: (value: themeEnum) => void;
+  updateModal?: (values: Partial<DModalProps>) => void;
+  updateFamilyTree?: (values: Partial<DFamilyTree>) => void;
+}
+
+export interface DContextProvider {
+  children?: ReactNode;
 }

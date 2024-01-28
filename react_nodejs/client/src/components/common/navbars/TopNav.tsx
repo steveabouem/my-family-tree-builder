@@ -7,25 +7,31 @@ import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
 import ThemeSelector from "../ThemeSelector";
 import usePrimary from "../../hooks/usePrimary.hook";
-import GlobalContext from "../../../context/global.context";
-import FamilyTreeContext from "../../../context/familyTree.context";
+import GlobalContext from "../../../context/creators/global.context";
+import FamilyTreeContext from "../../../context/creators/familyTree.context";
 import ButtonRounded from "../buttons/Rounded";
-import AuthService from "../../../services";
+import service from "../../../services";
 
-const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
+const TopNav = () => {
   const [menuOpened, setMenuOpened] = useState(false);
   const linkColor = usePrimary();
   const { theme } = useContext(GlobalContext);
   const { currentUser, updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
 
-  const processLogout = async () => {
-    const authService = new AuthService('auth');
-    await authService.logout();
-    // TODO: handle error
-    // .catch;
-    updateUser({});
-    navigate('/');
+  const processLogout = () => {
+    const authService = new service.auth('auth');
+    authService.logout()
+    .then(() => {
+      if (updateUser) {
+        updateUser({});
+        navigate('/');
+      }
+    })
+    .catch((e: unknown) => {
+      console.log('ERRR: ', e);
+      // ! -TOFIX: handle error
+    });
   }
 
   return (
@@ -56,14 +62,14 @@ const TopNav = ({ position, handleChangeTheme }: DTopNavProps) => {
         </div>
       </div>
       <div className="avatar-container" onClick={() => setMenuOpened(!menuOpened)}>
-        {currentUser?.first_name ? (
+        {currentUser?.firstName ? (
           <>
-            <RiUser5Fill />   {currentUser.first_name}
+            <RiUser5Fill />   {currentUser.firstName}
           </>
         ) : <LiaUserSecretSolid />}
       </div>
       {menuOpened && <ButtonRounded text="LOGOUT" action={() => processLogout()} />}
-      <ThemeSelector switchTheme={handleChangeTheme} />
+      <ThemeSelector />
     </div>
   );
 };

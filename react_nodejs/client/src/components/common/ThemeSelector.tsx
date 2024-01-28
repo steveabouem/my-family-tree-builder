@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { IoColorPaletteSharp } from "react-icons/io5";
 import usePrimary from "../hooks/usePrimary.hook";
-import { DThemeSelectorProps } from "./definitions";
 import { themeEnum } from "../../context/definitions";
+import GlobalContext from "../../context/creators/global.context";
 
-const ThemeSelector = ({ switchTheme }: DThemeSelectorProps) => {
+const ThemeSelector = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const triggerColor = usePrimary();
+  const { updateTheme } = useContext(GlobalContext);
 
   return (
     <div id="THEME">
@@ -15,13 +16,13 @@ const ThemeSelector = ({ switchTheme }: DThemeSelectorProps) => {
       </div>
       {isOpen ? (
         <div className="choices">
-          <div onClick={() => switchTheme(themeEnum.dark)} >
+          <div onClick={() => { if (updateTheme) updateTheme(themeEnum.dark) }} >
             <IoColorPaletteSharp color="#070707" />
           </div>
-          <div onClick={() => switchTheme(themeEnum.green)} >
+          <div onClick={() => { if (updateTheme) updateTheme(themeEnum.green) }} >
             <IoColorPaletteSharp color="#003231" />
           </div>
-          <div onClick={() => switchTheme(themeEnum.light)} >
+          <div onClick={() => { if (updateTheme) updateTheme(themeEnum.light) }} >
             <IoColorPaletteSharp color="#fff" />
           </div>
         </div>

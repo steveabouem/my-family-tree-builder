@@ -14,7 +14,7 @@ const BaseFormFields = ({
     <div className={`base-form-fields accent-bg primary ${size}`}>
       {title ? <div className="form-title">{title}</div> : null}
       {fields.map((field: DFormField, i: number) => (
-        <div key={`${i}-${field.fieldName}`} className="field-wrap base">
+        <div key={`${i}-${field.fieldName}`} className={'field-wrap base ' + field?.class || ''}>
           <label htmlFor={field.fieldName} className="primary">
             {field.label}{field.required ? <PiAsteriskSimpleFill className="bg-accent" /> : null}
           </label>

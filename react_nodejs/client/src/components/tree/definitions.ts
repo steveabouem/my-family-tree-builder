@@ -1,3 +1,10 @@
+import { DUserDTO } from "../../services/auth/auth.definitions";
+
+export interface DFamilyTree {
+  name: string;
+  isPublic: boolean;
+  members?: DUserDTO[];
+}
 export interface DTreeManagerFields {
   relation: keyof typeof relationType | '';
   first_name: string;
@@ -9,7 +16,7 @@ export interface DTreeManagerFields {
 }
 
 export interface DTreeManagerProps {
-  hasSiblings: boolean;
+  numberOfSiblings: number;
   hasSpouse: boolean;
 }
 

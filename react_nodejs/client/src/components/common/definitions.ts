@@ -1,34 +1,33 @@
 import React, { ReactNode } from "react";
-import { applicationEnum, themeEnum } from "../../context/definitions";
+import { themeEnum } from "../../context/definitions";
 
 /* +++++=> NAVIGATION <= +++++ */
-export interface DTopNavProps {
-  links?: DNavigationLink[];
-  position: string;
-  handleChangeTheme: (theme: themeEnum) => void;
-}
+// export interface DTopNavProps {
+//   links?: DNavigationLink[];
+//   position: string;
+//   handleChangeTheme?: (theme: themeEnum) => void;
+// }
 
 export interface DNavigationLink {
-  link: string;
-  path: string;
+  link: string  | ReactNode;
+  path: string  | ReactNode;
 }
 
 /* +++++=> PAGES <= +++++ */
 export interface DPageProps {
   isLoading: boolean;
-  theme: themeEnum;
-  title: string;
-  subtitle: string;
+  title: string | ReactNode;
+  subtitle: string | ReactNode;
   children?: React.ReactNode;
 }
 
 /* +++++=> FORMS <= +++++ */
 export interface DFormField {
   fieldName: string;
-  label: string;
+  label: string | ReactNode;
   class?: string;
   id?: string;
-  value?: string | number;
+  value?: string | number | ReactNode;
   required?: boolean;
   type?: string;
   subComponent?: any;
@@ -36,18 +35,15 @@ export interface DFormField {
 }
 
 export interface DBaseFormProps {
-  title?: string;
+  title?: string | ReactNode;
   fields: DFormField[];
   handleSubmit: () => void;
-  size: string;
-  initialValues?: { [key: string]: string | number };
-  handleFieldValueChange?: (field: string, value: string | number) => void;
-  // TODO: No any, valiation types are not hard
+  size: string | ReactNode;
+  initialValues?: { [key: string]: string | ReactNode | number };
+  handleFieldValueChange?: (field: string , value: string  | number) => void;
+  // ! -TOFIX: No any, valiation types are not hard
   validations?: any;
 }
 
 /* +++++=> APP <= +++++ */
 
-export interface DThemeSelectorProps {
-  switchTheme: (theme: themeEnum) => void;
-}

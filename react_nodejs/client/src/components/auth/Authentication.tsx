@@ -1,20 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, FormikHelpers } from "formik";
 import { Trans, t } from "@lingui/macro";
-import { useLingui } from "@lingui/react";
 import { DAuthProps } from "./definitions";
 import { useNavigate } from "react-router";
-import FamilyTreeContext from "../../context/familyTree.context";
-import GlobalContext from "../../context/global.context";
+import FamilyTreeContext from "../../context/creators/familyTree.context";
+import GlobalContext from "../../context/creators/global.context";
 import { DDropdownOption, genderOptions, maritalStatusOptions, parentOptions } from "../common/dropdowns/definitions";
 import { DFormField } from "../common/definitions";
-import AuthService from "../../services";
+import service from "../../services";
 import BaseFormFields from "../common/forms/BaseFormFields";
 import Page from "../common/Page";
 import BaseDropDown from "../common/dropdowns/BaseDropdown";
 import { DUserDTO } from "../../services/auth/auth.definitions";
-import BaseModal from "../common/alerts/BaseModal";
-import { DModalProps } from "../common/alerts/definitions";
 
 const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,17 +21,9 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     is_parent: 'Yes',
     gender: 'Male',
   });
-  const [modal, setModal] = useState<DModalProps>(
-    {
-      hidden: true,
-      content: '',
-      title: '',
-      id: 'auth-modal'
-    }
-  );
   const { updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
-  const { theme } = useContext(GlobalContext);
+  const { theme, updateModal, updateTheme, modal } = useContext(GlobalContext);
   const mStatus = t({
     id: "marital.status",
     message: `Marital Status`,
@@ -131,17 +120,26 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   };
 
   const processLogin = async (values: Partial<DUserDTO>) => {
-    const authService = new AuthService('auth');
+    const authService = new service.auth('auth');
     const envToken: string | undefined = process.env.REACT_APP_JWT_TOKEN;
     const logedInUser = await authService.submitLoginForm({ ...values, sessionToken: envToken as string })
       .catch((e: unknown) => {
-        // TODO: LOGGING AND PROPER HANDLING IN FRONT
         console.log('Error loging in', e);
+        if (updateModal) {
+          updateModal({
+            ...modal,
+            hidden: false,
+            title: <Trans>login_failure</Trans>,
+            content: <Trans>login_failure_msg {attempts}</Trans>,
+          });
+        }
         return false;
       });
 
     if (logedInUser.data?.data?.authenticated) {
       localStorage.setItem('FT', JSON.stringify(logedInUser.data.data));
+      if (updateUser) {
+      updateUser(logedInUser.data.data);
       updateUser(logedInUser.data.data);
       // setModal({
       //   ...modal,
@@ -153,30 +151,37 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       //     }, 500);
       //   }
       // });
-      changeMode(undefined);
-      navigate(`/users/${logedInUser.data.session.id}`);
+        updateUser(logedInUser.data.data);
+      // setModal({
+      //   ...modal,
+      //   hidden: false,
+      //   title: 'Login Succesful!',
+      //   content: 'Thank you for entering your credentials. You will now be redirected.',
+      //   onConfirm: () => {
+      //     setTimeout(() => {
+      //     }, 500);
+      //   }
+      // });
+        changeMode(undefined);
+        navigate(`/users/${logedInUser.data.session.id}`);
+      }
     } else {
-      // console.log('Error loging in'); // TODO logging
       setAttempts((prev) => prev + 1);
-      setModal({
+      if (updateModal)
+      updateModal({
         ...modal,
         hidden: false,
         title: <Trans>login_failure</Trans>,
         content: <Trans>login_failure_msg {attempts}</Trans>,
-        onConfirm: () => {
-          setTimeout(() => {
-            navigate(`/users/${logedInUser.data.session.id}`);
-          }, 500);
-        }
       });
     }
   }
 
   const processRegister = async (values: Partial<DUserDTO>) => {
-    const authService = new AuthService('auth');
+    const authService = new service.auth('auth');
     const registeredUser = await authService.submitRegistrationForm(values)
       .catch((e: unknown) => {
-        // TODO: LOGGING AND PROPER HANDLING IN FRONT
+        // ! -TOFIX: LOGGING AND PROPER HANDLING IN FRONT
         console.log('Error registering', e);
         return false;
       });
@@ -185,10 +190,12 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       console.log('Succesful registration');
       localStorage.setItem('FT', JSON.stringify(registeredUser.data));
       changeMode(undefined);
-      updateUser(registeredUser.data.data);
-      navigate(`/users/${registeredUser.data.data.userId}`);
+      if (updateUser) {
+        updateUser(registeredUser.data.data);
+        navigate(`/users/${registeredUser.data.data.userId}`);
+      }
     } else {
-      // TODO: on screen notification
+      // ! -TOFIX: on screen notification
       console.log('Registration failure');
     }
   }
@@ -197,7 +204,7 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     <Page
       title="Authentication Page"
       subtitle="Please verify yourself below"
-      theme={theme} isLoading={loading}
+      isLoading={loading}
     >
       <div className="m-auto w-100">
         {mode === 'register' ? (
@@ -279,13 +286,6 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
             handleFieldValueChange={(field: string, value: string | number) => setFieldValue(field, value)} />
         }
       </Formik>
-
-      <BaseModal
-        hidden={modal.hidden}
-        id="auth-modal"
-        content={modal.content}
-        title={modal.title}
-      />
     </Page>
   );
 }

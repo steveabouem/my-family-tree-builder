@@ -1,18 +1,30 @@
-import React, { useEffect } from "react";
+import React, { Suspense, useContext } from "react";
 import { DPageProps } from "./definitions";
-import FTSpinner from "./FT.Spinner";
-import useAuthValidation from "../hooks/useAuthValidation";
+import Spinner from "./Spinner";
+import useSession from "../hooks/useAuthValidation";
+import BaseModal from "./alerts/BaseModal";
+import GlobalContext from "../../context/creators/global.context";
 
-const Page = ({ title, subtitle, children, theme, isLoading }: DPageProps): JSX.Element => {
-  useAuthValidation();
+const Page = ({ title, subtitle, children, isLoading }: DPageProps): JSX.Element => {
+  useSession();
+  const { modal, theme } = useContext(GlobalContext);
 
   return (
-    <div className={`page ${theme} primary`}>
-      <h1 className="secondary">{title}</h1>
-      {subtitle ? <h2 className="secondary">{subtitle}</h2> : ''}
-      {isLoading ? <FTSpinner /> : null}
-      {children || null}
-    </div>
+    <Suspense fallback={<Spinner />}>
+      <div className={`page ${theme} primary`}>
+        <h1 className="secondary">{title}</h1>
+        {subtitle ? <h2 className="secondary">{subtitle}</h2> : ''}
+        {isLoading ? <Spinner /> : null}
+        {children || null}
+      </div>
+      {
+        modal ?
+          <BaseModal
+            hidden={modal?.hidden || true} id={modal?.id || ''}
+            title={modal?.title || ''} content={modal?.content || ''}
+          />
+          : null}
+    </Suspense>
   );
 }
 

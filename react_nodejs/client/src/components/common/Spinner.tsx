@@ -1,7 +1,7 @@
 import React from "react";
 import { BounceLoader } from "react-spinners";;
 
-const FTSpinner = (): JSX.Element => {
+const Spinner = (): JSX.Element => {
   return (
     <div id="FT-SPINNER">
       <BounceLoader
@@ -16,4 +16,4 @@ const FTSpinner = (): JSX.Element => {
   )
 }
 
-export default FTSpinner;
+export default Spinner;

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import GlobalContext from "../../context/global.context";
+import GlobalContext from "../../context/creators/global.context";
 import { themeEnum } from "../../context/definitions";
 
 const usePrimary = (): string => {
