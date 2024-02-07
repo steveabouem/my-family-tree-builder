@@ -13,18 +13,33 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: src/components/common/navbars/TopNav.tsx:55
+msgid "Connect"
+msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:47
+msgid "Families"
+msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:39
+msgid "Home"
+msgstr ""
+
 #: src/components/auth/Authentication.tsx:159
 #~ msgid "login failure"
 #~ msgstr ""
 
-#: src/components/auth/Authentication.tsx:119
-#: src/components/auth/Authentication.tsx:165
+#: src/components/auth/Authentication.tsx:164
 msgid "login_failure"
 msgstr ""
 
-#: src/components/auth/Authentication.tsx:166
-msgid "login_failure_msg, {loginAttempts}"
+#: src/components/auth/Authentication.tsx:165
+msgid "login_failure_msg {attempts}"
 msgstr ""
+
+#: src/components/auth/Authentication.tsx:166
+#~ msgid "login_failure_msg, {loginAttempts}"
+#~ msgstr ""
 
 #: src/components/auth/Authentication.tsx:282
 #~ msgid "login.failure"
@@ -39,6 +54,18 @@ msgstr ""
 msgid "marital.status"
 msgstr ""
 
+#: src/components/common/navbars/TopNav.tsx:43
+msgid "Profile"
+msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:51
+msgid "Trees"
+msgstr ""
+
 #: src/components/auth/Authentication.tsx:282
 #~ msgid "Wallah PAPA"
 #~ msgstr ""
+
+#: src/components/user/Profile.tsx:37
+msgid "your_families_title"
+msgstr ""

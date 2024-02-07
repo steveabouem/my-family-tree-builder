@@ -5,19 +5,31 @@ msgstr ""
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
-"Language: fr\n"
+"Language: \n"
 "Language-Team: \n"
 "Content-Type: \n"
 "Content-Transfer-Encoding: \n"
-"X-Generator: @lingui/cli\n"
 "Plural-Forms: \n"
-#: src/components/auth/Authentication.tsx:119
-#: src/components/auth/Authentication.tsx:165
+
+#: src/components/common/navbars/TopNav.tsx:55
+msgid "Connect"
+msgstr "Connect"
+
+#: src/components/common/navbars/TopNav.tsx:47
+msgid "Families"
+msgstr "Families"
+
+#: src/components/common/navbars/TopNav.tsx:39
+msgid "Home"
+msgstr "Home"
+
+#: src/components/auth/Authentication.tsx:164
 msgid "login_failure"
 msgstr "Login Failure!"
 
-#~ msgid "login_failure_msg {attempts}"
-#~ msgstr "Failed to Connect. Please check your credentials and try again.({attempts} attempts)"
+#: src/components/auth/Authentication.tsx:165
+msgid "login_failure_msg {attempts}"
+msgstr "Failed to Connect. Please check your credentials and try again.({attempts} attempts)"
 
 #~ msgid "login_success"
 #~ msgstr "Logged in Succesfully!"
@@ -26,3 +38,15 @@ msgstr "Login Failure!"
 #: src/components/auth/Authentication.tsx:38
 msgid "marital.status"
 msgstr "Marital Status"
+
+#: src/components/common/navbars/TopNav.tsx:43
+msgid "Profile"
+msgstr "Profile"
+
+#: src/components/common/navbars/TopNav.tsx:51
+msgid "Trees"
+msgstr "Trees"
+
+#: src/components/user/Profile.tsx:37
+msgid "your_families_title"
+msgstr "your_families_title"

@@ -7,7 +7,7 @@ import FamilyTreeContext from "../../context/creators/familyTree.context";
 import GlobalContext from "../../context/creators/global.context";
 import { DDropdownOption, genderOptions, maritalStatusOptions, parentOptions } from "../common/dropdowns/definitions";
 import { DFormField } from "../common/definitions";
-import service from "../../services";
+import { service } from "../../services";
 import BaseFormFields from "../common/forms/BaseFormFields";
 import Page from "../common/Page";
 import BaseDropDown from "../common/dropdowns/BaseDropdown";
@@ -23,7 +23,7 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   });
   const { updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
-  const { theme, updateModal, updateTheme, modal } = useContext(GlobalContext);
+  const { theme, updateModal, toggleLoading, modal } = useContext(GlobalContext);
   const mStatus = t({
     id: "marital.status",
     message: `Marital Status`,
@@ -106,7 +106,7 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   };
 
   useEffect(() => {
-    setLoading(false);
+    toggleLoading(false);
   }, []);
 
   const submitForm = async (values: Partial<DUserDTO>, { resetForm }: FormikHelpers<Partial<DUserDTO>>) => {
@@ -139,41 +139,21 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     if (logedInUser.data?.data?.authenticated) {
       localStorage.setItem('FT', JSON.stringify(logedInUser.data.data));
       if (updateUser) {
-      updateUser(logedInUser.data.data);
-      updateUser(logedInUser.data.data);
-      // setModal({
-      //   ...modal,
-      //   hidden: false,
-      //   title: 'Login Succesful!',
-      //   content: 'Thank you for entering your credentials. You will now be redirected.',
-      //   onConfirm: () => {
-      //     setTimeout(() => {
-      //     }, 500);
-      //   }
-      // });
         updateUser(logedInUser.data.data);
-      // setModal({
-      //   ...modal,
-      //   hidden: false,
-      //   title: 'Login Succesful!',
-      //   content: 'Thank you for entering your credentials. You will now be redirected.',
-      //   onConfirm: () => {
-      //     setTimeout(() => {
-      //     }, 500);
-      //   }
-      // });
+        console.log({logedInUser});
+        
         changeMode(undefined);
-        navigate(`/users/${logedInUser.data.session.id}`);
+        navigate(`/users/${logedInUser.data.data.userId}`);
       }
     } else {
       setAttempts((prev) => prev + 1);
       if (updateModal)
-      updateModal({
-        ...modal,
-        hidden: false,
-        title: <Trans>login_failure</Trans>,
-        content: <Trans>login_failure_msg {attempts}</Trans>,
-      });
+        updateModal({
+          ...modal,
+          hidden: false,
+          title: <Trans>login_failure</Trans>,
+          content: <Trans>login_failure_msg {attempts}</Trans>,
+        });
     }
   }
 
@@ -192,7 +172,7 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       changeMode(undefined);
       if (updateUser) {
         updateUser(registeredUser.data.data);
-        navigate(`/users/${registeredUser.data.data.userId}`);
+        navigate(`/users/${registeredUser.data.data.data.userId}`);
       }
     } else {
       // ! -TOFIX: on screen notification

@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import { themeEnum } from "../../context/definitions";
 
 /* +++++=> NAVIGATION <= +++++ */
 // export interface DTopNavProps {
@@ -15,7 +14,6 @@ export interface DNavigationLink {
 
 /* +++++=> PAGES <= +++++ */
 export interface DPageProps {
-  isLoading: boolean;
   title: string | ReactNode;
   subtitle: string | ReactNode;
   children?: React.ReactNode;

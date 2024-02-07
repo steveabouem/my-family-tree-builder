@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const FT_user_service_1 = require("../../../services/FT/user/FT.user.service");
+const FT_user_middleware_1 = require("../../../middleware-classes/user/FT.user.middleware");
 const Base_controller_1 = __importDefault(require("../../Base.controller"));
 class FTUserController extends Base_controller_1.default {
     //      User model
@@ -31,11 +31,11 @@ class FTUserController extends Base_controller_1.default {
     constructor() {
         super('Users');
         this.create = (user) => __awaiter(this, void 0, void 0, function* () {
-            const userService = new FT_user_service_1.FTUserService();
+            const userMiddleware = new FT_user_middleware_1.FTUserMiddleware();
             // TODO: catch return false doesnt actually catch falty logic, 
             // just wrong syntax and maybe wrong typing. FIX
             console.log('NEW USER: ', user);
-            yield userService.create(user).catch(() => false);
+            yield userMiddleware.create(user).catch(() => false);
             return true;
         });
     }

@@ -4,7 +4,7 @@ import { DUserRelatedFamily } from "./user.definitions";
 class UserService extends BaseService {
   async getRelatedFamilies(id?: string): Promise<DUserRelatedFamily[]> {
     if (!id) {
-      // TODO: Logging
+      // ! -TOFIX: Logging
       return [];
     }
 
@@ -13,7 +13,7 @@ class UserService extends BaseService {
     return [];
   }
 
-  // TODO: no any
+  // ! -TOFIX: no any
   getExtendedFamilies = async (id: number): Promise<any> => {
     // get all families of the same level in the tree (families grouped by parents and children' spouses' parents) for a given user
     const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/${id}/extended`);

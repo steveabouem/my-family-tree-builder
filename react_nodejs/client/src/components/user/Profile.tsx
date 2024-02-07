@@ -1,65 +1,76 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { Trans } from "@lingui/macro";
 import React from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import NotFound from '../common/404NotFound';
 import FamilyCard from "../family/FamilyCard";
-import { DFamilyDTO } from "../family/definitions";
 import Page from "../common/Page";
-import GlobalContext from "../../context/creators/global.context";
 import FamilyTreeContext from "../../context/creators/familyTree.context";
-import { DProfileProps } from "./definitions";
-import service from "../../services";
-import ButtonRounded from "../common/buttons/Rounded";
-import { Link } from "react-router-dom";
+import {service} from "../../services";
+import { DFamilyTree } from "../tree/definitions";
+import GlobalContext from "../../context/creators/global.context";
 
-const UserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [userTrees, setUserTrees] = useState<any[]>([]);
-  const { theme } = useContext(GlobalContext);
-  const { currentUser } = useContext(FamilyTreeContext); // ! -TOFIX: this should even be done directly in the page component
+const UserProfilePage = (): JSX.Element => {
+  const { currentUser, familyTrees, updateFamilyTrees } = useContext(FamilyTreeContext);
+  const { toggleLoading, updateModal } = useContext(GlobalContext);
+  const {id} = useParams();
+  const navigate = useNavigate();
+
+  const getfamilyTrees = useCallback(async (): Promise<any> => {
+    const familyTreeService = new service.familyTree();
+    const userId = currentUser?.userId;
+
+    if (userId && userId === Number(id)) {
+      const families = await familyTreeService.getAllForUser(userId)
+        .catch(e => {
+          console.log('Get FAMILIES: ', e);
+        });
+
+      return families;
+    } else {
+      navigate('/connect');
+    }
+  }, [currentUser, id]);
+
 
   useEffect(() => {
-    const getUserTrees = async (): Promise<any> => {
-      const familyTreeService = new service.familyTre();
-      const userId = currentUser?.userId;
-
-      if (userId) {
-        const families = await familyTreeService.getAllForUser(userId);
-        setUserTrees(families.data);
-      }
-    }
-
-    if (currentUser) {
-      getUserTrees()
-        .then((data) => {
-          console.log({ data });
-          setUserTrees(data);
-          setLoading(false);
+    if (currentUser?.userId) {
+      getfamilyTrees()
+        .then(({data}) => {
+          if (!data.error) {
+            if (updateFamilyTrees) updateFamilyTrees(data.data);
+            if (toggleLoading) toggleLoading(false);
+          }
         })
         .catch(e => {
-
+          if (updateModal) updateModal({
+            hidden: false,
+            buttons: { confirm: true, cancel: false },
+            content: <Trans>error_modal_message</Trans>,
+            title: <Trans>error_modal_title</Trans>,
+          });
+          if (toggleLoading) toggleLoading(false);
         });
     }
   }, [currentUser]);
 
   return currentUser ? (
-    <Page subtitle="My profile" isLoading={loading} title={`Welcome ${currentUser?.firstName || ''}`}>
+    <Page subtitle="My profile" title={`Welcome ${currentUser?.firstName || ''}`}>
       <div className="row">
         <div className="col-md-6">
-          {userTrees?.length ?
+          {familyTrees?.length ?
             <>
-              <label><Trans>your_tree_title</Trans> ({userTrees?.length || 0})</label>
+              <label><Trans>your_tree_title</Trans> ({familyTrees?.length || 0})</label>
               <div>
                 {
-                  userTrees.map((family: DFamilyDTO) => (
-                    <FamilyCard {...family} />
+                  familyTrees.map((tree: Partial<DFamilyTree>) => (
+                    <FamilyCard {...tree} />
                   ))
                 }
               </div>
             </>
             :
             <>
-
               <label><Trans>manage_your_tree_title</Trans></label>
               <div> <Link to="/family-tree"><Trans>go_check_my_tree</Trans></Link></div>
             </>
@@ -70,7 +81,6 @@ const UserProfilePage = ({ updateUser }: DProfileProps): JSX.Element => {
   ) : (
     <NotFound title="Profile Not Found!" /> // this probably wont be necesarry given redirect
   );
-
 }
 
 export default UserProfilePage;

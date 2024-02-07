@@ -10,12 +10,13 @@ export enum themeEnum {
 
 export interface DGlobalContext {
   theme: themeEnum;
+  loading: boolean;
   session?: string;
   modal?: Partial<DModalProps>;
   tree?: Partial<DFamilyTree>;
   updateTheme?: (value: themeEnum) => void;
   updateModal?: (values: Partial<DModalProps>) => void;
-  updateFamilyTree?: (values: Partial<DFamilyTree>) => void;
+  toggleLoading?: (value: boolean) => void;
 }
 
 export interface DContextProvider {

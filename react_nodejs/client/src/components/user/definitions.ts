@@ -1,7 +1,3 @@
-export interface DProfileProps {
-  updateUser: (user: any) => void;
-}
-
 export interface DFamilyMember {
   firstName: string;
   lastName: string;

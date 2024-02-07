@@ -1,43 +1,42 @@
-import React, { useEffect, useState } from "react";
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "react-bootstrap";
+import React, { useContext } from "react";
+import { Modal } from "react-bootstrap";
 import { DModalProps } from "./definitions";
+import GlobalContext from "../../../context/creators/global.context";
+import { Trans } from "@lingui/macro";
 
-const BaseModal = ({ id, hidden, title, content, onConfirm, onCancel, children }: DModalProps): JSX.Element => {
-  const [visible, setVisible] = useState<boolean>(false);
-
-  useEffect(() => {
-    setVisible(!hidden);
-  }, []);
+const BaseModal = ({ onConfirm, onCancel, children }: DModalProps): JSX.Element => {
+  const { modal, updateModal } = useContext(GlobalContext);
 
   const handleCancel = () => {
     if (onCancel) {
       onCancel();
     }
-    setVisible(false);
+
+    if (updateModal) updateModal({ ...modal, hidden: true });
   };
 
   const handleConfirm = () => {
     if (onConfirm) {
       onConfirm();
     }
-    setVisible(false);
+
+    if (updateModal) updateModal({ ...modal, hidden: true });
   };
 
   return (
-    <Modal show={visible} onHide={handleCancel} id={id}>
+    <Modal show={!modal?.hidden} onHide={handleCancel} id={modal?.id || ''}>
       <Modal.Header closeButton>
-        <Modal.Title>{title}</Modal.Title>
+        <Modal.Title>{modal?.title || ''}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {content || null}
-        {children || null}
+        {modal?.content || null}
+        {children}
       </Modal.Body>
       <Modal.Footer>
-        <button onClick={() => handleCancel()}>Cancel</button>
-        <button onClick={() => handleConfirm()}>Confirm</button>
+        {modal?.buttons?.cancel ? <button onClick={() => handleCancel()}><Trans>cancel</Trans></button> : <></>}
+        {modal?.buttons?.confirm ? <button onClick={() => handleConfirm()}><Trans>confirm</Trans></button> : <></>}
       </Modal.Footer>
     </Modal>
-
   );
 }
 

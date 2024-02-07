@@ -26,7 +26,6 @@ const BaseDropDown = ({ id, label, options, additionalClass, onValueChange, val,
               className={`dd-options  ${option.additionalClass || ''} ${val === option.value ? ' selected' : ''}`}
               key={`dd-opt-${i}`}
               onClick={() => {
-                console.log('SELECTING OPT', option);
                 updateVal(option);
               }}>
               <div

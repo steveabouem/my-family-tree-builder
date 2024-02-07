@@ -1,17 +1,10 @@
 import React from "react";
-import { DFamilyDTO } from "./definitions";
+import { DFamilyTree } from "../tree/definitions";
 
-const FamilyCard = (props: DFamilyDTO): JSX.Element => {
+const FamilyCard = (props: Partial<DFamilyTree>): JSX.Element => {
   return (
     <div className="">
-      <h3>{props.name} Family</h3>
-      <div>
-        {props.members.length} members
-      </div>
-      <div>
-        <h4>Summary</h4>
-        {props.description}
-      </div>
+      <h3>{props.name} Family Tree</h3>
     </div>
   );
 

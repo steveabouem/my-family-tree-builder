@@ -13,10 +13,8 @@ const useSession = (): void => {
       const currentSession = JSON.parse(localStorage.getItem('FT') || '');
       
       if (currentSession?.sessionId) {
-        console.log('we have a session: ', currentSession);
         sessionService.getCurrent(currentSession.sessionId)
           .then(({data} ) => {
-            console.log('user added to context after session api get call: ', {data});
             //TODO: "there's got to be a better way!"
             if (data.error) {
               navigate('/connect');

@@ -1,4 +1,5 @@
 export interface DUserDTO {
+    userId?: number;
     first_name: string;
     last_name: string;
     age: number;
@@ -16,4 +17,13 @@ export interface DUserDTO {
     imm_family: number;
     related_to: number[];
     sessionToken?: string;
+}
+
+export interface DUserSession {
+    authenticated: boolean;
+    email: string;
+    sessionId: string;
+    userId: number;
+    firstName: string;
+    lastName: string;
 }

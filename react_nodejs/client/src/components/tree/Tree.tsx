@@ -1,23 +1,39 @@
-import React, { ChangeEvent, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { Trans } from '@lingui/macro';
 import Page from '../common/Page';
 import GlobalContext from '../../context/creators/global.context';
 import ManageTreeForm from './ManageTreeForm';
 import FamilyTreeContext from '../../context/creators/familyTree.context';
-import service from '../../services';
-import { DProfileProps } from '../user/definitions';
+import {service} from '../../services';
 
-const Tree = ({ updateUser }: DProfileProps): JSX.Element => {
-  const [loading, setLoading] = useState<boolean>(true);
+const Tree = (): JSX.Element => {
   const [numberOfSiblings, setNumberOfSiblings] = useState<number>(0);
   const [hasSpouse, setHasSpouse] = useState<boolean>(true);
-  const { theme } = useContext(GlobalContext);
-  const { currentUser } = useContext(FamilyTreeContext); // ! -TOFIX: this should even be done directly in the Page component
+  const { currentUser } = useContext(FamilyTreeContext);
+  const { modal, updateModal, toggleLoading } = useContext(GlobalContext);
+
+  // useEffect(() => {
+  //   const getFamilyTrees =  async() => {
+  //     if (currentUser?.userId) {
+  //       const familyTreeService = new service.familyTree();
+  //       const userFamilies = await familyTreeService.getAllForUser(currentUser.userId);
+  //       console.log({userFamilies});
+  //     }
+  //   };
+
+  //   if(toggleLoading) toggleLoading(false);
+  // }, []);
 
   useEffect(() => {
-    // ! load anything you need
-    setLoading(false);
-  }, []);
+    if (hasSpouse && updateModal) {
+      updateModal({
+        ...modal,
+        content: <Trans>added_spouse_fields</Trans>,
+        hidden: false,
+        buttons: {confirm: true, cancel: false}
+      });
+    }
+  }, [hasSpouse]);
 
   const countSiblings = (e: ChangeEvent<HTMLInputElement>) => {
     if (Number(e.target.value) && Number(e.target.value) > 0) {
@@ -31,25 +47,13 @@ const Tree = ({ updateUser }: DProfileProps): JSX.Element => {
     return
   };
 
-  const submitForm = (values: any) => {
-    const familyTreeService = new service.familyTre();
-    familyTreeService.create(values)
-      .then((data) => {
-        console.log('TREE DONE? ', data);
-      })
-      .catch((e: unknown) => {
-        console.log('Error loging in', e);
-        return false;
-      });
-  };
-
   return (
-    <Page title={<Trans>my_tree_page_title</Trans>} subtitle="Describe your Family" isLoading={loading} >
+    <Page title={<Trans>my_tree_page_title</Trans>} subtitle="Describe your Family">
       <div className="row text-center">
         <div className="col">
           <label><Trans>marital_status_question_label</Trans></label>
-          <label aria-label="hasSpouse"><Trans>yes</Trans></label><input type="radio" value='1' onClick={() => setHasSpouse(true)} />
-          <label aria-label="noSpouse"><Trans>no</Trans></label><input type="radio" value='0' onClick={() => setHasSpouse(false)} />
+          <label aria-label="hasSpouse"><Trans>yes</Trans></label><input readOnly checked={!!hasSpouse} type="radio" onClick={() => setHasSpouse(true)} />
+          <label aria-label="noSpouse"><Trans>no</Trans></label><input readOnly checked={!hasSpouse} type="radio" onClick={() => setHasSpouse(false)} />
         </div>
       </div>
       <div className="row text-center pb-4">
@@ -58,7 +62,6 @@ const Tree = ({ updateUser }: DProfileProps): JSX.Element => {
           <input type="number" onChange={countSiblings} />
         </div>
       </div>
-
       <div className="row text-center pb-4">
         <ManageTreeForm numberOfSiblings={numberOfSiblings} hasSpouse={hasSpouse} />
       </div>

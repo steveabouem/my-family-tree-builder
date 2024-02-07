@@ -7,7 +7,7 @@ import { I18nProvider } from "@lingui/react";
 import * as baseEN from "./locales/en/main.js";
 import * as baseFR from "./locales/fr/main.js";
 import GlobalContextProvider from './context/providers/GlobalContextProvider';
-import FamilyTreeContextProvider from './context/providers/FamilyContextProvider';
+import FamilyTreeContextProvider from './context/providers/FamilyTreeContextProvider';
 
 i18n.load({
   en: baseEN,

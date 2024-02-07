@@ -1,9 +1,12 @@
 import { DUserDTO } from "../../services/auth/auth.definitions";
 
 export interface DFamilyTree {
+  id: number;
   name: string;
-  isPublic: boolean;
+  public: boolean;
   members?: DUserDTO[];
+  authorized_ips: string;
+  active: boolean;
 }
 export interface DTreeManagerFields {
   relation: keyof typeof relationType | '';
@@ -21,19 +24,19 @@ export interface DTreeManagerProps {
 }
 
 export interface DSibling {
-    first_name: string;
-    last_name: string;
-    age: string;
-    occupation: string;
-    partner?: string; // User
-    marital_status: string;
-    is_parent: number;
-    description: string;
-    gender: string; // 1:m 2:f
-    profile_url: string;
-    user_id?: number;
-    email: string;
-    relation: string; // value of relation type below
+  first_name: string;
+  last_name: string;
+  age: string;
+  occupation: string;
+  partner?: string; // User
+  marital_status: string;
+  is_parent: number;
+  description: string;
+  gender: string; // 1:m 2:f
+  profile_url: string;
+  user_id?: number;
+  email: string;
+  relation: string; // value of relation type below
 }
 
 export const relationType = {

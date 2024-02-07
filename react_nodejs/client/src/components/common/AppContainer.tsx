@@ -12,6 +12,7 @@ import Family from "../family/Family";
 import FTLandingPage from "../FT.Landing";
 import { DUserDTO } from "../../services/auth/auth.definitions";
 import GlobalContext from "../../context/creators/global.context";
+import { Container } from "react-bootstrap";
 import('./styles.scss');
 
 const AppContainer = (): JSX.Element => {
@@ -36,8 +37,6 @@ const AppContainer = (): JSX.Element => {
   }
 
   const updateUser = (user?: Partial<DUserDTO>) => {
-    console.log('REceiving user: ', user);
-
     if (user) {
       // @ts-ignore
       setCurrentUser(prev => {
@@ -52,7 +51,7 @@ const AppContainer = (): JSX.Element => {
   return (
     <>
       <TopNav />
-      <div id="FT" className={theme}>
+      <Container fluid id="FT" className={theme}>
         <div className="scroll">
           <Routes>
             <Route path="/" element={<FTLandingPage />} />
@@ -63,12 +62,13 @@ const AppContainer = (): JSX.Element => {
               />
             }
             />
-            <Route path="users/:id" element={<UserProfilePage updateUser={updateUser} />} />
-            <Route path="family" element={<Family updateUser={updateUser} />} />
-            <Route path="family-tree" element={<Tree updateUser={updateUser} />} />
+            <Route path="users/:id" element={<UserProfilePage />} />
+            <Route path="family" element={<Family />} />
+            <Route path="family-tree" element={<Tree />} />
+            <Route path='*' element={<FTLandingPage />} />
           </Routes>
         </div>
-      </div>
+      </Container>
       <Footer />
     </>
   );

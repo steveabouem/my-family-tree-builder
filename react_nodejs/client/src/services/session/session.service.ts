@@ -5,7 +5,7 @@ class SessionService extends BaseService {
     super('session');
   }
 
-  // TODO: ensure previous session is closed, so that this actually returns only the latest, non expired session
+  // ! -TOFIX: ensure previous session is closed, so that this actually returns only the latest, non expired session
   public async getCurrent (id: number) {
     const result = await this.request.get(`${this.APIBaseUrl}/${this.APIPath}/get-data?id=${id}`);
 
