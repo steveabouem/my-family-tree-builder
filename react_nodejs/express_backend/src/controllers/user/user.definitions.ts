@@ -28,7 +28,7 @@ export interface DUserDTO {
     imm_family: number,
     has_ipa?: number,
     partner?: number,
-    // TODO: replace with association
+    // ! -TOFIX: replace with association
     realated_to: number[],
     created_at: Date,
     updated_at?: Date,

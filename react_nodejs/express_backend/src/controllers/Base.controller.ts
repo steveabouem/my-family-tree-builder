@@ -58,10 +58,34 @@ class BaseController<GProps> {
     }
 
     public async getById(id: number): Promise<GProps> {
-        const results: any = {}; // TODO: no any
+        const results: any = {}; // ! -TOFIX: no any
         return results;
     };
 
+    // public async handleRequest(execution: Promise<unknown>, next?: NextFunction) {
+        // maybe use this funciton for all controller METHODS, pass the method's logic as a promise (execution) and return the response?
+    //     const response: DEndpointResponse = { error: true, status: 400, session: '', data: undefined };
+    //     const data = await execution.catch (e) {
+    //         response.status = 400;
+    //         response.error = true;
+    //         response.payload= 'Unable to find session' + e;
+    //         res.status(400);
+    //     }
+        
+
+    //         res.status(200);
+    //         response.error = false;
+
+    //         if (currentSession?.length) {
+    //             //   TODO: FIX TS IGNORES
+    //             //   @ts-ignore either find a way to use the store, or refactor migration
+    //             response.payload= currentSession[0];
+    //         } else {
+    //             response.message = 'No existing session.';
+    //         }
+           
+       
+    // }
 
 }
 

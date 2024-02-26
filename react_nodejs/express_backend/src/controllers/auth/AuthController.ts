@@ -1,52 +1,18 @@
 import bcrypt from "bcryptjs";
-import { DFTLoginFields } from "./Auth.definitions";
+import { DFTLoginFields } from "./auth.definitions";
 import BaseController from "../Base.controller";
 import { NextFunction, Request, Response } from "express";
 import { DEndpointResponse, DSessionUser } from "../controllers.definitions";
 import dayjs from "dayjs";
 import UserController from "../user/UserController";
+import logger from "../../utils/logger";
 
-class AuthController extends BaseController<any> { // TODO: no any
+class AuthController extends BaseController<any> { // ! -TOFIX: no any
     constructor() {
-        super('FTIPs');
+        super('');
     }
 
-    // verifyUserIp = async (id: number): Promise<boolean> => {
-    //     const userMiddleware = new UserMiddleware();
-    //     // TODO: catch return false doesnt actually catch falty logic, 
-    //     // just wrong syntax and maybe wrong typing. FIX
-    //     const currentUser: DUserRecord = await userMiddleware.getById(id);
-    //     return this.authorized_ips.includes(currentUser.authorizedIps);
-    // }
-
-    // verifyIp = async (currentIp?: string | string[]): Promise<boolean> => {
-    //     if (!currentIp) {
-    //         return false;
-    //     }
-
-    //     // TODO: SQL BINDINGS
-    //     const ip = FTIP.findOne({ where: { value: currentIp } });
-    //     return !!ip;
-    // }
-
-    // verifyUser = async (values: DFTLoginFields): Promise<Partial<DUserDTO> | null> => {
-    //     const currentUser = await User.findOne({ where: { email: values.email } });
-    //     if (!currentUser) {
-    //         return null;
-    //     }
-
-    //     const passwordValid = bcrypt.compareSync(values.password, currentUser.password);
-
-    //     if (passwordValid) {
-    //         console.log('User is verified', currentUser);
-
-    //         return { ...currentUser.dataValues, password: '' };
-    //     }
-
-    //     return null
-    // }
-
-    public register = async (req: Request, res: Response) => {
+    public async register(req: Request, res: Response) {
         const response: DEndpointResponse = { error: true, status: 400, session: '' };
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         const formattedValues = { ...req.body, assigned_ips: [ip], created_at: dayjs(), parent_2: 2 };
@@ -55,54 +21,61 @@ class AuthController extends BaseController<any> { // TODO: no any
             const userController = new UserController();
             const duplicate = await userController.getByEmail(req.body.email);
             if (duplicate) {
-                response.status = 400;
                 response.error = true;
-                response.data = 'Email address is already in use';
+                response.payload = 'Email address is already in use';
+                response.status = 400;
+
                 res.status(400);
             }
 
             const newUser = await userController.create(formattedValues).catch(e => {
-                response.status = 400;
+                logger.error('! Auth.register !', e);
                 response.error = true;
-                response.data = 'Unable to create user';
+                response.payload = 'Unable to create user';
+                response.status = 400;
+
                 res.status(400);
             });
 
             if (newUser) {
-                req.session.data = {
+                req.session.details = {
                     userId: newUser.id,
                     authenticated: true,
+                    firstName: newUser.first_name,
+                    lastName: newUser.last_name,
                     email: req.body.email
                 };
-                res.status(200);
+                req.session.save();
                 response.error = false;
-                response.data = {
+                response.payload = {
                     userId: newUser.id,
                     authenticated: true,
                     email: req.body.email
                 };
                 response.status = 200;
-                // console.log('SESSION TABLE', req.session);
+
+                res.status(200);
             }
         } catch (e: unknown) {
-            response.status = 400;
             response.message = `Caught ERR ${e}`;
+            response.status = 400;
+
             res.status(400);
         }
-        // console.log('rEADY TO SEND: ', response);
 
         res.json(response);
     }
 
-    public login = async (req: Request, res: Response) => {
+    public async login(req: Request, res: Response) {
         const response: DEndpointResponse = { error: true, status: 400, session: '' };
 
         try {
             const userController = new UserController();
             const currentUser = await userController.getByEmail(req.body.email).catch(e => {
-                response.status = 400;
                 response.error = true;
-                response.data = 'Unable to find user';
+                response.payload = 'Unable to find user';
+                response.status = 400;
+
                 res.status(400);
             });
 
@@ -110,49 +83,65 @@ class AuthController extends BaseController<any> { // TODO: no any
                 const passwordIsValid = bcrypt.compareSync(req.body.password, currentUser.password);
 
                 if (passwordIsValid) {
-                    req.session.data = {
+                    req.session.details = {
                         userId: currentUser.id,
+                        firstName: currentUser.first_name,
+                        lastName: currentUser.last_name,
                         authenticated: true,
                         email: req.body.email,
                     };
-                    res.status(200);
+                    
                     response.error = false;
-                    response.data = {
+                    response.payload = {
                         sessionId: req.sessionID,
                         userId: currentUser.id,
                         authenticated: true,
-                        email: req.body.email
+                        email: req.body.email,
+                        firstName: currentUser.first_name,
+                        lastName: currentUser.last_name,
                     };
+
                     response.status = 200;
+
+                    res.status(200);
+                    req.session.save((e) => {
+                        response.error = true;
+                        response.payload = 'Unable to login';
+                        response.status = 500;
+                        res.status(500);
+                        logger.error('! Auth.login !', e);
+                    });
                 } else {
-                    response.status = 400;
+                    
                     response.error = true;
-                    response.data = 'Unable to authenticate user';
+                    response.payload = 'Unable to authenticate user';
+                    response.status = 400;
+
                     res.status(400);
                 }
             }
         } catch (e: unknown) {
-            response.status = 400;
             response.message = `Login failed - ${e}`;
+            response.status = 400;
+
             res.status(400);
         }
-        // console.log('rEADY TO SEND: ', response);
 
         res.json(response);
     }
 
-    public logout = async (req: Request, res: Response) => {
+    public async logout(req: Request, res: Response) {
         const response: DEndpointResponse = { error: true, status: 400, session: '' };
         req.session.destroy(() => { });
-        res.status(200);
         response.error = false;
-        response.data = {
+        response.payload = {
             userId: 0,
             authenticated: false,
             email: req.body.email
         };
         response.status = 200;
-        // console.log('RESPONSE: ', response);
+
+        res.status(200);
         res.json(response);
     }
 }

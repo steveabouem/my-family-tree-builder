@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import { UserMiddleware } from "../middleware-classes/user/user.middleware";
+import UserController from "../controllers/user/UserController";
 
 const router = Router();
 
@@ -18,7 +19,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
       }
     })
     .catch((e: unknown) => {
-      // TODO: catch return false doesnt actually catch falty logic, 
+      // ! -TOFIX: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
       res.status(500);
       res.json('Error: ' + e);
@@ -80,4 +81,10 @@ router.get('/:id/extended-families', (req: Request, res: Response) => {
 });
 
 
+router.post('/create', (req: Request, res: Response) => {
+  const userController = new UserController();
+  const ip = '';
+  const newUserFieldValues = { ...req.body, authorizedIps: [ip], roles: '[1]' };
+  res.send('ok');
+});
 export default router;

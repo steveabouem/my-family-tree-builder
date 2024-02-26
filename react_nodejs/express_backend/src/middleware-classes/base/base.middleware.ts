@@ -21,7 +21,7 @@ export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlew
   }
 
   async index(limit: number): Promise<any> {
-    // TODO: no any
+    // ! -TOFIX: no any
     const select = `SELECT * FROM :tableName LIMIT :limit;`
     const results = await this.dataBase.query(select,
       {
@@ -78,7 +78,7 @@ export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlew
   async getById(id: number): Promise<any> {
     // await this.dataBase.authenticate();
     // const select = `SELECT * FROM :tableName WHERE id = :id;`;
-    // // TODO: no any
+    // // ! -TOFIX: no any
     // const record: any = await this.dataBase.query(select, {
     //   type: QueryTypes.SELECT,
     //   replacements: { tableName: this.tableName, id: id }
@@ -102,7 +102,7 @@ export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlew
   }
 
   getDTOMapping = (): Record<keyof T, any> => {
-    // TODO: figure out how to map the generic type's keys to retur an object and use that as return getById and the likes
+    // ! -TOFIX: figure out how to map the generic type's keys to retur an object and use that as return getById and the likes
     // @ts-expect-error
     const keys = Object.keys({} as T);
     console.log({ keys });
@@ -116,7 +116,7 @@ export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlew
     return obj;
   }
 
-  // TODO: ask around for this, chatGPT failed
+  // ! -TOFIX: ask around for this, chatGPT failed
   // validateHasAllValues<G extends Record<string, unknown>>(values: MyType<G>): boolean {
   //     // this uses the DTO for values, hence me using a different generatePrimeSync (the middleware accepts the record type).
   //     const requiredKeys = Object.keys(values) as (keyof G)[];

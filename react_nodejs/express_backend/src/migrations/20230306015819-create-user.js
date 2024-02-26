@@ -26,7 +26,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       occupation: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.STRING
       },
       partner: { type: Sequelize.INTEGER },

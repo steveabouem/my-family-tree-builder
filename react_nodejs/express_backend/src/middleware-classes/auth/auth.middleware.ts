@@ -5,14 +5,14 @@ import { BaseMiddleware } from "../base/base.middleware";
 import User from "../../models/User";
 import FTIP from "../../models/Ip";
 
-class FTAuthMiddleware extends BaseMiddleware<any> { // TODO: no any
+class FTAuthMiddleware extends BaseMiddleware<any> { // ! -TOFIX: no any
     constructor() {
         super('ip_addresses');
     }
 
     // verifyUserIp = async (id: number): Promise<boolean> => {
     //     const userMiddleware = new UserMiddleware();
-    //     // TODO: catch return false doesnt actually catch falty logic, 
+    //     // ! -TOFIX: catch return false doesnt actually catch falty logic, 
     //     // just wrong syntax and maybe wrong typing. FIX
     //     const currentUser: DUserRecord = await userMiddleware.getById(id);
     //     return this.authorized_ips.includes(currentUser.authorizedIps);
@@ -23,7 +23,7 @@ class FTAuthMiddleware extends BaseMiddleware<any> { // TODO: no any
             return false;
         }
 
-        // TODO: SQL BINDINGS
+        // ! -TOFIX: SQL BINDINGS
         const ip = FTIP.findOne({ where: { value: currentIp } });
         return !!ip;
     }

@@ -2,22 +2,16 @@ import { DSession } from "../../routes/definitions";
 import BaseController from "../Base.controller";
 import { DEndpointResponse, DSessionUser } from "../controllers.definitions";
 import logger from "../../utils/logger";
-import Session from "../../models/Session";
 import { Request, Response } from "express";
 import { QueryTypes } from "sequelize";
-import dayjs from "dayjs";
+import store from "../../store";
 
 /** 
 // ?: Used to  manage session records, in case we dont use the default express-session (and session store)
 **/
 class SessionController extends BaseController<DSession> {
     constructor() {
-        super('Sessions');
-    }
-
-    // ?: creates session secret and initial session record
-    public async create(user: DSessionUser): Promise<Session | void> {
-        
+        super('stored_sessions');
     }
 
     public async getCurrent(req: Request, res: Response) {
@@ -27,12 +21,13 @@ class SessionController extends BaseController<DSession> {
                 const sessionId = `${req.query.id}`;
                 //   @ts-ignore either find a way to use the store, or refactor migration
                 const currentSession = await this.dataBase
-                    .query("SELECT * FROM `Sessions` WHERE `sid` = :s limit 1", { replacements: { s: sessionId }, type: QueryTypes.SELECT })
+                    .query("SELECT * FROM `stored_sessions` WHERE `sid` = :s limit 1", { replacements: { s: sessionId }, type: QueryTypes.SELECT })
                     .catch((e: any) => {
                         logger.error('get current session: ', e);
-                        response.status = 400;
                         response.error = true;
-                        response.data = 'Unable to find session' + e;
+                        response.payload = 'Unable to find session' + e;
+                        response.status = 400;
+
                         res.status(400);
                     });
 
@@ -42,7 +37,7 @@ class SessionController extends BaseController<DSession> {
                 if (currentSession?.length) {
                     //   TODO: FIX TS IGNORES
                     //   @ts-ignore either find a way to use the store, or refactor migration
-                    response.data = currentSession[0];
+                    response.payload = currentSession[0];
                 } else {
                     response.message = 'No existing session.';
                 }
@@ -50,12 +45,13 @@ class SessionController extends BaseController<DSession> {
                 throw new Error('Missing mandatory parameters.');
             }
         } catch (e) {
-            response.status = 400;
             response.error = true;
-            response.data = 'Unable to find session' + e;
+            response.payload = 'Unable to find session' + e;
+            response.status = 400;
+
             res.status(400);
         }
-        console.log({ response });
+        console.log('current session', { response });
 
         res.json(response);
     }

@@ -19,7 +19,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
     })
     .catch((e: unknown) => {
     winston.log('error' ,  e);
-      // TODO: catch return false doesnt actually catch falty logic, 
+      // ! -TOFIX: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
       res.status(400);
       res.json({ ipIsValid: false, message: e });
@@ -27,14 +27,14 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// TODO: req, res typing
-router.get('/get-data', (req: Request, res: Response) => {
+// ! -TOFIX: req, res typing
+router.get('/', (req: Request, res: Response) => {
   const sessionController = new SessionController();
   sessionController.getCurrent(req, res);
 });
 
 router.post('/set-data', (req: Request, res: Response) => {
-  // TODO: Kill session, send back the guest session default
+  // ! -TOFIX: Kill session, send back the guest session default
   // const ftSessionMiddleware = new FTSessionMiddleware();
   // const sessionData = ftSessionMiddleware.createSession(req.body.data);
   // res.json(sessionData);

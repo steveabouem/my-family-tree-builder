@@ -15,6 +15,7 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   declare public: number;
   declare name: string;
   declare active: number;
+  declare members: string;
   declare created_by: number; //User
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
@@ -39,6 +40,9 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   get familyTreeCreated_by(): NonAttribute<number> { //User
     return this.created_by;
   }
+  get familyTreeMembers(): NonAttribute<string> { //Users
+    return this.members;
+  }
   get familytreeActive(): NonAttribute<number> {
     return this.active;
   }
@@ -60,6 +64,9 @@ FamilyTree.init(
     authorized_ips: {
       type: DataTypes.JSON
     },
+     members: {
+      type: DataTypes.JSON
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -67,7 +74,6 @@ FamilyTree.init(
     },
     created_by: {
       type: DataTypes.INTEGER,
-      allowNull: false
     },
     name: {
       type: DataTypes.STRING,

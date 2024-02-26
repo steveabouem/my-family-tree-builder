@@ -173,6 +173,7 @@ User.init(
     },
     partner: {
       type: DataTypes.INTEGER,
+      allowNull: true
     },
     profile_url: {
       type: DataTypes.STRING,

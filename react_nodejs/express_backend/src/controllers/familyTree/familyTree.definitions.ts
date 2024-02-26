@@ -5,6 +5,7 @@ export interface DFamilyTreeRecord {
     id: number;
     created_at: Date;
     created_by: number;
+    members: number[];
     families: number[];
     updated_at: Date;
     active: boolean;

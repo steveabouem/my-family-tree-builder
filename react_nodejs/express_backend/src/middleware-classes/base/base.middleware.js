@@ -40,7 +40,7 @@ var db_1 = require("../../db");
 var BaseMiddleware = /** @class */ (function () {
     function BaseMiddleware(table) {
         this.getDTOMapping = function () {
-            // TODO: figure out how to map the generic type's keys to retur an object and use that as return getById and the likes
+            // ! -TOFIX: figure out how to map the generic type's keys to retur an object and use that as return getById and the likes
             // @ts-expect-error
             var keys = Object.keys({});
             console.log({ keys: keys });
@@ -78,10 +78,10 @@ var BaseMiddleware = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         update = "UPDATE " + p_table + " SET active = false WHERE id = " + p_id + ";";
-                        // TODO: the catch here probably doesnt do the return you think
+                        // ! -TOFIX: the catch here probably doesnt do the return you think
                         return [4 /*yield*/, this.dataBase.query(update)["catch"](function () { return false; })];
                     case 1:
-                        // TODO: the catch here probably doesnt do the return you think
+                        // ! -TOFIX: the catch here probably doesnt do the return you think
                         _a.sent();
                         return [2 /*return*/, true];
                 }

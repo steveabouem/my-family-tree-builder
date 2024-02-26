@@ -1,4 +1,4 @@
-// TODO: move this to controller defs
+// ! -TOFIX: move this to controller defs
 import { Cookie, Session } from "express-session";
 
 export enum HTTPMethodEnum {

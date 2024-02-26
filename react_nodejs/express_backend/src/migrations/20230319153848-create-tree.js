@@ -24,10 +24,6 @@ module.exports = {
         allowNull: false,
         defaultValue: true
       },
-      families: {
-        type: Sequelize.JSON,
-        defaultValue: '[]'
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -37,7 +33,6 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       updated_at: {
-        allowNull: false,
         type: Sequelize.DATE
       }
     });

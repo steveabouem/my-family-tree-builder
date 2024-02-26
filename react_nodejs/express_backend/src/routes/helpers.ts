@@ -1,7 +1,7 @@
 // import { Router, Response } from "express";
 // import { HTTPMethodEnum } from "./definitions";
 
-// // TODO: no any, proper typing
+// // ! -TOFIX: no any, proper typing
 // const processHTTPReq = async (
 //   router: Router, callback: any, path: string,
 //   method: HTTPMethodEnum, res: Response,
@@ -19,7 +19,7 @@
 //           }
 //         })
 //         .catch((e: any) => {
-//           // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
+//           // ! -TOFIX: LOGGING AND SEND BACK TO FRONT IF NECESSARY
 //           res.status(500);
 //           res.json(e);
 //         });
@@ -35,7 +35,7 @@
 //           }
 //         })
 //         .catch((e: any) => {
-//           // TODO: LOGGING AND SEND BACK TO FRONT IF NECESSARY
+//           // ! -TOFIX: LOGGING AND SEND BACK TO FRONT IF NECESSARY
 //           res.status(500);
 //           res.json(e);
 //         }

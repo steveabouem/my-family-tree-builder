@@ -1,4 +1,5 @@
-import { Cookie, Session } from "express-session";
+import { Session } from "express-session";
+import { DFamilyTreeRecord } from "./familyTree/familyTree.definitions";
 export interface DTableJoin {
     tableName: string;
     on: string;
@@ -7,7 +8,7 @@ export interface DTableJoin {
 // Augment express-session with a custom SessionData object
 declare module "express-session" {
   interface SessionData {
-    user_id: number;
+    id: number;
     authenticated: boolean;
   }
 }
@@ -27,6 +28,7 @@ export interface DSessionUser {
   email?: string;
   firstName?: string;
   lastName?: string;
+  familyTree?:  DFamilyTreeRecord;
 }
 
 export interface DSession {
@@ -39,6 +41,6 @@ export interface DEndpointResponse {
   status: number,
   session: string,
   error: boolean;
-  data?: unknown;
+  payload?: unknown;
   message?: string
 }

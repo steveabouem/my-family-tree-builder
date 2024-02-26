@@ -13,7 +13,7 @@ export interface DFTFamDTO {
     updated_at: Date;
 }
 
-// TODO: this will be obsolet very soon. 
+// ! -TOFIX: this will be obsolet very soon. 
 // Just pass id as a second arg
 export type DFTFamUpdateDTO = Partial<DFTFamDTO>
 

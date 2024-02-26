@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import dayjs from 'dayjs';
-import FTSessionMiddleware from "../middleware-classes/session/session.middleware";
+import SessionMiddleware from "../middleware-classes/session/session.middleware";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import { UserMiddleware } from "../middleware-classes/user/user.middleware";
 import logger from "../utils/logger";

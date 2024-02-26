@@ -3,7 +3,7 @@ import User from "../../models/User";
 import { BaseMiddleware } from "../base/base.middleware";
 import { DUserDTO } from "./user..definitions";
 import bcrypt from "bcryptjs";
-import { DUserRecord } from "../../controllers/user/User.definitions";
+import { DUserRecord } from "../../controllers/user/user.definitions";
 
 export class UserMiddleware extends BaseMiddleware<DUserRecord> {
   constructor() {
@@ -13,7 +13,7 @@ export class UserMiddleware extends BaseMiddleware<DUserRecord> {
 
   public create = async (values: DUserDTO): Promise<Partial<DUserDTO> | null> => {
     const hashedPassword = bcrypt.hashSync(values.password, this.salt);
-    // TODO: implement search by name as user enter their last name. 
+    // ! -TOFIX: implement search by name as user enter their last name. 
     // Does it make sense to offer them choices given the security aspect?
     const formattedValues = { ...values, related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date };
     const fieldsValid = await this.validateUserFields(formattedValues);
@@ -30,7 +30,7 @@ export class UserMiddleware extends BaseMiddleware<DUserRecord> {
     return null;
   }
 
-  // TODO: No any. fix typing, should related_to be added to the dto?
+  // ! -TOFIX: No any. fix typing, should related_to be added to the dto?
   public getUserData = async (id: number): Promise<any> => {
     const currentUser = await User.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
     if (currentUser?.dataValues) {
@@ -60,11 +60,11 @@ export class UserMiddleware extends BaseMiddleware<DUserRecord> {
 
     return relatedFamilies;
   }
-  // TODO: no any
+  // ! -TOFIX: no any
   public getExtendedFamiliesDetails = async (id: number): Promise<any> => {
     const currentUser: DUserDTO = await this.getUserData(id)
       .catch((e) => {
-        // TODO: logging
+        // ! -TOFIX: logging
         console.log('ERROR', e);
       });
     console.log(currentUser.partner);

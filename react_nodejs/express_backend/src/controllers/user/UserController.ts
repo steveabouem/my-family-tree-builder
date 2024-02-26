@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes } from "sequelize";
 import BaseController from "../Base.controller";
-import { DUserRecord, DUserDTO } from "./User.definitions";
+import { DUserRecord, DUserDTO } from "./user.definitions";
 import User from "../../models/User";
 import logger from "../../utils/logger";
 
@@ -12,25 +12,35 @@ class UserController extends BaseController<DUserRecord> {
 
     public async create (values: DUserDTO): Promise<Partial<DUserDTO> | null>  {
         const hashedPassword = bcrypt.hashSync(values.password, this.salt);
-        // TODO: implement search by name as user enter their last name. 
+        // ! -TOFIX: implement search by name as user enter their last name. 
         // Does it make sense to offer them choices given the security aspect?
         const formattedValues = { ...values, related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date };
-        // TODO: uncommen validation
-        // const fieldsValid = await this.validateUserFields(formattedValues); 
+        const fieldsValid = await this.validateUserFields(formattedValues); 
+        const duplicate = await User.findOne({where: { email: values.email}});
         let newUser = null;
 
-        // if (fieldsValid) {
+        if (duplicate) {
+          logger.error('! User.create ! User already exists');
+          return null;
+        }
+        
+        if (fieldsValid) {
             newUser = await User.create(formattedValues).catch((e) => { //TODO: Error typing and catch
-                logger.log(e);
+                logger.error('! User.create !', e);
                 return null;
             });
-            await newUser?.save();
+
+            if (newUser) {
+              await newUser.save();
+            } else {
+              logger.error('! User.create !', 'User wasn\'t createDecipheriv, unable to save');
+            }
             return { ...newUser?.dataValues, password: undefined };
-        // }
+        }
         return null;
     }
 
-    // TODO: No any. fix typing, should related_to be added to the dto?
+    // ! -TOFIX: No any. fix typing, should related_to be added to the dto?
     public async getUserData (id: number): Promise<any> {
         const currentUser = await User.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
         if (currentUser?.dataValues) {
@@ -60,11 +70,11 @@ class UserController extends BaseController<DUserRecord> {
 
         return relatedFamilies;
     }
-    // TODO: no any
+    // ! -TOFIX: no any
     public async getExtendedFamiliesDetails(id: number): Promise<any> {
         const currentUser: DUserDTO = await this.getUserData(id)
             .catch((e) => {
-                // TODO: logging
+                // ! -TOFIX: logging
                 console.log('ERROR', e);
             });
         console.log(currentUser.partner);
@@ -89,69 +99,69 @@ class UserController extends BaseController<DUserRecord> {
         console.log('RECEIVED VALUES: ', values);
     
         if (values.age < 0 || !values.age) {
-          console.log('missing age'); //TODO: LOGGING
-          logger.error('missing age'); //TODO: LOGGING
+          console.log('missing age');
+          logger.error('! User.validateUserFields ! missing age');
           return false;
         }
     
         if (!values?.assigned_ips?.length || !values.assigned_ips) {
-          console.log('missing .'); //TODO: LOGGING
-          logger.error('missing .'); //TODO: LOGGING
+          console.log('missing .');
+          logger.error('! User.validateUserFields ! missing assigned IPs.');
           return false;
         }
     
         if (!values.description) {
-          console.log('missing description'); //TODO: LOGGING
-          logger.error('missing description'); //TODO: LOGGING
+          console.log('missing description');
+          logger.error('! User.validateUserFields ! missing description');
           return false;
         }
     
         if (!values.first_name) {
-          console.log('missing first_name'); //TODO: LOGGING
-          logger.error('missing first_name'); //TODO: LOGGING
+          console.log('missing first_name');
+          logger.error('! User.validateUserFields ! missing first_name');
           return false;
         }
     
         if (!values.gender) {
-          console.log('missing gender'); //TODO: LOGGING
-          logger.error('missing gender'); //TODO: LOGGING
+          console.log('missing gender');
+          logger.error('! User.validateUserFields ! missing gender');
           return false;
         }
     
         if (values.is_parent === null || values.is_parent === undefined) {
           // must be explicitly identified
-          console.log('missing is_parent'); //TODO: LOGGING
-          logger.error('missing is_parent'); //TODO: LOGGING
+          console.log('missing is_parent');
+          logger.error('! User.validateUserFields ! missing is_parent');
           return false;
         }
     
         if (!values.email || !values.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
-          console.log('missing email'); //TODO: LOGGING
-          logger.error('missing email'); //TODO: LOGGING
+          console.log('missing email');
+          logger.error('! User.validateUserFields ! missing email');
           return false;
         }
     
         if (!values.last_name) {
-          console.log('missing last_name'); //TODO: LOGGING
-          logger.error('missing last_name'); //TODO: LOGGING
+          console.log('missing last_name');
+          logger.error('! User.validateUserFields ! missing last_name');
           return false;
         }
     
         if (!values.imm_family) {
-          console.log('missing imm_family'); //TODO: LOGGING
-          logger.error('missing imm_family'); //TODO: LOGGING
+          console.log('missing imm_family');
+          logger.error('! User.validateUserFields ! missing imm_family');
           return false;
         }
     
         if (!values.marital_status) {
-          console.log('missing marital_status'); //TODO: LOGGING
-          logger.error('missing marital_status'); //TODO: LOGGING
+          console.log('missing marital_status');
+          logger.error('! User.validateUserFields ! missing marital_status');
           return false;
         }
     
         if (!values.password || values.password.length < 14) {
-          console.log('missing password'); //TODO: LOGGING
-          logger.error('missing password'); //TODO: LOGGING
+          console.log('missing password');
+          logger.error('! User.validateUserFields ! missing password');
           return false;
         }
     
