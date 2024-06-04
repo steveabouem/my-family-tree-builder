@@ -4,7 +4,7 @@ import Page from '../common/Page';
 import { DProfileProps } from '../user/definitions';
 
 const Family = ({ updateUser }: DProfileProps): JSX.Element => {
-  const { theme } = useContext(GlobalContext);
+  const { theme } = React.useContext(GlobalContext);
   return (
     <Page
       title="My Family!"

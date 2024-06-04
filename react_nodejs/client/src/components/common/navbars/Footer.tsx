@@ -4,7 +4,7 @@ import GlobalContext from "../../../context/creators/global.context";
 import ('../styles.scss');
 
 const Footer = () => {
-  const { theme } = useContext(GlobalContext);
+  const { theme } = React.useContext(GlobalContext);
 
   return (
     <div className={`${theme} footer primary-bg position-absolute bottom-0 w-100 px-2`}>

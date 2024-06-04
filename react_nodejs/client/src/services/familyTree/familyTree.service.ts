@@ -6,7 +6,14 @@ class FamilyTreeService extends BaseService {
   }
 
  public async getAllForUser(userId: number) {
-  const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/get_all?member=${userId}`);
+  const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/index?member=${userId}`);
+  return results;
+ }
+ 
+ public async getOne(treeId: string) {
+  console.log('Triggering');
+  
+  const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/details?id=${treeId}`);
   return results;
  }
  

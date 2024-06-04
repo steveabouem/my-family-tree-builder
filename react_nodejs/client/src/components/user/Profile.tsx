@@ -1,22 +1,20 @@
-import { useCallback, useContext, useEffect } from "react";
 import { Trans } from "@lingui/macro";
 import React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import NotFound from '../common/404NotFound';
-import FamilyCard from "../family/FamilyCard";
 import Page from "../common/Page";
 import FamilyTreeContext from "../../context/creators/familyTree.context";
-import {service} from "../../services";
-import { DFamilyTree } from "../tree/definitions";
+import { service } from "../../services";
 import GlobalContext from "../../context/creators/global.context";
+import { Col, Row } from "react-bootstrap";
 
 const UserProfilePage = (): JSX.Element => {
-  const { currentUser, familyTrees, updateFamilyTrees } = useContext(FamilyTreeContext);
-  const { toggleLoading, updateModal } = useContext(GlobalContext);
-  const {id} = useParams();
+  const { currentUser, familyTrees, updateFamilyTrees } = React.useContext(FamilyTreeContext);
+  const { toggleLoading, updateModal } = React.useContext(GlobalContext);
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  const getfamilyTrees = useCallback(async (): Promise<any> => {
+  const getfamilyTrees = React.useCallback(async (): Promise<any> => {
     const familyTreeService = new service.familyTree();
     const userId = currentUser?.userId;
 
@@ -33,12 +31,12 @@ const UserProfilePage = (): JSX.Element => {
   }, [currentUser, id]);
 
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (currentUser?.userId) {
       getfamilyTrees()
-        .then(({data}) => {
+        .then(({ data }) => {
           if (!data.error) {
-            if (updateFamilyTrees) updateFamilyTrees(data.data);
+            if (updateFamilyTrees) updateFamilyTrees(data.payload);
             if (toggleLoading) toggleLoading(false);
           }
         })
@@ -56,27 +54,28 @@ const UserProfilePage = (): JSX.Element => {
 
   return currentUser ? (
     <Page subtitle="My profile" title={`Welcome ${currentUser?.firstName || ''}`}>
-      <div className="row">
-        <div className="col-md-6">
-          {familyTrees?.length ?
-            <>
-              <label><Trans>your_tree_title</Trans> ({familyTrees?.length || 0})</label>
-              <div>
-                {
-                  familyTrees.map((tree: Partial<DFamilyTree>) => (
-                    <FamilyCard {...tree} />
-                  ))
-                }
-              </div>
-            </>
-            :
-            <>
-              <label><Trans>manage_your_tree_title</Trans></label>
-              <div> <Link to="/family-tree"><Trans>go_check_my_tree</Trans></Link></div>
-            </>
-          }
-        </div>
-      </div>
+      <Row>
+        <Col md="6">
+          <label>
+            {
+              familyTrees?.length ? <><Trans>your_tree_title</Trans> ({familyTrees?.length || 0}) </>
+                : <Trans>manage_your_tree_title</Trans>
+            }
+          </label>
+        </Col>
+      </Row>
+      {
+        familyTrees?.map((tree: any, index: number) => (
+          <Row>
+            <Col md="3">
+              {tree?.name}
+            </Col>
+            <Col md="2">
+              <Link to={`/family-trees/${tree?.id || ''}`}><Trans>go_check_my_tree</Trans></Link>
+            </Col>
+          </Row>
+        ))
+      }
     </Page>
   ) : (
     <NotFound title="Profile Not Found!" /> // this probably wont be necesarry given redirect

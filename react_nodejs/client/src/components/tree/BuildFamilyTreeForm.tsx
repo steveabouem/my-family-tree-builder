@@ -1,21 +1,21 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Formik } from "formik";
 import { Trans } from "@lingui/macro";
-import BaseFormFields from "../common/forms/BaseFormFields";
+import FormFieldsGenerator from "../common/forms/FormFieldsGenerator";
 import { DTreeManagerFields, DTreeManagerProps } from "./definitions";
 import { DFormField } from "../common/definitions";
 import FamilyTreeContext from "../../context/creators/familyTree.context";
 import GlobalContext from "../../context/creators/global.context";
-import {service} from "../../services";
+import { service } from "../../services";
 
-const ManageTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX.Element => {
+const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX.Element => {
   // !: For now I will not distinguish between the 2.Will use fam as central entity (seen README)
   // ? single form here to build the treeManagerFormFields. I might add an option on each tree node to allow adding a link for that specific Node. 
   // ? hat will allow for extended families without having to also deal with the families endpoint **/
-  // const [motherName, setMotherName] = useState<string>('');
-  const { currentUser } = useContext(FamilyTreeContext);
-  const { updateModal, toggleLoading } = useContext(GlobalContext);
-  const [trees, setTrees] = useState<number[]>([]);
+  // const [motherName, setMotherName] = React.useState<string>('');
+  const { currentUser } = React.useContext(FamilyTreeContext);
+  const { updateModal, toggleLoading } = React.useContext(GlobalContext);
+  const [trees, setTrees] = React.useState<number[]>([]);
 
   const treeBuilderFields: DFormField[] = [
     {
@@ -55,7 +55,7 @@ const ManageTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX
       required: true
     },
     {
-      fieldName: 'public',
+      fieldName: 'is_public',
       label: <Trans>make_tree_private</Trans>,
       type: 'checkbox',
       required: true,
@@ -77,19 +77,26 @@ const ManageTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX
     marital_status: '' //! - TODO: send from session
   } : {};
 
-  const siblingsFieldArray = useMemo((): DFormField[] => {
+  const siblingsFieldArray = React.useMemo((): DFormField[] => {
     const range: number[] = Array.from({ length: numberOfSiblings }, (abstractItem: unknown, index: number) => index);
     const fields = range.reduce((list: DFormField[], siblingIndex: number) => (
-      [...list, {
+      [...list, { 
         fieldName: `siblings[${siblingIndex}].first_name`,
         label: <Trans>first_name_of_sibling {siblingIndex + 1}</Trans>,
         type: 'text',
         required: true
       },
+      // TODO: add a field here for email, to allow the backend to query the member
       {
         fieldName: `siblings[${siblingIndex}].last_name`,
         label: <Trans>last_name_of_sibling {siblingIndex + 1}</Trans>,
         type: 'text',
+        required: true
+      },
+      {
+        fieldName: `siblings[${siblingIndex}].email`,
+        label: <Trans>email_of_sibling {siblingIndex + 1}</Trans>,
+        type: 'email',
         required: true
       },
       {
@@ -108,7 +115,7 @@ const ManageTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX
     return fields;
   }, [numberOfSiblings]);
 
-  const spouseFieldArray = useMemo((): DFormField[] => {
+  const spouseFieldArray = React.useMemo((): DFormField[] => {
     return hasSpouse ? ([{
       fieldName: `spouse.first_name`,
       label: <Trans>first_name_of_spouse</Trans>,
@@ -136,40 +143,28 @@ const ManageTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX
 
   }, [hasSpouse]);
 
-  const submitForm = (values: any) => {
+  const submitForm = async (values: any) => {
     if (toggleLoading) {
       toggleLoading(true);
     }
     const familyTreeService = new service.familyTree();
-    familyTreeService.create(values)
-      .then(({ data }) => {
-        if (data?.error && updateModal) {
-          updateModal({
-            hidden: false,
-            title: 'Err',
-            content: 'Error'
-          });
-        }
-        if (updateModal) {
-          updateModal({
-            hidden: false,
-            title: 'Success',
-            content: 'Success',
-            buttons: {confirm: false, cancel: true}
-          });
-        }
-      })
-      .catch((e: unknown) => {
-        console.log('Create tree', e);
-        if (updateModal) {
-          updateModal({
-            hidden: false,
-            title: 'Err',
-            content: 'Error'
-          });
-        }
-        return false;
-      });
+    const { data } = await familyTreeService.create(values);
+    if (updateModal) {
+      if (data?.error) {
+        updateModal({
+          hidden: false,
+          title: 'Err',
+          content: 'Error'
+        });
+      } else {
+        updateModal({
+          hidden: false,
+          title: 'Success',
+          content: 'Success',
+          buttons: { confirm: false, cancel: true }
+        });
+      }
+    }
 
     if (toggleLoading) {
       toggleLoading(false);
@@ -183,7 +178,7 @@ const ManageTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX
         onSubmit={submitForm}
       >
         {({ handleSubmit, errors, isSubmitting, setFieldValue, values }) => (
-          <BaseFormFields size="med"
+          <FormFieldsGenerator size="med"
             fields={[
               ...treeBuilderFields,
               ...siblingsFieldArray,
@@ -198,4 +193,4 @@ const ManageTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX
   );
 };
 
-export default ManageTreeForm;
+export default BuildFamilyTreeForm;

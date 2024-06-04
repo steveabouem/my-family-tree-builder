@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trans } from "@lingui/macro";
 import logo from "../../../assets/logo.jpg";
@@ -10,12 +10,13 @@ import GlobalContext from "../../../context/creators/global.context";
 import FamilyTreeContext from "../../../context/creators/familyTree.context";
 import ButtonRounded from "../buttons/Rounded";
 import {service} from "../../../services";
+import { Navbar } from "react-bootstrap";
 
 const TopNav = () => {
-  const [menuOpened, setMenuOpened] = useState(false);
+  const [menuOpened, setMenuOpened] = React.useState(false);
   const linkColor = usePrimary();
-  const { theme } = useContext(GlobalContext);
-  const { currentUser, updateUser } = useContext(FamilyTreeContext);
+  const { theme } = React.useContext(GlobalContext);
+  const { currentUser, updateUser } = React.useContext(FamilyTreeContext);
   const navigate = useNavigate();
 
   const processLogout = () => {
@@ -34,7 +35,7 @@ const TopNav = () => {
   }
 
   return (
-    <div className={"navigation " + theme}>
+    <Navbar className={"navigation " + theme} expand="lg" >
       <div className="logo-container">
         <span>Zogh</span><img src={logo} alt="app logo" />
       </div>
@@ -49,12 +50,12 @@ const TopNav = () => {
               <Link to={`/users/${currentUser.userId}`} color={linkColor}><Trans>Profile</Trans></Link>
             </div>
 
-            <div className="accent">
+            {/* <div className="accent">
               <Link to="/families" color={linkColor}><Trans>Families</Trans></Link>
-            </div>
+            </div> */}
 
             <div className="accent">
-              <Link to="/family-trees" color={linkColor}><Trans>Trees</Trans></Link>
+              <Link to="/family-trees/manage" color={linkColor}><Trans>Trees</Trans></Link>
             </div>
           </>
         ) : null}
@@ -71,7 +72,7 @@ const TopNav = () => {
       </div>
       {menuOpened && <ButtonRounded text="LOGOUT" action={processLogout} />}
       <ThemeSelector />
-    </div>
+    </Navbar>
   );
 };
 

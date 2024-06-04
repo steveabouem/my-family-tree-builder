@@ -5,9 +5,9 @@ import { themeEnum } from "../../context/definitions";
 import GlobalContext from "../../context/creators/global.context";
 
 const ThemeSelector = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const triggerColor = usePrimary();
-  const { updateTheme } = useContext(GlobalContext);
+  const { updateTheme } = React.useContext(GlobalContext);
 
   return (
     <div id="THEME">

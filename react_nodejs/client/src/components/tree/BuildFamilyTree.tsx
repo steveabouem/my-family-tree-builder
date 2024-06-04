@@ -2,29 +2,29 @@ import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { Trans } from '@lingui/macro';
 import Page from '../common/Page';
 import GlobalContext from '../../context/creators/global.context';
-import ManageTreeForm from './ManageTreeForm';
+import BuildFamilyTreeForm from './BuildFamilyTreeForm';
 import FamilyTreeContext from '../../context/creators/familyTree.context';
 import {service} from '../../services';
 
-const Tree = (): JSX.Element => {
-  const [numberOfSiblings, setNumberOfSiblings] = useState<number>(0);
-  const [hasSpouse, setHasSpouse] = useState<boolean>(true);
-  const { currentUser } = useContext(FamilyTreeContext);
-  const { modal, updateModal, toggleLoading } = useContext(GlobalContext);
+const BuildFamilyTree = (): JSX.Element => {
+  const [numberOfSiblings, setNumberOfSiblings] = React.useState<number>(0);
+  const [hasSpouse, setHasSpouse] = React.useState<boolean>(true);
+  const { currentUser } = React.useContext(FamilyTreeContext);
+  const { modal, updateModal, toggleLoading } = React.useContext(GlobalContext);
 
-  // useEffect(() => {
-  //   const getFamilyTrees =  async() => {
-  //     if (currentUser?.userId) {
-  //       const familyTreeService = new service.familyTree();
-  //       const userFamilies = await familyTreeService.getAllForUser(currentUser.userId);
-  //       console.log({userFamilies});
-  //     }
-  //   };
+  React.useEffect(() => {
+    // const getFamilyTrees =  async() => {
+    //   if (currentUser?.userId) {
+    //     const familyTreeService = new service.familyTree();
+    //     const userFamilies = await familyTreeService.getAllForUser(currentUser.userId);
+    //     console.log({userFamilies});
+    //   }
+    // };
 
-  //   if(toggleLoading) toggleLoading(false);
-  // }, []);
+    if(toggleLoading) toggleLoading(false);
+  }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (hasSpouse && updateModal) {
       updateModal({
         ...modal,
@@ -43,7 +43,7 @@ const Tree = (): JSX.Element => {
     }
   };
 
-  const getMotherData = (e: ChangeEvent<HTMLInputElement>) => {
+  const getMothersData = (e: ChangeEvent<HTMLInputElement>) => {
     return
   };
 
@@ -63,10 +63,10 @@ const Tree = (): JSX.Element => {
         </div>
       </div>
       <div className="row text-center pb-4">
-        <ManageTreeForm numberOfSiblings={numberOfSiblings} hasSpouse={hasSpouse} />
+        <BuildFamilyTreeForm numberOfSiblings={numberOfSiblings} hasSpouse={hasSpouse} />
       </div>
     </Page>
   );
 }
 
-export default Tree;
+export default BuildFamilyTree;

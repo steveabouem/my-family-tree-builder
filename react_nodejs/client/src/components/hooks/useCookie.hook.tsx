@@ -1,9 +1,9 @@
 import react, { useEffect, useState } from "react";
 
 const useCookie = (): string | undefined => {
-  const [cookie, setCookie] = useState<string | undefined>();
+  const [cookie, setCookie] = React.useState<string | undefined>();
 
-  useEffect(() => {
+  React.useEffect(() => {
     const cookies =  document.cookie.split(';');
     const appCookie = cookies.find((c: string) => c.trim().startsWith('FT='));
     

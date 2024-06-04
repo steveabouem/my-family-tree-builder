@@ -94,18 +94,18 @@ FamilyMember.init(
       primaryKey: true
     },
     age: { type: DataTypes.INTEGER },
-    description: { type: DataTypes.STRING },
+    description: { type: DataTypes.STRING, allowNull: true }, // all values allowing null are basically relative to non registered family members
     first_name: { type: DataTypes.STRING },
     gender: { type: DataTypes.INTEGER },
-    parent_1: { type: DataTypes.INTEGER },
+    parent_1: { type: DataTypes.INTEGER,  allowNull: true },
     parent_2: { type: DataTypes.INTEGER },
     email: { type: DataTypes.STRING },
     last_name: { type: DataTypes.STRING },
     imm_family: { type: DataTypes.INTEGER },
     marital_status: { type: DataTypes.STRING },
-    occupation: { type: DataTypes.STRING },
-    partner: { type: DataTypes.INTEGER },
-    profile_url: { type: DataTypes.STRING },
+    occupation: { type: DataTypes.STRING, allowNull: true },
+    partner: { type: DataTypes.INTEGER, allowNull: true },
+    profile_url: { type: DataTypes.STRING, allowNull: true },
     created_by: {
       type: DataTypes.INTEGER
     },

@@ -7,6 +7,15 @@ const service = {
   auth: AuthService,
   familyTree: FamilyTreeService,
   user: UserService,
-  sessio: SessionService,
+  session: SessionService,
 };
-export default service;
+
+ const endpoints = {
+  auth: {index: '/connect'},
+  trees: {index: '/trees/index', getById: '/trees/?id=:id', new: '/trees/new'},
+  members: {index: '/members/index', getById: '/members?id=:id', new: '/members/new'},
+  users: {index: '/users/index', getById: '/users?id=:id', new: '/users/new'},
+  sessions: {get: '/?id=:id', update: '/update'}
+};
+export {service};
+export {endpoints}

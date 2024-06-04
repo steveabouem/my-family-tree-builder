@@ -1,12 +1,11 @@
 export interface DFamilyTreeRecord {
     public: number;
     name: string;
-    authorized_ips: string[];
+    authorized_ips: string;
     id: number;
     created_at: Date;
     created_by: number;
-    members: number[];
-    families: number[];
+    members: string;
     updated_at: Date;
-    active: boolean;
+    active: number;
 }

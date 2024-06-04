@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import FamilyTreeContext from '../creators/familyTree.context';
 import { DContextProvider } from '../definitions';
 import { DUserSession } from '../../services/auth/auth.definitions';
@@ -6,10 +6,11 @@ import { DUserSession } from '../../services/auth/auth.definitions';
 import { DFamilyTree } from '../../components/tree/definitions';
 
 const FamilyTreeContextProvider = ({ children }: DContextProvider) => {
-  const [currentUser, setCurrentUser] = useState<Partial<DUserSession>>({});
-  const [familyTrees, setFamilyTrees] = useState<Partial<DFamilyTree>[]>([]);
+  const [currentUser, setCurrentUser] = React.useState<Partial<DUserSession>>({});
+  const [familyTrees, setFamilyTrees] = React.useState<Partial<DFamilyTree>[]>([]);
+  const [currentFamilyTree, setCurrentFamilyTree] = React.useState<Partial<DFamilyTree>>({});
 
-  useEffect(() => {
+  React.useEffect(() => {
     const storedUser = localStorage.getItem('FT');
 
     if (storedUser) {
@@ -28,9 +29,13 @@ const FamilyTreeContextProvider = ({ children }: DContextProvider) => {
     setFamilyTrees([...familyTrees, ...newTreeIds || []]);
   };
 
+  const updateCurrentFamilyTree = (values?: Partial<DFamilyTree>): void => {
+    
+    setCurrentFamilyTree({...currentFamilyTree, ...values});
+  };
 
   return (
-    <FamilyTreeContext.Provider value={{ currentUser, familyTrees, updateUser, updateFamilyTrees }}>
+    <FamilyTreeContext.Provider value={{ currentUser, familyTrees, currentFamilyTree, updateCurrentFamilyTree, updateUser, updateFamilyTrees }}>
       {children}
     </FamilyTreeContext.Provider>
   )

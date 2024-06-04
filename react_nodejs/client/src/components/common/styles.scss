@@ -64,16 +64,7 @@ body {
     margin: 0;
 
     .navigation {
-      position: absolute;
-      top: 0;
-      width: 100vw;
-      margin: 0;
-      z-index: 2;
-      display: flex;
-      left: 0;
-      justify-content: flex-start;
       height: 60px;
-      align-items: center;
       box-shadow: 1px 1px 0 grey;
       background: #f5f6f4;
 
@@ -418,7 +409,6 @@ body {
       padding: 15px;
       height: calc(100vh - 80px);
       width: 100vw;
-      margin-top: 60px;
       overflow: hidden scroll;
       background: #cecaca3d;
     }

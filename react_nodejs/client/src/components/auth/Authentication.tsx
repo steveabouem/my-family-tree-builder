@@ -8,22 +8,22 @@ import GlobalContext from "../../context/creators/global.context";
 import { DDropdownOption, genderOptions, maritalStatusOptions, parentOptions } from "../common/dropdowns/definitions";
 import { DFormField } from "../common/definitions";
 import { service } from "../../services";
-import BaseFormFields from "../common/forms/BaseFormFields";
+import FormFieldsGenerator from "../common/forms/FormFieldsGenerator";
 import Page from "../common/Page";
 import BaseDropDown from "../common/dropdowns/BaseDropdown";
 import { DUserDTO } from "../../services/auth/auth.definitions";
 
 const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [attempts, setAttempts] = useState<number>(0);
-  const [registerAttempts, setRegisterAttempts] = useState<number>(0);
-  const [displayValues, setDisplayValues] = useState<{ [key: string]: string | number }>({ //format dropdown values for client
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [attempts, setAttempts] = React.useState<number>(0);
+  const [registerAttempts, setRegisterAttempts] = React.useState<number>(0);
+  const [displayValues, setDisplayValues] = React.useState<{ [key: string]: string | number }>({ //format dropdown values for client
     is_parent: 'Yes',
     gender: 'Male',
   });
-  const { updateUser } = useContext(FamilyTreeContext);
+  const { updateUser } = React.useContext(FamilyTreeContext);
   const navigate = useNavigate();
-  const { theme, updateModal, toggleLoading, modal } = useContext(GlobalContext);
+  const { theme, updateModal, toggleLoading, modal } = React.useContext(GlobalContext);
   const mStatus = t({
     id: "marital.status",
     message: `Marital Status`,
@@ -105,8 +105,9 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     email: '',
   };
 
-  useEffect(() => {
-    toggleLoading(false);
+  React.useEffect(() => {
+    if (toggleLoading)
+      toggleLoading(false);
   }, []);
 
   const submitForm = async (values: Partial<DUserDTO>, { resetForm }: FormikHelpers<Partial<DUserDTO>>) => {
@@ -122,28 +123,38 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const processLogin = async (values: Partial<DUserDTO>) => {
     const authService = new service.auth('auth');
     const envToken: string | undefined = process.env.REACT_APP_JWT_TOKEN;
-    const logedInUser = await authService.submitLoginForm({ ...values, sessionToken: envToken as string })
+    const { data } = await authService.submitLoginForm({ ...values, sessionToken: envToken as string })
       .catch((e: unknown) => {
         console.log('Error loging in', e);
-        if (updateModal) {
-          updateModal({
-            ...modal,
-            hidden: false,
-            title: <Trans>login_failure</Trans>,
-            content: <Trans>login_failure_msg {attempts}</Trans>,
-          });
-        }
+        // @ts-ignore
+        updateModal({
+          ...modal,
+          hidden: false,
+          title: <Trans>login_failure</Trans>,
+          content: <Trans>login_failure_msg {attempts}</Trans>,
+        });
         return false;
       });
+      
+      if (data.error) {
+      // @ts-ignore
+      updateModal({
+        ...modal,
+        hidden: false,
+        title: <Trans>login_failure</Trans>,
+        content: <Trans>login_failure_msg {attempts}</Trans>,
+      });
+      return false;
+    }
 
-    if (logedInUser.data?.data?.authenticated) {
-      localStorage.setItem('FT', JSON.stringify(logedInUser.data.data));
+    if (data?.payload?.authenticated) {
+      localStorage.setItem('FT', JSON.stringify(data.payload));
       if (updateUser) {
-        updateUser(logedInUser.data.data);
-        console.log({logedInUser});
-        
+        updateUser(data.payload);
+        console.log({ logedInUser: { data } });
+
         changeMode(undefined);
-        navigate(`/users/${logedInUser.data.data.userId}`);
+        navigate(`/users/${data.payload.userId}`);
       }
     } else {
       setAttempts((prev) => prev + 1);
@@ -184,7 +195,6 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     <Page
       title="Authentication Page"
       subtitle="Please verify yourself below"
-      isLoading={loading}
     >
       <div className="m-auto w-100">
         {mode === 'register' ? (
@@ -198,9 +208,9 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         onSubmit={submitForm}
       >
         {({ handleSubmit, errors, isSubmitting, setFieldValue, values }) => mode === 'login' ?
-          <BaseFormFields size="med" fields={loginFormFields} handleSubmit={handleSubmit} />
+          <FormFieldsGenerator size="med" fields={loginFormFields} handleSubmit={handleSubmit} />
           :
-          <BaseFormFields size="med"
+          <FormFieldsGenerator size="med"
             fields={[
               ...registrationFormFields,
               {

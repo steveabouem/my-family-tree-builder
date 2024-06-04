@@ -17,7 +17,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
       }
     })
     .catch((e: unknown) => {
-    winston.log('error' ,  e);
+      winston.log('error', e);
       // ! -TOFIX: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
       res.status(500);
@@ -35,18 +35,24 @@ router.get('/index', (req: Request, res: Response) => {
   familyTreeController.getAll(req, res);
 });
 
+router.get('/details', (req: Request, res: Response) => {
+  const familyTreeController = new FamilyTreeController();
+  familyTreeController.getOne(req, res);
+});
+
 router.post('/create', (req: Request, res: Response) /**TODO: return type */ => {
- const familyTreeController = new FamilyTreeController();
- familyTreeController.create(req, res);
+  const familyTreeController = new FamilyTreeController();
+  familyTreeController.create(req, res);
 });
 
 router.post('/delete', (req: Request, res: Response) /**TODO: return type */ => {
   const familyTreeController = new FamilyTreeController();
   familyTreeController.delete(req, res);
- });
+});
 
  router.put('/members', (req: Request, res: Response) /**TODO: return type */ => {
   const familyTreeController = new FamilyTreeController();
   familyTreeController.addMembers(req, res);
- });
+});
+
 export default router;

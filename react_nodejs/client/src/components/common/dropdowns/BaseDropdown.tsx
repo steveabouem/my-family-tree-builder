@@ -4,7 +4,7 @@ import { DBaseDropDownProps, DDropdownOption } from "./definitions";
 import('./styles.scss');
 
 const BaseDropDown = ({ id, label, options, additionalClass, onValueChange, val, displayVal }: DBaseDropDownProps): JSX.Element => {
-  const [isOpen, setOpen] = useState<boolean>(false);
+  const [isOpen, setOpen] = React.useState<boolean>(false);
 
   const updateVal = (option: DDropdownOption) => {
     onValueChange(option);

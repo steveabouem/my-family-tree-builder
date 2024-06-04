@@ -20,7 +20,7 @@ class FamilyTreeController extends BaseController<any> {
       const treeList = await FamilyTree.findAll({ where: { members: { [Op.like]: `%${userId}%` } } });
       response.status = 200;
       response.error = false;
-      response.payload= [...treeList];
+      response.payload = [...treeList];
       res.status(200);
     } catch (e: unknown) {
       response.status = 400;
@@ -48,16 +48,30 @@ class FamilyTreeController extends BaseController<any> {
       if (currentUser) {
         const familyMemberController = new FamilyMemberController();
         const membersIds = await familyMemberController.createFamilyUnit({ siblings, father, mother });
-        const newTree = await FamilyTree.create({ active: 1, name: tree_name, members: '[]', public: is_public, authorized_ips: '[]', created_at: new Date(), created_by: user_id });
+        const newTree = await FamilyTree.create(
+          {
+            active: 1, name: tree_name, members: '[]', 
+            public: is_public, authorized_ips: '[]', 
+            created_at: new Date(), created_by: user_id
+          }
+        );
 
         membersIds.push(user_id);
         newTree.members = JSON.stringify(membersIds);
         newTree.save();
-  
-        response.payload= newTree;
+
+        response.payload = newTree;
         response.status = 200;
         response.error = false;
         response.message = 'Family Tree Created Succesfully';
+
+        req.session.details = {
+          ...req.session.details,
+          authenticated: true,
+          familyTree: newTree
+        }
+
+        req.session.save();
         res.status(200);
       } else {
         response.status = 400;
@@ -67,8 +81,45 @@ class FamilyTreeController extends BaseController<any> {
     } catch (e: unknown) {
       logger.error('! FamilyTree.create !', e);
       response.status = 400;
-        response.message = 'FAIL';
-        res.status(400);
+      response.message = 'FAIL';
+      res.status(400);
+    }
+
+    res.json(response);
+  }
+
+  public async getOne(req: Request, res: Response) {
+    const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
+
+    try {
+      const id = req.query.id;
+      // @ts-ignore 
+      const tree = await FamilyTree.findByPk(id);
+      const familyMembers = JSON.parse(tree?.members || '[]');
+      console.log(familyMembers);
+      
+      response.status = 200;
+      response.error = false;
+      res.status(200);
+
+      if (tree) {
+        response.payload = tree;
+        response.message = 'Family Tree Fetched Succesfully';
+
+        req.session.details = {
+          ...req.session.details,
+          authenticated: true,
+          familyTree: tree
+        }
+        req.session.save();
+      } else {
+        response.message = 'Tree requested not found';
+      }
+    } catch (e: unknown) {
+      logger.error('! FamilyTree.get !', e);
+      response.status = 400;
+      response.message = 'Tree cannot be retrieved.';
+      res.status(400);
     }
 
     res.json(response);

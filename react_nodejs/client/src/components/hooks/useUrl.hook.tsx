@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
 const useUrlId = (url: string): string => {
-  const [param, setParam] = useState<string>('');
+  const [param, setParam] = React.useState<string>('');
   
-  useEffect(() => {
+  React.useEffect(() => {
     setParam(window.location.pathname.replace(url, ''));
   }, [url]);
 

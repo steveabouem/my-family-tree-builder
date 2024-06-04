@@ -2,12 +2,12 @@ import BaseService from "../base/base.service";
 
 class SessionService extends BaseService {
   constructor() {
-    super('session');
+    super('sessions');
   }
 
   // ! -TOFIX: ensure previous session is closed, so that this actually returns only the latest, non expired session
   public async getCurrent (id: number) {
-    const result = await this.request.get(`${this.APIBaseUrl}/${this.APIPath}/get-data?id=${id}`);
+    const result = await this.request.get(`${this.APIBaseUrl}/${this.APIPath}?id=${id}`);
 
     return result;
   }

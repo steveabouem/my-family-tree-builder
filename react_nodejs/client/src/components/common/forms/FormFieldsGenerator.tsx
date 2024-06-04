@@ -5,7 +5,7 @@ import ButtonRounded from "../buttons/Rounded";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
 import('./styles.scss');
 
-const BaseFormFields = ({ 
+const FormFieldsGenerator = ({ 
   fields, handleSubmit, 
   size, handleFieldValueChange, title 
 }: DBaseFormProps): JSX.Element => {
@@ -39,4 +39,4 @@ const BaseFormFields = ({
   );
 }
 
-export default BaseFormFields;
+export default FormFieldsGenerator;

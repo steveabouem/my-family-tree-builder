@@ -5,7 +5,7 @@ import GlobalContext from "../../../context/creators/global.context";
 import { Trans } from "@lingui/macro";
 
 const BaseModal = ({ onConfirm, onCancel, children }: DModalProps): JSX.Element => {
-  const { modal, updateModal } = useContext(GlobalContext);
+  const { modal, updateModal } = React.useContext(GlobalContext);
 
   const handleCancel = () => {
     if (onCancel) {

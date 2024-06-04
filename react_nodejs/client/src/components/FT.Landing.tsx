@@ -1,13 +1,14 @@
 import React, { useContext } from "react";
 import GlobalContext from "../context/creators/global.context";
+import Page from "./common/Page";
 
 const FTLandingPage = (): JSX.Element => {
-  const {theme} = useContext(GlobalContext);
+  const {theme} = React.useContext(GlobalContext);
   return (
-    <div>
-      <h2>Welcome to  your Tree Manager</h2>
-      <h3>Use nav bar for now</h3>
-    </div> 
+    <Page
+      title="Welcome to your Family Tree"
+      subtitle="HEad to the authentication page for now"
+    />
   );
 }
 

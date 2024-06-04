@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import React from "react";
 import GlobalContext from "../../context/creators/global.context";
 import { themeEnum } from "../../context/definitions";
 
 const usePrimary = (): string => {
-  const [primaryColor, setPrimaryColor] = useState<string>('white');
-  const { theme } = useContext(GlobalContext);
+  const [primaryColor, setPrimaryColor] = React.useState<string>('white');
+  const { theme } = React.useContext(GlobalContext);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (theme === themeEnum.dark) {
       setPrimaryColor('white');
     }

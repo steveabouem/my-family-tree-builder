@@ -4,9 +4,9 @@ import { DModalProps } from '../../components/common/alerts/definitions';
 import GlobalContext from '../creators/global.context';
 
 const GlobalContextProvider = ({ children }: DContextProvider) => {
-  const [theme, setTheme] = useState<themeEnum>(themeEnum.dark);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [modalContent, setModalContent] = useState<Partial<DModalProps>>({hidden: true});
+  const [theme, setTheme] = React.useState<themeEnum>(themeEnum.dark);
+  const [loading, setLoading] = React.useState<boolean>(true);
+  const [modalContent, setModalContent] = React.useState<Partial<DModalProps>>({hidden: true});
 
   const updateTheme = (value: themeEnum): void => {
     setTheme(() => value);
