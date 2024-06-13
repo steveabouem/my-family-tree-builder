@@ -1,14 +1,9 @@
 import { BaseMiddleware } from "../base/base.middleware";
-import logger from "../../utils/logger";
-import { Request } from "express";
 
+// ! TODO: THIS LOOKS USELESS SO frameElement. MIGHT DELETE THIS MIDDLEWARE ENTIRELY
 class SessionMiddleware<GSession> extends BaseMiddleware<GSession> {
   constructor() {
     super('Sessions');
-  }
-
-  public isAuthenticated(req: Request) {
-    return req.session.authenticated;
   }
 
 }

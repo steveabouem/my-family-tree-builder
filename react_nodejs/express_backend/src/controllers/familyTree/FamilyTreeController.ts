@@ -6,6 +6,7 @@ import { Op } from "sequelize";
 import FamilyMemberController from "../familyMember/FamilyMemberController";
 import logger from "../../utils/logger";
 import User from "../../models/User";
+import FamilyMember from "../../models/FamilyMember";
 
 class FamilyTreeController extends BaseController<any> {
   constructor() {
@@ -50,8 +51,8 @@ class FamilyTreeController extends BaseController<any> {
         const membersIds = await familyMemberController.createFamilyUnit({ siblings, father, mother });
         const newTree = await FamilyTree.create(
           {
-            active: 1, name: tree_name, members: '[]', 
-            public: is_public, authorized_ips: '[]', 
+            active: 1, name: tree_name, members: '[]',
+            public: is_public, authorized_ips: '[]',
             created_at: new Date(), created_by: user_id
           }
         );
@@ -93,33 +94,45 @@ class FamilyTreeController extends BaseController<any> {
 
     try {
       const id = req.query.id;
-      // @ts-ignore 
-      const tree = await FamilyTree.findByPk(id);
-      const familyMembers = JSON.parse(tree?.members || '[]');
-      console.log(familyMembers);
-      
-      response.status = 200;
-      response.error = false;
-      res.status(200);
+      const userId = req.session?.details?.userId || 0;
+      const canViewTree = await this.canUserViewTree(Number(id), userId);
 
-      if (tree) {
-        response.payload = tree;
-        response.message = 'Family Tree Fetched Succesfully';
+      if (canViewTree) {
+        // @ts-ignore 
+        const tree = await FamilyTree.findByPk(id).catch((e: unknown) => {
+          logger.error('! FamilyTree.getOne !', e);
+          response.status = 500;
+          response.message = 'Tree cannot be retrieved.';
+          res.status(500);
+        });
 
-        req.session.details = {
-          ...req.session.details,
-          authenticated: true,
-          familyTree: tree
+        response.status = 200;
+        response.error = false;
+        res.status(200);
+
+        if (tree) {
+          response.payload = tree;
+          response.message = 'Family Tree Fetched Succesfully';
+
+          req.session.details = {
+            ...req.session.details,
+            authenticated: true,
+            familyTree: tree
+          }
+          req.session.save();
+        } else {
+          response.message = 'Tree requested not found';
         }
-        req.session.save();
       } else {
-        response.message = 'Tree requested not found';
+        res.status(403);
+        response.status = 403;
+        response.message = 'User is not allowed to view this tree.';
       }
     } catch (e: unknown) {
       logger.error('! FamilyTree.get !', e);
-      response.status = 400;
+      response.status = 500;
       response.message = 'Tree cannot be retrieved.';
-      res.status(400);
+      res.status(500);
     }
 
     res.json(response);
@@ -128,26 +141,37 @@ class FamilyTreeController extends BaseController<any> {
   public async delete(req: Request, res: Response) {
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
     const treeId = req.body.id;
-    try {
-      const currentTree = await FamilyTree.findByPk(treeId);
-      if (currentTree) {
+    const userId = req.session?.details?.userId || 0;
+    const canUpdateTree = await this.canUserUpdateTree(treeId, userId);
 
-        await currentTree.destroy();
-        response.status = 200;
-        response.error = false;
-        response.message = 'Family Tree Deleted Succesfully';
-        res.status(200);
-      } else {
-        response.status = 400;
-        response.error = true;
-        response.message = 'Family Tree Does not Exist';
-        res.status(400);
+    if (canUpdateTree) {
+      try {
+        const currentTree = await FamilyTree.findByPk(treeId);
+        if (currentTree) {
+          await currentTree.destroy();
+
+          response.status = 200;
+          response.error = false;
+          response.message = 'Family Tree Deleted Succesfully';
+          res.status(200);
+        } else {
+          response.status = 500;
+          response.error = true;
+          response.message = 'Family Tree Does not Exist';
+          res.status(500);
+        }
+
+      } catch (e: unknown) {
+        logger.error('! FamilyTree.delete ! ', e)
+        response.status = 500;
+        response.message = `Caught ERR ${e}`;
+        res.status(500);
       }
-
-    } catch (e: unknown) {
-      response.status = 400;
-      response.message = `Caught ERR ${e}`;
-      res.status(400);
+    } else {
+      res.status(403);
+      response.error = false;
+      response.status = 403;
+      response.message = 'User is not allowed to view this tree.';
     }
 
     res.json(response);
@@ -157,37 +181,144 @@ class FamilyTreeController extends BaseController<any> {
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
     const newMember = req.body.member;
     const treeId = req.body.id;
+    const userId = req.session?.details?.userId || 0;
+    const canUpdateTree = await this.canUserUpdateTree(treeId, userId);
     let treeMembers: number[] = [];
 
-    try {
-      const currentTree = await FamilyTree.findByPk(treeId);
-      if (currentTree) {
-        if (currentTree.members) {
-          treeMembers = [...JSON.parse(currentTree.members), newMember];
-          console.log({ treeMembers });
-        } else {
-          treeMembers = [newMember];
-        }
+    if (canUpdateTree) {
+      try {
+        const currentTree = await FamilyTree.findByPk(treeId);
+        if (currentTree) {
+          if (currentTree.members) {
+            treeMembers = [...JSON.parse(currentTree.members), newMember];
+          } else {
+            treeMembers = [newMember];
+          }
 
-        await currentTree.update({ members: JSON.stringify(treeMembers) });
-        response.status = 200;
-        response.error = false;
-        response.message = 'Family Member Added Succesfully';
-        res.status(200);
-      } else {
+          await currentTree.update({ members: JSON.stringify(treeMembers) });
+          response.status = 200;
+          response.error = false;
+          response.message = 'Family Member Added Succesfully';
+          res.status(200);
+        } else {
+          response.status = 400;
+          response.error = true;
+          response.message = 'Family Tree Does not Exist';
+          res.status(400);
+        }
+      } catch (e: unknown) {
         response.status = 400;
-        response.error = true;
-        response.message = 'Family Tree Does not Exist';
+        response.message = `Caught ERR ${e}`;
         res.status(400);
       }
-
-    } catch (e: unknown) {
-      response.status = 400;
-      response.message = `Caught ERR ${e}`;
-      res.status(400);
+    } else {
+      res.status(403);
+      response.error = false;
+      response.status = 403;
+      response.message = 'User is not allowed to view this tree.';
     }
 
     res.json(response);
+  }
+
+  public async removeMembers(req: Request, res: Response) {
+    const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
+    const treeId: number = req.body.tree;
+    const membersToRemove: number[] = JSON.parse(req.body.members);
+    const userId = req.session?.details?.userId || 0;
+    const canUpdateTree = await this.canUserUpdateTree(treeId, userId);
+
+    if (canUpdateTree) {
+      const tree = await FamilyTree.findByPk(treeId).catch((e: unknown) => {
+        logger.error('! FamilyTree.removeMembers ! ', e)
+        response.status = 500;
+        response.message = `Caught ERR ${e}`;
+        res.status(500);
+      });
+
+      if (tree) {
+        const remainingTreeMembers = JSON.parse(tree.members)?.filter((member: number) => !membersToRemove?.includes(member));
+
+        await tree.update({ members: JSON.stringify(remainingTreeMembers) }).catch((e: unknown) => {
+          logger.error('! FamilyTree.removeMembers ! ', e)
+          response.status = 500;
+          response.message = `Caught ERR ${e}`;
+          res.status(500);
+        });
+
+        response.error = false;
+        response.message = 'Tree updated successfully';
+        response.status = 200;
+        res.status(200);
+      } else {
+        logger.info('! FamilyTree.removeMembers ! No tree with the given Id')
+        response.status = 500;
+        response.message = 'No matching tree found.';
+        res.status(500);
+      }
+    } else {
+      res.status(403);
+      response.error = false;
+      response.status = 403;
+      response.message = 'User is not allowed to view this tree.';
+    }
+  }
+
+  public async getMembers(req: Request, res: Response) {
+    const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
+    const userId = req.session?.details?.userId || 0;
+    const id = req.query.id;
+    const canViewTree = await this.canUserViewTree(Number(id), userId);
+
+    if (canViewTree) {
+      try {
+        // @ts-ignore 
+        const tree = await FamilyTree.findByPk(id);
+        const familyMembers = JSON.parse(tree?.members || '[]');
+        const membersData = await FamilyMember.findAll({ where: { id: { [Op.in]: familyMembers } } });
+
+        response.status = 200;
+        response.error = false;
+        res.status(200);
+
+        if (membersData) {
+          response.payload = membersData;
+          response.message = 'Family Tree members Fetched Succesfully';
+        } else {
+          response.message = 'Tree members not found';
+        }
+      } catch (e: unknown) {
+        logger.error('! FamilyTree.getmembers !', e);
+        response.status = 400;
+        response.message = 'Tree members cannot be retrieved.';
+        res.status(400);
+      }
+    } else {
+      res.status(403);
+      response.error = false;
+      response.status = 403;
+      response.message = 'User is not allowed to view this tree.';
+    }
+
+    res.json(response);
+  }
+
+  public async canUserViewTree(treeId: number, userId: number): Promise<boolean> {
+    const tree = await FamilyTree.findByPk(treeId).catch((e: unknown) => {
+      logger.error('! FamilyTree.isUserAuthorizedOntree ! ', e)
+    });
+    const members = JSON.parse(tree?.members || '[]');
+
+    return tree?.created_by === userId || members?.includes(userId) || tree?.public;
+  }
+
+  public async canUserUpdateTree(treeId: number, userId: number): Promise<boolean> {
+    const tree = await FamilyTree.findByPk(treeId).catch((e: unknown) => {
+      logger.error('! FamilyTree.isUserAuthorizedOntree ! ', e)
+    });
+    const members = JSON.parse(tree?.members || '[]');
+
+    return tree?.created_by === userId;
   }
 }
 

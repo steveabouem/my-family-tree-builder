@@ -10,14 +10,6 @@ class FTAuthMiddleware extends BaseMiddleware<any> { // ! -TOFIX: no any
         super('ip_addresses');
     }
 
-    // verifyUserIp = async (id: number): Promise<boolean> => {
-    //     const userMiddleware = new UserMiddleware();
-    //     // ! -TOFIX: catch return false doesnt actually catch falty logic, 
-    //     // just wrong syntax and maybe wrong typing. FIX
-    //     const currentUser: DUserRecord = await userMiddleware.getById(id);
-    //     return this.authorized_ips.includes(currentUser.authorizedIps);
-    // }
-
     verifyIp = async (currentIp?: string | string[]): Promise<boolean> => {
         if (!currentIp) {
             return false;

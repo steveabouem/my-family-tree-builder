@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
-import winston from "winston";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import FamilyTreeController from "../controllers/familyTree/FamilyTreeController";
+import logger from "../utils/logger";
 
 const router = Router();
 
@@ -12,18 +12,17 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   ftAuthMiddleware.verifyIp(ip)
     .then((valid: boolean) => {
       if (!valid) {
-        res.status(400);
-        res.json('IP is not approved');
+        res.status(403);
+        res.json('Forbidden. IP is not approved');
       }
     })
     .catch((e: unknown) => {
-      winston.log('error', e);
-      // ! -TOFIX: catch return false doesnt actually catch falty logic, 
-      // just wrong syntax and maybe wrong typing. FIX
-      res.status(500);
-      res.json('Error: ' + e);
-    });
+        logger.error('! Family Tree middleware !', e);
+        res.status(403);
+        res.json('Unable to validate IP.');
+      });
 
+  
   next();
 })
 
@@ -50,7 +49,12 @@ router.post('/delete', (req: Request, res: Response) /**TODO: return type */ => 
   familyTreeController.delete(req, res);
 });
 
- router.put('/members', (req: Request, res: Response) /**TODO: return type */ => {
+router.get('/members', (req: Request, res: Response) /**TODO: return type */ => {
+  const familyTreeController = new FamilyTreeController();
+  familyTreeController.getMembers(req, res);
+});
+
+router.put('/members', (req: Request, res: Response) /**TODO: return type */ => {
   const familyTreeController = new FamilyTreeController();
   familyTreeController.addMembers(req, res);
 });

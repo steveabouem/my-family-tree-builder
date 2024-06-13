@@ -85,10 +85,10 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
                 if (passwordIsValid) {
                     req.session.details = {
                         userId: currentUser.id,
-                        firstName: currentUser.first_name,
-                        lastName: currentUser.last_name,
                         authenticated: true,
                         email: req.body.email,
+                        firstName: currentUser.first_name,
+                        lastName: currentUser.last_name,
                     };
                     
                     response.error = false;
@@ -112,7 +112,6 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
                         logger.error('! Auth.login !', e);
                     });
                 } else {
-                    
                     response.error = true;
                     response.payload = 'Unable to authenticate user';
                     response.status = 400;

@@ -8,21 +8,30 @@ const router = Router();
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   const ftAuthMiddleware = new FTAuthMiddleware();
-
-  ftAuthMiddleware.verifyIp(ip)
-    .then((valid: boolean) => {
-      if (!valid) {
-        res.status(400);
-        res.json('IP is not approved');
-      }
-    })
-    .catch((e: unknown) => {
-    winston.log('error' ,  e);
-      // ! -TOFIX: catch return false doesnt actually catch falty logic, 
-      // just wrong syntax and maybe wrong typing. FIX
-      res.status(500);
-      res.json('Error: ' + e);
-    });
+  const maxAge = req?.session?.cookie?.expires?.getTime() || 0;
+  const now = new Date().getTime();
+  const canProceed = maxAge > now;
+  console.log({canProceed, maxAge});
+  
+  if (canProceed) {
+    ftAuthMiddleware.verifyIp(ip)
+      .then((valid: boolean) => {
+        if (!valid) {
+          res.status(400);
+          res.json('IP is not approved');
+        }
+      })
+      .catch((e: unknown) => {
+      winston.log('error' ,  e);
+        // ! -TOFIX: catch return false doesnt actually catch falty logic, 
+        // just wrong syntax and maybe wrong typing. FIX
+        res.status(500);
+        res.json('Error: ' + e);
+      });
+  } else {
+    res.status(403);
+    res.json('Session expired');
+  }
 
   next();
 })

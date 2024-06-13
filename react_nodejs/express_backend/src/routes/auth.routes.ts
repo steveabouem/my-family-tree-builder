@@ -13,7 +13,6 @@ const router = Router();
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
   const authMiddleware = new FTAuthMiddleware();
-
   authMiddleware.verifyIp(ip)
     .then((valid: boolean) => {
       if (!valid) {
@@ -26,6 +25,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
       res.status(400);
       res.json({ ipIsValid: false, message: e });
     });
+
   next();
 });
 
