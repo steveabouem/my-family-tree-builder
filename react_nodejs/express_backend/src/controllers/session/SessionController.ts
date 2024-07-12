@@ -20,7 +20,7 @@ class SessionController extends BaseController<DSession> {
                 const sessionId = `${req.query.id}`;
                 //   @ts-ignore either find a way to use the store, or refactor migration
                 const currentSession = await this.dataBase
-                    .query("SELECT * FROM `sessions` WHERE `sid` = :s limit 1", { replacements: { s: sessionId }, type: QueryTypes.SELECT })
+                    .query("SELECT * FROM `Sessions` WHERE `sid` = :s limit 1", { replacements: { s: sessionId }, type: QueryTypes.SELECT })
                     .catch((e: any) => {
                         logger.error('get current session: ', e);
                         response.error = true;
@@ -42,11 +42,12 @@ class SessionController extends BaseController<DSession> {
                 }
             } else {
                 throw new Error('Missing mandatory parameters.');
-            }
-        } catch (e) {
-            response.error = true;
-            response.payload = 'Unable to find session' + e;
-            response.status = 400;
+                }
+                } catch (e) {
+                    response.error = true;
+                    logger.error('! login ! ', e)
+                    response.payload = 'Unable to find session' + e;
+                    response.status = 400;
 
             res.status(400);
         }

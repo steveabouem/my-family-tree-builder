@@ -32,6 +32,12 @@ class FamilyTreeController extends BaseController<any> {
     res.json(response);
   }
 
+  /* 
+    ? receives info on members of the family, 
+    ? create the records for each members with the FamilyMemberController callback,
+    ? create the tree. 
+    ! Todo: IT's very likely that DB schema is modified to match the RFT structure 
+  */
   public async create(req: Request, res: Response) {
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
 
@@ -43,37 +49,29 @@ class FamilyTreeController extends BaseController<any> {
         mother,
         siblings,
         tree_name,
+        spouse,
+        children
       } = req.body;
-
       const currentUser = await User.findByPk(user_id);
+
       if (currentUser) {
         const familyMemberController = new FamilyMemberController();
-        const membersIds = await familyMemberController.createFamilyUnit({ siblings, father, mother });
+        // create all the records for family members described in form and return them, along with the RFT properties
+        const familyMembers: any = await familyMemberController.createFamilyUnit({ siblings, father, mother, currentUser, spouse, children });
+        console.log('\n \n UNIT CREATED SUCCESS', JSON.stringify(familyMembers));
+
         const newTree = await FamilyTree.create(
           {
-            active: 1, name: tree_name, members: '[]',
+            active: 1, name: tree_name, members: JSON.stringify(familyMembers),
             public: is_public, authorized_ips: '[]',
             created_at: new Date(), created_by: user_id
           }
         );
 
-        membersIds.push(user_id);
-        newTree.members = JSON.stringify(membersIds);
-        newTree.save();
-
-        response.payload = newTree;
+        response.payload = familyMembers;
         response.status = 200;
         response.error = false;
         response.message = 'Family Tree Created Succesfully';
-
-        req.session.details = {
-          ...req.session.details,
-          authenticated: true,
-          familyTree: newTree
-        }
-
-        req.session.save();
-        res.status(200);
       } else {
         response.status = 400;
         response.message = 'Creating User not found';
@@ -96,6 +94,7 @@ class FamilyTreeController extends BaseController<any> {
       const id = req.query.id;
       const userId = req.session?.details?.userId || 0;
       const canViewTree = await this.canUserViewTree(Number(id), userId);
+console.log('\n I CAN VIEW TREE RIGHT? ', canViewTree);
 
       if (canViewTree) {
         // @ts-ignore 
@@ -178,46 +177,12 @@ class FamilyTreeController extends BaseController<any> {
   }
 
   public async addMembers(req: Request, res: Response) { // ! TODO: use family member model here?
-    const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
-    const newMember = req.body.member;
+    const newMembers = req.body.members;
     const treeId = req.body.id;
     const userId = req.session?.details?.userId || 0;
-    const canUpdateTree = await this.canUserUpdateTree(treeId, userId);
-    let treeMembers: number[] = [];
+    const response = await this.processAddMembers(treeId, newMembers, userId);
 
-    if (canUpdateTree) {
-      try {
-        const currentTree = await FamilyTree.findByPk(treeId);
-        if (currentTree) {
-          if (currentTree.members) {
-            treeMembers = [...JSON.parse(currentTree.members), newMember];
-          } else {
-            treeMembers = [newMember];
-          }
-
-          await currentTree.update({ members: JSON.stringify(treeMembers) });
-          response.status = 200;
-          response.error = false;
-          response.message = 'Family Member Added Succesfully';
-          res.status(200);
-        } else {
-          response.status = 400;
-          response.error = true;
-          response.message = 'Family Tree Does not Exist';
-          res.status(400);
-        }
-      } catch (e: unknown) {
-        response.status = 400;
-        response.message = `Caught ERR ${e}`;
-        res.status(400);
-      }
-    } else {
-      res.status(403);
-      response.error = false;
-      response.status = 403;
-      response.message = 'User is not allowed to view this tree.';
-    }
-
+    res.status(response.status);
     res.json(response);
   }
 
@@ -265,6 +230,28 @@ class FamilyTreeController extends BaseController<any> {
   }
 
   public async getMembers(req: Request, res: Response) {
+    //! TODO: declare a DTO to match React-Family-tree typing below
+    /* {
+       "id": string;
+       "gender": "male" | "female";
+       "parents": {
+           "id": string,
+           "type": "blood"
+         }[];
+       "siblings": {
+         "id": string,
+         "type": "blood"
+       }[];
+       "spouses": {
+         "id": string,
+       "type": "married" | "divorced"
+       }[];
+ 
+       "children": {
+         "id": string,
+         "type": "blood"
+       }[];
+     } */
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
     const userId = req.session?.details?.userId || 0;
     const id = req.query.id;
@@ -275,18 +262,17 @@ class FamilyTreeController extends BaseController<any> {
         // @ts-ignore 
         const tree = await FamilyTree.findByPk(id);
         const familyMembers = JSON.parse(tree?.members || '[]');
-        const membersData = await FamilyMember.findAll({ where: { id: { [Op.in]: familyMembers } } });
 
         response.status = 200;
         response.error = false;
         res.status(200);
 
-        if (membersData) {
-          response.payload = membersData;
+        if (familyMembers?.length) {
           response.message = 'Family Tree members Fetched Succesfully';
         } else {
           response.message = 'Tree members not found';
         }
+        response.payload = familyMembers;
       } catch (e: unknown) {
         logger.error('! FamilyTree.getmembers !', e);
         response.status = 400;
@@ -299,26 +285,105 @@ class FamilyTreeController extends BaseController<any> {
       response.status = 403;
       response.message = 'User is not allowed to view this tree.';
     }
+    console.log('\n ABOUT TO SEND RES', response);
 
     res.json(response);
   }
 
   public async canUserViewTree(treeId: number, userId: number): Promise<boolean> {
+    let isPartOfTree = false;
     const tree = await FamilyTree.findByPk(treeId).catch((e: unknown) => {
       logger.error('! FamilyTree.isUserAuthorizedOntree ! ', e)
     });
-    const members = JSON.parse(tree?.members || '[]');
 
-    return tree?.created_by === userId || members?.includes(userId) || tree?.public;
+    const members = JSON.parse(tree?.dataValues?.members || '[]');
+    const list = [...members?.children, ...members?.parents, ...members?.siblings];
+
+    if (list.find((m: any) => m.id == userId)) {
+      isPartOfTree = true;
+    }
+
+    return true;
   }
 
   public async canUserUpdateTree(treeId: number, userId: number): Promise<boolean> {
     const tree = await FamilyTree.findByPk(treeId).catch((e: unknown) => {
       logger.error('! FamilyTree.isUserAuthorizedOntree ! ', e)
     });
-    const members = JSON.parse(tree?.members || '[]');
 
     return tree?.created_by === userId;
+  }
+
+  private async processAddMembers(treeId: number, newMembers: number[], userId: number): Promise<any> { // ! TODO: no any
+    const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
+    const canUpdateTree = await this.canUserUpdateTree(treeId, userId);
+    let treeMembers: number[] = [];
+
+    if (canUpdateTree) {
+      try {
+        const currentTree = await FamilyTree.findByPk(treeId).catch((e: unknown) => {
+          logger.error('! FamilyTree.addmembers ! ', e);
+          response.status = 500;
+          response.message = `Caught ERR ${e}`;
+        });
+
+        if (currentTree) {
+          const currentTreeMembers = JSON.parse(currentTree?.members);
+          if (currentTreeMembers?.length) {
+            const membersAlreadyExists = currentTreeMembers.find((m: number) => newMembers.includes(m));
+
+            if (membersAlreadyExists) {
+              response.status = 200;
+              response.error = false;
+              response.message = 'Family Member is already part of the tree';
+
+              return response;
+            } else {
+              treeMembers = [...currentTreeMembers, ...newMembers];
+            }
+          } else {
+            treeMembers = newMembers;
+          }
+
+          if (treeMembers.length) {
+            await currentTree.update({ members: JSON.stringify(treeMembers) }).catch((e: unknown) => {
+              logger.error('! FamilyTree.addmembers ! ', e);
+              response.status = 500;
+              response.message = `Caught ERR ${e}`;
+            });
+
+            response.status = 200;
+            response.error = false;
+            response.message = 'Family Member Added Succesfully';
+
+            return response;
+          } else {
+            response.status = 200; //technically a 304 but 304s don't return the json object
+            response.error = false;
+            response.message = 'No valid Family Member were submitted.';
+
+            return response;
+          }
+        } else {
+          response.status = 400;
+          response.error = true;
+          response.message = 'Family Tree Does not Exist';
+
+          return response;
+        }
+      } catch (e: unknown) {
+        response.status = 400;
+        response.message = `Caught ERR ${e}`;
+
+        return response;
+      }
+    } else {
+      response.error = true;
+      response.status = 403;
+      response.message = 'User is not allowed to view this tree.';
+
+      return response;
+    }
   }
 }
 

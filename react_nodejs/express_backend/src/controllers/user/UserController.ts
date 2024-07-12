@@ -14,7 +14,7 @@ class UserController extends BaseController<DUserRecord> {
         const hashedPassword = bcrypt.hashSync(values.password, this.salt);
         // ! -TOFIX: implement search by name as user enter their last name. 
         // Does it make sense to offer them choices given the security aspect?
-        const formattedValues = { ...values, related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date };
+        const formattedValues = { ...values, related_to: [1], password: hashedPassword, created_at: new Date };
         const fieldsValid = await this.validateUserFields(formattedValues); 
         const duplicate = await User.findOne({where: { email: values.email}});
         let newUser = null;
@@ -33,7 +33,7 @@ class UserController extends BaseController<DUserRecord> {
             if (newUser) {
               await newUser.save();
             } else {
-              logger.error('! User.create !', 'User wasn\'t createDecipheriv, unable to save');
+              logger.error('! User.create !', 'User wasn\'t created, unable to save');
             }
             return { ...newUser?.dataValues, password: undefined };
         }
@@ -98,9 +98,9 @@ class UserController extends BaseController<DUserRecord> {
     private validateUserFields (values: DUserDTO): boolean {
         console.log('RECEIVED VALUES: ', values);
     
-        if (values.age < 0 || !values.age) {
-          console.log('missing age');
-          logger.error('! User.validateUserFields ! missing age');
+        if (!values.dob) {
+          console.log('missing dob');
+          logger.error('! User.validateUserFields ! missing dob');
           return false;
         }
     
@@ -147,11 +147,11 @@ class UserController extends BaseController<DUserRecord> {
           return false;
         }
     
-        if (!values.imm_family) {
-          console.log('missing imm_family');
-          logger.error('! User.validateUserFields ! missing imm_family');
-          return false;
-        }
+        // if (!values.imm_family) {
+        //   console.log('missing imm_family');
+        //   logger.error('! User.validateUserFields ! missing imm_family');
+        //   return false;
+        // }
     
         if (!values.marital_status) {
           console.log('missing marital_status');

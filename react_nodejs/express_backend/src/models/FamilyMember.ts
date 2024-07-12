@@ -12,11 +12,12 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
   declare age: number;
+  declare dob: string;
   declare description: string;
   declare first_name: string;
   declare gender: number; //1:M, 2:F
-  declare parent_1: number;
-  declare parent_2: number;
+  declare parent_1: number; // father, nullable
+  declare parent_2: number; // mother
   declare email: string;
   declare last_name: string;
   declare imm_family: number;
@@ -38,6 +39,9 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   }
   get familyMemberAge(): NonAttribute<number> {
     return this.age;
+  };
+  get familyMemberDOB(): NonAttribute<string> {
+    return this.dob;
   };
   get familyMemberDescription(): NonAttribute<string> {
     return this.description;
@@ -93,7 +97,8 @@ FamilyMember.init(
       autoIncrement: true,
       primaryKey: true
     },
-    age: { type: DataTypes.INTEGER },
+    age: { type: DataTypes.INTEGER, allowNull: true },
+    dob: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING, allowNull: true }, // all values allowing null are basically relative to non registered family members
     first_name: { type: DataTypes.STRING },
     gender: { type: DataTypes.INTEGER },

@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      age:{ type: Sequelize.INTEGER, allowNull: false},
+      age:{ type: Sequelize.INTEGER, allowNull: true},
       description:{ type: Sequelize.STRING},
       first_name:{ type: Sequelize.STRING, allowNull: false},
       gender:{ type: Sequelize.INTEGER, allowNull: false},
@@ -18,6 +18,7 @@ module.exports = {
       email:{ type: Sequelize.STRING},
       last_name:{ type: Sequelize.STRING, allowNull: false},
       tree_id:{ type: Sequelize.INTEGER},
+      imm_family:{ type: Sequelize.INTEGER, allowNull: true},
       marital_status:{ type: Sequelize.STRING},
       occupation:{ type: Sequelize.STRING},
       partner:{ type: Sequelize.INTEGER},

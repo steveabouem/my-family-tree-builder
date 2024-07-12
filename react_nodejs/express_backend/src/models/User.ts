@@ -11,7 +11,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
   declare first_name: string;
   declare last_name: string;
-  declare age: number;
+  declare age: number | null;
+  declare dob: string;
   declare parent_1: number | null;
   declare parent_2: number | null;
   declare occupation: string;
@@ -39,14 +40,17 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     return this.id;
   }
 
-  get userAge(): NonAttribute<number> {
+  get userAge(): NonAttribute<number | null> {
     return this.age;
   }
-  get userParent_1(): NonAttribute<number> {
-    return this.age;
+  get userDOB(): NonAttribute<string> {
+    return this.dob;
   }
-  get userParent_2(): NonAttribute<number> {
-    return this.age;
+  get userParent_1(): NonAttribute<number | null> {
+    return this.parent_1;
+  }
+  get userParent_2(): NonAttribute<number | null> {
+    return this.parent_2;
   }
 
   get userEmail(): NonAttribute<string> {
@@ -119,6 +123,10 @@ User.init(
     },
     age: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    dob: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     assigned_ips: {

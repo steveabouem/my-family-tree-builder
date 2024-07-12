@@ -15,7 +15,7 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
     public async register(req: Request, res: Response) {
         const response: DEndpointResponse = { error: true, status: 400, session: '' };
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        const formattedValues = { ...req.body, assigned_ips: [ip], created_at: dayjs(), parent_2: 2 };
+        const formattedValues = { ...req.body, assigned_ips: [ip], created_at: dayjs() };
 
         try {
             const userController = new UserController();
@@ -75,6 +75,7 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
                 response.error = true;
                 response.payload = 'Unable to find user';
                 response.status = 400;
+                logger.error('! login ! User not found');
 
                 res.status(400);
             });
@@ -113,6 +114,7 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
                     });
                 } else {
                     response.error = true;
+                    logger.error('! login ! User authentication failed');
                     response.payload = 'Unable to authenticate user';
                     response.status = 400;
 
@@ -121,8 +123,8 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
             }
         } catch (e: unknown) {
             response.message = `Login failed - ${e}`;
+            logger.error('! login !', e);
             response.status = 400;
-
             res.status(400);
         }
 

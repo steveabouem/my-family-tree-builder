@@ -1,7 +1,8 @@
 export interface DUserDTO {
     first_name: string,
     last_name: string,
-    age: number,
+    age: number | null,
+    dob: string,
     occupation: string,
     id: number;
     marital_status: string,

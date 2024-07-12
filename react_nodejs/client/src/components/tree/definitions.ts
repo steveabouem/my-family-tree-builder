@@ -39,6 +39,38 @@ export interface DSibling {
   relation: string; // value of relation type below
 }
 
+/* REACT_FAMILY_TREE package */
+interface DParentDetails {
+  id: string;
+  gender: 'male' | 'female';
+}
+
+interface DSiblingsDetails {
+  id: string;
+  type: 'blood' | 'union';
+}
+
+interface DSpouseDetails {
+  id: string;
+  type: 'married' | 'divorced';
+}
+
+export interface DTreeNode {
+    id: string;
+    gender: 'male' | 'female';
+    first_name: string;
+    last_name: string;
+    age: number;
+    marital_status?: string;
+    profile_url?: string;
+    parents: DParentDetails[];
+    siblings: DSiblingsDetails[];
+    spouses: DSpouseDetails[];
+    children: DSiblingsDetails[];
+}
+
+/* END */
+
 export const relationType = {
   a: 'aunt',
   b: 'brother',

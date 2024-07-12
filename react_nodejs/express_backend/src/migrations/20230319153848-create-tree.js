@@ -40,7 +40,6 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     // deal with foreign key constraints
     await queryInterface.dropTable('users');
-    await queryInterface.dropTable('families');
     await queryInterface.dropTable('family_trees');
   }
 };

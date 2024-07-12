@@ -15,7 +15,7 @@ export class UserMiddleware extends BaseMiddleware<DUserRecord> {
     const hashedPassword = bcrypt.hashSync(values.password, this.salt);
     // ! -TOFIX: implement search by name as user enter their last name. 
     // Does it make sense to offer them choices given the security aspect?
-    const formattedValues = { ...values, related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date };
+    const formattedValues = { ...values, related_to: [1], password: hashedPassword, created_at: new Date };
     const fieldsValid = await this.validateUserFields(formattedValues);
     let newUser = null;
 
@@ -88,10 +88,9 @@ export class UserMiddleware extends BaseMiddleware<DUserRecord> {
   private validateUserFields = (values: DUserDTO): boolean => {
     console.log('RECEIVED VALUES: ', values);
 
-    if (values.age < 0 || !values.age) {
-      console.log('missing age'); //TODO: LOGGING
-      return false;
-    }
+    // if (values.age < 0 || !values.age) {
+    //   return false;
+    // }
 
     if (!values?.assigned_ips?.length || !values.assigned_ips) {
       console.log('missing .'); //TODO: LOGGING
@@ -129,10 +128,10 @@ export class UserMiddleware extends BaseMiddleware<DUserRecord> {
       return false;
     }
 
-    if (!values.imm_family) {
-      console.log('missing imm_family'); //TODO: LOGGING
-      return false;
-    }
+    // if (!values.imm_family) {
+    //   console.log('missing imm_family'); //TODO: LOGGING
+    //   return false;
+    // }
 
     if (!values.marital_status) {
       console.log('missing marital_status'); //TODO: LOGGING

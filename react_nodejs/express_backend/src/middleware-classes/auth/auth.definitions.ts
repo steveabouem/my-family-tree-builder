@@ -7,7 +7,7 @@ export interface DTrackerRegistrationFields { //registration form fields
 export interface DFTRegistrationFields { //registration form fields
     firstName: string;
     lastName: string;
-    age: number;
+    age?: number;
     occupation?: string;
     partner?: string;
     maritalStatus?: string;

@@ -17,3 +17,34 @@ export interface DFamilyMemberRecord {
     created_at: Date;
     updated_at: Date;
 }
+
+export interface DFamilyTreeNodeDTO {
+    age: number;
+    first_name: string;
+    last_name: string;
+    marital_status: string;
+    description?: string;
+    email?: string;
+    occupation?: string;
+    profile_url?: string;
+
+    // RFT OBJECT
+    id: string;
+    gender: "male" | "female";
+    parents: {
+        id: string,
+        type: "blood"
+    }[];
+    siblings?: {
+        id: string,
+        type: "blood"
+    }[];
+    spouses?: {
+        id: string,
+        type: "married" | "separated"
+    }[];
+    children?: {
+        id: string,
+        type: "blood"
+    }[];
+}

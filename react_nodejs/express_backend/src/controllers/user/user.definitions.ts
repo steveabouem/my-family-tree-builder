@@ -12,7 +12,7 @@ export interface DUserRecord {
 export interface DUserDTO {
     first_name: string,
     last_name: string,
-    age: number,
+    dob: string,
     occupation: string,
     id: number;
     marital_status: string,
