@@ -13,14 +13,6 @@ const BuildFamilyTree = (): JSX.Element => {
   const { modal, updateModal, toggleLoading } = React.useContext(GlobalContext);
 
   React.useEffect(() => {
-    // const getFamilyTrees =  async() => {
-    //   if (currentUser?.userId) {
-    //     const familyTreeService = new service.familyTree();
-    //     const userFamilies = await familyTreeService.getAllForUser(currentUser.userId);
-    //     console.log({userFamilies});
-    //   }
-    // };
-
     if(toggleLoading) toggleLoading(false);
   }, []);
 

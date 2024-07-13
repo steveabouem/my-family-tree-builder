@@ -10,22 +10,14 @@ import GlobalContext from "../../context/creators/global.context";
 import FamilyNode from "../FamilyNode";
 import { NODE_HEIGHT, NODE_WIDTH } from "./const";
 import { DTreeNode } from "./definitions";
-import { table } from "console";
-import('../../styles/index.scss');
+import('../../styles/tree.styles.scss');
+import('./chatGPT.tree.scss')
 
 const ViewFamilyTree = () => {
-  const [membersDetails, setMembersDetails] = React.useState({});
   const { currentFamilyTree, updateCurrentFamilyTree } = React.useContext(FamilyTreeContext);
   const { toggleLoading, updateModal } = React.useContext(GlobalContext);
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const getTreeMembers = async (id: number) => {
-    const familyTreeService = new service.familyTree();
-    const treeMembers = await familyTreeService.getMembers(id);
-
-    return treeMembers;
-  }
 
   const getCurrentTree = async (): Promise<any> => {
     const familyTreeService = new service.familyTree();
@@ -43,45 +35,61 @@ const ViewFamilyTree = () => {
   };
 
   const treeDetails = React.useMemo(() => {
-    // @ts-ignore
-    if (membersDetails?.id) {
-      console.log({ sample, membersDetails });
-
-      return (
-        <ReactFamilyTree
-          // @ts-ignore
-          nodes={sampleFromDb}
-          // @ts-ignore
-          rootId={sampleFromDb[0]?.id}
-          width={NODE_WIDTH}
-          height={NODE_HEIGHT}
-          className="tree"
-          renderNode={(node: Readonly<ExtNode>) => (
-            <FamilyNode
-              key={node.id}
-              node={node}
-              isRoot={false}
-              isHover={false}
-              onClick={() => { }}
-              onSubClick={() => { }}
-              style={{
-                transform: `translate(${node.left * (NODE_WIDTH / 2)}px, ${node.top * (NODE_HEIGHT / 2)}px)`,
-              }}
-            />
-          )}
-        />
-      )
-    } else {
-      return <></>
+    if (currentFamilyTree?.members) {
+      // @ts-ignore
+      return JSON.parse(currentFamilyTree?.members || '[]');
     }
 
-  }, [membersDetails])
+    return null;
+  }, [currentFamilyTree]);
+
+  function createTreeNode(member: any) {
+    console.log({member});
+    
+    return (
+      <div className="d-flex align-items-center flex-column single-unit text-center">
+
+        {member?.parents?.length ? (
+          <>
+            <div className="d-flex justify-content-between member-parents">
+              {member?.parents?.map((p: any) => (
+                <div className="text-danger">
+                  {createTreeNode(p)}
+                </div>
+              ))}
+            </div>
+            |||
+          </>
+        ) : ''}
+        <div className="member-siblings d-flex justify-content-between">
+          <div className="current-member-root">
+            <div className="d-flex flex-column align-items-center">
+              {member?.first_name}
+              <div className="d-flex justify-content-between member-children">
+                {member?.children?.map((child: any) => (
+                  <div>{createTreeNode(child)}</div>
+                ))}
+              </div>
+            </div>
+          </div>
+          {member?.siblings?.map((sibling: any) => (
+            <div>{createTreeNode(sibling)}</div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  function buildFamilyTree() {
+    if (treeDetails) {
+      const rootMember = treeDetails[0];
+      const rootLi = createTreeNode(rootMember);
+
+      return rootLi;
+    }
+  }
 
   React.useEffect(() => {
-    if (currentFamilyTree) {
-      return
-    }
-
     getCurrentTree()
       .then(({ data }) => {
         if (!data.error) {
@@ -98,184 +106,42 @@ const ViewFamilyTree = () => {
         });
         if (toggleLoading) toggleLoading(false);
       });
-  }, [currentFamilyTree]);
+  }, []);
 
-  React.useEffect(() => {
-    //! TODO: you will need a new migration to either:
-    //! - keep your current data structuredClone, but save the family tree and the RFT blueprint in a separate table, to then call for its contents here
-    //! - Do a new migration to refactore the family tree table and match it exactly to RFT
-    // if (id) {
-    //   getTreeMembers(Number(id))
-    //     .then(({ data }: any) => {
-    //       setMembersDetails(data?.payload);
-    //     })
-    //     .catch((e: unknown) => {
-    //       console.log('Unable to get the family members', e);
-    //     })
-    // }
-  }, [currentFamilyTree, id]);
 
   return (
     <Page subtitle="" title={`${currentFamilyTree?.name || ''}`}>
-      <ReactFamilyTree
-        // @ts-ignore
-        nodes={sampleFromDb}
-        // @ts-ignore
-        rootId={sampleFromDb[0]?.id}
-        width={NODE_WIDTH}
-        height={NODE_HEIGHT}
-        className="tree"
-        renderNode={(node: Readonly<ExtNode>) => (
-          <FamilyNode
-            key={node.id}
-            node={node}
-            isRoot={false}
-            isHover={false}
-            onClick={() => { }}
-            onSubClick={() => { }}
-            style={{
-              transform: `translate(${node.left * (NODE_WIDTH / 2)}px, ${node.top * (NODE_HEIGHT / 2)}px)`,
-            }}
-          />
-        )}
-      />
+      {/* <ReactFamilyTree
+          // @ts-ignore
+          nodes={treeDetails}
+          // @ts-ignore
+          rootId={treeDetails[0]?.id}
+          width={NODE_WIDTH}
+          height={NODE_HEIGHT}
+          className="tree"
+          renderNode={(node: Readonly<ExtNode>) => (
+            <FamilyNode
+              key={node.id}
+              node={node}
+              isRoot={node.id === treeDetails[0]?.id}
+              isHover={false}
+              onC55ick={() => { }}
+              onSubClick={() => { }}
+              style={{
+                transform: `translate(${node.left == 0 ? '25' : node.left * (NODE_WIDTH / 1.7)}px, ${node.top == 0 ? '25' : node.top * (NODE_HEIGHT / 1.9)}px)`,
+              }}
+            />
+          )}
+        /> */}
+      <div className="tree">
+        <ul>
+          {buildFamilyTree()}
+        </ul>
+      </div>
     </Page >
   );
 }
 
-const sampleFromDb = [
-  {
-      "id": "1",
-      "age": null,
-      "dob": "1985/01/21",
-      "description": "Test mapping with RFT",
-      "first_name": "User 1",
-      "gender": 1,
-      "parent_1": null,
-      "parent_2": 2,
-      "email": "s1@b.com",
-      "last_name": "Abm 1",
-      "imm_family": null,
-      "marital_status": "Single",
-      "occupation": null,
-      "partner": null,
-      "profile_url": null,
-      "siblings": [],
-      "parents": [
-          {
-              "id": "2",
-              "type": "blood"
-          },
-          {
-              "id": "3",
-              "type": "blood"
-          }
-      ],
-      "spouses": [],
-      "children": [
-          {
-              "id": "5",
-              "dob": "2024/01/21",
-              "first_name": "JJ",
-              "gender": 2,
-              "email": "jj@.abd.cm",
-              "last_name": "Abanda",
-              "marital_status": "Single",
-              "type": "blood"
-          }
-      ]
-  },
-  {
-      "id": "2",
-      "first_name": "Aline",
-      "last_name": "Abanda",
-      "dob": "1959/01/21",
-      "profile_url": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/91/91d963f85581bc0a73e02432085dae7546426e42.jpg",
-      "gender": 2,
-      "children": [
-          {
-              "id": "1",
-              "type": "blood"
-          }
-      ],
-      "spouses": [
-          {
-              "id": "3",
-              "type": "married"
-          }
-      ],
-      "siblings": [],
-      "parents": []
-  },
-  {
-      "id": "3",
-      "first_name": "Abanda",
-      "last_name": "Abanda",
-      "dob": "1955/01/21",
-      "profile_url": "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/5c/5c2d7e9dfd804434534b6290e9a176bf0cf417aa.jpg",
-      "gender": 1,
-      "children": [
-          {
-              "id": "1",
-              "type": "blood"
-          }
-      ],
-      "spouses": [
-          {
-              "id": "2",
-              "type": "married"
-          }
-      ],
-      "siblings": [],
-      "parents": []
-  },
-  {
-      "id": "4",
-      "dob": "2017/01/21",
-      "first_name": "Clotilde",
-      "gender": 2,
-      "email": "clocl@.abd.cm",
-      "last_name": "Abanda",
-      "marital_status": "Single",
-      "siblings": [
-          {
-              "id": "1",
-              "type": "blood"
-          }
-      ],
-      "parents": [
-          {
-              "id": "1",
-              "type": "blood"
-          }
-      ],
-      "spouses": [],
-      "children": []
-  },
-  {
-      "id": "5",
-      "dob": "2024/01/21",
-      "first_name": "JJ",
-      "gender": 2,
-      "email": "jj@.abd.cm",
-      "last_name": "Abanda",
-      "marital_status": "Single",
-      "children": [],
-      "parents": [
-          {
-              "id": "1",
-              "type": "blood"
-          }
-      ],
-      "siblings": [
-          {
-              "id": "1",
-              "type": "blood"
-          }
-      ],
-      "spouses": []
-  }
-]
 const sample = [
 
   {
@@ -325,7 +191,7 @@ const sample = [
     "children": [
       {
         id: "HkqEDLvxE",
-        type: "blood"
+        type: "adopted"
       },
       {
         id: "kuVISwh7w",

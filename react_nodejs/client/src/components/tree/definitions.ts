@@ -57,6 +57,7 @@ interface DSpouseDetails {
 
 export interface DTreeNode {
     id: string;
+    hasSubTree?: boolean;
     gender: 'male' | 'female';
     first_name: string;
     last_name: string;

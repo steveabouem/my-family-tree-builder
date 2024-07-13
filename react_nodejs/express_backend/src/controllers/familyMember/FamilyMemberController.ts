@@ -42,28 +42,8 @@ class FamilyMemberController extends BaseController<any> {
   ! NOTE: if any element in the relations array of each member doesn't have the matching object, 
   ! ***the tree will break*** in the front
   */
-  /*! { each family member should have this structure
- "id": string;
- "gender": "male" | "female";
- "parents": {
-     "id": string,
-     "type": "blood"
-   }[];
- "siblings": {
-   "id": string,
-   "type": "blood"
- }[];
- "spouses": {
-   "id": string,
- "type": "married" | "divorced"
- }[];
 
- "children": {
-   "id": string,
-   "type": "blood"
- }[];
-   } []*/
-  public async createFamilyUnit(members: any) { // ! TODO: no any, easy fix
+  public async createTreeMembersArray(members: any) { // ! TODO: no any, easy fix
     // ? the rftBlueprint will be used for the RFT family tree library. As mentionned earlier, each memeber will be represented by an object holding 
     // ? their info plus a set of arrays with ids and relation types of their relations (siblings, parents, spouses, and children)
     // ? To make things easier, we will first an object (similar to a hashmap) and build the array from that. 
@@ -91,7 +71,8 @@ class FamilyMemberController extends BaseController<any> {
       }
 
       // update current user's hasmap values
-      treeMembersById[currentFamilyMember.id] = { ...currentFamilyMember,
+      treeMembersById[currentFamilyMember.id] = {
+        ...currentFamilyMember,
         id: `${currentFamilyMember.id}`, siblings: [], parents: [], spouses: [], children: []
       };
 
@@ -100,9 +81,9 @@ class FamilyMemberController extends BaseController<any> {
         gender: 2
       });
       // update mother's hasmap values
-      treeMembersById[mother.dataValues.id] = { ...mother.dataValues, id: `${mother.dataValues.id}`, children: [{ id: `${currentFamilyMember.id}`, type: 'blood' }], spouses: [], siblings: [], parents: [] };
+      treeMembersById[mother.dataValues.id] = { ...mother.dataValues, id: `${mother.dataValues.id}`, children: [{ id: `${currentFamilyMember.id}` }], spouses: [], siblings: [], parents: [] };
       // add mother to the current user's hasmap values
-      treeMembersById[currentFamilyMember.id].parents.push({ id: `${mother.dataValues.id}`, type: 'blood' })
+      treeMembersById[currentFamilyMember.id].parents.push({  ...mother.dataValues, id: `${mother.dataValues.id}` })
 
       if (members?.father) {
         father = await FamilyMember.create({
@@ -113,40 +94,14 @@ class FamilyMemberController extends BaseController<any> {
         // update tree members map (father, mother and mutual relationship)
         treeMembersById[father.dataValues.id] = {
           ...father.dataValues, id: `${father.dataValues.id}`,
-          children: [{ id: `${currentFamilyMember.id}`, type: 'blood' }],
-          spouses: [{ id: `${mother.dataValues.id}`, type: 'married' }],
+          children: [{...currentFamilyMember, id: `${currentFamilyMember.id}` }],
+          spouses: [{...mother.dataValues, id: `${mother.dataValues.id}` }],
           siblings: [],
           parents: []
         };
-        treeMembersById[mother.dataValues.id].spouses = [{ id: `${father.dataValues.id}`, type: 'married' }];
+        treeMembersById[mother.dataValues.id].spouses = [{...father.dataValues, id: `${father.dataValues.id}` }];
         //update current user's hasmap values with father
-        treeMembersById[currentFamilyMember.id].parents.push({ id: `${father.dataValues.id}`, type: 'blood' })
-      }
-
-      if (members?.siblings?.length) {
-        const siblingsRecords = await FamilyMember.bulkCreate(members.siblings).catch((e: any) => {
-          logger.error('! createFamilyUnit ! bulk create siblings', e);
-          return null;
-        });
-
-        siblingsRecords?.forEach(({ dataValues }: any) => {
-          const siblingsParents = [];
-
-          if (currentFamilyMember?.id) {
-            siblingsParents.push({ id: `${currentFamilyMember.id}`, type: 'blood' })
-          }
-
-          if (currentFamilyMemberSpouse?.id) {
-            siblingsParents.push({ id: `${currentFamilyMemberSpouse.id}`, type: 'blood' })
-          }
-
-          treeMembersById[dataValues.id] = {
-             ...dataValues,
-            id: `${dataValues.id}`, siblings: [...siblingsRecords.filter((r: any) => r.id !== dataValues.id), {
-              id: `${currentFamilyMember.id}`, type: 'blood'
-            }], parents: siblingsParents, spouses: [], children: []
-          };
-        })
+        treeMembersById[currentFamilyMember.id].parents.push({ ...father.dataValues, id: `${father.dataValues.id}` })
       }
 
       if (members?.spouse) {
@@ -168,9 +123,39 @@ class FamilyMemberController extends BaseController<any> {
         // update tree members map (spouses array)
         treeMembersById[currentFamilyMemberSpouse.id] = {
           ...currentFamilyMemberSpouse, children: [], parents: [],
-          siblings: [], spouses: [{ id: `${currentFamilyMember.id}`, type: "married" }]
+          siblings: [], spouses: [{ id: `${currentFamilyMember.id}`, ...currentFamilyMember }]
         };
-        treeMembersById[currentFamilyMember.id].spouses = [{ id: `${currentFamilyMemberSpouse.id}`, type: "married" }]
+        treeMembersById[currentFamilyMember.id].spouses = [{ id: `${currentFamilyMemberSpouse.id}`, ...currentFamilyMemberSpouse }]
+      }
+
+      if (members?.siblings?.length) {
+        const siblingsRecords = await FamilyMember.bulkCreate(members.siblings).catch((e: any) => {
+          logger.error('! createFamilyUnit ! bulk create siblings', e);
+          return null;
+        });
+
+        siblingsRecords?.forEach(({ dataValues }: any) => {
+          const siblingsParents = [];
+
+          console.log('\n CREATING SIBLINGS HASHMAP. Mom\'s value: ');
+
+          if (currentFamilyMember?.id) {
+            siblingsParents.push({...currentFamilyMember, id: `${currentFamilyMember.id}` })
+          }
+
+          if (currentFamilyMemberSpouse?.id) {
+            siblingsParents.push({...currentFamilyMemberSpouse, id: `${currentFamilyMemberSpouse.id}` })
+          }
+
+          treeMembersById[dataValues.id] = {
+            ...dataValues,
+            id: `${dataValues.id}`, siblings: [...siblingsRecords.filter((r: any) => r.id !== dataValues.id), {
+              id: `${currentFamilyMember.id}`, ...currentFamilyMember
+            }], parents: siblingsParents, spouses: [], children: []
+          };
+
+          treeMembersById[currentFamilyMember.id].siblings.push(treeMembersById[dataValues.id]);
+        })
       }
 
       if (members?.children?.length) {
@@ -181,25 +166,25 @@ class FamilyMemberController extends BaseController<any> {
 
         if (childrenRecords?.length) {
           // update blueprint with all children and their relation to user and spouse (ensure the siblings array of each child does not contain their own id)
-          const childrenMappedIds = childrenRecords?.map(({ dataValues }: any) => ({ ...dataValues, id: `${dataValues.id}`, type: 'blood' })) || [];
+          const childrenMappedIds = childrenRecords?.map(({ dataValues }: any) => ({ ...dataValues, id: `${dataValues.id}` })) || [];
 
           treeMembersById[currentFamilyMember.id].children = childrenMappedIds;
           childrenRecords.forEach(({ dataValues }: any) => {
             const childsParents = [];
 
             if (currentFamilyMember?.id) {
-              childsParents.push({ id: `${currentFamilyMember.id}`, type: 'blood' })
+              childsParents.push({...currentFamilyMember, id: `${currentFamilyMember.id}` })
             }
 
             if (currentFamilyMemberSpouse?.id) {
-              childsParents.push({ id: `${currentFamilyMemberSpouse.id}`, type: 'blood' })
+              childsParents.push({ ...currentFamilyMemberSpouse, id: `${currentFamilyMemberSpouse.id}` })
             }
 
             treeMembersById[dataValues.id] = {
               ...dataValues, id: `${dataValues.id}`, children: [],
               parents: childsParents,
               siblings: [...childrenRecords.filter((r: any) => r.id !== dataValues.id), {
-                id: `${currentFamilyMember.id}`, type: 'blood'
+                id: `${currentFamilyMember.id}`, ...currentFamilyMember
               }], spouses: []
             }
           });

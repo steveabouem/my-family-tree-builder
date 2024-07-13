@@ -178,7 +178,6 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       });
 
     if (registeredUser.data?.data?.authenticated) {
-      console.log('Succesful registration');
       localStorage.setItem('FT', JSON.stringify(registeredUser.data));
       changeMode(undefined);
       if (updateUser) {

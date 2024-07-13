@@ -57,8 +57,7 @@ class FamilyTreeController extends BaseController<any> {
       if (currentUser) {
         const familyMemberController = new FamilyMemberController();
         // create all the records for family members described in form and return them, along with the RFT properties
-        const familyMembers: any = await familyMemberController.createFamilyUnit({ siblings, father, mother, currentUser, spouse, children });
-        console.log('\n \n UNIT CREATED SUCCESS', JSON.stringify(familyMembers));
+        const familyMembers: any = await familyMemberController.createTreeMembersArray({ siblings, father, mother, currentUser, spouse, children });
 
         const newTree = await FamilyTree.create(
           {
@@ -68,7 +67,7 @@ class FamilyTreeController extends BaseController<any> {
           }
         );
 
-        response.payload = familyMembers;
+        response.payload = newTree;
         response.status = 200;
         response.error = false;
         response.message = 'Family Tree Created Succesfully';
@@ -96,7 +95,7 @@ class FamilyTreeController extends BaseController<any> {
       const canViewTree = await this.canUserViewTree(Number(id), userId);
 console.log('\n I CAN VIEW TREE RIGHT? ', canViewTree);
 
-      if (canViewTree) {
+      // if (canViewTree) {
         // @ts-ignore 
         const tree = await FamilyTree.findByPk(id).catch((e: unknown) => {
           logger.error('! FamilyTree.getOne !', e);
@@ -122,11 +121,11 @@ console.log('\n I CAN VIEW TREE RIGHT? ', canViewTree);
         } else {
           response.message = 'Tree requested not found';
         }
-      } else {
-        res.status(403);
-        response.status = 403;
-        response.message = 'User is not allowed to view this tree.';
-      }
+      // } else {
+      //   res.status(403);
+      //   response.status = 403;
+      //   response.message = 'User is not allowed to view this tree.';
+      // }
     } catch (e: unknown) {
       logger.error('! FamilyTree.get !', e);
       response.status = 500;
@@ -297,13 +296,13 @@ console.log('\n I CAN VIEW TREE RIGHT? ', canViewTree);
     });
 
     const members = JSON.parse(tree?.dataValues?.members || '[]');
-    const list = [...members?.children, ...members?.parents, ...members?.siblings];
-
-    if (list.find((m: any) => m.id == userId)) {
+    console.log('\n WHAT I HAVE : ', userId, JSON.stringify(members));
+    
+    if (members.find((m: any) => m.id == userId)) {
       isPartOfTree = true;
     }
 
-    return true;
+    return isPartOfTree;
   }
 
   public async canUserUpdateTree(treeId: number, userId: number): Promise<boolean> {
