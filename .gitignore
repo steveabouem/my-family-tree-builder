@@ -68,3 +68,6 @@ react_nodejs/express_backend/yarn.lock
 react_nodejs/express_backend/package-lock.json
 react_nodejs/schema.sql
 schema.sql
+react_nodejs/express_backend/combined.log
+react_nodejs/express_backend/exceptions.log
+react_nodejs/express_backend/error.log
