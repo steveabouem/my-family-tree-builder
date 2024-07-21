@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DContextProvider, themeEnum } from '../definitions';
-import { DModalProps } from '../../components/common/alerts/definitions';
+import { DModalProps } from '../../pages/common/alerts/definitions';
 import GlobalContext from '../creators/global.context';
 
 const GlobalContextProvider = ({ children }: DContextProvider) => {

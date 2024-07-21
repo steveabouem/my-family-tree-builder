@@ -1,5 +1,5 @@
-import "../components/common/"
-import Authentication from "./auth/Authentication";
+import "../pages/common"
+import Authentication from "../pages/auth/Authentication";
 
 const pages = {
   tree: {

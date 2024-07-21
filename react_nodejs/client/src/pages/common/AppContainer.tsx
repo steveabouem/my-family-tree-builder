@@ -9,7 +9,7 @@ import UserProfilePage from "../user/Profile";
 import Footer from "./navbars/Footer";
 import BuildFamilyTree from "../tree/BuildFamilyTree";
 import Family from "../family/Family";
-import FTLandingPage from "../FT.Landing";
+import FTLandingPage from "../../components/FT.Landing";
 import { DUserDTO } from "../../services/auth/auth.definitions";
 import GlobalContext from "../../context/creators/global.context";
 import { Container } from "react-bootstrap";

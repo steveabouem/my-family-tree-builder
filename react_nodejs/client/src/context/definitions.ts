@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { DModalProps } from "../components/common/alerts/definitions";
-import { DFamilyTree } from "../components/tree/definitions";
+import { DModalProps } from "../pages/common/alerts/definitions";
+import { DFamilyTree } from "../pages/tree/definitions";
 
 export enum themeEnum {
   green = 'DARK-GREEN',

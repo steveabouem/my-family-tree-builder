@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import AppContainer from './components/common/AppContainer';
+import AppContainer from './pages/common/AppContainer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";

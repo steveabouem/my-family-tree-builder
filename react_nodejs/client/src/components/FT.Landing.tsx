@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import GlobalContext from "../context/creators/global.context";
-import Page from "./common/Page";
+import Page from "../pages/common/Page";
 
 const FTLandingPage = (): JSX.Element => {
   const {theme} = React.useContext(GlobalContext);

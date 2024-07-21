@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { DUserSession } from "../../services/auth/auth.definitions";
-import { DFamilyTree } from "../../components/tree/definitions";
+import { DFamilyTree } from "../../pages/tree/definitions";
 
 interface DFTContext {
   currentUser: Partial<DUserSession>;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trans } from "@lingui/macro";
-import logo from "../../../assets/logo.jpg";
+import logo from "../../../assets/images/logo.jpg";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
 import ThemeSelector from "../ThemeSelector";
