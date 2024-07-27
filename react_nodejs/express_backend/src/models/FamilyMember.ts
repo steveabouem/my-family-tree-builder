@@ -11,6 +11,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
+  declare user_id: number;
   declare age: number;
   declare dob: string;
   declare description: string;
@@ -36,6 +37,9 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   // to remove them from the model's Attribute Typings.
   get FamilyMemberId(): NonAttribute<number> {
     return this.id;
+  }
+  get FamilyMemberUserId(): NonAttribute<number> {
+    return this.user_id;
   }
   get familyMemberAge(): NonAttribute<number> {
     return this.age;
@@ -97,6 +101,7 @@ FamilyMember.init(
       autoIncrement: true,
       primaryKey: true
     },
+    user_id: {type: DataTypes.INTEGER, allowNull: true},
     age: { type: DataTypes.INTEGER, allowNull: true },
     dob: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING, allowNull: true }, // all values allowing null are basically relative to non registered family members

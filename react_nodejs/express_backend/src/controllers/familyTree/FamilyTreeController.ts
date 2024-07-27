@@ -57,15 +57,20 @@ class FamilyTreeController extends BaseController<any> {
       if (currentUser) {
         const familyMemberController = new FamilyMemberController();
         // create all the records for family members described in form and return them, along with the RFT properties
-        const familyMembers: any = await familyMemberController.createTreeMembersArray({ siblings, father, mother, currentUser, spouse, children });
-
+        const familyMembers: any = await familyMemberController
+          .createFamilyUnit({ siblings, father, mother, currentUser, spouse, children })
+          .catch((e: unknown) => {
+            logger.info('BREAKS : ', e);
+          });
         const newTree = await FamilyTree.create(
           {
             active: 1, name: tree_name, members: JSON.stringify(familyMembers),
             public: is_public, authorized_ips: '[]',
             created_at: new Date(), created_by: user_id
           }
-        );
+        ).catch((e: any) => {
+          logger.error("! create family tree !", e)
+        });
 
         response.payload = newTree;
         response.status = 200;
@@ -92,8 +97,7 @@ class FamilyTreeController extends BaseController<any> {
     try {
       const id = req.query.id;
       const userId = req.session?.details?.userId || 0;
-      const canViewTree = await this.canUserViewTree(Number(id), userId);
-console.log('\n I CAN VIEW TREE RIGHT? ', canViewTree);
+      // const canViewTree = await this.canUserViewTree(Number(id), userId);
 
       // if (canViewTree) {
         // @ts-ignore 
@@ -298,7 +302,7 @@ console.log('\n I CAN VIEW TREE RIGHT? ', canViewTree);
     const members = JSON.parse(tree?.dataValues?.members || '[]');
     console.log('\n WHAT I HAVE : ', userId, JSON.stringify(members));
     
-    if (members.find((m: any) => m.id == userId)) {
+    if (members?.find((m: any) => m.id == userId)) {
       isPartOfTree = true;
     }
 
