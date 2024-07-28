@@ -7,9 +7,8 @@ import Page from "../common/Page";
 import FamilyTreeContext from "../../context/creators/familyTree.context";
 import { service } from "../../services";
 import GlobalContext from "../../context/creators/global.context";
-import { NODE_HEIGHT, NODE_WIDTH } from "./const";
 import { DTreeNode } from "./definitions";
-import('../../assets/styles/tree.styles.scss');
+import TreeNodeBubble from "../family/TreeNodeBubble";
 import('./chatGPT.tree.scss')
 
 const ViewFamilyTree = () => {
@@ -36,80 +35,65 @@ const ViewFamilyTree = () => {
   const treeDetails = React.useMemo(() => {
     if (currentFamilyTree?.members) {
       // @ts-ignore
-      return JSON.parse(currentFamilyTree?.members || '[]');
+      return JSON.parse(currentFamilyTree?.members);
     }
 
     return null;
   }, [currentFamilyTree]);
 
-  function createTreeNode(member: any) {
-    if (treeDetails) {
-      return (
-        <div className="d-flex align-items-center flex-column single-unit text-center">
-          {member?.parents?.length ? (
-            <>
-              <div className="d-flex justify-content-between member-parents">
-                {member?.parents?.map((p: any) => {
-                  console.log('CURRENT PARENT: ', p);
-                  
-                  const parentNode = treeDetails.find((n: any) => n.id === 2);
-                  console.log('FOUND PARENT? ', parentNode, treeDetails);
-                  
+  function createTreeNode(anchor: any) {
+    if (anchor) {
+      const anchorSpouse = treeDetails[anchor.spouses[0]];
+      const anchorChildren = anchor?.children?.reduce((children: any, currentChild: any) => ([
+        ...children, treeDetails[currentChild]
+      ]), []);
 
-                  if (parentNode) {
-                    return (
-                      <div className="text-danger">
-                        {createTreeNode(p)}
-                      </div>
-                    );
-                  }
-                })}
+      return (
+        <div className="d-flex align-items-center flex-column text-center household">
+          {anchor ? (
+            <>
+              <div className="d-flex justify-content-between nodes-row parents">
+                <TreeNodeBubble node={anchor} onClick={() => {}} onHover={() => {}} /> 
+                <TreeNodeBubble node={anchorSpouse} onClick={() => {}} onHover={() => {}} /> 
               </div>
-              |||
+              divider
             </>
           ) : ''}
-          <div className="member-siblings d-flex justify-content-between">
-            <div className="current-member-root">
-              <div className="d-flex flex-column align-items-center">
-                {member?.first_name}
-                <div className="d-flex justify-content-between member-children">
-                  {member?.children?.map((child: any) => {
-                    const childNode = treeDetails.find((n: any) => n.id === child.id);
-
-                    if (childNode) {
-                      return (
-                        <div>
-                          {createTreeNode(child)}
-                        </div>
-                      );
-                    }
-                  })}
-                </div>
+          {anchorChildren?.length ? (
+            <div className="nodes-row children d-flex justify-content-between children">
+              <div className="d-flex justify-content-between member-children">
+                {anchorChildren?.map((child: any) => (
+                  <div>
+                    {createTreeNode(child)}
+                  </div>
+                ))}
               </div>
             </div>
-            {member?.siblings?.map((sibling: any) => {
-              const siblingNode = treeDetails.find((n: any) => n.id === sibling.id);
-
-              if (siblingNode) {
-                return (
-                  <div className="text-danger">
-                    {createTreeNode(sibling)}
-                  </div>
-                );
-              }
-            })}
-          </div>
+          ) : ''}
         </div>
       );
     }
-
-    return '';
   }
 
   function buildFamilyTree() {
     if (treeDetails) {
-      const rootMember = treeDetails[0];
-      const rootLi = createTreeNode(rootMember);
+      const orderedTreeMembers: any = [];
+      // get oldest family member te determine tree root 
+      const orderedIds = Object.keys(treeDetails).sort((a: any, b: any) => {
+        if (treeDetails[a]?.age > treeDetails[b]?.age) {
+          return -1;
+        }
+
+        return 1;
+      });
+
+      orderedIds.forEach((id: any) => {
+        // @ts-ignore
+        orderedTreeMembers.push(treeDetails[id]);
+      });
+
+      const anchor = treeDetails[orderedIds[0]];
+      const rootLi = createTreeNode(anchor);
 
       return rootLi;
     }

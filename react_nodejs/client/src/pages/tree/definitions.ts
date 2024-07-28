@@ -4,6 +4,7 @@ export interface DFamilyTree {
   id: number;
   name: string;
   public: boolean;
+  dob: ,
   members?: DUserDTO[];
   authorized_ips: string;
   active: boolean;

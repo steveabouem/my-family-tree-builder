@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import GlobalContext from '../../context/creators/global.context';
 import Page from '../common/Page';
-import { DProfileProps } from '../user/definitions';
+import {  } from '../user/definitions';
 
 const Family = ({ updateUser }: DProfileProps): JSX.Element => {
   const { theme } = React.useContext(GlobalContext);
