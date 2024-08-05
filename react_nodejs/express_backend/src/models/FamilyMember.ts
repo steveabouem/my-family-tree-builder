@@ -12,13 +12,13 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
   declare user_id: number;
-  declare age: number;
+  declare age: number | null;
   declare dob: string;
   declare description: string;
   declare first_name: string;
   declare gender: number; //1:M, 2:F
-  declare parent_1: number; // father, nullable
-  declare parent_2: number; // mother
+  declare parent_1: number | null; // father, nullable
+  declare parent_2: number | null; // mother
   declare email: string;
   declare last_name: string;
   declare imm_family: number;
@@ -41,7 +41,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   get FamilyMemberUserId(): NonAttribute<number> {
     return this.user_id;
   }
-  get familyMemberAge(): NonAttribute<number> {
+  get familyMemberAge(): NonAttribute<number | null> {
     return this.age;
   };
   get familyMemberDOB(): NonAttribute<string> {
@@ -59,10 +59,10 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   get familymemberGender(): NonAttribute<number> {
     return this.gender;
   }
-  get familyMemberParent1(): NonAttribute<number> {
+  get familyMemberParent1(): NonAttribute<number | null> {
     return this.parent_1;
   };
-  get familyMemberParent2(): NonAttribute<number> {
+  get familyMemberParent2(): NonAttribute<number | null> {
     return this.parent_2;
   };
   get familyMemberEmail(): NonAttribute<string> {
@@ -111,8 +111,8 @@ FamilyMember.init(
     parent_2: { type: DataTypes.INTEGER },
     email: { type: DataTypes.STRING },
     last_name: { type: DataTypes.STRING },
-    imm_family: { type: DataTypes.INTEGER },
-    marital_status: { type: DataTypes.STRING },
+    imm_family: { type: DataTypes.INTEGER, allowNull: true },
+    marital_status: { type: DataTypes.STRING, allowNull: true },
     occupation: { type: DataTypes.STRING, allowNull: true },
     partner: { type: DataTypes.INTEGER, allowNull: true },
     profile_url: { type: DataTypes.STRING, allowNull: true },

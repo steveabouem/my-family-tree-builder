@@ -9,10 +9,8 @@ import GlobalContext from "../../context/creators/global.context";
 import { service } from "../../services";
 
 const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX.Element => {
-  // !: For now I will not distinguish between the 2.Will use fam as central entity (seen README)
   // ? single form here to build the treeManagerFormFields. I might add an option on each tree node to allow adding a link for that specific Node. 
   // ? hat will allow for extended families without having to also deal with the families endpoint **/
-  // const [motherName, setMotherName] = React.useState<string>('');
   const { currentUser } = React.useContext(FamilyTreeContext);
   const { updateModal, toggleLoading } = React.useContext(GlobalContext);
   const [trees, setTrees] = React.useState<number[]>([]);
@@ -80,7 +78,7 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
   const siblingsFieldArray = React.useMemo((): DFormField[] => {
     const range: number[] = Array.from({ length: numberOfSiblings }, (abstractItem: unknown, index: number) => index);
     const fields = range.reduce((list: DFormField[], siblingIndex: number) => (
-      [...list, { 
+      [...list, {
         fieldName: `siblings[${siblingIndex}].first_name`,
         label: <Trans>first_name_of_sibling {siblingIndex + 1}</Trans>,
         type: 'text',

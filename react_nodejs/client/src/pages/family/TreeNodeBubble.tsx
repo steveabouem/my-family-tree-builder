@@ -9,17 +9,20 @@ interface DTreeNodeBubbleProps {
 }
 
 function TreeNodeBubble({ node, onClick, onHover }: DTreeNodeBubbleProps) {
+  console.log(node?.id);
 
   return (
-    <Card className="bg-dark text-white">
-      <Image roundedCircle src={node?.profile_url || ''} />
-      <Card.ImgOverlay>
-        <Card.Title>{node?.first_name?.split('')[0] || ''} {node?.last_name?.split('')[0] || ''}</Card.Title>
-        <Card.Text>Description</Card.Text>
-        <Card.Text>
-          {/* {node?.description || ''} */}
-        </Card.Text>
-      </Card.ImgOverlay>
+    <Card style={{ width: '150px', height: '150px', borderRadius: '300px', background: '#d59949', border: '2px solid white' }}>
+      <Image roundedCircle src={node?.profile_url || ''} height={'30%'} width={'30%'} style={{ border: '2px solid', background: 'white' }} />
+      {/* <Card.Title color='secondary'>{node?.first_name || ''}</Card.Title> */}
+      <Card.Text style={{ overflow: 'hidden', height: '50%', textAlign: 'center' }}>
+        <p>
+          {node?.first_name || ''}
+        </p>
+        <p>
+          {node?.description || ''}
+        </p>
+      </Card.Text>
     </Card>
   );
 }

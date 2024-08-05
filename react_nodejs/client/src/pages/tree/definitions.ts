@@ -57,18 +57,19 @@ interface DSpouseDetails {
 }
 
 export interface DTreeNode {
-    id: string;
-    hasSubTree?: boolean;
-    gender: 'male' | 'female';
-    first_name: string;
-    last_name: string;
-    age: number;
-    marital_status?: string;
-    profile_url?: string;
-    parents: DParentDetails[];
-    siblings: DSiblingsDetails[];
-    spouses: DSpouseDetails[];
-    children: DSiblingsDetails[];
+  id: string;
+  hasSubTree?: boolean;
+  gender: 'male' | 'female';
+  first_name: string;
+  last_name: string;
+  age: number;
+  description?: string;
+  marital_status?: string;
+  profile_url?: string;
+  parents: DParentDetails[];
+  siblings: DSiblingsDetails[];
+  spouses: DSpouseDetails[];
+  children: DSiblingsDetails[];
 }
 
 /* END */

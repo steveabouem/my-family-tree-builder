@@ -9,7 +9,7 @@ import { service } from "../../services";
 import GlobalContext from "../../context/creators/global.context";
 import { DTreeNode } from "./definitions";
 import TreeNodeBubble from "../family/TreeNodeBubble";
-import('./chatGPT.tree.scss')
+import { Col, Row } from "react-bootstrap";
 
 const ViewFamilyTree = () => {
   const { currentFamilyTree, updateCurrentFamilyTree } = React.useContext(FamilyTreeContext);
@@ -41,62 +41,75 @@ const ViewFamilyTree = () => {
     return null;
   }, [currentFamilyTree]);
 
-  function createTreeNode(anchor: any) {
-    if (anchor) {
-      const anchorSpouse = treeDetails[anchor.spouses[0]];
-      const anchorChildren = anchor?.children?.reduce((children: any, currentChild: any) => ([
-        ...children, treeDetails[currentChild]
-      ]), []);
+  function createTreeNodes(anchor: any, step: number, advance: (step: number) => number) {
+    let anchorSpouse: any = null;
+    let anchorChildren: any = null;
+    let anchorSiblings: any = null;
+    console.log('\n +++++++++++ANCHOR ID AND STEP +++++++++++ \n ', anchor?.id, step);
+
+    if (anchor?.id) {
+      if (anchor?.spouses?.length) {
+        console.log('ANCHOR SPOUSE ', anchor?.spouses);
+        anchorSpouse = data[anchor.spouses[0]];
+      }
+
+      if (anchor?.children?.length) {
+        anchorChildren = anchor.children.reduce((children: any, currentChildId: any) => {
+          console.log('curr child ID ', currentChildId);
+
+          return ([
+            ...children, { ...data[currentChildId] }
+          ])
+        }, []);
+      }
+
+      if (anchor?.siblings?.length) {
+        console.log('anchor siblings');
+        anchorSiblings = anchor.siblings.reduce((siblings: any, currentSiblingId: any) => {
+          console.log('ANCHOR SIBLING ', currentSiblingId);
+
+          return ([
+            ...siblings, { ...data[currentSiblingId] }
+          ])
+        }, []);
+      }
 
       return (
-        <div className="d-flex align-items-center flex-column text-center household">
-          {anchor ? (
-            <>
-              <div className="d-flex justify-content-between nodes-row parents">
-                <TreeNodeBubble node={anchor} onClick={() => {}} onHover={() => {}} /> 
-                <TreeNodeBubble node={anchorSpouse} onClick={() => {}} onHover={() => {}} /> 
-              </div>
-              divider
-            </>
-          ) : ''}
-          {anchorChildren?.length ? (
-            <div className="nodes-row children d-flex justify-content-between children">
-              <div className="d-flex justify-content-between member-children">
-                {anchorChildren?.map((child: any) => (
-                  <div>
-                    {createTreeNode(child)}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : ''}
-        </div>
+        <Col>
+          <Row >
+            {anchorSiblings?.map((s: any, i: number) => {
+              if (s?.id) {
+                console.log("MA SIBLING  ", s);
+
+                return <Col><TreeNodeBubble node={s} onClick={() => { }} onHover={() => { }} /></Col>;
+              }
+            })}
+            <Col>
+              <Row>
+                <TreeNodeBubble node={anchor} onClick={() => { }} onHover={() => { }} />
+                {anchorSpouse?.id && <TreeNodeBubble node={anchorSpouse} onClick={() => { }} onHover={() => { }} />}
+              </Row>
+            </Col>
+          </Row >
+          <Row>
+            {anchorChildren?.map((child: any) => {
+              if (child?.id) {
+                console.log('MA CHILD ', child);
+                return (
+                  <>
+                    <Col><TreeNodeBubble node={child} onClick={() => { }} onHover={() => { }} /></Col>
+                  </>
+                );
+              }
+            })}
+          </Row>
+        </Col >
       );
     }
   }
 
   function buildFamilyTree() {
-    if (treeDetails) {
-      const orderedTreeMembers: any = [];
-      // get oldest family member te determine tree root 
-      const orderedIds = Object.keys(treeDetails).sort((a: any, b: any) => {
-        if (treeDetails[a]?.age > treeDetails[b]?.age) {
-          return -1;
-        }
-
-        return 1;
-      });
-
-      orderedIds.forEach((id: any) => {
-        // @ts-ignore
-        orderedTreeMembers.push(treeDetails[id]);
-      });
-
-      const anchor = treeDetails[orderedIds[0]];
-      const rootLi = createTreeNode(anchor);
-
-      return rootLi;
-    }
+    if (data) { }
   }
 
   React.useEffect(() => {
@@ -118,16 +131,311 @@ const ViewFamilyTree = () => {
       });
   }, []);
 
-
   return (
     <Page subtitle="" title={`${currentFamilyTree?.name || ''}`}>
       <div className="tree">
-        <ul>
-          {buildFamilyTree()}
-        </ul>
+        {Object.values(orderedData).map((member: any) => {
+          let level = 0;
+          function advance(step: number) { return level++ };
+          return createTreeNodes(member, level, advance);
+        })}
       </div>
     </Page >
   );
 }
 
-export default ViewFamilyTree 
+export default ViewFamilyTree
+
+const data: any = {
+  "1": {
+    "id": 1,
+    "age": 30,
+    "dob": "01/01/1994",
+    "description": "Test 4th generation",
+    "first_name": "SELF",
+    "gender": 1,
+    "email": "s4@b.com",
+    "last_name": "Abwm 3",
+    "marital_status": "Single",
+    "children": [
+      5,
+      6
+    ],
+    "parents": [
+      3
+    ],
+    "siblings": [
+      4
+    ],
+  },
+  "2": {
+    "id": 2,
+    "first_name": "MOTHER",
+    "last_name": "Abanda",
+    "dob": "1959/01/21",
+    "profile_url": "https://randomuser.me/api/portraits/women/62.jpg",
+    "age": 65,
+    "gender": 2,
+    "children": [
+      1
+    ],
+    "spouses": [3],
+    "siblings": [],
+    "parents": []
+  },
+  "3": {
+    "id": 3,
+    "first_name": "FATHER",
+    "last_name": "Abanda",
+    "dob": "1955/01/21",
+    "profile_url": "https://randomuser.me/api/portraits/men/91.jpg",
+    "age": 69,
+    "gender": 1,
+    "children": [
+      1
+    ],
+    "spouses": [
+      2
+    ],
+    "siblings": [],
+    "parents": []
+  },
+  "4": {
+    "id": 4,
+    "age": 27,
+    "dob": "2017/01/21",
+    "first_name": "SISTER",
+    "gender": 2,
+    "email": "clocl@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/women/69.jpg",
+    "children": [
+      7,
+      8
+    ],
+    "parents": [
+      2,
+      3
+    ],
+    "siblings": [
+      1
+    ]
+  },
+  "5": {
+    "id": 5,
+    "age": 10,
+    "dob": "2014/01/21",
+    "first_name": "SON",
+    "gender": 1,
+    "email": "jj@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/lego/1.jpg",
+    "parents": [
+      1
+    ],
+    "siblings": [
+      6
+    ]
+  },
+  "6": {
+    "id": 6,
+    "age": 10,
+    "dob": "2024/01/21",
+    "first_name": "DAUGHTER",
+    "gender": 2,
+    "email": "dr@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/women/26.jpg",
+    "parents": [
+      1
+    ],
+    "siblings": [
+      5
+    ]
+  },
+  "7": {
+    "id": 7,
+    "age": 5,
+    "dob": "2024/01/21",
+    "first_name": "Grandchild one",
+    "gender": 2,
+    "email": "drj@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/women/9.jpg",
+    "parents": [
+      4
+    ],
+    "siblings": [
+      8
+    ]
+  },
+  "8": {
+    "id": 8,
+    "age": 1,
+    "dob": "2024/01/21",
+    "first_name": "Great grandchild one",
+    "gender": 2,
+    "email": "drj@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/women/68.jpg",
+    "parents": [
+      4
+    ],
+    "siblings": [
+      7
+    ]
+  }
+}
+
+const orderedData = {
+  "0": {
+    "id": 3,
+    "first_name": "FATHER",
+    "last_name": "Abanda",
+    "dob": "1955/01/21",
+    "profile_url": "https://randomuser.me/api/portraits/men/91.jpg",
+    "age": 69,
+    "gender": 1,
+    "children": [
+      1
+    ],
+    "spouses": [
+      2
+    ],
+    "siblings": [],
+    "parents": []
+  },
+  "1": {
+    "id": 2,
+    "first_name": "MOTHER",
+    "last_name": "Abanda",
+    "dob": "1959/01/21",
+    "profile_url": "https://randomuser.me/api/portraits/women/62.jpg",
+    "age": 65,
+    "gender": 2,
+    "children": [
+      1
+    ],
+    "spouses": [
+      3
+    ],
+    "siblings": [],
+    "parents": []
+  },
+  "2": {
+    "id": 1,
+    "age": 30,
+    "dob": "01/01/1994",
+    "description": "Test 4th generation",
+    "first_name": "SELF",
+    "gender": 1,
+    "email": "s4@b.com",
+    "last_name": "Abwm 3",
+    "marital_status": "Single",
+    "children": [
+      5,
+      6
+    ],
+    "parents": [
+      3
+    ],
+    "siblings": [
+      4
+    ]
+  },
+  "3": {
+    "id": 4,
+    "age": 27,
+    "dob": "2017/01/21",
+    "first_name": "SISTER",
+    "gender": 2,
+    "email": "clocl@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/women/69.jpg",
+    "children": [
+      7,
+      8
+    ],
+    "parents": [
+      2,
+      3
+    ],
+    "siblings": [
+      1
+    ]
+  },
+  "4": {
+    "id": 5,
+    "age": 10,
+    "dob": "2014/01/21",
+    "first_name": "SON",
+    "gender": 1,
+    "email": "jj@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/lego/1.jpg",
+    "parents": [
+      1
+    ],
+    "siblings": [
+      6
+    ]
+  },
+  "5": {
+    "id": 6,
+    "age": 10,
+    "dob": "2024/01/21",
+    "first_name": "DAUGHTER",
+    "gender": 2,
+    "email": "dr@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/women/26.jpg",
+    "parents": [
+      1
+    ],
+    "siblings": [
+      5
+    ]
+  },
+  "6": {
+    "id": 7,
+    "age": 5,
+    "dob": "2024/01/21",
+    "first_name": "Grandchild one",
+    "gender": 2,
+    "email": "drj@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/women/9.jpg",
+    "parents": [
+      4
+    ],
+    "siblings": [
+      8
+    ]
+  },
+  "7": {
+    "id": 8,
+    "age": 1,
+    "dob": "2024/01/21",
+    "first_name": "Great grandchild one",
+    "gender": 2,
+    "email": "drj@.abd.cm",
+    "last_name": "Abanda",
+    "marital_status": "Single",
+    "profile_url": "https://randomuser.me/api/portraits/women/68.jpg",
+    "parents": [
+      4
+    ],
+    "siblings": [
+      7
+    ]
+  }
+}

@@ -11,7 +11,7 @@ const sequelize = new Sequelize(DB || '', DB_USER || '', DB_PWD, {
     dialect: 'mysql'
 });
 // Sync the models with the database
-sequelize.sync().then(() => {
+sequelize.sync({alter: true}).then(() => {
     console.log('Tables created successfully.');
 }).catch((error) => {
     console.error('Unable to create tables:', error);

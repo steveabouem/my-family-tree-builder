@@ -7,7 +7,7 @@ import { DFamilyMemberRecord, DFamilyTreeNodeDTO } from "./familyMember.definiti
 import { Op } from "sequelize";
 import logger from "../../utils/logger";
 import dayjs from "dayjs";
-import profiles from '../../utils/assets/dummy/profiles'
+import profiles from '../../utils/dummy/profiles';
 
 class FamilyMemberController extends BaseController<any> {
   constructor() {
@@ -37,164 +37,195 @@ class FamilyMemberController extends BaseController<any> {
 
 
   /*
+  ? Fill in the first 3 generations of a given tree. Each member will be able to also
+  ? be updated with their own family unit once tree is created (see this.addFamilyUnit)
   ? expects form data with all the members of the immediate family of the current user
   ? creates FamilyMember record for each of the members declared
   ? returns tree data objects array
   */
   public async createFamilyUnit(members: any) { // ! TODO: no any, easy fix
     //! TODO:  before running the bulk create, create an array with first, last name and dob. Run a WHERE IN to find duplicates and if any found, avoid creating new record but instead use existing to build blueprint
-    const today = dayjs();  
+    const today = dayjs();
     let treeMembersById: any = {};
     let father: any = {}
-    let currentFamilyMember: any = {};
+    let mother: any = {}
     let currentFamilyMemberSpouse: any = {};
 
-    if (!members?.currentUser) {
-      logger.error('! FamilyMember.createFamilyUnit !. No current user provided.');
-      return [];
-    }
-
     try {
-      // if user has no Tree, create a familyMember record. Otherwise, use the existing record to populate RFT mapping
-      const userFamilyMemberRecord = await FamilyMember.findByPk(members?.currentUser?.dataValues?.id);
-
-      if (!userFamilyMemberRecord?.dataValues) {
-        currentFamilyMember = (
-          await FamilyMember.create({
-            ...members.currentUser.dataValues, age: today.diff(dayjs(members.currentUser.dob), 'years'),
-            profile_url: profiles[Math.floor(Math.random() * 200) + 1],
-          }))?.dataValues;
-      } else {
-        currentFamilyMember = userFamilyMemberRecord.dataValues;
-      }
-
-      // update current user's hasmap values
-      treeMembersById[currentFamilyMember.id] = {
-        ...currentFamilyMember, siblings: [], parents: [], spouses: [], children: []
-      };
-
-      const mother = await FamilyMember.create({
-        ...members.mother, profile_url: profiles[Math.floor(Math.random() * 200) + 1],
-        age: today.diff(dayjs(members.mother.dob), 'years'),
-        gender: 2
-      });
-      // update mother's hasmap values
-      treeMembersById[mother.dataValues.id] = { ...mother.dataValues, children: [currentFamilyMember.id], spouses: [], siblings: [], parents: [] };
-      // add mother to the current user's hasmap values
-      treeMembersById[currentFamilyMember.id].parents.push(mother.dataValues.id)
-
-      if (members?.father) {
-        father = await FamilyMember.create({
-          ...members.father,
-          profile_url: profiles[Math.floor(Math.random() * 200) + 1],
-          age: today.diff(dayjs(members.father.dob), 'years'),
-          gender: 1
-        });
-        // update tree members map (father, mother and mutual relationship)
-        treeMembersById[father.dataValues.id] = {
-          ...father.dataValues,
-          children: [currentFamilyMember.id],
-          spouses: [mother?.dataValues?.id],
-          siblings: [],
-          parents: []
+      if (members?.current) {
+        const currentFamilyMember: any = members.current;
+        // update current user's hasmap values
+        treeMembersById[currentFamilyMember.id] = {
+          ...currentFamilyMember, siblings: [], parents: [], spouses: [], children: []
         };
-        treeMembersById[mother?.dataValues?.id].spouses = [father?.dataValues?.id];
-        //update current user's hasmap values with father
-        treeMembersById[currentFamilyMember.id].parents.push(father?.dataValues?.id)
-      }
+        if (members?.mother) {
+          console.log('Mother provided ', members.mother);
 
-      if (members?.siblings?.length) {
-        const siblingsRecords = await FamilyMember.bulkCreate(
-          members.siblings.map((s: any) => (
-            {...s, age: today.diff(dayjs(s.dob), 'years')}
-          ))).catch((e: any) => {
-            logger.error('! createFamilyUnit ! bulk create siblings', e);
-            return null;
+          mother = await FamilyMember.create({
+            ...members.mother, profile_url: profiles[Math.floor(Math.random() * 200) + 1],
+            age: today.diff(dayjs(members.mother.dob), 'years'),
+            gender: 2
           });
 
-        siblingsRecords?.forEach(({ dataValues }: any) => {
-          const siblingsParents = [];
-          const siblingsMappedIds = siblingsRecords.filter((r: any) => (
-            r.id !== dataValues.id));
-
-          if (currentFamilyMember?.id) {
-            siblingsParents.push(currentFamilyMember.id)
-          }
-
-          if (currentFamilyMemberSpouse?.id) {
-            siblingsParents.push(currentFamilyMemberSpouse.id)
-          }
-
-          treeMembersById[dataValues.id] = {
-            ...dataValues,
-            siblings: [...siblingsMappedIds,
-            currentFamilyMember.id],
-            parents: siblingsParents, spouses: [], children: []
-          };
-        })
-      }
-
-      if (members?.spouse) {
-        // if spouse has no familyMember record, create it, otherwise use existing record. Add it to RFT mapping 
-        const spouseFamilyMemberRecord = await FamilyMember.findOne({
-          where: {
-            [Op.and]: [{ first_name: members.spouse.first_name }, { last_name: members.spouse.last_name }, { dob: members.spouse.dob }, { partner: currentFamilyMember.id }]
-          }
-        });
-
-        if (spouseFamilyMemberRecord) {
-          currentFamilyMemberSpouse = spouseFamilyMemberRecord.dataValues;
-        } else {
-          const spouseRecord = await FamilyMember.create({ ...members.spouse, partner: currentFamilyMember.id, profile_url: profiles[Math.floor(Math.random() * 200) + 1] });
-          currentFamilyMemberSpouse = spouseRecord.dataValues;
+          // update mother's hasmap values
+          treeMembersById[mother.dataValues.id] = { ...mother.dataValues, children: [currentFamilyMember.id], spouses: [], siblings: [], parents: [] };
+          // add mother to the current user's hasmap values
+          treeMembersById[currentFamilyMember.id].parents.push(mother.dataValues.id)
         }
 
-        await FamilyMember.update({ partner: currentFamilyMemberSpouse.id }, { where: { id: { [Op.eq]: currentFamilyMember.id } } })
-        // update tree members map (spouses array)
-        treeMembersById[currentFamilyMemberSpouse.id] = {
-          ...currentFamilyMemberSpouse, children: [], parents: [],
-          siblings: [], spouses: [currentFamilyMember.id]
-        };
-        treeMembersById[currentFamilyMember.id].spouses = [currentFamilyMemberSpouse.id]
-      }
+        if (members?.father) {
+          console.log('father provided ', members.father);
 
-      if (members?.children?.length) {
-        const childrenRecords = await FamilyMember.bulkCreate(members.children).catch((e: any) => {
-          logger.error('! createFamilyUnit ! bulk create children', e);
-          return null;
-        });
+          father = await FamilyMember.create({
+            ...members.father,
+            profile_url: profiles[Math.floor(Math.random() * 200) + 1],
+            age: today.diff(dayjs(members.father.dob), 'years'),
+            gender: 1
+          });
+          // update tree members map (father, mother and mutual relationship)
+          treeMembersById[father.dataValues.id] = {
+            ...father.dataValues,
+            children: [currentFamilyMember.id],
+            spouses: mother?.dataValues ? [mother.dataValues.id] : [],
+            siblings: [],
+            parents: []
+          };
+          if (mother?.dataValues) {
+            treeMembersById[mother?.dataValues?.id].spouses = [father?.dataValues?.id];
+          }
+          //update current user's hasmap values with father
+          treeMembersById[currentFamilyMember.id].parents.push(father?.dataValues?.id)
+        }
 
-        if (childrenRecords?.length) {
-          // update blueprint with all children and their relation to user and spouse (ensure the siblings array of each child does not contain their own id)
-          const childrenMappedIds = childrenRecords?.map(({ dataValues }: any) => (dataValues.id)) || [];
+        if (members?.siblings?.length) {
+          console.log('siblings provided ', members.siblings);
+          const siblingsRecords = await FamilyMember.bulkCreate(
+            members.siblings.map((s: any) => (
+              { ...s, age: today.diff(dayjs(s.dob), 'years'), parent_1: mother?.id || null }
+            ))).catch((e: any) => {
+              logger.error('! createFamilyUnit ! bulk create siblings #106', e);
+              return null;
+            });
 
-          treeMembersById[currentFamilyMember.id].children = childrenMappedIds;
-          childrenRecords.forEach(({ dataValues }: any) => {
-            const childsParents = [];
+          siblingsRecords?.forEach(({ dataValues }: any) => {
+            const siblingsParents = [];
+            const siblingsMappedIds = siblingsRecords.filter((r: any) => (
+              r.id !== dataValues.id));
 
             if (currentFamilyMember?.id) {
-              childsParents.push(currentFamilyMember.id)
+              siblingsParents.push(currentFamilyMember.id)
             }
 
             if (currentFamilyMemberSpouse?.id) {
-              childsParents.push(currentFamilyMemberSpouse.id)
+              siblingsParents.push(currentFamilyMemberSpouse.id)
             }
 
             treeMembersById[dataValues.id] = {
               ...dataValues,
-              profile_url: profiles[Math.floor(Math.random() * 200) + 1],
-              parents: childsParents,
-              siblings: [...childrenMappedIds.filter((id: any) => id !== dataValues.id), currentFamilyMember.id], spouses: []
+              siblings: [...siblingsMappedIds,
+              currentFamilyMember.id],
+              parents: siblingsParents, spouses: [], children: []
+            };
+          })
+        }
+
+        if (members?.spouse) {
+          console.log('spouse provided ', members.spouse);
+
+          // if spouse has no familyMember record, create it, otherwise use existing record. Add it to RFT mapping 
+          const spouseFamilyMemberRecord = await FamilyMember.findOne({
+            where: {
+              [Op.and]: [{ first_name: members.spouse.first_name }, { last_name: members.spouse.last_name }, { dob: members.spouse.dob }, { partner: currentFamilyMember.id }]
             }
           });
+
+          if (spouseFamilyMemberRecord) {
+            currentFamilyMemberSpouse = spouseFamilyMemberRecord.dataValues;
+          } else {
+            const spouseRecord = await FamilyMember.create({ ...members.spouse, partner: currentFamilyMember.id, profile_url: profiles[Math.floor(Math.random() * 200) + 1] });
+            currentFamilyMemberSpouse = spouseRecord.dataValues;
+          }
+
+          await FamilyMember.update({ partner: currentFamilyMemberSpouse.id }, { where: { id: { [Op.eq]: currentFamilyMember.id } } })
+          // update tree members map (spouses array)
+          treeMembersById[currentFamilyMemberSpouse.id] = {
+            ...currentFamilyMemberSpouse, children: [], parents: [],
+            siblings: [], spouses: [currentFamilyMember.id]
+          };
+          treeMembersById[currentFamilyMember.id].spouses = [currentFamilyMemberSpouse.id]
         }
+
+        if (members?.children?.length) {
+          console.log('children provided ', members.children);
+
+          const childrenRecords = await FamilyMember.bulkCreate(members.children.map((c: any) => ({ ...c, parent_1: mother?.id || null }))).catch((e: any) => {
+            logger.error('! createFamilyUnit ! bulk create children #158', e);
+            return null;
+          });
+
+          if (childrenRecords?.length) {
+            // update blueprint with all children and their relation to user and spouse (ensure the siblings array of each child does not contain their own id)
+            const childrenMappedIds = childrenRecords?.map(({ dataValues }: any) => (dataValues.id)) || [];
+
+            treeMembersById[currentFamilyMember.id].children = childrenMappedIds;
+            childrenRecords.forEach(({ dataValues }: any) => {
+              const childsParents = [];
+
+              if (currentFamilyMember?.id) {
+                childsParents.push(currentFamilyMember.id)
+              }
+
+              if (currentFamilyMemberSpouse?.id) {
+                childsParents.push(currentFamilyMemberSpouse.id)
+              }
+
+              treeMembersById[dataValues.id] = {
+                ...dataValues,
+                profile_url: profiles[Math.floor(Math.random() * 200) + 1],
+                parents: childsParents,
+                siblings: [...childrenMappedIds.filter((id: any) => id !== dataValues.id), currentFamilyMember.id], spouses: []
+              }
+            });
+          }
+        }
+        console.log('Final tree memebers ', treeMembersById);
+      } else {
+        logger.error('! missing current family member');
       }
 
       return treeMembersById;
     } catch (e: unknown) {
-      logger.error('! create family unit. ', e);
+      logger.error('! create family unit. #191', e);
       return null;
     }
+  }
+
+  public async addFamilyUnit(data: any) {
+    //! TODO:  before running the bulk create, create an array with first, last name and dob. Run a WHERE IN to find duplicates and if any found, avoid creating new record but instead use existing to build blueprint
+    const {
+      treeId,
+      anchorId,
+      father,
+      mother,
+      siblings,
+      spouse,
+      children
+    } = data;
+    let subFamily: any = [];
+
+    if (!anchorId) {
+      logger.error('! FamilyMember.addFamilyUnit !. Member not provided.');
+    }
+
+    const anchorFamilyMemberRecord = await FamilyMember.findByPk(anchorId);
+
+    if (anchorFamilyMemberRecord?.dataValues) {
+      subFamily = await this.createFamilyUnit({ father, mother, siblings, spouse, children, current: anchorFamilyMemberRecord.dataValues });
+    } else {
+      logger.error('! FamilyMember.addFamilyUnit !. Member not provided.');
+    }
+
+    return subFamily;
   }
 
   // public async delete(req: Request, res: Response) {
@@ -224,43 +255,6 @@ class FamilyMemberController extends BaseController<any> {
 
   //   res.json(response);
   // }
-
-  public async getSiblings(req: Request, res: Response) {
-    const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
-    const member = req.body.member;
-    const treeId = req.body.id;
-    let siblings: number[] = [];
-
-    // try {
-    //   const currentTree = await FamilyMember.findAll({where: {[Op.eq]: treeId}});
-    //   if (currentTree) {
-    //     if (currentTree.members) {
-    //       treeMembers = [...JSON.parse(currentTree.members), newMember];
-    //       console.log({ treeMembers });
-    //     } else {
-    //       treeMembers = [newMember];
-    //     }
-
-    //     await currentTree.update({ members: JSON.stringify(treeMembers) });
-    //     response.status = 200;
-    //     response.error = false;
-    //     response.message = 'Family Member Added Succesfully';
-    //     res.status(200);
-    //   } else {
-    //     response.status = 400;
-    //     response.error = true;
-    //     response.message = 'Family Tree Does not Exist';
-    //     res.status(400);
-    //   }
-
-    // } catch (e: unknown) {
-    //   response.status = 400;
-    //   response.message = `Caught ERR ${e}`;
-    //   res.status(400);
-    // }
-
-    // res.json(response);
-  }
 
   public async getMembersChildren(req: Request, res: Response) {
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };

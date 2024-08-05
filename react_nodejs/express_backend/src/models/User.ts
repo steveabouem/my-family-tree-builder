@@ -157,7 +157,7 @@ User.init(
     },
     parent_2: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING,

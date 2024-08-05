@@ -17,12 +17,12 @@ router.use((req: Request, res: Response, next: NextFunction) => {
       }
     })
     .catch((e: unknown) => {
-        logger.error('! Family Tree middleware !', e);
-        res.status(403);
-        res.json('Unable to validate IP.');
-      });
+      logger.error('! Family Tree middleware !', e);
+      res.status(403);
+      res.json('Unable to validate IP.');
+    });
 
-  
+
   next();
 })
 
@@ -56,7 +56,12 @@ router.get('/members', (req: Request, res: Response) /**TODO: return type */ => 
 
 router.put('/members', (req: Request, res: Response) /**TODO: return type */ => {
   const familyTreeController = new FamilyTreeController();
-  familyTreeController.addMembers(req, res);
+  familyTreeController.addFamilyUnit(req, res);
+});
+
+router.get('/layouts', (req: Request, res: Response) /**TODO: return type */ => {
+  const familyTreeController = new FamilyTreeController();
+  familyTreeController.getTreeLayout(req, res);
 });
 
 export default router;

@@ -7,6 +7,7 @@ import FamilyMemberController from "../familyMember/FamilyMemberController";
 import logger from "../../utils/logger";
 import User from "../../models/User";
 import FamilyMember from "../../models/FamilyMember";
+import dayjs from "dayjs";
 
 class FamilyTreeController extends BaseController<any> {
   constructor() {
@@ -35,12 +36,13 @@ class FamilyTreeController extends BaseController<any> {
   /* 
     ? receives info on members of the family, 
     ? create the records for each members with the FamilyMemberController callback,
-    ? create the tree. 
-    ! Todo: IT's very likely that DB schema is modified to match the RFT structure 
+    ? creates the tree. 
+    ? can only be initiated by a registered user. 
+    ? Used for brand new tree, meaning registered user has no familyMember record for this tree yet
   */
   public async create(req: Request, res: Response) {
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
-
+    const today = dayjs();
     try {
       const {
         father,
@@ -54,11 +56,19 @@ class FamilyTreeController extends BaseController<any> {
       } = req.body;
       const currentUser = await User.findByPk(user_id);
 
-      if (currentUser) {
+      if (currentUser?.dataValues) {
         const familyMemberController = new FamilyMemberController();
-        // create all the records for family members described in form and return them, along with the RFT properties
+        const userFamilyMemberRecord = await FamilyMember.create({
+          ...currentUser.dataValues, id: undefined, user_id, created_by: user_id,
+          age: currentUser?.dob ? today.diff(dayjs(currentUser.dob), 'years') : null,
+        })
+          .catch((e: unknown) => {
+            logger.error('!family tree.create current member ', e);
+          });
+
+        // create all the records for family members described in form and return them
         const familyMembers: any = await familyMemberController
-          .createFamilyUnit({ siblings, father, mother, currentUser, spouse, children })
+          .createFamilyUnit({ siblings, father, mother, current: userFamilyMemberRecord?.dataValues, spouse, children })
           .catch((e: unknown) => {
             logger.info('BREAKS : ', e);
           });
@@ -91,6 +101,68 @@ class FamilyTreeController extends BaseController<any> {
     res.json(response);
   }
 
+  /* 
+    ? add a family around existing tree member.
+    ? anchor may or may not have a user profile 
+    ? can only be initiated by a registered user
+  */
+  public async addFamilyUnit(req: Request, res: Response) {
+    const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
+
+    if (req.body?.anchorId) {
+      try {
+        const currentTree = await FamilyTree.findByPk(req.body?.treeId)
+          .catch((e: any) => {
+            logger.error('! FamilyTree.addUnit', e);
+          });
+        const anchorFamilyMemberRecord = await FamilyMember.findByPk(req.body.anchorId)
+          .catch((e: unknown) => {
+            logger.error('!family tree.add sub #119 ', e);
+          });
+
+        if (currentTree?.dataValues && anchorFamilyMemberRecord?.dataValues) {
+          console.log('\n \n FOUND TREE ND ANCHOR');
+
+          const familyMemberController = new FamilyMemberController();
+          // create all the records for family members described in form and return them
+          const anchorsFamily: any = await familyMemberController
+            .addFamilyUnit({ ...req.body, current: anchorFamilyMemberRecord.dataValues })
+            .catch((e: unknown) => {
+              logger.info('BREAKS : ', e);
+            });
+
+          if (anchorsFamily) {
+            const updatedMembersList = { ...JSON.parse(currentTree.members), ...anchorsFamily };
+            console.log(`\n\n new list , \n ${JSON.stringify(updatedMembersList)}, \n ${JSON.parse(currentTree.members)}`);
+
+            await FamilyTree.update({ members: JSON.stringify(updatedMembersList) }, { where: { id: { [Op.eq]: req.body.treeId } } });
+          }
+          console.log('\n \n RESULTING SUB ', anchorsFamily);
+
+          response.payload = anchorsFamily;
+          response.status = 200;
+          response.error = false;
+          response.message = 'Family member updated Succesfully';
+        } else {
+          response.status = 400;
+          response.message = 'FAmily member recored not found';
+          res.status(400);
+        }
+      } catch (e: unknown) {
+        logger.error('! FamilyTree.addUnit !', e);
+        response.status = 400;
+        response.message = 'FAIL';
+        res.status(400);
+      }
+    } else {
+      logger.error('! FamilyTree.addUnit ! No anchor provided');
+      response.error = true;
+      response.message = 'No anchor provided';
+    }
+
+    return res.json(response);
+  }
+
   public async getOne(req: Request, res: Response) {
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
 
@@ -100,31 +172,31 @@ class FamilyTreeController extends BaseController<any> {
       // const canViewTree = await this.canUserViewTree(Number(id), userId);
 
       // if (canViewTree) {
-        // @ts-ignore 
-        const tree = await FamilyTree.findByPk(id).catch((e: unknown) => {
-          logger.error('! FamilyTree.getOne !', e);
-          response.status = 500;
-          response.message = 'Tree cannot be retrieved.';
-          res.status(500);
-        });
+      // @ts-ignore 
+      const tree = await FamilyTree.findByPk(id).catch((e: unknown) => {
+        logger.error('! FamilyTree.getOne !', e);
+        response.status = 500;
+        response.message = 'Tree cannot be retrieved.';
+        res.status(500);
+      });
 
-        response.status = 200;
-        response.error = false;
-        res.status(200);
+      response.status = 200;
+      response.error = false;
+      res.status(200);
 
-        if (tree) {
-          response.payload = tree;
-          response.message = 'Family Tree Fetched Succesfully';
+      if (tree) {
+        response.payload = tree;
+        response.message = 'Family Tree Fetched Succesfully';
 
-          req.session.details = {
-            ...req.session.details,
-            authenticated: true,
-            familyTree: tree
-          }
-          req.session.save();
-        } else {
-          response.message = 'Tree requested not found';
+        req.session.details = {
+          ...req.session.details,
+          authenticated: true,
+          familyTree: tree
         }
+        req.session.save();
+      } else {
+        response.message = 'Tree requested not found';
+      }
       // } else {
       //   res.status(403);
       //   response.status = 403;
@@ -136,6 +208,15 @@ class FamilyTreeController extends BaseController<any> {
       response.message = 'Tree cannot be retrieved.';
       res.status(500);
     }
+
+    res.json(response);
+  }
+
+  public async getTreeLayout(req: Request, res: Response) {
+    const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
+    const treeId = req.query?.id;
+    response.payload = `<div>Test HTML ${treeId}</div>`;
+    response.status = 200;
 
     res.json(response);
   }
@@ -234,27 +315,6 @@ class FamilyTreeController extends BaseController<any> {
 
   public async getMembers(req: Request, res: Response) {
     //! TODO: declare a DTO to match React-Family-tree typing below
-    /* {
-       "id": string;
-       "gender": "male" | "female";
-       "parents": {
-           "id": string,
-           "type": "blood"
-         }[];
-       "siblings": {
-         "id": string,
-         "type": "blood"
-       }[];
-       "spouses": {
-         "id": string,
-       "type": "married" | "divorced"
-       }[];
- 
-       "children": {
-         "id": string,
-         "type": "blood"
-       }[];
-     } */
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
     const userId = req.session?.details?.userId || 0;
     const id = req.query.id;
@@ -288,7 +348,7 @@ class FamilyTreeController extends BaseController<any> {
       response.status = 403;
       response.message = 'User is not allowed to view this tree.';
     }
-    console.log('\n ABOUT TO SEND RES', response);
+    console.log('\n \n \n ABOUT TO SEND RES', response);
 
     res.json(response);
   }
@@ -300,8 +360,8 @@ class FamilyTreeController extends BaseController<any> {
     });
 
     const members = JSON.parse(tree?.dataValues?.members || '[]');
-    console.log('\n WHAT I HAVE : ', userId, JSON.stringify(members));
-    
+    console.log('\n \n \n WHAT I HAVE : ', userId, JSON.stringify(members));
+
     if (members?.find((m: any) => m.id == userId)) {
       isPartOfTree = true;
     }
