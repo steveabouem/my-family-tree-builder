@@ -9,12 +9,14 @@ import { service } from "../../services";
 import GlobalContext from "../../context/creators/global.context";
 import { DTreeNode } from "./definitions";
 import TreeNodeBubble from "../family/TreeNodeBubble";
+import { Col, Container, Row } from "react-bootstrap";
 import('./tree.scss');
 
 const ViewFamilyTree = () => {
   const [rootId, setRootId] = React.useState<any>();
   const { currentFamilyTree, updateCurrentFamilyTree } = React.useContext(FamilyTreeContext);
-  const { toggleLoading, updateModal } = React.useContext(GlobalContext);
+  const { toggleLoading, updateModal, loading } = React.useContext(GlobalContext);
+  const [treeData, setTreeData] = React.useState<any>();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -35,12 +37,11 @@ const ViewFamilyTree = () => {
 
 
   React.useEffect(() => {
-    setRootId(data[0].id);
+    const parsedTree = currentFamilyTree.members;
     getCurrentTree()
       .then(({ data }) => {
         if (!data.error) {
           if (updateCurrentFamilyTree) updateCurrentFamilyTree(data.payload);
-          if (toggleLoading) toggleLoading(false);
         }
       })
       .catch(e => {
@@ -50,87 +51,52 @@ const ViewFamilyTree = () => {
           content: <Trans>error_modal_message</Trans>,
           title: <Trans>error_modal_title</Trans>,
         });
-        if (toggleLoading) toggleLoading(false);
       });
   }, []);
 
-  return (
-    <Page subtitle="" title={`${currentFamilyTree?.name || ''}`}>
+  React.useEffect(() => {
+    if (currentFamilyTree?.members) {
+      // @ts-ignore
+      const parsedMembers = JSON.parse(currentFamilyTree.members);
+      setRootId(parsedMembers[0].id);
+      setTreeData(parsedMembers);
+    }
+  }, [currentFamilyTree]);
 
-      <ReactFamilyTree
-        nodes={[...data]}
-        rootId={'1'}
-        width={50}
-        height={60}
-        renderNode={(node: any) => (
-          <TreeNodeBubble
-            // @ts-ignore
-            node={node}
-          />
-        )}
-      />
-    </Page >
-  );
+  React.useEffect(() => {
+    if (treeData?.length && rootId) {
+      // @ts-ignore
+      toggleLoading(false);
+    }
+  })
+  if (loading) {
+    return <div>Loading</div>;
+  } else {
+    return (
+      <Page subtitle="" title={`${currentFamilyTree?.name || ''}`}>
+        <Container fluid>
+          <Row>
+            <Col md-2></Col>
+            <Col md-8>
+              <ReactFamilyTree
+                nodes={treeData}
+                rootId={rootId}
+                width={50}
+                height={60}
+                renderNode={(node: any) => (
+                  <TreeNodeBubble
+                    // @ts-ignore
+                    node={node}
+                  />
+                )}
+              /></Col>
+            <Col md-2></Col>
+          </Row>
+        </Container>
+      </Page >
+    );
+  }
 }
 
-export default ViewFamilyTree
+export default ViewFamilyTree;
 
-const data: any = [
-  {
-    "id": "H-06WvsfJ",
-    "gender": "female",
-    "parents": [
-      {
-        "id": "1",
-      },{
-        "id": "2",
-      }
-    ],
-    "children": [],
-    "siblings": [
-     
-    ],
-    "spouses": [],
-    "name": "random NAme 24"
-  },
-  {
-    "id": '1',
-    "age": 30,
-    "dob": "01/01/1994",
-    "description": "Test 4th generation",
-    "first_name": "Steve 3",
-    "gender": 1,
-    "parent_1": null,
-    "parent_2": null,
-    "email": "s4@b.com",
-    "last_name": "Abwm 3",
-    "imm_family": null,
-    "marital_status": "Single",
-    "occupation": null,
-    "partner": null,
-    "profile_url": null,
-    "user_id": 1,
-    "created_by": 1,
-    "siblings": [],
-    "parents": [],
-    "spouses": [{id: '2'}],
-    "children": [{id: 'H-06WvsfJ'}],
-  },
-  {
-    "id": '2',
-    "first_name": "My Mom",
-    "last_name": "Abanda",
-    "dob": "1959/01/21",
-    "profile_url": "https://randomuser.me/api/portraits/men/0.jpg",
-    "age": 65,
-    "gender": 2,
-    "children": [
-      {id: 'H-06WvsfJ'}
-    ],
-    "spouses": [
-      {id: '1'}
-    ],
-    "siblings": [],
-    "parents": []
-  }
-]

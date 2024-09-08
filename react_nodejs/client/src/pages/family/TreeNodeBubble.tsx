@@ -1,5 +1,5 @@
 import React, { MouseEvent, useCallback } from 'react';
-import { div, Col, Container, Image, Row } from 'react-bootstrap';
+import {  Col, Container, Image, Row } from 'react-bootstrap';
 import { DTreeNode } from '../tree/definitions';
 
 interface DTreeNodeBubbleProps {
@@ -11,14 +11,15 @@ interface DTreeNodeBubbleProps {
 function TreeNodeBubble({ node}: DTreeNodeBubbleProps) {
   return (
     <div className={'root'} style={{
-      width: 70,
-      height: 80,
-      transform: `translate(${node.left * (70 / 2)}px, ${node.top * (80 / 2)}px)`
+      width: 170,
+      height: 180,
+      transform: `translate(${node.left * (170 / 2)}px, ${node.top * (180 / 2)}px)`
     }}>
+      <img src={node?.profile_url || ''} />
       <div
         className="inner"
       >
-        <div className={'id'}>{node.id}</div>
+        <div className={'id'}>{node.first_name}</div>
       </div>
     </div>
   );

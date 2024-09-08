@@ -48,7 +48,7 @@ class FamilyMemberController extends BaseController<any> {
     const today = dayjs();
     let treeMembersById: any = {};
     let father: any = {}
-    let mother: any = {}
+    let mother: any = null;
     let currentFamilyMemberSpouse: any = {};
 
     try {
@@ -56,53 +56,71 @@ class FamilyMemberController extends BaseController<any> {
         const currentFamilyMember: any = members.current;
         // update current user's hasmap values
         treeMembersById[currentFamilyMember.id] = {
-          ...currentFamilyMember, siblings: [], parents: [], spouses: [], children: []
+          ...currentFamilyMember, id: `${currentFamilyMember.id}`, siblings: [], parents: [], spouses: [], children: []
         };
         if (members?.mother) {
-          console.log('Mother provided ', members.mother);
-
           mother = await FamilyMember.create({
             ...members.mother, profile_url: profiles[Math.floor(Math.random() * 200) + 1],
             age: today.diff(dayjs(members.mother.dob), 'years'),
             gender: 2
+          }).catch(e => {
+            logger.error('FAILED TO CREATE MOTHER', e);
           });
 
-          // update mother's hasmap values
-          treeMembersById[mother.dataValues.id] = { ...mother.dataValues, children: [currentFamilyMember.id], spouses: [], siblings: [], parents: [] };
-          // add mother to the current user's hasmap values
-          treeMembersById[currentFamilyMember.id].parents.push(mother.dataValues.id)
+          if (mother?.dataValues?.id) {
+console.log('ITS HERE ', mother.dataValues);
+
+            // update mother's hasmap values
+            treeMembersById[mother.dataValues.id] = { ...mother.dataValues, id: `${mother.dataValues.id}`, children: [{ ...currentFamilyMember, id: `${currentFamilyMember.id}` }], spouses: [], siblings: [], parents: [] };
+            // add mother to the current user's hasmap values
+            treeMembersById[currentFamilyMember.id].parents.push({ ...mother.dataValues, id: `${mother.dataValues.id}` });
+            console.log('ADDED MOTHER', { mother })
+          }
         }
 
         if (members?.father) {
-          console.log('father provided ', members.father);
 
           father = await FamilyMember.create({
             ...members.father,
             profile_url: profiles[Math.floor(Math.random() * 200) + 1],
             age: today.diff(dayjs(members.father.dob), 'years'),
             gender: 1
-          });
-          // update tree members map (father, mother and mutual relationship)
-          treeMembersById[father.dataValues.id] = {
-            ...father.dataValues,
-            children: [currentFamilyMember.id],
-            spouses: mother?.dataValues ? [mother.dataValues.id] : [],
-            siblings: [],
-            parents: []
-          };
-          if (mother?.dataValues) {
-            treeMembersById[mother?.dataValues?.id].spouses = [father?.dataValues?.id];
+          })
+            .catch(e => {
+              logger.error('FAILED TO CREATE FATHER');
+            });
+
+          if (father?.dataValues?.id) {
+            // update tree members map (father, mother and mutual relationship)
+            treeMembersById[father.dataValues.id] = {
+              ...father.dataValues,
+              id: `${father.dataValues.id}`,
+              children: [{ ...currentFamilyMember, id: `${currentFamilyMember.id}` }],
+              spouses: mother?.dataValues ? [{ ...mother.dataValues, id: `${mother.dataValues.id}` }] : [],
+              siblings: [],
+              parents: []
+            };
+            console.log('CHECKING FOR  MOTHER', { mother })
+
+            if (mother?.dataValues?.id) {
+              treeMembersById[mother.dataValues.id].spouses = [{ ...father?.dataValues, id: `${father?.dataValues?.id}` }];
+            }
+            console.log('THEN CHECKING FOR FATHER', { father })
+
+            //update current user's hasmap values with father
+            treeMembersById[currentFamilyMember.id].parents.push({ ...father?.dataValues, id: `${father?.dataValues?.id}` })
           }
-          //update current user's hasmap values with father
-          treeMembersById[currentFamilyMember.id].parents.push(father?.dataValues?.id)
         }
 
         if (members?.siblings?.length) {
-          console.log('siblings provided ', members.siblings);
           const siblingsRecords = await FamilyMember.bulkCreate(
-            members.siblings.map((s: any) => (
-              { ...s, age: today.diff(dayjs(s.dob), 'years'), parent_1: mother?.id || null }
-            ))).catch((e: any) => {
+            members.siblings.map((s: any) => {
+              return (
+
+                { ...s, age: today.diff(dayjs(s.dob), 'years'), parent_1: mother?.dataValues?.id || null }
+              )
+            }
+            )).catch((e: any) => {
               logger.error('! createFamilyUnit ! bulk create siblings #106', e);
               return null;
             });
@@ -111,26 +129,27 @@ class FamilyMemberController extends BaseController<any> {
             const siblingsParents = [];
             const siblingsMappedIds = siblingsRecords.filter((r: any) => (
               r.id !== dataValues.id));
+            console.log('THEN CHECK IF CURENT IS PARENT', { currentFamilyMember, currentFamilyMemberSpouse })
 
-            if (currentFamilyMember?.id) {
-              siblingsParents.push(currentFamilyMember.id)
+            if (mother?.datavalues?.id) {
+              siblingsParents.push({ ...mother.dataValues, id: `${mother.datavalues.id}` })
             }
 
-            if (currentFamilyMemberSpouse?.id) {
-              siblingsParents.push(currentFamilyMemberSpouse.id)
+            if (father?.dataValues?.id) {
+              siblingsParents.push({ ...father.dataValues, id: `${father.dataValues.id}` })
             }
 
             treeMembersById[dataValues.id] = {
               ...dataValues,
+              id: `${dataValues.id}`,
               siblings: [...siblingsMappedIds,
-              currentFamilyMember.id],
+              { ...currentFamilyMember, id: `${currentFamilyMember.id}` }],
               parents: siblingsParents, spouses: [], children: []
             };
           })
         }
 
         if (members?.spouse) {
-          console.log('spouse provided ', members.spouse);
 
           // if spouse has no familyMember record, create it, otherwise use existing record. Add it to RFT mapping 
           const spouseFamilyMemberRecord = await FamilyMember.findOne({
@@ -149,51 +168,52 @@ class FamilyMemberController extends BaseController<any> {
           await FamilyMember.update({ partner: currentFamilyMemberSpouse.id }, { where: { id: { [Op.eq]: currentFamilyMember.id } } })
           // update tree members map (spouses array)
           treeMembersById[currentFamilyMemberSpouse.id] = {
-            ...currentFamilyMemberSpouse, children: [], parents: [],
-            siblings: [], spouses: [currentFamilyMember.id]
+            ...currentFamilyMemberSpouse, id: `${currentFamilyMemberSpouse.id}`, children: [], parents: [],
+            siblings: [], spouses: [{ ...currentFamilyMember, id: `${currentFamilyMember.id}` }]
           };
-          treeMembersById[currentFamilyMember.id].spouses = [currentFamilyMemberSpouse.id]
+          treeMembersById[currentFamilyMember.id].spouses = [{ ...currentFamilyMemberSpouse, id: `${currentFamilyMemberSpouse.id}` }]
         }
 
         if (members?.children?.length) {
-          console.log('children provided ', members.children);
-
-          const childrenRecords = await FamilyMember.bulkCreate(members.children.map((c: any) => ({ ...c, parent_1: mother?.id || null }))).catch((e: any) => {
+          const childrenRecords = await FamilyMember.bulkCreate(members.children.map((c: any) => ({ ...c, parent_1: mother?.dataValues?.id || null }))).catch((e: any) => {
             logger.error('! createFamilyUnit ! bulk create children #158', e);
             return null;
           });
 
           if (childrenRecords?.length) {
             // update blueprint with all children and their relation to user and spouse (ensure the siblings array of each child does not contain their own id)
-            const childrenMappedIds = childrenRecords?.map(({ dataValues }: any) => (dataValues.id)) || [];
+            const childrenMappedIds = childrenRecords?.map(({ dataValues }: any) => ({ ...dataValues, id: `${dataValues.id}` })) || [];
 
             treeMembersById[currentFamilyMember.id].children = childrenMappedIds;
             childrenRecords.forEach(({ dataValues }: any) => {
               const childsParents = [];
+              console.log('CHECK CUR USER AGAIN', { currentFamilyMember, currentFamilyMemberSpouse })
 
               if (currentFamilyMember?.id) {
-                childsParents.push(currentFamilyMember.id)
+                childsParents.push({ ...currentFamilyMember, id: `${currentFamilyMember.id}` })
               }
 
               if (currentFamilyMemberSpouse?.id) {
-                childsParents.push(currentFamilyMemberSpouse.id)
+                childsParents.push({ ...currentFamilyMemberSpouse, id: `${currentFamilyMemberSpouse.id}` })
               }
+              console.log({ childsParents });
 
               treeMembersById[dataValues.id] = {
                 ...dataValues,
+                id: `${dataValues.id}`,
                 profile_url: profiles[Math.floor(Math.random() * 200) + 1],
                 parents: childsParents,
-                siblings: [...childrenMappedIds.filter((id: any) => id !== dataValues.id), currentFamilyMember.id], spouses: []
+                siblings: [...childrenMappedIds.filter((id: any) => id !== dataValues.id), { ...currentFamilyMember, id: `${currentFamilyMember.id}` }], spouses: [],
+                children: []
               }
             });
           }
         }
-        console.log('Final tree memebers ', treeMembersById);
       } else {
         logger.error('! missing current family member');
       }
 
-      return treeMembersById;
+      return Object.values(treeMembersById).reduce((acc: any, n: any) => [...acc, n], []);
     } catch (e: unknown) {
       logger.error('! create family unit. #191', e);
       return null;
