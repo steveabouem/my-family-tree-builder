@@ -9,8 +9,6 @@ interface DTreeNodeBubbleProps {
 }
 
 function TreeNodeBubble({ node, onClick, onHover }: DTreeNodeBubbleProps) {
-  console.log(node?.id);
-
   return (
     <Card style={{ width: '150px', height: '150px', borderRadius: '300px', background: '#d59949', border: '2px solid white' }}>
       <Image roundedCircle src={node?.profile_url || ''} height={'30%'} width={'30%'} style={{ border: '2px solid', background: 'white' }} />

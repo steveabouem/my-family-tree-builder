@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createElement } from "react";
 import ReactFamilyTree from 'react-family-tree';
 import { ExtNode, Gender, RelType } from "relatives-tree/lib/types";
 import { Trans } from "@lingui/macro";
@@ -9,7 +9,6 @@ import { service } from "../../services";
 import GlobalContext from "../../context/creators/global.context";
 import { DTreeNode } from "./definitions";
 import TreeNodeBubble from "../family/TreeNodeBubble";
-import { Col, Row } from "react-bootstrap";
 
 const ViewFamilyTree = () => {
   const { currentFamilyTree, updateCurrentFamilyTree } = React.useContext(FamilyTreeContext);
@@ -32,6 +31,13 @@ const ViewFamilyTree = () => {
     }
   };
 
+  React.useEffect(() => {
+    {Object.values(orderedData).map((member: any) => {
+      populateTreeNode(member.id)
+    })}
+
+  }, [currentFamilyTree])
+
   const treeDetails = React.useMemo(() => {
     if (currentFamilyTree?.members) {
       // @ts-ignore
@@ -41,75 +47,55 @@ const ViewFamilyTree = () => {
     return null;
   }, [currentFamilyTree]);
 
-  function createTreeNodes(anchor: any, step: number, advance: (step: number) => number) {
-    let anchorSpouse: any = null;
-    let anchorChildren: any = null;
-    let anchorSiblings: any = null;
-    console.log('\n +++++++++++ANCHOR ID AND STEP +++++++++++ \n ', anchor?.id, step);
-
-    if (anchor?.id) {
-      if (anchor?.spouses?.length) {
-        console.log('ANCHOR SPOUSE ', anchor?.spouses);
-        anchorSpouse = data[anchor.spouses[0]];
-      }
-
-      if (anchor?.children?.length) {
-        anchorChildren = anchor.children.reduce((children: any, currentChildId: any) => {
-          console.log('curr child ID ', currentChildId);
-
-          return ([
-            ...children, { ...data[currentChildId] }
-          ])
-        }, []);
-      }
-
-      if (anchor?.siblings?.length) {
-        console.log('anchor siblings');
-        anchorSiblings = anchor.siblings.reduce((siblings: any, currentSiblingId: any) => {
-          console.log('ANCHOR SIBLING ', currentSiblingId);
-
-          return ([
-            ...siblings, { ...data[currentSiblingId] }
-          ])
-        }, []);
-      }
-
-      return (
-        <Col>
-          <Row >
-            {anchorSiblings?.map((s: any, i: number) => {
-              if (s?.id) {
-                console.log("MA SIBLING  ", s);
-
-                return <Col><TreeNodeBubble node={s} onClick={() => { }} onHover={() => { }} /></Col>;
-              }
-            })}
-            <Col>
-              <Row>
-                <TreeNodeBubble node={anchor} onClick={() => { }} onHover={() => { }} />
-                {anchorSpouse?.id && <TreeNodeBubble node={anchorSpouse} onClick={() => { }} onHover={() => { }} />}
-              </Row>
-            </Col>
-          </Row >
-          <Row>
-            {anchorChildren?.map((child: any) => {
-              if (child?.id) {
-                console.log('MA CHILD ', child);
-                return (
-                  <>
-                    <Col><TreeNodeBubble node={child} onClick={() => { }} onHover={() => { }} /></Col>
-                  </>
-                );
-              }
-            })}
-          </Row>
-        </Col >
-      );
-    }
+  function generateNodeMarkup(anchor: any) {
+    console.log('\n +++++++++++ANCHOR ID AND STEP +++++++++++ \n ', anchor?.id);
+    const anchorElement =  React.createElement(
+      'div',
+      { id: `node-for-${anchor.id}` },
+      anchor?.first_name || ''
+    );
+    return anchorElement
   }
 
-  function buildFamilyTree() {
-    if (data) { }
+  function populateTreeNode(nodeId: number) {
+    const nodeMarkup = generateNodeMarkup(nodeId);
+    const treeElement = document.getElementById('tree')!;
+    treeElement?.appendChild();
+    React.createElement
+    // const nodeElement = document.getElementById(`node-for-${nodeId}`);
+    // const node = data[nodeId];
+    // let spouse: any = null;
+    // let nodeChildren: any = null;
+    // let nodeSiblings: any = null;
+
+    // if (node?.spouses?.length) {
+    //   spouse = data[node.spouses[0]];
+    //   if (nodeElement) {
+    //     const spouseNode = createElement('div', { className: 'test' }, spouse.first_name)
+    //     // Array.from(nodeElement.childNodes).push(spouseNode)
+    //     // @ts-ignore
+    //     nodeElement.appendChild(spouseNode);
+    //   }
+    // }
+
+    // if (node?.children?.length) {
+    //   nodeChildren = node.children.reduce((children: any, currentChildId: any) => {
+
+    //     return ([
+    //       ...children, { ...data[currentChildId] }
+    //     ])
+    //   }, []);
+    // }
+
+    // if (node?.siblings?.length) {
+    //   nodeSiblings = node.siblings.reduce((siblings: any, currentSiblingId: any) => {
+
+    //     return ([
+    //       ...siblings, { ...data[currentSiblingId] }
+    //     ])
+    //   }, []);
+    // }
+    return convertNodeToElement(treeElement)
   }
 
   React.useEffect(() => {
@@ -133,12 +119,8 @@ const ViewFamilyTree = () => {
 
   return (
     <Page subtitle="" title={`${currentFamilyTree?.name || ''}`}>
-      <div className="tree">
-        {Object.values(orderedData).map((member: any) => {
-          let level = 0;
-          function advance(step: number) { return level++ };
-          return createTreeNodes(member, level, advance);
-        })}
+      <div className="tree" id="tree">
+       
       </div>
     </Page >
   );
