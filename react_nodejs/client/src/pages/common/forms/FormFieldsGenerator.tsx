@@ -3,11 +3,12 @@ import { Field, FieldArray } from "formik";
 import { DBaseFormProps, DFormField } from "../definitions";
 import ButtonRounded from "../buttons/Rounded";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
+import { Form } from "react-bootstrap";
 import('./styles.scss');
 
-const FormFieldsGenerator = ({ 
-  fields, handleSubmit, 
-  size, handleFieldValueChange, title 
+const FormFieldsGenerator = ({
+  fields, handleSubmit,
+  size, handleFieldValueChange, title
 }: DBaseFormProps): JSX.Element => {
 
   return (
@@ -19,13 +20,18 @@ const FormFieldsGenerator = ({
             {field.label}{field.required ? <PiAsteriskSimpleFill className="bg-accent" /> : null}
           </label>
           {field.subComponent ? (
-            <Field 
+            <Field
               id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
-              required={!!field.required} component={field.subComponent}/>
+              required={!!field.required} component={field.subComponent} />
           ) : field.type === 'array' ? (
             <FieldArray name={field.fieldName} render={fields => field.subComponent} />
+          ) : field.type === 'select' ? (
+            <Form.Select aria-label="Default select example">
+              {field?.options?.map((o, i) => <option value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</option>)}
+              
+            </Form.Select>
           ) : (
-            <Field 
+            <Field
               id={field?.id || ''} name={field.fieldName} value={field.value}
               required={!!field.required} type={field?.type || 'input'}
             />

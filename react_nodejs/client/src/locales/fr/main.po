@@ -12,42 +12,168 @@ msgstr ""
 "Content-Type: \n"
 "Plural-Forms: \n"
 
-#: src/components/common/navbars/TopNav.tsx:55
+#: src/pages/tree/BuildFamilyTree.tsx:23
+msgid "added_spouse_fields"
+msgstr "champs pour conjoint(e) ajoutés au formulaire"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:102
+msgid "age_of_sibling {0}"
+msgstr "âge du frère ou de la soeur"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:131
+msgid "age_of_spouse"
+msgstr "âge de conjoint(e)"
+
+#: src/pages/common/alerts/BaseModal.tsx:36
+msgid "cancel"
+msgstr "annuler"
+
+#: src/pages/common/alerts/BaseModal.tsx:37
+msgid "confirm"
+msgstr "confirmer"
+
+#: src/pages/common/navbars/TopNav.tsx:63
 msgid "Connect"
-msgstr ""
+msgstr "connecter"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:96
+msgid "email_of_sibling {0}"
+msgstr "email du frère ou soeur"
+
+#: src/pages/tree/ViewFamilyTree.tsx:51
+#: src/pages/user/Profile.tsx:47
+msgid "error_modal_message"
+msgstr "veuillez réessayer"
+
+#: src/pages/tree/ViewFamilyTree.tsx:52
+#: src/pages/user/Profile.tsx:48
+msgid "error_modal_title"
+msgstr "une erreur est survenue"
 
 #: src/components/common/navbars/TopNav.tsx:47
-msgid "Families"
-msgstr ""
+#~ msgid "Families"
+#~ msgstr "familles"
 
-#: src/components/common/navbars/TopNav.tsx:39
+#: src/pages/tree/BuildFamilyTreeForm.tsx:64
+msgid "family_tree_name_label"
+msgstr "nom de l'arbre généalogique"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:51
+msgid "father_age"
+msgstr "âge du père"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:39
+msgid "father_first_name"
+msgstr "prénom du père"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:45
+msgid "father_last_name"
+msgstr "nom du père"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:83
+msgid "first_name_of_sibling {0}"
+msgstr "prénom du frère ou de la soeur"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:119
+msgid "first_name_of_spouse"
+msgstr "prénom de conjoint(e)"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:107
+msgid "gender_of_sibling {0}"
+msgstr "Sexe"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:137
+msgid "gender_of_spouse"
+msgstr "sexe"
+
+#: src/pages/user/Profile.tsx:74
+msgid "go_check_my_tree"
+msgstr "consulter mon arbre"
+
+#: src/pages/common/navbars/TopNav.tsx:45
 msgid "Home"
+msgstr "Accueil"
+
+#: src/pages/tree/BuildFamilyTree.tsx:53
+msgid "how_many_siblings"
+msgstr "combien de frères et soeurs?"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:90
+msgid "last_name_of_sibling {0}"
+msgstr "nom"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:125
+msgid "last_name_of_spouse"
 msgstr ""
 
-#: src/components/auth/Authentication.tsx:164
+#: src/pages/auth/Authentication.tsx:133
+#: src/pages/auth/Authentication.tsx:144
+#: src/pages/auth/Authentication.tsx:165
 msgid "login_failure"
 msgstr "Erreur de Connection!"
 
-#: src/components/auth/Authentication.tsx:165
+#: src/pages/auth/Authentication.tsx:134
+#: src/pages/auth/Authentication.tsx:145
+#: src/pages/auth/Authentication.tsx:166
 msgid "login_failure_msg {attempts}"
 msgstr "Échec de connection.Veuillez vérifier vos infos et rééssayer.({attempts} tentatives)"
 
 #~ msgid "login_success"
 #~ msgstr "Connection Réussie!"
 
+#: src/pages/tree/BuildFamilyTreeForm.tsx:57
+msgid "make_tree_private"
+msgstr ""
+
+#: src/pages/user/Profile.tsx:62
+msgid "manage_your_tree_title"
+msgstr ""
+
 #. js-lingui-explicit-id
-#: src/components/auth/Authentication.tsx:38
+#: src/pages/auth/Authentication.tsx:27
 msgid "marital.status"
 msgstr "État Civil"
 
-#: src/components/common/navbars/TopNav.tsx:43
+#: src/pages/tree/BuildFamilyTree.tsx:46
+msgid "marital_status_question_label"
+msgstr ""
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:33
+msgid "mother_age"
+msgstr ""
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:21
+msgid "mother_first_name"
+msgstr ""
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:27
+msgid "mother_last_name"
+msgstr ""
+
+#: src/pages/tree/BuildFamilyTree.tsx:43
+msgid "my_tree_page_title"
+msgstr ""
+
+#: src/pages/tree/BuildFamilyTree.tsx:48
+msgid "no"
+msgstr "non"
+
+#: src/pages/common/navbars/TopNav.tsx:50
 msgid "Profile"
 msgstr ""
 
-#: src/components/common/navbars/TopNav.tsx:51
+#: src/pages/common/navbars/TopNav.tsx:58
 msgid "Trees"
 msgstr ""
 
+#: src/pages/tree/BuildFamilyTree.tsx:47
+msgid "yes"
+msgstr ""
+
 #: src/components/user/Profile.tsx:37
-msgid "your_families_title"
+#~ msgid "your_families_title"
+#~ msgstr ""
+
+#: src/pages/user/Profile.tsx:61
+msgid "your_tree_title"
 msgstr ""

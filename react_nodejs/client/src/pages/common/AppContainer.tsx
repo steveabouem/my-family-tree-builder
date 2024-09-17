@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { DeepPartial } from "redux";
-import { useLingui } from "@lingui/react";
+import { Trans, useLingui } from "@lingui/react";
 import Authentication from "../auth/Authentication";
 import TopNav from "./navbars/TopNav";
 import { DAuthMode } from "../auth/definitions";
@@ -20,7 +20,6 @@ const AppContainer = (): JSX.Element => {
   const [currentUser, setCurrentUser] = React.useState<DeepPartial<DUserDTO>>({});
   const [mode, setMode] = React.useState<DAuthMode | undefined>();
   const [throwError, setThrowError] = React.useState<boolean>(false);
-  const { i18n } = useLingui();
   const { theme } = React.useContext(GlobalContext);
 
   React.useEffect(() => {

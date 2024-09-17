@@ -4,16 +4,16 @@ import AppContainer from './pages/common/AppContainer';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import * as baseEN from "./locales/en/main.js";
-import * as baseFR from "./locales/fr/main.js";
+import baseEn from "./locales/en/main.js" ;
+import baseFr from "./locales/fr/main.js" ;
 import GlobalContextProvider from './context/providers/GlobalContextProvider';
 import FamilyTreeContextProvider from './context/providers/FamilyTreeContextProvider';
 
 i18n.load({
-  en: baseEN,
-  fr: baseFR,
+  en: baseEn.messages,
+  fr: baseFr.messages,
 });
-i18n.activate("fr");
+i18n.activate("fr" , "en");
 
 const root = ReactDOM.createRoot(document.getElementById('root') as Element);
 root.render(

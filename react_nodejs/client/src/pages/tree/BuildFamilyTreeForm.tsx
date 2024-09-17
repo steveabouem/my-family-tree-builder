@@ -20,7 +20,7 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
       fieldName: 'mother.first_name',
       label: <Trans>mother_first_name</Trans>,
       type: 'text',
-      required: true
+      required: true,
     },
     {
       fieldName: 'mother.last_name',
@@ -29,9 +29,9 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
       required: true
     },
     {
-      fieldName: 'mother.age',
+      fieldName: 'mother.dob',
       label: <Trans>mother_age</Trans>,
-      type: 'number',
+      type: 'date',
       required: true
     },
     {
@@ -47,9 +47,9 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
       required: true
     },
     {
-      fieldName: 'father.age',
+      fieldName: 'father.dob',
       label: <Trans>father_age</Trans>,
-      type: 'text',
+      type: 'date',
       required: true
     },
     {
@@ -98,14 +98,15 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
         required: true
       },
       {
-        fieldName: `siblings[${siblingIndex}].age`,
+        fieldName: `siblings[${siblingIndex}].dob`,
         label: <Trans>age_of_sibling {siblingIndex + 1}</Trans>,
-        type: 'text',
+        type: 'date',
         required: true
       }, {
         fieldName: `siblings[${siblingIndex}].gender`,
         label: <Trans>gender_of_sibling {siblingIndex + 1}</Trans>,
-        type: 'text',
+        type: 'select',
+        options: [{label: 'F', value: 2},{label: 'M', value: 1},],
         required: true
       }
       ]), []);
@@ -127,15 +128,16 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
       required: true
     },
     {
-      fieldName: `spouse.age`,
+      fieldName: `spouse.dob`,
       label: <Trans>age_of_spouse</Trans>,
-      type: 'text',
+      type: 'date',
       required: true
     },
     {
       fieldName: `spouse.gender`,
       label: <Trans>gender_of_spouse</Trans>,
-      type: 'text',
+      type: 'select',
+      options: [{label: 'F', value: 2},{label: 'M', value: 1},],
       required: true
     }]) : [];
 

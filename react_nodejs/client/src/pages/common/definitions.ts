@@ -30,6 +30,7 @@ export interface DFormField {
   type?: string;
   subComponent?: any;
   updateValue?: () => void;
+  options?: {label: string, value: any}[];
 }
 
 export interface DBaseFormProps {
