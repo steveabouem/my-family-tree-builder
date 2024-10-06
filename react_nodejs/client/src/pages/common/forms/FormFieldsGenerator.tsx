@@ -1,47 +1,48 @@
 import React from "react";
-import { Field, FieldArray } from "formik";
+import { Field, FieldArray, useFormikContext } from "formik";
 import { DBaseFormProps, DFormField } from "../definitions";
-import ButtonRounded from "../buttons/Rounded";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
-import { Form } from "react-bootstrap";
+import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/material";
+import CustomField from "./CustomField";
 import('./styles.scss');
 
 const FormFieldsGenerator = ({
   fields, handleSubmit,
   size, handleFieldValueChange, title
 }: DBaseFormProps): JSX.Element => {
-
+  const {isSubmitting} = useFormikContext();
+  
   return (
-    <div className={`base-form-fields accent-bg primary ${size}`}>
-      {title ? <div className="form-title">{title}</div> : null}
+    <Paper>
+      {title ? <Typography variant="h4">{title}</Typography> : null}
       {fields.map((field: DFormField, i: number) => (
-        <div key={`${i}-${field.fieldName}`} className={'field-wrap base ' + field?.class || ''}>
-          <label htmlFor={field.fieldName} className="primary">
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Typography variant="subtitle2">
             {field.label}{field.required ? <PiAsteriskSimpleFill className="bg-accent" /> : null}
-          </label>
+          </Typography>
           {field.subComponent ? (
-            <Field
-              id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
+            <CustomField  id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
               required={!!field.required} component={field.subComponent} />
           ) : field.type === 'array' ? (
-            <FieldArray name={field.fieldName} render={fields => field.subComponent} />
+            <FieldArray name={field.fieldName} render={fields => field.subComponent} /> // TODO: this is incorrect
           ) : field.type === 'select' ? (
-            <Form.Select aria-label="Default select example">
-              {field?.options?.map((o, i) => <option value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</option>)}
+            <FormControl aria-label="Default select example">
+              {/* <InputLabel></InputLabel> */}
+              {field?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</MenuItem>)}
               
-            </Form.Select>
+            </FormControl>
           ) : (
             <Field
               id={field?.id || ''} name={field.fieldName} value={field.value}
               required={!!field.required} type={field?.type || 'input'}
             />
           )}
-        </div>
+        </Box>
       ))}
-      <div>
-        <ButtonRounded action={handleSubmit} />
-      </div>
-    </div>
+      <Box >
+        <Button variant="contained" color="success" onClick={handleSubmit} />
+      </Box>
+    </Paper>
   );
 }
 

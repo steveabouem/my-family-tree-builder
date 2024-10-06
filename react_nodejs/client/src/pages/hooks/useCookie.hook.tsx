@@ -1,4 +1,4 @@
-import react, { useEffect, useState } from "react";
+import React from "react";
 
 const useCookie = (): string | undefined => {
   const [cookie, setCookie] = React.useState<string | undefined>();

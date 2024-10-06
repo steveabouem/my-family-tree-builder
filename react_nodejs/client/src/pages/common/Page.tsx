@@ -1,4 +1,4 @@
-import React, { Suspense,  } from "react";
+import React from "react";
 import {Container, Typography} from '@mui/material';
 import { DPageProps } from "./definitions";
 import Spinner from "./Spinner";
@@ -12,11 +12,11 @@ const Page = ({ title, subtitle, children }: DPageProps): JSX.Element => {
   const { modal, loading } = React.useContext(GlobalContext);
 
   return (
-    <Suspense fallback={<Spinner />}>
-      <Container maxWidth="lg">
+    <React.Suspense fallback={<Spinner loading={true} />}>
+      <Container maxWidth="xl">
         <Typography variant="h4" color={theme.palette.primary.main}>{title}</Typography> 
         {subtitle ? <Typography variant="h5" color="">{subtitle}</Typography> : ''}
-        {loading ? <Spinner /> : null}
+        <Spinner loading={loading} /> 
         {children || null}
         <BaseModal
           hidden={modal?.hidden || true} id={modal?.id || ''}
@@ -24,7 +24,7 @@ const Page = ({ title, subtitle, children }: DPageProps): JSX.Element => {
           buttons={{ cancel: modal?.buttons?.cancel || false, confirm: modal?.buttons?.confirm || false }}
         />
       </Container>
-    </Suspense>
+    </React.Suspense>
   );
 };
 

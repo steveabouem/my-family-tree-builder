@@ -3,12 +3,12 @@ import { themeEnum } from "contexts/creators/global/globalContext.types";
 import React from "react";
 
 const usePrimary = (): string => {
-  const [primaryColor, setPrimaryColor] = React.useState<string>('white');
+  const [primaryColor, setPrimaryColor] = React.useState<string>('#fff');
   const { theme } = React.useContext(GlobalContext);
 
   React.useEffect(() => {
     if (theme === themeEnum.dark) {
-      setPrimaryColor('white');
+      setPrimaryColor('#fff');
     }
     if (theme === themeEnum.green) {
       setPrimaryColor('#d39a49');

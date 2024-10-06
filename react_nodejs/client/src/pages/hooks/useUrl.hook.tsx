@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React from "react";
 
 const useUrlId = (url: string): string => {
   const [param, setParam] = React.useState<string>('');

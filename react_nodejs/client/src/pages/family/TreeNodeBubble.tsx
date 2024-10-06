@@ -1,7 +1,5 @@
-import React, { MouseEvent, useCallback } from 'react';
-import { Col, Container, Image, Row } from 'react-bootstrap';
-import { DTreeNode } from '../tree/definitions';
-
+import React from 'react';
+import { Box } from '@mui/material';
 
 interface DTreeNodeBubbleProps {
   node: any;
@@ -13,7 +11,7 @@ function TreeNodeBubble({ node }: DTreeNodeBubbleProps) {
   const [displayMiniForm, setDisplayMiniForm] = React.useState<boolean>(false);
 
   return (
-    <div className={'root'} style={{
+    <Box className={'root'} style={{
       width: 170,
       height: 180,
       transform: `translate(${node.left * (170 / 2)}px, ${node.top * (180 / 2)}px)`,
@@ -22,12 +20,12 @@ function TreeNodeBubble({ node }: DTreeNodeBubbleProps) {
       onClick={() => setDisplayMiniForm(!displayMiniForm)}
     >
       <img src={node?.profile_url || ''} />
-      <div
+      <Box
         className="inner"
       >
-        <div className={'id'}>{node.first_name}</div>
-      </div>
-    </div>
+        <Box className={'id'}>{node.first_name}</Box>
+      </Box>
+    </Box>
   );
 }
 

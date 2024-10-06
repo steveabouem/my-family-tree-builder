@@ -5,9 +5,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import Page from "../common/Page";
 import { service } from "../../services";
 import TreeNodeBubble from "../family/TreeNodeBubble";
-import { Col, Container, Row } from "react-bootstrap";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
+import { Grid2 } from "@mui/material";
 import('./tree.scss');
 
 const ViewFamilyTree = () => {
@@ -73,25 +73,23 @@ const ViewFamilyTree = () => {
   } else {
     return (
       <Page subtitle="" title={`${currentFamilyTree?.name || ''}`}>
-        <Container fluid>
-          <Row>
-            <Col md-2></Col>
-            <Col md-8>
-              <ReactFamilyTree
-                nodes={treeData}
-                rootId={rootId}
-                width={50}
-                height={60}
-                renderNode={(node: any) => (
-                  <TreeNodeBubble
-                    // @ts-ignore
-                    node={node}
-                  />
-                )}
-              /></Col>
-            <Col md-2></Col>
-          </Row>
-        </Container>
+        <Grid2 container>
+          <Grid2 size={2}></Grid2>
+          <Grid2 size={8}>
+            <ReactFamilyTree
+              nodes={treeData}
+              rootId={rootId}
+              width={50}
+              height={60}
+              renderNode={(node: any) => (
+                <TreeNodeBubble
+                  // @ts-ignore
+                  node={node}
+                />
+              )}
+            /></Grid2>
+          <Grid2 size={2}></Grid2>
+        </Grid2>
       </Page >
     );
   }

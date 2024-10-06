@@ -1,5 +1,5 @@
-import { DModalProps } from "src/pages/common/alerts/definitions";
-import { DFamilyTree } from "src/pages/tree/definitions";
+import { DModalProps } from "pages/common/alerts/definitions";
+import { DFamilyTree } from "pages/tree/definitions";
 
 export enum themeEnum {
   green = 'DARK-GREEN',

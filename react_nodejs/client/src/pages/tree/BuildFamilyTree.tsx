@@ -4,6 +4,7 @@ import Page from '../common/Page';
 import BuildFamilyTreeForm from './BuildFamilyTreeForm';
 import FamilyTreeContext from 'contexts/creators/familyTree/familyTree.context';
 import GlobalContext from 'contexts/creators/global/global.context';
+import {  Box, Grid2, Typography } from '@mui/material';
 
 const BuildFamilyTree = (): JSX.Element => {
   const [numberOfSiblings, setNumberOfSiblings] = React.useState<number>(0);
@@ -40,16 +41,16 @@ const BuildFamilyTree = (): JSX.Element => {
 
   return (
     <Page title={<Trans>my_tree_page_title</Trans>} subtitle="Describe your Family">
-      <div className="row text-center">
-        <div className="col">
+      <Box display="flex">
+        <div>
           <label><Trans>marital_status_question_label</Trans></label>
-          <label aria-label="hasSpouse"><Trans>yes</Trans></label><input readOnly checked={!!hasSpouse} type="radio" onClick={() => setHasSpouse(true)} />
-          <label aria-label="noSpouse"><Trans>no</Trans></label><input readOnly checked={!hasSpouse} type="radio" onClick={() => setHasSpouse(false)} />
+          <Typography variant ="subtitle2" aria-label="hasSpouse"><Trans>yes</Trans></Typography><input readOnly checked={!!hasSpouse} type="radio" onClick={() => setHasSpouse(true)} />
+          <Typography variant ="subtitle2" aria-label="noSpouse"><Trans>no</Trans></Typography><input readOnly checked={!hasSpouse} type="radio" onClick={() => setHasSpouse(false)} />
         </div>
-      </div>
+      </Box>
       <div className="row text-center pb-4">
-        <div className="col">
-          <label><Trans>how_many_siblings</Trans></label>
+        <div>
+          <Typography><Trans>how_many_siblings</Trans></Typography>
           <input type="number" onChange={countSiblings} />
         </div>
       </div>

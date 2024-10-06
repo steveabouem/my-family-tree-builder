@@ -1,21 +1,20 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Trans } from "@lingui/macro";
 import logo from "../../../assets/images/logo.jpg";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
 import ThemeSelector from "../ThemeSelector";
 import usePrimary from "../../hooks/usePrimary.hook";
-import ButtonRounded from "../buttons/Rounded";
 import {service} from "../../../services";
-import { Navbar } from "react-bootstrap";
 import GlobalContext from "contexts/creators/global/global.context";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
+import { Box, Button, Link } from "@mui/material";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = React.useState(false);
   const linkColor = usePrimary();
-  const { theme } = React.useContext(GlobalContext);
+  const theme  = React.useContext(GlobalContext);
   const { currentUser, updateUser } = React.useContext(FamilyTreeContext);
   const navigate = useNavigate();
 
@@ -35,44 +34,44 @@ const TopNav = () => {
   }
 
   return (
-    <Navbar className={"navigation " + theme} expand="lg" >
-      <div className="logo-container">
+    <Box display="flex" height={80} width="100vw">
+      <Box className="logo-container">
         <span>Zogh</span><img src={logo} alt="app logo" />
-      </div>
-      <div className="pages-links">
+      </Box>
+      <Box className="pages-links">
 
-        <div className="accent">
-          <Link to="/" color={linkColor}><Trans>Home</Trans></Link>
-        </div>
+        <Box>
+          <Link href="/" color={linkColor}><Trans>Home</Trans></Link>
+        </Box>
         {currentUser ? (
           <>
-            <div className="accent">
-              <Link to={`/users/${currentUser.userId}`} color={linkColor}><Trans>Profile</Trans></Link>
-            </div>
+            <Box>
+              <Link href={`/users/${currentUser.userId}`} color={linkColor}><Trans>Profile</Trans></Link>
+            </Box>
 
-            {/* <div className="accent">
-              <Link to="/families" color={linkColor}><Trans>Families</Trans></Link>
-            </div> */}
+            {/* <Box>
+              <Link href="/families" color={linkColor}><Trans>Families</Trans></Link>
+            </Box> */}
 
-            <div className="accent">
-              <Link to="/family-trees/manage" color={linkColor}><Trans>Trees</Trans></Link>
-            </div>
+            <Box>
+              <Link href="/family-trees/manage" color={linkColor}><Trans>Trees</Trans></Link>
+            </Box>
           </>
         ) : null}
-        <div className="accent">
-          <Link to="/connect" color={linkColor}><Trans>Connect</Trans></Link>
-        </div>
-      </div>
-      <div className="avatar-container" onClick={() => setMenuOpened(!menuOpened)}>
+        <Box>
+          <Link href="/connect" color={linkColor}><Trans>Connect</Trans></Link>
+        </Box>
+      </Box>
+      <Box className="avatar-container" onClick={() => setMenuOpened(!menuOpened)}>
         {currentUser?.firstName ? (
           <>
             <RiUser5Fill />   {currentUser.firstName}
           </>
         ) : <LiaUserSecretSolid />}
-      </div>
-      {menuOpened && <ButtonRounded text="LOGOUT" action={processLogout} />}
+      </Box>
+      {menuOpened && <Button variant="contained" color="success" onClick={processLogout} >{}</Button>}
       <ThemeSelector />
-    </Navbar>
+    </Box>
   );
 };
 

@@ -3,6 +3,7 @@ import { IoColorPaletteSharp } from "react-icons/io5";
 import usePrimary from "../hooks/usePrimary.hook";
 import GlobalContext from "contexts/creators/global/global.context";
 import { themeEnum } from "contexts/creators/global/globalContext.types";
+import { Box } from "@mui/material";
 
 const ThemeSelector = () => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -10,11 +11,11 @@ const ThemeSelector = () => {
   const { updateTheme } = React.useContext(GlobalContext);
 
   return (
-    <div id="THEME">
+    <Box>
       <div className="trigger" onClick={() => setIsOpen(!isOpen)} >
         <IoColorPaletteSharp color={triggerColor} />
       </div>
-      {isOpen ? (
+      {/* {isOpen ? (
         <div className="choices">
           <div onClick={() => { if (updateTheme) updateTheme(themeEnum.dark) }} >
             <IoColorPaletteSharp color="#070707" />
@@ -26,10 +27,10 @@ const ThemeSelector = () => {
             <IoColorPaletteSharp color="#fff" />
           </div>
         </div>
-      ) : null}
+      ) : null} */}
       <div>
       </div>
-    </div>
+    </Box>
   )
 
 }

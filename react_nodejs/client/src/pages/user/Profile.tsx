@@ -4,9 +4,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import NotFound from '../common/404NotFound';
 import Page from "../common/Page";
 import { service } from "../../services";
-import { Col, Row } from "react-bootstrap";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
+import { Grid2, Typography } from "@mui/material";
 
 const UserProfilePage = (): JSX.Element => {
   const { currentUser, familyTrees, updateFamilyTrees } = React.useContext(FamilyTreeContext);
@@ -54,26 +54,26 @@ const UserProfilePage = (): JSX.Element => {
 
   return currentUser ? (
     <Page subtitle="My profile" title={`Welcome ${currentUser?.firstName || ''}`}>
-      <Row>
-        <Col md="6">
-          <label>
+      <Grid2 container>
+        <Grid2 size={6}>
+          <Typography variant="subtitle2">
             {
               familyTrees?.length ? <><Trans>your_tree_title</Trans> ({familyTrees?.length || 0}) </>
                 : <Trans>manage_your_tree_title</Trans>
             }
-          </label>
-        </Col>
-      </Row>
+          </Typography>
+        </Grid2>
+      </Grid2>
       {
         familyTrees?.map((tree: any, index: number) => (
-          <Row>
-            <Col md="3">
+          <Grid2 container key={`tree-preview-${index}`}>
+            <Grid2 size={3}>
               {tree?.name}
-            </Col>
-            <Col md="2">
+            </Grid2>
+            <Grid2 size={3}>
               <Link to={`/family-trees/${tree?.id || ''}`}><Trans>go_check_my_tree</Trans></Link>
-            </Col>
-          </Row>
+            </Grid2>
+          </Grid2>
         ))
       }
     </Page>

@@ -8,10 +8,10 @@ import Footer from "./navbars/Footer";
 import BuildFamilyTree from "../tree/BuildFamilyTree";
 import FTLandingPage from "../../components/FT.Landing";
 import { DUserDTO } from "../../services/auth/auth.definitions";
-import { Container } from "react-bootstrap";
 import ViewFamilyTree from "../tree/ViewFamilyTree";
 import GlobalContext from "contexts/creators/global/global.context";
 import Authentication from "pages/auth/Authentication";
+import { Container } from "@mui/material";
 import('./styles.scss');
 
 const AppContainer = (): JSX.Element => {
@@ -47,7 +47,7 @@ const AppContainer = (): JSX.Element => {
   }
 
   return (
-    <Container fluid id="FT" className={theme}>
+    <Container maxWidth="xl">
       <TopNav />
       <div className="scroll">
         <Routes>
