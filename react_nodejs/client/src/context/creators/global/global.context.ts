@@ -1,5 +1,5 @@
+import { DGlobalContext, themeEnum } from "contexts/creators/global/globalContext.types";
 import { createContext } from "react";
-import { DGlobalContext, themeEnum } from "../definitions";
 
 const GlobalContext = createContext<DGlobalContext>({
   theme: themeEnum.green,

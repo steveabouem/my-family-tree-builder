@@ -1,6 +1,6 @@
+import GlobalContext from "contexts/creators/global/global.context";
+import { themeEnum } from "contexts/creators/global/globalContext.types";
 import React from "react";
-import GlobalContext from "../../context/creators/global.context";
-import { themeEnum } from "../../context/definitions";
 
 const usePrimary = (): string => {
   const [primaryColor, setPrimaryColor] = React.useState<string>('white');

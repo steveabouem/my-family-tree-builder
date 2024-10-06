@@ -3,10 +3,10 @@ import React from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import NotFound from '../common/404NotFound';
 import Page from "../common/Page";
-import FamilyTreeContext from "../../context/creators/familyTree.context";
 import { service } from "../../services";
-import GlobalContext from "../../context/creators/global.context";
 import { Col, Row } from "react-bootstrap";
+import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
+import GlobalContext from "contexts/creators/global/global.context";
 
 const UserProfilePage = (): JSX.Element => {
   const { currentUser, familyTrees, updateFamilyTrees } = React.useContext(FamilyTreeContext);

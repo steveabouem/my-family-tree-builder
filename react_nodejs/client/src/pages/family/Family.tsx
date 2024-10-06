@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import GlobalContext from '../../context/creators/global.context';
+import GlobalContext from '../../contexts/creators/global.context';
 import Page from '../common/Page';
 import {  } from '../user/definitions';
 

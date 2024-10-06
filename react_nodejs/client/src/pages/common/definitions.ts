@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactElement, ReactNode } from "react";
 
 /* +++++=> NAVIGATION <= +++++ */
 // export interface DTopNavProps {
@@ -30,7 +30,7 @@ export interface DFormField {
   type?: string;
   subComponent?: any;
   updateValue?: () => void;
-  options?: {label: string, value: any}[];
+  options?: {label: string | ReactElement, value: any}[];
 }
 
 export interface DBaseFormProps {

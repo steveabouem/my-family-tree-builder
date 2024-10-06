@@ -1,19 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { DeepPartial } from "redux";
-import { Trans, useLingui } from "@lingui/react";
-import Authentication from "../auth/Authentication";
 import TopNav from "./navbars/TopNav";
 import { DAuthMode } from "../auth/definitions";
 import UserProfilePage from "../user/Profile";
 import Footer from "./navbars/Footer";
 import BuildFamilyTree from "../tree/BuildFamilyTree";
-import Family from "../family/Family";
 import FTLandingPage from "../../components/FT.Landing";
 import { DUserDTO } from "../../services/auth/auth.definitions";
-import GlobalContext from "../../context/creators/global.context";
 import { Container } from "react-bootstrap";
 import ViewFamilyTree from "../tree/ViewFamilyTree";
+import GlobalContext from "contexts/creators/global/global.context";
+import Authentication from "pages/auth/Authentication";
 import('./styles.scss');
 
 const AppContainer = (): JSX.Element => {

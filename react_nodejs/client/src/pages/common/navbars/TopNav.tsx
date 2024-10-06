@@ -6,11 +6,11 @@ import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
 import ThemeSelector from "../ThemeSelector";
 import usePrimary from "../../hooks/usePrimary.hook";
-import GlobalContext from "../../../context/creators/global.context";
-import FamilyTreeContext from "../../../context/creators/familyTree.context";
 import ButtonRounded from "../buttons/Rounded";
 import {service} from "../../../services";
 import { Navbar } from "react-bootstrap";
+import GlobalContext from "contexts/creators/global/global.context";
+import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = React.useState(false);

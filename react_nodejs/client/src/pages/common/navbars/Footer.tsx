@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import Dayjs from 'dayjs';
-import GlobalContext from "../../../context/creators/global.context";
+import GlobalContext from "contexts/creators/global/global.context";
 import ('../styles.scss');
 
 const Footer = () => {

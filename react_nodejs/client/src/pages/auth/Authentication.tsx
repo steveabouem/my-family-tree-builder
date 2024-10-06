@@ -3,8 +3,6 @@ import { Formik, FormikHelpers } from "formik";
 import { Trans, t } from "@lingui/macro";
 import { DAuthProps } from "./definitions";
 import { useNavigate } from "react-router";
-import FamilyTreeContext from "../../context/creators/familyTree.context";
-import GlobalContext from "../../context/creators/global.context";
 import { DDropdownOption, genderOptions, maritalStatusOptions, parentOptions } from "../common/dropdowns/definitions";
 import { DFormField } from "../common/definitions";
 import { service } from "../../services";
@@ -12,6 +10,8 @@ import FormFieldsGenerator from "../common/forms/FormFieldsGenerator";
 import Page from "../common/Page";
 import BaseDropDown from "../common/dropdowns/BaseDropdown";
 import { DUserDTO } from "../../services/auth/auth.definitions";
+import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
+import GlobalContext from "contexts/creators/global/global.context";
 
 const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -220,7 +220,7 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                 subComponent: () => (
                   <div className="field-wrap base">
                     <BaseDropDown
-                      onValueChange={(option: DDropdownOption) => {
+                      onValueChange={(option: DDropdownOption) => {                       
                         setFieldValue('gender', option.value);
                         setDisplayValues((prev) => ({ ...prev, gender: option.label }))
                       }}

@@ -1,15 +1,13 @@
-import React, { createElement } from "react";
+import React from "react";
 import ReactFamilyTree from 'react-family-tree';
-import { ExtNode, Gender, RelType } from "relatives-tree/lib/types";
 import { Trans } from "@lingui/macro";
 import { useNavigate, useParams } from "react-router-dom";
 import Page from "../common/Page";
-import FamilyTreeContext from "../../context/creators/familyTree.context";
 import { service } from "../../services";
-import GlobalContext from "../../context/creators/global.context";
-import { DTreeNode } from "./definitions";
 import TreeNodeBubble from "../family/TreeNodeBubble";
 import { Col, Container, Row } from "react-bootstrap";
+import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
+import GlobalContext from "contexts/creators/global/global.context";
 import('./tree.scss');
 
 const ViewFamilyTree = () => {
@@ -68,7 +66,8 @@ const ViewFamilyTree = () => {
       // @ts-ignore
       toggleLoading(false);
     }
-  })
+  }, [treeData, rootId])
+
   if (loading) {
     return <div>Loading</div>;
   } else {

@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
 import {useLocation} from "react-router"
 import SessionService from "../../services/session/session.service";
-import FamilyTreeContext from "../../context/creators/familyTree.context";
+import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 
 const useSessionValidation = (): void => {
   const navigate = useNavigate();

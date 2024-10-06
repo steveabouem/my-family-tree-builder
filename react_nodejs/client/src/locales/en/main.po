@@ -15,11 +15,11 @@ msgstr ""
 msgid "added_spouse_fields"
 msgstr "Added Spouse!"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:102
+#: src/pages/tree/BuildFamilyTreeForm.tsx:104
 msgid "age_of_sibling {0}"
 msgstr "age_of_sibling {0}"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:131
+#: src/pages/tree/BuildFamilyTreeForm.tsx:134
 msgid "age_of_spouse"
 msgstr "age_of_spouse"
 
@@ -35,7 +35,7 @@ msgstr "confirm"
 msgid "Connect"
 msgstr "Connect"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:96
+#: src/pages/tree/BuildFamilyTreeForm.tsx:98
 msgid "email_of_sibling {0}"
 msgstr "email_of_sibling {0}"
 
@@ -53,35 +53,45 @@ msgstr "error_modal_title"
 #~ msgid "Families"
 #~ msgstr "Families"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:64
+#: src/pages/tree/BuildFamilyTreeForm.tsx:66
 msgid "family_tree_name_label"
 msgstr "family_tree_name_label"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:51
+#: src/pages/tree/BuildFamilyTreeForm.tsx:53
 msgid "father_age"
 msgstr "father_age"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:39
+#: src/pages/tree/BuildFamilyTreeForm.tsx:41
 msgid "father_first_name"
 msgstr "father_first_name"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:45
+#: src/pages/tree/BuildFamilyTreeForm.tsx:47
 msgid "father_last_name"
 msgstr "father_last_name"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:83
+#: src/pages/tree/BuildFamilyTreeForm.tsx:85
 msgid "first_name_of_sibling {0}"
 msgstr "first_name_of_sibling {0}"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:119
+#: src/pages/tree/BuildFamilyTreeForm.tsx:122
 msgid "first_name_of_spouse"
 msgstr "first_name_of_spouse"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:107
+#: src/pages/tree/BuildFamilyTreeForm.tsx:185
+#: src/pages/tree/BuildFamilyTreeForm.tsx:198
+msgid "gender_female"
+msgstr "female"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:185
+#: src/pages/tree/BuildFamilyTreeForm.tsx:198
+msgid "gender_male"
+msgstr "male"
+
+#: src/pages/tree/BuildFamilyTreeForm.tsx:109
 msgid "gender_of_sibling {0}"
 msgstr "gender_of_sibling {0}"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:137
+#: src/pages/tree/BuildFamilyTreeForm.tsx:183
 msgid "gender_of_spouse"
 msgstr "gender_of_spouse"
 
@@ -97,11 +107,11 @@ msgstr "Home"
 msgid "how_many_siblings"
 msgstr "how_many_siblings"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:90
+#: src/pages/tree/BuildFamilyTreeForm.tsx:92
 msgid "last_name_of_sibling {0}"
 msgstr "last_name_of_sibling {0}"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:125
+#: src/pages/tree/BuildFamilyTreeForm.tsx:128
 msgid "last_name_of_spouse"
 msgstr "last_name_of_spouse"
 
@@ -120,7 +130,7 @@ msgstr "Failed to Connect. Please check your credentials and try again.({attempt
 #~ msgid "login_success"
 #~ msgstr "Logged in Succesfully!"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:57
+#: src/pages/tree/BuildFamilyTreeForm.tsx:59
 msgid "make_tree_private"
 msgstr "make_tree_private"
 
@@ -137,15 +147,15 @@ msgstr "Marital Status"
 msgid "marital_status_question_label"
 msgstr "marital_status_question_label"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:33
+#: src/pages/tree/BuildFamilyTreeForm.tsx:35
 msgid "mother_age"
 msgstr "mother_age"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:21
+#: src/pages/tree/BuildFamilyTreeForm.tsx:23
 msgid "mother_first_name"
 msgstr "mother_first_name"
 
-#: src/pages/tree/BuildFamilyTreeForm.tsx:27
+#: src/pages/tree/BuildFamilyTreeForm.tsx:29
 msgid "mother_last_name"
 msgstr "mother_last_name"
 

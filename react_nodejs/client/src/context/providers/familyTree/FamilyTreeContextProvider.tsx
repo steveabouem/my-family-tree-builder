@@ -1,11 +1,9 @@
-import React from 'react';
-import FamilyTreeContext from '../creators/familyTree.context';
-import { DContextProvider } from '../definitions';
-import { DUserSession } from '../../services/auth/auth.definitions';
-// import { DFamilyDTO } from '../../components/family/definitions';
-import { DFamilyTree } from '../../pages/tree/definitions';
+import FamilyTreeContext from 'contexts/creators/familyTree/familyTree.context';
+import { DFamilyTree } from 'pages/tree/definitions';
+import React, { ReactNode } from 'react';
+import { DUserSession } from 'services/auth/auth.definitions';
 
-const FamilyTreeContextProvider = ({ children }: DContextProvider) => {
+const FamilyTreeContextProvider = ({ children }: {children: ReactNode}) => {
   const [currentUser, setCurrentUser] = React.useState<Partial<DUserSession>>({});
   const [familyTrees, setFamilyTrees] = React.useState<Partial<DFamilyTree>[]>([]);
   const [currentFamilyTree, setCurrentFamilyTree] = React.useState<Partial<DFamilyTree>>({});
@@ -35,7 +33,7 @@ const FamilyTreeContextProvider = ({ children }: DContextProvider) => {
   };
 
   return (
-    <FamilyTreeContext.Provider value={{ currentUser, familyTrees, currentFamilyTree, updateCurrentFamilyTree, updateUser, updateFamilyTrees }}>
+    <FamilyTreeContext.Provider value={{ currentUser, familyTrees, currentFamilyTree, updateCurrentFamilyTree, updateUser, updateFamilyTrees } }>
       {children}
     </FamilyTreeContext.Provider>
   )

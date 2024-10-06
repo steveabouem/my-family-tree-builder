@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import { IoColorPaletteSharp } from "react-icons/io5";
 import usePrimary from "../hooks/usePrimary.hook";
-import { themeEnum } from "../../context/definitions";
-import GlobalContext from "../../context/creators/global.context";
+import GlobalContext from "contexts/creators/global/global.context";
+import { themeEnum } from "contexts/creators/global/globalContext.types";
 
 const ThemeSelector = () => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);

@@ -1,8 +1,8 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Modal } from "react-bootstrap";
 import { DModalProps } from "./definitions";
-import GlobalContext from "../../../context/creators/global.context";
 import { Trans } from "@lingui/macro";
+import GlobalContext from "contexts/creators/global/global.context";
 
 const BaseModal = ({ onConfirm, onCancel, children }: DModalProps): JSX.Element => {
   const { modal, updateModal } = React.useContext(GlobalContext);

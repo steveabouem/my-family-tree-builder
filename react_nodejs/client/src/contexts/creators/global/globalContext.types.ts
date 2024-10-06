@@ -1,12 +1,11 @@
-import { ReactNode } from "react";
-import { DModalProps } from "../pages/common/alerts/definitions";
-import { DFamilyTree } from "../pages/tree/definitions";
+import { DModalProps } from "src/pages/common/alerts/definitions";
+import { DFamilyTree } from "src/pages/tree/definitions";
 
 export enum themeEnum {
   green = 'DARK-GREEN',
   light = 'LIGHT',
   dark = 'DARK',
-}
+};
 
 export interface DGlobalContext {
   theme: themeEnum;
@@ -17,8 +16,4 @@ export interface DGlobalContext {
   updateTheme?: (value: themeEnum) => void;
   updateModal?: (values: Partial<DModalProps>) => void;
   toggleLoading?: (value: boolean) => void;
-}
-
-export interface DContextProvider {
-  children?: ReactNode;
-}
+};

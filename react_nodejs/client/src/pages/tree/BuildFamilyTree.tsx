@@ -1,10 +1,9 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
+import React, { ChangeEvent } from 'react';
 import { Trans } from '@lingui/macro';
 import Page from '../common/Page';
-import GlobalContext from '../../context/creators/global.context';
 import BuildFamilyTreeForm from './BuildFamilyTreeForm';
-import FamilyTreeContext from '../../context/creators/familyTree.context';
-import {service} from '../../services';
+import FamilyTreeContext from 'contexts/creators/familyTree/familyTree.context';
+import GlobalContext from 'contexts/creators/global/global.context';
 
 const BuildFamilyTree = (): JSX.Element => {
   const [numberOfSiblings, setNumberOfSiblings] = React.useState<number>(0);

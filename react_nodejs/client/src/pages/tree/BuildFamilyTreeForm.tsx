@@ -1,12 +1,14 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React from "react";
 import { Formik } from "formik";
 import { Trans } from "@lingui/macro";
 import FormFieldsGenerator from "../common/forms/FormFieldsGenerator";
 import { DTreeManagerFields, DTreeManagerProps } from "./definitions";
 import { DFormField } from "../common/definitions";
-import FamilyTreeContext from "../../context/creators/familyTree.context";
-import GlobalContext from "../../context/creators/global.context";
 import { service } from "../../services";
+import BaseDropDown from "../common/dropdowns/BaseDropdown";
+import { DDropdownOption, genderOptions } from "../common/dropdowns/definitions";
+import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
+import GlobalContext from "contexts/creators/global/global.context";
 
 const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX.Element => {
   // ? single form here to build the treeManagerFormFields. I might add an option on each tree node to allow adding a link for that specific Node. 
@@ -106,7 +108,7 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
         fieldName: `siblings[${siblingIndex}].gender`,
         label: <Trans>gender_of_sibling {siblingIndex + 1}</Trans>,
         type: 'select',
-        options: [{label: 'F', value: 2},{label: 'M', value: 1},],
+        options: [{ label: 'F', value: 2 }, { label: 'M', value: 1 },],
         required: true
       }
       ]), []);
@@ -132,13 +134,6 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
       label: <Trans>age_of_spouse</Trans>,
       type: 'date',
       required: true
-    },
-    {
-      fieldName: `spouse.gender`,
-      label: <Trans>gender_of_spouse</Trans>,
-      type: 'select',
-      options: [{label: 'F', value: 2},{label: 'M', value: 1},],
-      required: true
     }]) : [];
 
   }, [hasSpouse]);
@@ -148,7 +143,7 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
       toggleLoading(true);
     }
     const familyTreeService = new service.familyTree();
-    const { data } = await familyTreeService.create(values);
+    const { data } = await familyTreeService.create({ ...values, user_id: currentUser.userId });
     if (updateModal) {
       if (data?.error) {
         updateModal({
@@ -183,7 +178,27 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
               ...treeBuilderFields,
               ...siblingsFieldArray,
               ...spouseFieldArray,
-            ]}
+              {
+                fieldName: `spouse.gender`,
+                label: <Trans>gender_of_spouse</Trans>,
+                type: 'select',
+                options: [{ label: <Trans>gender_female</Trans>, value: 2 }, { label: <Trans>gender_male</Trans>, value: 1 },],
+                required: true,
+                subComponent: () => <div className="field-wrap base">
+                  <BaseDropDown
+                    onValueChange={(option: DDropdownOption) => {
+                      setFieldValue('spouse.gender', option.value);
+                    }}
+                    options={genderOptions}
+                    id="marital-status-dd"
+                    //  TODO typing of your form is not optimal
+                    // @ts-ignore:
+                    val={values?.spouse?.gender}
+                    // @ts-ignore:
+                    displayVal={values?.spouse?.gender === 1 ? <Trans>gender_male</Trans> : <Trans>gender_female</Trans>}
+                  />
+                </div>
+              }]}
             handleSubmit={handleSubmit}
             handleFieldValueChange={(field: string, value: string | number) => setFieldValue(field, value)} />
         )}
