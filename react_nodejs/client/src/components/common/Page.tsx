@@ -1,29 +1,30 @@
 import React from "react";
-import {Container, Typography} from '@mui/material';
+import {Box, Container, Typography} from '@mui/material';
 import { DPageProps } from "./definitions";
 import Spinner from "./Spinner";
-import useSessionValidation from "../hooks/useAuthValidation";
+import useSessionValidation from "../../pages/hooks/useAuthValidation";
 import BaseModal from "./alerts/BaseModal";
 import GlobalContext from "contexts/creators/global/global.context";
 import theme from "utils/material/theme";
+import('./styles.scss');
 
-const Page = ({ title, subtitle, children }: DPageProps): JSX.Element => {
+const Page = ({ title, subtitle, children, loading}: DPageProps): JSX.Element => {
   useSessionValidation();
-  const { modal, loading } = React.useContext(GlobalContext);
+  const {modal} = React.useContext(GlobalContext);
 
   return (
     <React.Suspense fallback={<Spinner loading={true} />}>
-      <Container maxWidth="xl">
+      <Box height="calc(100vh - 90px)" width="100%"  className="app-page" overflow="hidden scroll" mt="50px" p={4}>
         <Typography variant="h4" color={theme.palette.primary.main}>{title}</Typography> 
         {subtitle ? <Typography variant="h5" color="">{subtitle}</Typography> : ''}
-        <Spinner loading={loading} /> 
+        <Spinner loading={!!loading} /> 
         {children || null}
         <BaseModal
           hidden={modal?.hidden || true} id={modal?.id || ''}
           title={modal?.title || ''} content={modal?.content || ''}
           buttons={{ cancel: modal?.buttons?.cancel || false, confirm: modal?.buttons?.confirm || false }}
         />
-      </Container>
+      </Box>
     </React.Suspense>
   );
 };

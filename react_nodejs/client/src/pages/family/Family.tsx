@@ -1,4 +1,4 @@
-import Page from 'pages/common/Page';
+import Page from 'components/common/Page';
 import React from 'react';
 
 const Family = ({ updateUser }: any): JSX.Element => {

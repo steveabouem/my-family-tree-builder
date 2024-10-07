@@ -1,12 +1,12 @@
 import { Trans } from "@lingui/macro";
 import React from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import NotFound from '../common/404NotFound';
-import Page from "../common/Page";
+import { useNavigate, useParams } from "react-router-dom";
+import NotFound from '../404NotFound';
+import Page from "../../components/common/Page";
 import { service } from "../../services";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
-import { Grid2, Typography } from "@mui/material";
+import { Box, Link, Typography } from "@mui/material";
 
 const UserProfilePage = (): JSX.Element => {
   const { currentUser, familyTrees, updateFamilyTrees } = React.useContext(FamilyTreeContext);
@@ -54,26 +54,26 @@ const UserProfilePage = (): JSX.Element => {
 
   return currentUser ? (
     <Page subtitle="My profile" title={`Welcome ${currentUser?.firstName || ''}`}>
-      <Grid2 container>
-        <Grid2 size={6}>
+      <Box display="flex">
+        <Box flex="0 1 50%">
           <Typography variant="subtitle2">
             {
               familyTrees?.length ? <><Trans>your_tree_title</Trans> ({familyTrees?.length || 0}) </>
                 : <Trans>manage_your_tree_title</Trans>
             }
           </Typography>
-        </Grid2>
-      </Grid2>
+        </Box>
+      </Box>
       {
         familyTrees?.map((tree: any, index: number) => (
-          <Grid2 container key={`tree-preview-${index}`}>
-            <Grid2 size={3}>
+          <Box  display="flex" gap={2} key={`tree-preview-${index}`}>
+            <Box flex="0 1 30%">
               {tree?.name}
-            </Grid2>
-            <Grid2 size={3}>
-              <Link to={`/family-trees/${tree?.id || ''}`}><Trans>go_check_my_tree</Trans></Link>
-            </Grid2>
-          </Grid2>
+            </Box>
+            <Box flex="0 1 30%">
+              <Link href={`/family-trees/${tree?.id || ''}`}><Trans>go_check_my_tree</Trans></Link>
+            </Box>
+          </Box>
         ))
       }
     </Page>

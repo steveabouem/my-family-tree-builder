@@ -1,6 +1,6 @@
 import React from "react";
 import { IoColorPaletteSharp } from "react-icons/io5";
-import usePrimary from "../hooks/usePrimary.hook";
+import usePrimary from "../../pages/hooks/usePrimary.hook";
 import GlobalContext from "contexts/creators/global/global.context";
 import { themeEnum } from "contexts/creators/global/globalContext.types";
 import { Box } from "@mui/material";

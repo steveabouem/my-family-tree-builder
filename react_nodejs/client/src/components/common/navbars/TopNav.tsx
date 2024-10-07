@@ -5,16 +5,15 @@ import logo from "../../../assets/images/logo.jpg";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
 import ThemeSelector from "../ThemeSelector";
-import usePrimary from "../../hooks/usePrimary.hook";
+import usePrimary from "../../../pages/hooks/usePrimary.hook";
 import {service} from "../../../services";
-import GlobalContext from "contexts/creators/global/global.context";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
-import { Box, Button, Link } from "@mui/material";
+import { Avatar, Box, Button, Link } from "@mui/material";
+import theme from "utils/material/theme";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = React.useState(false);
   const linkColor = usePrimary();
-  const theme  = React.useContext(GlobalContext);
   const { currentUser, updateUser } = React.useContext(FamilyTreeContext);
   const navigate = useNavigate();
 
@@ -34,12 +33,11 @@ const TopNav = () => {
   }
 
   return (
-    <Box display="flex" height={80} width="100vw">
-      <Box className="logo-container">
-        <span>Zogh</span><img src={logo} alt="app logo" />
+    <Box display="flex" position="absolute" top="0" right={0} height={50} width="100vw" zIndex={2} py={1} px={2} justifyContent="space-between" alignItems="center" sx={{background: theme.palette.grey['400']}}>
+      <Box display="flex" gap={2} alignItems="center">
+        <span>Zogh</span><Avatar src={logo} alt="app logo" sizes="40px 40px" variant="circular" />
       </Box>
-      <Box className="pages-links">
-
+      <Box display="flex" justifyContent="end">
         <Box>
           <Link href="/" color={linkColor}><Trans>Home</Trans></Link>
         </Box>

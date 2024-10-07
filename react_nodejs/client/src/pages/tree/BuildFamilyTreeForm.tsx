@@ -1,12 +1,12 @@
 import React from "react";
 import { Formik } from "formik";
 import { Trans } from "@lingui/macro";
-import FormFieldsGenerator from "../common/forms/FormFieldsGenerator";
+import FormFieldsGenerator from "../../components/common/forms/FormFieldsGenerator";
 import { DTreeManagerFields, DTreeManagerProps } from "./definitions";
-import { DFormField } from "../common/definitions";
+import { DFormField } from "../../components/common/definitions";
 import { service } from "../../services";
-import BaseDropDown from "../common/dropdowns/BaseDropdown";
-import { DDropdownOption, genderOptions } from "../common/dropdowns/definitions";
+import BaseDropDown from "../../components/common/dropdowns/BaseDropdown";
+import { DDropdownOption, genderOptions } from "../../components/common/dropdowns/definitions";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
 

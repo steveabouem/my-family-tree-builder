@@ -2,23 +2,21 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { DeepPartial } from "redux";
 import TopNav from "./navbars/TopNav";
-import { DAuthMode } from "../auth/definitions";
-import UserProfilePage from "../user/Profile";
+import { DAuthMode } from "../../pages/auth/definitions";
+import UserProfilePage from "../../pages/user/Profile";
 import Footer from "./navbars/Footer";
-import BuildFamilyTree from "../tree/BuildFamilyTree";
-import FTLandingPage from "../../components/FT.Landing";
+import BuildFamilyTree from "../../pages/tree/BuildFamilyTree";
+import FTLandingPage from "../FT.Landing";
 import { DUserDTO } from "../../services/auth/auth.definitions";
-import ViewFamilyTree from "../tree/ViewFamilyTree";
-import GlobalContext from "contexts/creators/global/global.context";
+import ViewFamilyTree from "../../pages/tree/ViewFamilyTree";
 import Authentication from "pages/auth/Authentication";
 import { Container } from "@mui/material";
-import('./styles.scss');
+// import('./styles.scss');
 
 const AppContainer = (): JSX.Element => {
   const [currentUser, setCurrentUser] = React.useState<DeepPartial<DUserDTO>>({});
   const [mode, setMode] = React.useState<DAuthMode | undefined>();
   const [throwError, setThrowError] = React.useState<boolean>(false);
-  const { theme } = React.useContext(GlobalContext);
 
   React.useEffect(() => {
     if (!currentUser.email && !mode) {
@@ -47,9 +45,8 @@ const AppContainer = (): JSX.Element => {
   }
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="xl" sx={{height: "100vh", width: "100vw", overflow: "hidden", padding: "0"}} className="main-container-app">
       <TopNav />
-      <div className="scroll">
         <Routes>
           <Route path="/" element={<FTLandingPage />} />
           <Route path="/connect" element={
@@ -65,7 +62,6 @@ const AppContainer = (): JSX.Element => {
           <Route path="family-trees/manage" element={<BuildFamilyTree />} />
           <Route path='*' element={<FTLandingPage />} />
         </Routes>
-      </div>
       <Footer />
     </Container>
   );

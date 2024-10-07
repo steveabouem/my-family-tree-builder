@@ -1,4 +1,4 @@
-import { DModalProps } from "pages/common/alerts/definitions";
+import { DModalProps } from "components/common/alerts/definitions";
 import { DFamilyTree } from "pages/tree/definitions";
 
 export enum themeEnum {

@@ -1,4 +1,4 @@
-import "../pages/common"
+import "./common"
 import Authentication from "../pages/auth/Authentication";
 
 const pages = {

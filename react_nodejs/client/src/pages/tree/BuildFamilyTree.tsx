@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react';
 import { Trans } from '@lingui/macro';
-import Page from '../common/Page';
+import Page from '../../components/common/Page';
 import BuildFamilyTreeForm from './BuildFamilyTreeForm';
 import FamilyTreeContext from 'contexts/creators/familyTree/familyTree.context';
 import GlobalContext from 'contexts/creators/global/global.context';

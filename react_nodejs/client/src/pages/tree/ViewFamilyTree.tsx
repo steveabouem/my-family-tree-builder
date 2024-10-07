@@ -2,7 +2,7 @@ import React from "react";
 import ReactFamilyTree from 'react-family-tree';
 import { Trans } from "@lingui/macro";
 import { useNavigate, useParams } from "react-router-dom";
-import Page from "../common/Page";
+import Page from "../../components/common/Page";
 import { service } from "../../services";
 import TreeNodeBubble from "../family/TreeNodeBubble";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";

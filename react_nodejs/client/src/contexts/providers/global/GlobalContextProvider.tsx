@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import { DModalProps } from '../../../pages/common/alerts/definitions';
+import { DModalProps } from '../../../components/common/alerts/definitions';
 import { themeEnum } from 'contexts/creators/global/globalContext.types';
 import GlobalContext from 'contexts/creators/global/global.context';
 

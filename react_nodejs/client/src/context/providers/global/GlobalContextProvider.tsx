@@ -1,11 +1,11 @@
-import React, { ReactNode } from 'react';
-import { DModalProps } from "pages/common/alerts/definitions";
-import { themeEnum } from 'contexts/creators/global/globalContext.types';
+import { DModalProps } from 'components/common/alerts/definitions';
 import GlobalContext from 'contexts/creators/global/global.context';
+import { themeEnum } from 'contexts/creators/global/globalContext.types';
+import React, { ReactNode } from 'react';
 
 const GlobalContextProvider = ({ children }: {children: ReactNode}) => {
   const [theme, setTheme] = React.useState<themeEnum>(themeEnum.dark);
-  const [loading, setLoading] = React.useState<boolean>(true);
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [modalContent, setModalContent] = React.useState<Partial<DModalProps>>({hidden: true});
 
   const updateTheme = (value: themeEnum): void => {

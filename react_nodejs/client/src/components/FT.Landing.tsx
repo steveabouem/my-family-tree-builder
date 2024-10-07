@@ -1,9 +1,7 @@
 import React, { useContext } from "react";
-import Page from "../pages/common/Page";
-import GlobalContext from "contexts/creators/global/global.context";
+import Page from "./common/Page";
 
 const FTLandingPage = (): JSX.Element => {
-  const {theme} = React.useContext(GlobalContext);
   return (
     <Page
       title="Welcome to your Family Tree"

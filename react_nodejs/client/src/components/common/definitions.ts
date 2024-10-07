@@ -17,6 +17,7 @@ export interface DPageProps {
   title: string | ReactNode;
   subtitle: string | ReactNode;
   children?: React.ReactNode;
+  loading?: boolean;
 }
 
 /* +++++=> FORMS <= +++++ */

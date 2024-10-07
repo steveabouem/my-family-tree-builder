@@ -19,6 +19,9 @@ const theme = createTheme({
       dark: "#041a46", // dark blue
       light: "#FFFFF6", // white
     },
+    info: {
+      main: "#fff"
+    },
     grey: {
       "400": "#cecaca3d",
       "100": "#8f97a0"
@@ -58,6 +61,10 @@ const theme = createTheme({
       ...defaultTypo,
       fontSize: ".9rem",
       color: "#5b9279"
+    },
+    caption: {
+      ...defaultTypo,
+      fontSize: '.6rem'
     }
   },
   components: {
@@ -65,6 +72,8 @@ const theme = createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           background: theme.palette.secondary.light,
+          height: "100vh",
+          overflow: "hidden"
         })
       }
     },

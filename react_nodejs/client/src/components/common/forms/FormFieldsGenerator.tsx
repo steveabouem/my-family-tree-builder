@@ -13,7 +13,7 @@ const FormFieldsGenerator = ({
   const {isSubmitting} = useFormikContext();
   
   return (
-    <Paper>
+    <Paper sx={{width: "100%"}}>
       {title ? <Typography variant="h4">{title}</Typography> : null}
       {fields.map((field: DFormField, i: number) => (
         <Box display="flex" flexDirection="column" gap={2}>
