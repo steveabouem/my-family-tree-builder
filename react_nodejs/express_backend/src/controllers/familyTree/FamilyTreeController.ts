@@ -215,7 +215,7 @@ class FamilyTreeController extends BaseController<any> {
   public async getTreeLayout(req: Request, res: Response) {
     const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
     const treeId = req.query?.id;
-    response.payload = `<div>Test HTML ${treeId}</div>`;
+    response.payload = `<Box>Test HTML ${treeId}</Box>`;
     response.status = 200;
 
     res.json(response);

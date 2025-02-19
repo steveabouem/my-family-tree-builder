@@ -1,9 +1,25 @@
-/** TRACKER */
-export interface DTrackerRegistrationFields { //registration form fields
-
+export type DRegistrationResponse = {
+    authenticated: boolean;
+    email: string;
+    userId?: number;
+    message?: string;
 }
 
-/** FT */
+export type DLoginResponse = {
+    sessionId: string;
+    authenticated: boolean;
+    email: string;
+    firstName: string;
+    lastName: string;
+    userId?: number;
+}
+
+export type DLogoutResponse = {
+    authenticated: boolean;
+    email: string;
+    userId?: number;
+}
+
 export interface DFTRegistrationFields { //registration form fields
     firstName: string;
     lastName: string;

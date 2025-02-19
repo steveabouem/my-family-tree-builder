@@ -135,7 +135,7 @@ class UserController extends BaseController<DUserRecord> {
           return false;
         }
     
-        if (!values.email || !values.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+        if (!values.email) {
           console.log('missing email');
           logger.error('! User.validateUserFields ! missing email');
           return false;

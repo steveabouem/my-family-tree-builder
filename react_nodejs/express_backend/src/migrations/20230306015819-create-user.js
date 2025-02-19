@@ -23,7 +23,8 @@ module.exports = {
       },
       email: {
         allowNull: false,
-        type: Sequelize.TEXT('medium'),
+        type: Sequelize.STRING,
+        unique: true
       },
       occupation: {
         allowNull: true,

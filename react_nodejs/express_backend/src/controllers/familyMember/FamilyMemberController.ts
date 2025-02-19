@@ -44,12 +44,20 @@ class FamilyMemberController extends BaseController<any> {
   ? returns tree data objects array
   */
   public async createFamilyUnit(members: any) { // ! TODO: no any, easy fix
-    //! TODO:  before running the bulk create, create an array with first, last name and dob. Run a WHERE IN to find duplicates and if any found, avoid creating new record but instead use existing to build blueprint
+    //! TODO:  before running the bulk create, create an array with first, last name and dob. 
+    //! Run a WHERE IN to find duplicates and if any found, avoid creating new record but instead use existing to build blueprint
     const today = dayjs();
     let treeMembersById: any = {};
     let father: any = {}
     let mother: any = null;
     let currentFamilyMemberSpouse: any = {};
+    /*
+     * Logic: 
+     ** receive object with user and list of imm. family ties 
+     ** family ties can go down multiple levels: user's brother can have children, who have spouses etc...
+     ** use mother (required) and father (optional) to define the current user's nuclear family
+     ** use recursion to do the same for any sibling who has a family of their own
+    */
 
     try {
       if (members?.current) {
@@ -60,7 +68,7 @@ class FamilyMemberController extends BaseController<any> {
         };
         if (members?.mother) {
           mother = await FamilyMember.create({
-            ...members.mother, profile_url: profiles[Math.floor(Math.random() * 200) + 1],
+            ...members.mother, profile_url: profiles[Math.floor(Math.random() * 200) + 1], // TODO: remove hardcoded url
             age: today.diff(dayjs(members.mother.dob), 'years'),
             gender: 2
           }).catch(e => {
@@ -68,7 +76,7 @@ class FamilyMemberController extends BaseController<any> {
           });
 
           if (mother?.dataValues?.id) {
-console.log('ITS HERE ', mother.dataValues);
+            console.log('Current user mother info ', mother.dataValues);
 
             // update mother's hasmap values
             treeMembersById[mother.dataValues.id] = { ...mother.dataValues, id: `${mother.dataValues.id}`, children: [{ ...currentFamilyMember, id: `${currentFamilyMember.id}` }], spouses: [], siblings: [], parents: [] };

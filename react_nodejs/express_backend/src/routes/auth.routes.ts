@@ -1,11 +1,10 @@
 import { Router, Request, Response, NextFunction } from "express";
-import dayjs from 'dayjs';
-import SessionMiddleware from "../middleware-classes/session/session.middleware";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
-import { UserMiddleware } from "../middleware-classes/user/user.middleware";
 import logger from "../utils/logger";
-import { DEndpointResponse, DHelperResponse } from "./definitions";
 import AuthController from "../controllers/auth/AuthController";
+import { DEndpointResponse, DRequestPayload } from "../controllers/controllers.definitions";
+import { DUserDTO } from "../middleware-classes/user/user..definitions";
+import { DRegistrationResponse } from "../controllers/auth/auth.definitions";
 
 
 const router = Router();
@@ -21,7 +20,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
       }
     })
     .catch((e: unknown) => {
-      console.log('error', e);
+      logger.error('Unable to use auth middleware ', e);
       res.status(400);
       res.json({ ipIsValid: false, message: e });
     });

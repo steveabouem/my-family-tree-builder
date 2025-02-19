@@ -105,13 +105,10 @@ export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlew
     // ! -TOFIX: figure out how to map the generic type's keys to retur an object and use that as return getById and the likes
     // @ts-expect-error
     const keys = Object.keys({} as T);
-    console.log({ keys });
-
     const obj: Record<keyof T, any> = {} as Record<keyof T, any>;
     for (const key of keys) {
       obj[key as keyof T] = null; // Initialize each key with null value
     }
-    console.log(obj);
 
     return obj;
   }
