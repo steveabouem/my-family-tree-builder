@@ -7,6 +7,7 @@ import { service } from "../../services";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
 import { Box, Link, Typography } from "@mui/material";
+import img1 from "../../assets/images/kids under tree locked.jpg";
 
 const UserProfilePage = (): JSX.Element => {
   const { currentUser, familyTrees, updateFamilyTrees } = React.useContext(FamilyTreeContext);
@@ -30,7 +31,6 @@ const UserProfilePage = (): JSX.Element => {
     }
   }, [currentUser, id]);
 
-
   React.useEffect(() => {
     if (currentUser?.userId) {
       getfamilyTrees()
@@ -53,20 +53,21 @@ const UserProfilePage = (): JSX.Element => {
   }, [currentUser]);
 
   return currentUser ? (
-    <Page subtitle="My profile" title={`Welcome ${currentUser?.firstName || ''}`}>
+    <Page subtitle={<Trans>profile_page_subtitle</Trans>} title={<Trans>profile_page_title {currentUser?.firstName || ''}</Trans>} bg={img1}>
       <Box display="flex">
         <Box flex="0 1 50%">
-          <Typography variant="subtitle2">
-            {
-              familyTrees?.length ? <><Trans>your_tree_title</Trans> ({familyTrees?.length || 0}) </>
-                : <Trans>manage_your_tree_title</Trans>
-            }
-          </Typography>
+          {
+            familyTrees?.length ?
+              <Typography variant="subtitle2">
+                <><Trans>your_tree_title</Trans> ({familyTrees?.length || 0}) </>
+              </Typography>
+              : <Link underline="none" href="/family-trees/manage"><Trans>create_your_first_tree</Trans></Link>
+          }
         </Box>
       </Box>
       {
         familyTrees?.map((tree: any, index: number) => (
-          <Box  display="flex" gap={2} key={`tree-preview-${index}`}>
+          <Box display="flex" gap={2} key={`tree-preview-${index}`}>
             <Box flex="0 1 30%">
               {tree?.name}
             </Box>
@@ -78,7 +79,7 @@ const UserProfilePage = (): JSX.Element => {
       }
     </Page>
   ) : (
-    <NotFound title="Profile Not Found!" /> // this probably wont be necesarry given redirect
+    <NotFound title={<Trans>profile_not_found</Trans>} /> // this probably wont be necesarry given redirect
   );
 }
 

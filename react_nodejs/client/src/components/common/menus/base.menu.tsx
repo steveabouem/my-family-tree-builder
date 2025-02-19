@@ -5,15 +5,15 @@ import { Link } from "react-router-dom";
 const BaseMenu = (props: DBaseMenuProps): JSX.Element => {
 
   return (
-    <div className="menu">
-      <div className="menu-items">
+    <Box className="menu">
+      <Box className="menu-items">
         {/* {props?.children?.map((c: DMenuItem, i:number) => (
-          <div className="menu-item" key={`menu-item-${i}`}>
+          <Box className="menu-item" key={`menu-item-${i}`}>
             <Link to={c.link}>{c.title}</Link>
-          </div>
+          </Box>
         ))} */}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

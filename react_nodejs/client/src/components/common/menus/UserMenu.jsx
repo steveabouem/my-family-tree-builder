@@ -6,22 +6,22 @@ const UserMenu = ({opened, setOpened, user}) => {
 
     return opened ? (
         <StyledUserMenu>
-            <div className="w-100 d-flex align-content-center justify-content-end">
-                <div className="close-menu hover red" onClick={() => setOpened(false)}>X</div>
-            </div>
-            <div className="user-menu-link">
+            <Box className="w-100 d-flex align-content-center justify-content-end">
+                <Box className="close-menu hover red" onClick={() => setOpened(false)}>X</Box>
+            </Box>
+            <Box className="user-menu-link">
                 Logo
-            </div>
+            </Box>
             {
                 user ? (
                     <>
-                        <div className="user-menu-link">{user.name}</div>
-                        <div className="user-menu-link">Notifications<div className="exp-num">2</div></div>
-                        <div className="user-menu-link">Settings</div>
-                        <div className="user-menu-link red hover">Logout</div>
+                        <Box className="user-menu-link">{user.name}</Box>
+                        <Box className="user-menu-link">Notifications<Box className="exp-num">2</Box></Box>
+                        <Box className="user-menu-link">Settings</Box>
+                        <Box className="user-menu-link red hover">Logout</Box>
                     </>
                 ) : (
-                    <div className="user-menu-link hover green">Login</div>
+                    <Box className="user-menu-link hover green">Login</Box>
                 )
             }
         </StyledUserMenu>

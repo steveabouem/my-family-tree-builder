@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { DeepPartial } from "redux";
 import TopNav from "./navbars/TopNav";
@@ -8,17 +8,17 @@ import Footer from "./navbars/Footer";
 import BuildFamilyTree from "../../pages/tree/BuildFamilyTree";
 import FTLandingPage from "../FT.Landing";
 import { DUserDTO } from "../../services/auth/auth.definitions";
-import ViewFamilyTree from "../../pages/tree/ViewFamilyTree";
+import TreeViewPage from "../../pages/tree/ViewFamilyTree";
 import Authentication from "pages/auth/Authentication";
 import { Container } from "@mui/material";
 // import('./styles.scss');
 
 const AppContainer = (): JSX.Element => {
-  const [currentUser, setCurrentUser] = React.useState<DeepPartial<DUserDTO>>({});
-  const [mode, setMode] = React.useState<DAuthMode | undefined>();
-  const [throwError, setThrowError] = React.useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<DeepPartial<DUserDTO>>({});
+  const [mode, setMode] = useState<DAuthMode | undefined>();
+  const [throwError, setThrowError] = useState<boolean>(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!currentUser.email && !mode) {
       setMode('register');
     }
@@ -45,8 +45,9 @@ const AppContainer = (): JSX.Element => {
   }
 
   return (
-    <Container maxWidth="xl" sx={{height: "100vh", width: "100vw", overflow: "hidden", padding: "0"}} className="main-container-app">
+    <>
       <TopNav />
+      <Container maxWidth="xl" sx={{ height: "100vh", width: "100vw", overflow: "hidden", padding: "0" }} className="main-container-app">
         <Routes>
           <Route path="/" element={<FTLandingPage />} />
           <Route path="/connect" element={
@@ -58,12 +59,13 @@ const AppContainer = (): JSX.Element => {
           />
           <Route path="users/:id" element={<UserProfilePage />} />
           {/* <Route path="family" element={<Family />} /> */}
-          <Route path="family-trees/:id" element={<ViewFamilyTree />} />
+          <Route path="family-trees/:id" element={<TreeViewPage />} />
           <Route path="family-trees/manage" element={<BuildFamilyTree />} />
           <Route path='*' element={<FTLandingPage />} />
         </Routes>
+      </Container>
       <Footer />
-    </Container>
+    </>
   );
 }
 

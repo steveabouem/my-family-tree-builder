@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
+import { Box } from '@mui/material';
 
 
-const NotFound = ({title}: {[key: string]: string}) => (
+const NotFound = ({title}: {[key: string]: ReactNode}) => (
     <main className='transparent-bg not-found page'>
-        <div className='header-lg'>{title || 'Page not Found!'}</div>
+        <Box className='header-lg'>{title || 'Page not Found!'}</Box>
         <FontAwesomeIcon icon={faTriangleExclamation} />
     </main>
 );

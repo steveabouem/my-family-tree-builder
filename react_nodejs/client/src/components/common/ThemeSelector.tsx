@@ -12,24 +12,24 @@ const ThemeSelector = () => {
 
   return (
     <Box>
-      <div className="trigger" onClick={() => setIsOpen(!isOpen)} >
+      <Box className="trigger" onClick={() => setIsOpen(!isOpen)} >
         <IoColorPaletteSharp color={triggerColor} />
-      </div>
+      </Box>
       {/* {isOpen ? (
-        <div className="choices">
-          <div onClick={() => { if (updateTheme) updateTheme(themeEnum.dark) }} >
+        <Box className="choices">
+          <Box onClick={() => { if (updateTheme) updateTheme(themeEnum.dark) }} >
             <IoColorPaletteSharp color="#070707" />
-          </div>
-          <div onClick={() => { if (updateTheme) updateTheme(themeEnum.green) }} >
+          </Box>
+          <Box onClick={() => { if (updateTheme) updateTheme(themeEnum.green) }} >
             <IoColorPaletteSharp color="#003231" />
-          </div>
-          <div onClick={() => { if (updateTheme) updateTheme(themeEnum.light) }} >
+          </Box>
+          <Box onClick={() => { if (updateTheme) updateTheme(themeEnum.light) }} >
             <IoColorPaletteSharp color="#fff" />
-          </div>
-        </div>
+          </Box>
+        </Box>
       ) : null} */}
-      <div>
-      </div>
+      <Box>
+      </Box>
     </Box>
   )
 

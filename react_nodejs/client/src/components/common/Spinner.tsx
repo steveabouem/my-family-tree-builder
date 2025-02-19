@@ -5,7 +5,7 @@ import theme from "utils/material";
 
 const Spinner = ({loading}: {loading: boolean}): JSX.Element => {
   return (
-    <Backdrop open={loading}>
+    <Backdrop open={loading} sx={{zIndex: 100}}>
       <BounceLoader
         color={theme.palette.grey[400]}
         loading={loading}

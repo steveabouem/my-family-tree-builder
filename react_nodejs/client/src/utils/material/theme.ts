@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material";
+import { capitalize, createTheme } from "@mui/material";
 
 const defaultTypo = {
   fontSize: "1rem",
@@ -37,16 +37,19 @@ const theme = createTheme({
   typography: {
     h1: {
       ...defaultTypo,
+      textTransform: "capitalize",
       fontSize: "2rem",
       color: "#041a46"
     },
     h2: {
       ...defaultTypo,
+      textTransform: "capitalize",
       fontSize: "1.5rem",
       color: "#041a46"
     },
     h3: {
       ...defaultTypo,
+      textTransform: "capitalize",
       fontSize: "1.2rem",
       color: "#041a46"
     },
@@ -65,6 +68,11 @@ const theme = createTheme({
     caption: {
       ...defaultTypo,
       fontSize: '.6rem'
+    },
+    subtitle1: { // USE FOR LABELS
+      ...defaultTypo,
+      textTransform: "capitalize",
+      fontSize: '.9rem'
     }
   },
   components: {

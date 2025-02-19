@@ -14,7 +14,6 @@ const FamilyTreeContextProvider = ({ children }: {children: ReactNode}) => {
 
     if (storedUser) {
       const user = JSON.parse(storedUser);
-
       updateUser(user);
     }
   }, []);

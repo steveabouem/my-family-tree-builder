@@ -1,41 +1,37 @@
-import React, { useState } from "react";
-import { HiBarsArrowDown, HiBarsArrowUp } from "react-icons/hi2";
+import React from "react";
 import { DBaseDropDownProps, DDropdownOption } from "./definitions";
+import { FormControl, Select, MenuItem } from "@mui/material";
+import { Trans } from "@lingui/macro";
+import { useFormikContext } from "formik";
 import('./styles.scss');
 
-const BaseDropDown = ({ id, label, options, additionalClass, onValueChange, val, displayVal }: DBaseDropDownProps): JSX.Element => {
-  const [isOpen, setOpen] = React.useState<boolean>(false);
+const BaseDropDown = <V,>({ id, label, name, options, additionalClass, onChangeCB, sx, displayVal }: DBaseDropDownProps<V>): JSX.Element => {
+  const { setFieldValue, setFieldTouched, values } = useFormikContext<V>();
 
-  const updateVal = (option: DDropdownOption) => {
-    onValueChange(option);
-    setOpen(false);
+  function handleFieldValueChange(v: string | number) {
+    setFieldTouched(name, true);
+    setFieldValue(name, v);
+
+    if (onChangeCB)
+      onChangeCB(v);
   }
 
-
   return (
-    <div className={`dropdown-container + ${additionalClass || ''}`} id={id || ''}>
-      {label || ''}
-      <div className="dd-trigger" onClick={() => setOpen(!isOpen)}>
-        <div>{displayVal || ''}</div>
-        {isOpen ? <HiBarsArrowUp className={isOpen ? 'accent' : ''} /> : <HiBarsArrowDown className={isOpen ? 'accent' : ''} />}
-      </div>
-      {isOpen ? <div className="dd-options-container accent-bg">
-        {options.map((option: DDropdownOption, i: number) => {
-          return (
-            <div
-              className={`dd-options  ${option.additionalClass || ''} ${val === option.value ? ' selected' : ''}`}
-              key={`dd-opt-${i}`}
-              onClick={() => {
-                updateVal(option);
-              }}>
-              <div
-                className={`dd-option-inner`}
-              >{option.label}</div>
-            </div>
-          );
-        })}
-      </div> : null}
-    </div>
+    <FormControl sx={{ width: '100%', height: '35px', ...sx }}>
+      <Select
+        // @ts-ignore
+        value={values[name]} required
+        placeholder={`${<Trans>select</Trans>}`}
+        labelId=""
+        id={id || ''}
+        label={label}
+        size="small"
+        onChange={(e) => handleFieldValueChange(e.target.value)}
+        className={additionalClass}
+      >
+        {options.map((option: DDropdownOption, i: number) => <MenuItem value={option.value} key={`${id || ''}-dropdown-option-${i}`}>{option.label}</MenuItem>)}
+      </Select>
+    </FormControl>
   );
 }
 

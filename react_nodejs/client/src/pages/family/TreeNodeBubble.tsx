@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 
 interface DTreeNodeBubbleProps {
   node: any;
-  // onClick: (e: MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  // onClick: (e: MouseEvent<HTMLBoxElement, MouseEvent>) => void;
   // onHover: (e: unknown) => void;
 }
 

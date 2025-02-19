@@ -7,10 +7,10 @@ import { service } from "../../services";
 import TreeNodeBubble from "../family/TreeNodeBubble";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
-import { Grid2 } from "@mui/material";
+import { Box, Grid2 } from "@mui/material";
 import('./tree.scss');
 
-const ViewFamilyTree = () => {
+const TreeViewPage = () => {
   const [rootId, setRootId] = React.useState<any>();
   const { currentFamilyTree, updateCurrentFamilyTree } = React.useContext(FamilyTreeContext);
   const { toggleLoading, updateModal, loading } = React.useContext(GlobalContext);
@@ -69,7 +69,7 @@ const ViewFamilyTree = () => {
   }, [treeData, rootId])
 
   if (loading) {
-    return <div>Loading</div>;
+    return <Box>Loading</Box>;
   } else {
     return (
       <Page subtitle="" title={`${currentFamilyTree?.name || ''}`}>
@@ -95,5 +95,5 @@ const ViewFamilyTree = () => {
   }
 }
 
-export default ViewFamilyTree;
+export default TreeViewPage;
 

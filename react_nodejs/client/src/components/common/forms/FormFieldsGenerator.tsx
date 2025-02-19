@@ -3,6 +3,7 @@ import { Field, FieldArray, useFormikContext } from "formik";
 import { DBaseFormProps, DFormField } from "../definitions";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
 import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/material";
+import { Trans, t } from "@lingui/macro";
 import CustomField from "./CustomField";
 import('./styles.scss');
 
@@ -10,10 +11,10 @@ const FormFieldsGenerator = ({
   fields, handleSubmit,
   size, handleFieldValueChange, title
 }: DBaseFormProps): JSX.Element => {
-  const {isSubmitting} = useFormikContext();
+  const {isSubmitting, submitForm} = useFormikContext();
   
   return (
-    <Paper sx={{width: "100%"}}>
+    <Paper sx={{width: "100%", padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem"}}>
       {title ? <Typography variant="h4">{title}</Typography> : null}
       {fields.map((field: DFormField, i: number) => (
         <Box display="flex" flexDirection="column" gap={2}>
@@ -39,8 +40,8 @@ const FormFieldsGenerator = ({
           )}
         </Box>
       ))}
-      <Box >
-        <Button variant="contained" color="success" onClick={handleSubmit} />
+      <Box display="flex" justifyContent="end" width="100%">
+        <Button variant="contained" color="success" onClick={submitForm}><Trans>confirm</Trans></Button>
       </Box>
     </Paper>
   );

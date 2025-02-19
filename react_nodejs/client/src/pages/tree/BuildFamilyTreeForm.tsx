@@ -9,6 +9,7 @@ import BaseDropDown from "../../components/common/dropdowns/BaseDropdown";
 import { DDropdownOption, genderOptions } from "../../components/common/dropdowns/definitions";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
+import { Box } from "@mui/material";
 
 const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps): JSX.Element => {
   // ? single form here to build the treeManagerFormFields. I might add an option on each tree node to allow adding a link for that specific Node. 
@@ -167,14 +168,15 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
   };
 
   return (
-    <div>
+    <Box width="450px">
       <Formik
         initialValues={treeManagerInitialValues}
         onSubmit={submitForm}
       >
-        {({ handleSubmit, errors, isSubmitting, setFieldValue, values }) => (
+        {({ handleSubmit, errors, setFieldValue, values }) => (
           <FormFieldsGenerator size="med"
-            fields={[
+            fields={
+              [
               ...treeBuilderFields,
               ...siblingsFieldArray,
               ...spouseFieldArray,
@@ -184,11 +186,8 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
                 type: 'select',
                 options: [{ label: <Trans>gender_female</Trans>, value: 2 }, { label: <Trans>gender_male</Trans>, value: 1 },],
                 required: true,
-                subComponent: () => <div className="field-wrap base">
+                subComponent: () => <Box className="field-wrap base">
                   <BaseDropDown
-                    onValueChange={(option: DDropdownOption) => {
-                      setFieldValue('spouse.gender', option.value);
-                    }}
                     options={genderOptions}
                     id="marital-status-dd"
                     //  TODO typing of your form is not optimal
@@ -197,13 +196,14 @@ const BuildFamilyTreeForm = ({ numberOfSiblings, hasSpouse }: DTreeManagerProps)
                     // @ts-ignore:
                     displayVal={values?.spouse?.gender === 1 ? <Trans>gender_male</Trans> : <Trans>gender_female</Trans>}
                   />
-                </div>
-              }]}
+                </Box>
+              }]
+            }
             handleSubmit={handleSubmit}
             handleFieldValueChange={(field: string, value: string | number) => setFieldValue(field, value)} />
         )}
       </Formik>
-    </div >
+    </Box >
 
   );
 };

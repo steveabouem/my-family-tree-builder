@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import Page from "./common/Page";
+import { Trans } from "@lingui/macro";
 
 const FTLandingPage = (): JSX.Element => {
   return (
     <Page
-      title="Welcome to your Family Tree"
-      subtitle="HEad to the authentication page for now"
+      title={<Trans>main_welcome_header</Trans>}
+      subtitle={<Trans>main_welcome_subheader</Trans>}
     />
   );
 }

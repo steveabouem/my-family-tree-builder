@@ -1,10 +1,11 @@
-export interface DBaseDropDownProps {
+export interface DBaseDropDownProps<V> {
   options: DDropdownOption[];
-  onValueChange: (option: DDropdownOption) => void;
-  id?: string;
+  name: string;
   additionalClass?: string;
+  onChangeCB?: (value: string | number) => void;
   label?: string;
-  val?: string | number;
+  sx?: {[key: string]: string},
+  id?: string;
   displayVal?: string | number;
 }
 
@@ -20,12 +21,10 @@ export const genderOptions: DDropdownOption[] = [
   {
     label: 'Male',
     value: 1,
-    id: 'male-option',
   },
   {
     label: 'Female',
     value: 2,
-    id: 'female-option',
   },
 ];
 
@@ -109,7 +108,7 @@ export const maritalStatusOptions: DDropdownOption[] = [
   {
     label: 'Divorced',
     value: 'Divorced',
-    id: 'divorced-option',
+    id: 'Divorced-option',
   },
   {
     label: 'Separated',

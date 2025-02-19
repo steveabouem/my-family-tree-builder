@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Formik, FormikHelpers } from "formik";
+import React from "react";
+import { Formik } from "formik";
 import { Trans, t } from "@lingui/macro";
 import { DAuthProps } from "./definitions";
 import { useNavigate } from "react-router";
@@ -12,19 +12,13 @@ import BaseDropDown from "../../components/common/dropdowns/BaseDropdown";
 import { DUserDTO } from "../../services/auth/auth.definitions";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
-import { Box, Button } from "@mui/material";
+import { Box, Button, FormControl } from "@mui/material";
 
 const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
-  const [loading, setLoading] = React.useState<boolean>(true);
   const [attempts, setAttempts] = React.useState<number>(0);
-  const [registerAttempts, setRegisterAttempts] = React.useState<number>(0);
-  const [displayValues, setDisplayValues] = React.useState<{ [key: string]: string | number }>({ //format dropdown values for client
-    is_parent: 'Yes',
-    gender: 'Male',
-  });
   const { updateUser } = React.useContext(FamilyTreeContext);
   const navigate = useNavigate();
-  const { theme, updateModal, toggleLoading, modal } = React.useContext(GlobalContext);
+  const { updateModal, toggleLoading, modal, loading } = React.useContext(GlobalContext);
   const mStatus = t({
     id: "marital.status",
     message: `Marital Status`,
@@ -69,9 +63,10 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       type: 'password'
     },
     {
-      fieldName: 'age',
+      fieldName: 'dob',
       label: 'Age',
-      required: true
+      required: true,
+      type: 'date'
     },
     {
       fieldName: 'occupation',
@@ -85,7 +80,7 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     },
   ];
 
-  const registerInitialValues = {
+  const registerInitialValues: Partial<DUserDTO> = {
     first_name: '',
     last_name: '',
     age: 1,
@@ -101,27 +96,28 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     imm_family: 0,
   };
 
-  const loginInitialValues = {
+  const loginInitialValues: Partial<DUserDTO> = {
     password: '',
     email: '',
   };
 
   React.useEffect(() => {
+    if (updateModal)
+      updateModal({ hidden: true })
     if (toggleLoading)
       toggleLoading(false);
   }, []);
 
-  const submitForm = async (values: Partial<DUserDTO>, { resetForm }: FormikHelpers<Partial<DUserDTO>>) => {
+  const proceedToFormSubmission = async (values: Partial<DUserDTO>) => {
     if (mode === 'login') {
       processLogin(values);
-      resetForm();
     } else {
       processRegister(values);
-      resetForm();
     }
   };
 
   const processLogin = async (values: Partial<DUserDTO>) => {
+    toggleLoading(true);
     const authService = new service.auth('auth');
     const envToken: string | undefined = process.env.REACT_APP_JWT_TOKEN;
     const { data } = await authService.submitLoginForm({ ...values, sessionToken: envToken as string })
@@ -137,25 +133,12 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         return false;
       });
 
-    if (data.error) {
-      // @ts-ignore
-      updateModal({
-        ...modal,
-        hidden: false,
-        title: <Trans>login_failure</Trans>,
-        content: <Trans>login_failure_msg {attempts}</Trans>,
-      });
-      return false;
-    }
-
-    if (data?.payload?.authenticated) {
-      localStorage.setItem('FT', JSON.stringify(data.payload));
+    if (data?.authenticated) {
+      localStorage.setItem('FT', JSON.stringify(data));
       if (updateUser) {
-        updateUser(data.payload);
-        console.log({ logedInUser: { data } });
-
+        updateUser(data);
         changeMode(undefined);
-        navigate(`/users/${data.payload.userId}`);
+        navigate(`/users/${data.userId}`);
       }
     } else {
       setAttempts((prev) => prev + 1);
@@ -167,9 +150,11 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
           content: <Trans>login_failure_msg {attempts}</Trans>,
         });
     }
+    toggleLoading(false);
   }
 
   const processRegister = async (values: Partial<DUserDTO>) => {
+    toggleLoading(true);
     const authService = new service.auth('auth');
     const registeredUser = await authService.submitRegistrationForm(values)
       .catch((e: unknown) => {
@@ -178,23 +163,31 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         return false;
       });
 
-    if (registeredUser.data?.data?.authenticated) {
+    if (registeredUser.data?.authenticated) {
       localStorage.setItem('FT', JSON.stringify(registeredUser.data));
       changeMode(undefined);
       if (updateUser) {
-        updateUser(registeredUser.data.data);
-        navigate(`/users/${registeredUser.data.data.data.userId}`);
+        updateUser(registeredUser.data);
+        navigate(`/users/${registeredUser.data.userId}`);
       }
     } else {
-      // ! -TOFIX: on screen notification
+      if (updateModal)
+        updateModal({
+          ...modal,
+          hidden: false,
+          title: <Trans>login_failure</Trans>,
+          content: <Trans>login_failure_msg {attempts}</Trans>,
+        });
       console.log('Registration failure');
     }
+    toggleLoading(false);
   }
 
   return (
     <Page
-      title="Authentication Page"
-      subtitle="Please verify yourself below"
+      title={<Trans>auth_page_title</Trans>}
+      subtitle={<Trans>auth_page_subtitle</Trans>}
+      loading={loading}
     >
       <Box>
         {mode === 'register' ? (
@@ -203,36 +196,31 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
           <Button variant="text" color="primary" onClick={() => changeMode('register')}>Register</Button>
         )}
       </Box>
-      <Box display="flex" width="50%" margin="auto"> 
-
+      <Box display="flex" width="50%" margin="auto">
         <Formik
           initialValues={mode === 'login' ? loginInitialValues : registerInitialValues}
-          onSubmit={submitForm}
+          onSubmit={(values) => proceedToFormSubmission(values)}
         >
-          {({ handleSubmit, errors, isSubmitting, setFieldValue, values }) => mode === 'login' ?
-            <FormFieldsGenerator size="med" fields={loginFormFields} handleSubmit={handleSubmit} />
+          {({ submitForm, errors, setFieldValue, values }) => mode === 'login' ?
+            <FormFieldsGenerator size="med" fields={loginFormFields} handleSubmit={() => { }} />
             :
             <FormFieldsGenerator size="med"
               fields={[
                 ...registrationFormFields,
                 {
                   fieldName: 'gender',
-                  label: 'Gender',
+                  label: <Trans>gender</Trans>,
                   value: values.gender,
                   required: true,
                   subComponent: () => (
-                    <div className="field-wrap base">
+                    <Box className="field-wrap base" sx={{ width: '100%' }}>
                       <BaseDropDown
-                        onValueChange={(option: DDropdownOption) => {
-                          setFieldValue('gender', option.value);
-                          setDisplayValues((prev) => ({ ...prev, gender: option.label }))
-                        }}
+                        name="gender"
                         options={genderOptions}
-                        id="marital-status-dd"
-                        val={values.gender}
-                        displayVal={displayValues.gender}
+                        id="gender-selection"
+                        sx={{ height: '1rem' }}
                       />
-                    </div>
+                    </Box>
                   ),
                 },
                 {
@@ -241,15 +229,13 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                   value: values.marital_status,
                   id: 'marital-status-field',
                   subComponent: () => (
-                    <div className="field-wrap base">
+                    <FormControl fullWidth>
                       <BaseDropDown
-                        onValueChange={(option: DDropdownOption) => setFieldValue('marital_status', option.value)}
+                        name="marital_status"
                         options={maritalStatusOptions}
                         id="marital-status-dd"
-                        val={values.marital_status}
-                        displayVal={values.marital_status}
                       />
-                    </div>
+                    </FormControl>
                   ),
                   required: true,
                 },
@@ -259,22 +245,17 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                   value: values.is_parent,
                   required: true,
                   subComponent: () => (
-                    <div className="field-wrap base">
+                    <FormControl >
                       <BaseDropDown
-                        onValueChange={(option: DDropdownOption) => {
-                          setFieldValue('is_parent', option.value);
-                          setDisplayValues((prev) => ({ ...prev, is_parent: option.label }))
-                        }}
+                        name="is_parent"
                         options={parentOptions}
                         id="parent_status-dd"
-                        val={values.is_parent}
-                        displayVal={displayValues.is_parent}
                       />
-                    </div>
+                    </FormControl>
                   ),
                 },
               ]}
-              handleSubmit={handleSubmit}
+              handleSubmit={submitForm}
               handleFieldValueChange={(field: string, value: string | number) => setFieldValue(field, value)} />
           }
         </Formik>
