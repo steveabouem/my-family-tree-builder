@@ -5,9 +5,9 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(t => {
       return Promise.all([
-        queryInterface.addColumn('family_trees', 'members', {
-          type: Sequelize.DataTypes.JSON
-        }, { transaction: t }),
+        queryInterface.addColumn('users', 'role_id', {
+          type: Sequelize.DataTypes.STRING,
+        }, { transaction: t })
       ]);
     });
   },
@@ -15,8 +15,8 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(t => {
       return Promise.all([
-        queryInterface.removeColumn('family_trees', 'members', { transaction: t })
+        queryInterface.removeColumn('users', 'role_id', { transaction: t })
       ]);
     });
   }
-}
+};

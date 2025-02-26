@@ -19,10 +19,11 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   // foreign keys are automatically added by associations methods (like Project.belongsTo)
   // by branding them using the `ForeignKey` type, `Project.init` will know it does not need to
   // display an error if partner is missing.
-  declare partner: ForeignKey<User['id']>;
+  declare partner: number;
   declare assigned_ips: string[]; //each User has one or more ip assigned to them. ips can be shared between multiple. model: FTIP"
   declare description: string;
   declare email: string;
+  declare role_id: number;
   declare gender: number; // 1:m 2:f"
   declare has_ipa: CreationOptional<number>; //has authority to update authorized ips"
   declare is_parent: number; // 1/0
@@ -109,6 +110,10 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     return this.password;
   }
 
+  get UserRole(): NonAttribute<number> {
+      return this.role_id;
+  }
+
   get UserRelatedTo(): NonAttribute<number[]> {
     return this.related_to;
   }
@@ -192,6 +197,9 @@ User.init(
     },
     related_to: {
       type: DataTypes.JSON
+    },
+    role_id: {
+      type: DataTypes.INTEGER
     },
     createdAt: {
       type: DataTypes.DATE,
