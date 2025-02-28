@@ -40,7 +40,7 @@ module.exports = {
       });
     }
 
-    await queryInterface.bulkInsert('Users', dummyJSON, {});
+    // await queryInterface.bulkInsert('Users', dummyJSON, {});
   },
 
   async down(queryInterface, Sequelize) {
@@ -50,6 +50,6 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
     */
-    await queryInterface.bulkDelete('Users', null, {});
+    // await queryInterface.bulkDelete('Users', null, {});
   }
 };

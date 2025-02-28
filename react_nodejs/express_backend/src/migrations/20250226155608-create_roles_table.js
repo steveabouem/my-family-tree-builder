@@ -18,9 +18,9 @@ module.exports = {
     },
     permissions: {
       allowNull: true,
-      type: Sequelize.JSON // permissionId[]
+      type: Sequelize.JSON
     }
-   })
+   });
   },
   async down (queryInterface, Sequelize) {
     await queryInterface.dropTable('roles');

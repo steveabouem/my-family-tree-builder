@@ -9,7 +9,7 @@ module.exports = {
      * Example:
     */
 
-    await queryInterface.bulkInsert('FTIPs', [{ value: '::1', owners: '[1,2,47,9]' }], {});
+    // await queryInterface.bulkInsert('FTIPs', [{ value: '::1', owners: '[1,2,47,9]' }], {});
   },
 
   async down(queryInterface, Sequelize) {
@@ -19,7 +19,7 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
     */
-    await queryInterface.bulkDelete('FTIPs', null, {});
+    // await queryInterface.bulkDelete('FTIPs', null, {});
   }
 };
 

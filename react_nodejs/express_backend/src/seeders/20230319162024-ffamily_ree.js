@@ -21,7 +21,7 @@ module.exports = {
         updated_at: faker.date.past(),
       });
     }
-    await queryInterface.bulkInsert('FTTrees', dummyJSON, {});
+    // await queryInterface.bulkInsert('FTTrees', dummyJSON, {});
   },
 
   async down(queryInterface, Sequelize) {
@@ -31,7 +31,7 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
     */
-    await queryInterface.bulkDelete('FTTrees', null, {});
+    // await queryInterface.bulkDelete('FTTrees', null, {});
   }
 };
 
