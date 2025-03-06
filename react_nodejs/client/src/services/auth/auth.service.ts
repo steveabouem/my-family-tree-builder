@@ -1,3 +1,4 @@
+import { DChangePasswordValues } from "pages/user/definitions";
 import BaseService from "../base/base.service";
 import { DUserDTO } from "./auth.definitions";
 
@@ -15,6 +16,10 @@ class AuthService extends BaseService {
     return currentSession;
   }
 
+  public submitPasswordChangeForm = async(values: DChangePasswordValues): Promise<any> => {
+    const res = await this.request.post(`${this.APIBaseUrl}/auth/password/change`, values);
+    return res;
+  }
   public logout = async (): Promise<void> => {
     await this.request.post(`${this.APIBaseUrl}/auth/logout`);
     localStorage.clear();

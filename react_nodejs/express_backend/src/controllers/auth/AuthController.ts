@@ -6,6 +6,7 @@ import { DEndpointResponse } from "../controllers.definitions";
 import dayjs from "dayjs";
 import UserController from "../user/UserController";
 import logger from "../../utils/logger";
+import User from "../../models/User";
 
 class AuthController extends BaseController<any> { // ! -TOFIX: no any
     constructor() {
@@ -142,11 +143,47 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
             responseBody.userId = 0;
             responseBody.authenticated = false;
             responseBody.email = req.body.email;
-    
+
             res.status(200);
-            res.json(responseBody);
-        } catch(e) {
+            res.json({...response, ...responseBody});
+        } catch (e) {
             logger.error('Unable to logout. ', e);
+        }
+    }
+
+    public async changePassword(req: Request, res: Response) {
+
+        const response: Partial<DEndpointResponse<DLoginResponse>> = { code: 400, session: '', error: true };
+        let responseBody = {
+            sessionId: '',
+            userId: 0,
+            authenticated: false,
+            email: '',
+            firstName: '',
+            lastName: '',
+        };
+        try {
+            const userController = new UserController();
+            const updatedUser = await userController.updatePassword(req.body);
+            logger.info('Return from update function: ', updatedUser);
+            if (updatedUser) {
+                responseBody.email = req.body.email;
+                responseBody.firstName = req.body.email;
+                responseBody.lastName = req.body.email;
+                res.status(200);
+                res.json({...response, ...responseBody});
+            } else {
+                logger.error('Reset password: update function returned nothing');
+                res.status(500);
+                res.json(response);
+            }
+
+        } catch (e) {
+            response.error = true;
+            res.status(500);
+            response.message = 'Invalid operation';
+            logger.error('Unable to reset password. ', e);
+            res.json({...response, ...responseBody});
         }
     }
 }

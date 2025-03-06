@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode, useCallback } from "react";
 import { Field, FieldArray, useFormikContext } from "formik";
 import { DBaseFormProps, DFormField } from "../definitions";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
@@ -8,40 +8,44 @@ import CustomField from "./CustomField";
 import('./styles.scss');
 
 const FormFieldsGenerator = ({
-  fields, handleSubmit,
-  size, handleFieldValueChange, title
+  fields, handleSubmit, withPaper = true, name = 'form',
+  size, handleFieldValueChange, title, mode = 'write'
 }: DBaseFormProps): JSX.Element => {
-  const {isSubmitting, submitForm} = useFormikContext();
-  
+  const { submitForm, values } = useFormikContext();
+
   return (
-    <Paper sx={{width: "100%", padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem"}}>
+    <Paper elevation={withPaper ? 1 : 0} sx={{width: '100%', padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem"}}>
       {title ? <Typography variant="h4">{title}</Typography> : null}
       {fields.map((field: DFormField, i: number) => (
-        <Box display="flex" flexDirection="column" gap={2}>
-          <Typography variant="subtitle2">
+        <Box display="flex" flexDirection="column" gap={2} key={`${name}-fields-wrapper-${i}`}>
+          <Typography variant="subtitle2" pt="1rem" pb="0">
             {field.label}{field.required ? <PiAsteriskSimpleFill className="bg-accent" /> : null}
           </Typography>
-          {field.subComponent ? (
-            <CustomField  id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
-              required={!!field.required} component={field.subComponent} />
-          ) : field.type === 'array' ? (
-            <FieldArray name={field.fieldName} render={fields => field.subComponent} /> // TODO: this is incorrect
-          ) : field.type === 'select' ? (
-            <FormControl aria-label="Default select example">
-              {/* <InputLabel></InputLabel> */}
-              {field?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</MenuItem>)}
-              
-            </FormControl>
+          {mode === 'write' ? (
+            <>
+              {field.subComponent ? (
+                <CustomField id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
+                  required={!!field.required} component={field.subComponent} />
+              ) : field.type === 'array' ? (
+                <FieldArray name={field.fieldName} render={fields => field.subComponent} /> // TODO: this is incorrect
+              ) : field.type === 'select' ? (
+                <FormControl aria-label="Default select example">
+                  {field?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</MenuItem>)}
+                </FormControl>
+              ) : (
+                <Field
+                  id={field?.id || ''} name={field.fieldName} value={values[field.fieldName]}
+                  required={!!field.required} type={field?.type || 'input'}
+                />
+              )}
+            </>
           ) : (
-            <Field
-              id={field?.id || ''} name={field.fieldName} value={field.value}
-              required={!!field.required} type={field?.type || 'input'}
-            />
+            <Typography variant="body1">{values?.[field.fieldName] || ''}</Typography>
           )}
         </Box>
       ))}
       <Box display="flex" justifyContent="end" width="100%">
-        <Button variant="contained" color="success" onClick={submitForm}><Trans>confirm</Trans></Button>
+        <Button variant="contained" color="success" onClick={submitForm}><Trans>submit</Trans></Button>
       </Box>
     </Paper>
   );

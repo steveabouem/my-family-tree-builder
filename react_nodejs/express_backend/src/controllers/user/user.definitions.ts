@@ -21,6 +21,7 @@ export interface DUserDTO {
     is_parent: number,
     parent_1: number | null,
     parent_2: number | null,
+    role_id: number,
     gender: number, // 1: M, 2:F
     assigned_ips: string[],
     profile_url: string,

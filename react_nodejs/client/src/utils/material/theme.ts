@@ -1,7 +1,7 @@
 import { capitalize, createTheme } from "@mui/material";
 
 const defaultTypo = {
-  fontSize: "1rem",
+  fontSize: ".9rem",
   color: "#5d576b"
 };
 
@@ -39,19 +39,29 @@ const theme = createTheme({
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "2rem",
-      color: "#041a46"
+      color: "#041a46",
+      padding: ".8rem 0"
     },
     h2: {
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.5rem",
-      color: "#041a46"
+      color: "#041a46",
+      padding: ".8rem 0"
     },
     h3: {
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.2rem",
-      color: "#041a46"
+      color: "#041a46",
+      padding: ".8rem 0"
+    },
+    h4: {
+      ...defaultTypo,
+      textTransform: "capitalize",
+      fontSize: "1.1rem",
+      color: "#041a46",
+      padding: ".8rem 0"
     },
     body1: {
       ...defaultTypo
@@ -93,7 +103,15 @@ const theme = createTheme({
           }
         })
       }
-    }
+    },
+    MuiButtonBase: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          fontSize: '.65rem!important'
+        })
+      }
+    },
+
   }
 });
 

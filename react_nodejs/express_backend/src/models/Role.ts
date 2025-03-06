@@ -36,3 +36,4 @@ Role.init({
   tableName: 'roles',
   sequelize: db // passing the `sequelize` instance is required
 });
+export default Role;

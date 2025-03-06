@@ -43,4 +43,9 @@ router.post('/logout', (req: Request, res: Response) => {
   authController.logout(req, res);
 });
 
+router.post('/password/change', (req: Request, res: Response) => {
+  const authController = new AuthController();
+  authController.changePassword(req, res);
+});
+
 export default router;

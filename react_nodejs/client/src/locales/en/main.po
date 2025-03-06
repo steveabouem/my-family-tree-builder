@@ -23,42 +23,54 @@ msgstr "age of sibling #{0}"
 msgid "age_of_spouse"
 msgstr "age of spouse"
 
-#: src/pages/auth/Authentication.tsx:193
+#: src/pages/auth/Authentication.tsx:189
 msgid "auth_page_subtitle"
 msgstr "Please authenticate yourself below."
 
-#: src/pages/auth/Authentication.tsx:192
+#: src/pages/auth/Authentication.tsx:188
 msgid "auth_page_title"
 msgstr "Authentication"
 
-#: src/components/common/alerts/BaseModal.tsx:39
+#: src/components/common/alerts/BaseModal.tsx:59
+#: src/pages/user/Profile.tsx:124
 msgid "cancel"
-msgstr "cancel"
+msgstr "Cancel"
 
-#: src/components/common/alerts/BaseModal.tsx:40
-#: src/components/common/forms/FormFieldsGenerator.tsx:44
+#: src/components/common/alerts/BaseModal.tsx:60
 msgid "confirm"
-msgstr "confirm"
+msgstr "Confirm"
 
 #: src/components/common/navbars/TopNav.tsx:77
 msgid "Connect"
 msgstr "Connect"
 
+#: src/pages/user/Profile.tsx:145
+msgid "create_your_first_tree"
+msgstr "Add"
+
 #: src/pages/tree/BuildFamilyTree.tsx:44
 msgid "describe_your_family"
-msgstr "describe your family"
+msgstr "Describe your family"
+
+#: src/pages/user/Profile.tsx:118
+msgid "edit"
+msgstr "Edit"
+
+#: src/pages/user/Profile.tsx:48
+msgid "email_form_label"
+msgstr "Email"
 
 #: src/pages/tree/BuildFamilyTreeForm.tsx:99
 msgid "email_of_sibling {0}"
 msgstr "email of sibling {0}"
 
 #: src/pages/tree/ViewFamilyTree.tsx:49
-#: src/pages/user/Profile.tsx:47
+#: src/pages/user/Profile.tsx:67
 msgid "error_modal_message"
 msgstr "error modal message"
 
 #: src/pages/tree/ViewFamilyTree.tsx:50
-#: src/pages/user/Profile.tsx:48
+#: src/pages/user/Profile.tsx:68
 msgid "error_modal_title"
 msgstr "An error has occured"
 
@@ -90,7 +102,7 @@ msgstr "first name of sibling #{0}"
 msgid "first_name_of_spouse"
 msgstr "spouse's first name"
 
-#: src/pages/auth/Authentication.tsx:216
+#: src/pages/auth/Authentication.tsx:212
 msgid "gender"
 msgstr "Gender"
 
@@ -116,9 +128,9 @@ msgstr "Spouse's gender"
 msgid "generic_field_error"
 msgstr "A error has occured. Please contact the administrator"
 
-#: src/pages/user/Profile.tsx:74
+#: src/pages/user/Profile.tsx:159
 msgid "go_check_my_tree"
-msgstr "go_check_my_tree"
+msgstr "Check Out my Tree"
 
 #: src/components/common/navbars/TopNav.tsx:51
 msgid "Home"
@@ -136,15 +148,15 @@ msgstr "last name of sibling {0}"
 msgid "last_name_of_spouse"
 msgstr "last name of spouse"
 
-#: src/pages/auth/Authentication.tsx:131
-#: src/pages/auth/Authentication.tsx:152
-#: src/pages/auth/Authentication.tsx:182
+#: src/pages/auth/Authentication.tsx:130
+#: src/pages/auth/Authentication.tsx:149
+#: src/pages/auth/Authentication.tsx:178
 msgid "login_failure"
 msgstr "Login Failure!"
 
-#: src/pages/auth/Authentication.tsx:132
-#: src/pages/auth/Authentication.tsx:153
-#: src/pages/auth/Authentication.tsx:183
+#: src/pages/auth/Authentication.tsx:131
+#: src/pages/auth/Authentication.tsx:150
+#: src/pages/auth/Authentication.tsx:179
 msgid "login_failure_msg {attempts}"
 msgstr "Failed to Connect. Please check your credentials and try again.({attempts} attempts)"
 
@@ -153,7 +165,7 @@ msgstr "Failed to Connect. Please check your credentials and try again.({attempt
 
 #: src/components/common/navbars/TopNav.tsx:87
 msgid "logout"
-msgstr "logout"
+msgstr "Logout"
 
 #: src/components/FT.Landing.tsx:8
 msgid "main_welcome_header"
@@ -166,10 +178,6 @@ msgstr "Head to the authentication page for now"
 #: src/pages/tree/BuildFamilyTreeForm.tsx:60
 msgid "make_tree_private"
 msgstr "Make the family tree to private?"
-
-#: src/pages/user/Profile.tsx:62
-msgid "create_your_first_tree"
-msgstr "Describe your family tree"
 
 #. js-lingui-explicit-id
 #: src/pages/auth/Authentication.tsx:22
@@ -196,9 +204,33 @@ msgstr "mother_last_name"
 msgid "my_tree_page_title"
 msgstr "Manage my family tree"
 
+#: src/pages/user/Profile.tsx:50
+msgid "new_password_form_label"
+msgstr "Nouveau mot de passe"
+
 #: src/pages/tree/BuildFamilyTree.tsx:52
 msgid "no"
 msgstr "no"
+
+#: src/pages/user/Profile.tsx:96
+msgid "operation_failure_text"
+msgstr "L'opération a échoué. Veuillez réessayer, en vous assurant d'utiliser les bonnes données."
+
+#: src/pages/user/Profile.tsx:97
+msgid "operation_failure_title"
+msgstr "Assia!"
+
+#: src/pages/user/Profile.tsx:86
+msgid "operation_success_text"
+msgstr "Your request was processed correctly!"
+
+#: src/pages/user/Profile.tsx:87
+msgid "operation_success_title"
+msgstr "Operation Successful!"
+
+#: src/pages/user/Profile.tsx:49
+msgid "password_form_label"
+msgstr "Password"
 
 #: src/pages/tree/BuildFamilyTree.tsx:47
 msgid "preliminary_build_tree_questions_title"
@@ -208,25 +240,41 @@ msgstr "Please answer the couple of questions below to better build the family t
 msgid "Profile"
 msgstr "Profile"
 
-#: src/pages/user/Profile.tsx:81
-msgid "profile_not_found"
-msgstr "profile_not_found"
+#: src/pages/user/Profile.tsx:111
+msgid "profile_management_label"
+msgstr "Profile Management"
 
-#: src/pages/user/Profile.tsx:56
+#: src/pages/user/Profile.tsx:166
+msgid "profile_not_found"
+msgstr "Profile Not Found"
+
+#: src/pages/user/Profile.tsx:107
 msgid "profile_page_subtitle"
 msgstr "On this page, you can find general information related to your profile."
 
-#: src/pages/user/Profile.tsx:56
+#: src/pages/user/Profile.tsx:107
 msgid "profile_page_title {0}"
 msgstr "Welcome {0}"
 
+#: src/pages/user/Profile.tsx:51
+msgid "repeat_new_password_form_label"
+msgstr "Confirmez le Nouveau mot de passe"
+
 #: src/components/common/dropdowns/BaseDropdown.tsx:24
 msgid "select"
-msgstr "select"
+msgstr "Select"
+
+#: src/components/common/forms/FormFieldsGenerator.tsx:49
+msgid "submit"
+msgstr "Submit"
 
 #: src/pages/tree/BuildFamilyTree.tsx:61
 msgid "tell_me_more_about_your_family_title"
 msgstr "Tell me more about your family"
+
+#: src/pages/user/Profile.tsx:135
+msgid "tree_management_label"
+msgstr "Family Trees Management"
 
 #: src/components/common/navbars/TopNav.tsx:70
 msgid "Trees"
@@ -240,6 +288,6 @@ msgstr "yes"
 #~ msgid "your_families_title"
 #~ msgstr "your_families_title"
 
-#: src/pages/user/Profile.tsx:61
+#: src/pages/user/Profile.tsx:139
 msgid "your_tree_title"
-msgstr "your_tree_title"
+msgstr "Checkout your Tree"

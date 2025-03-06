@@ -84,7 +84,7 @@ const TopNav = () => {
             <RiUser5Fill />   {currentUser.firstName}
           </>
         ) : <LiaUserSecretSolid />}
-        {menuOpened && <Button variant="contained" color="success" onClick={processLogout} ><Trans>logout</Trans></Button>}
+        {menuOpened && currentUser?.firstName && <Button variant="contained" color="success" onClick={processLogout} ><Trans>logout</Trans></Button>}
       </Box>
       {/* <ThemeSelector /> */}
     </Box>

@@ -36,11 +36,14 @@ export interface DFormField {
 }
 
 export interface DBaseFormProps {
+  name?: string | ReactNode;
+  withPaper?: boolean;
+  mode?: 'read' | 'write',
   title?: string | ReactNode;
   fields: DFormField[];
   handleSubmit: () => void;
   size: string | ReactNode;
-  initialValues?: { [key: string]: string | ReactNode | number };
+  initialValues?: any; // will switch to a generic soon
   handleFieldValueChange?: (field: string , value: string  | number) => void;
   // ! -TOFIX: No any, valiation types are not hard
   validations?: any;
