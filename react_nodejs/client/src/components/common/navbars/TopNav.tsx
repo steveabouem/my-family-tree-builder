@@ -1,18 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Trans } from "@lingui/macro";
-import logo from "../../../assets/images/logo.jpg";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
-import usePrimary from "../../../pages/hooks/usePrimary.hook";
-import { service } from "../../../services";
-import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import { Avatar, Box, Button, Link, Typography } from "@mui/material";
+import logo from "assets/images/logo.jpg";
+import FamilyTreeContext from "contexts/creators/familyTree";
+import { service } from "services";
+import PageUrlsEnum from "utils/urls";
 import theme from "utils/material/theme";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = useState(false);
-  const linkColor = usePrimary();
   const { currentUser, updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
   const {pathname} = useLocation();
@@ -23,7 +22,7 @@ const TopNav = () => {
       .then(() => {
         if (updateUser) {
           updateUser({});
-          navigate('/');
+          navigate(PageUrlsEnum.home);
         }
       })
       .catch((e: unknown) => {
@@ -47,14 +46,14 @@ const TopNav = () => {
       </Box>
       <Box display="flex" justifyContent="end" gap={2}>
         <Box>
-          <Link href="/" color={'secondary'} sx={{ textDecoration: isCurrentLocation() ? 'underline' : 'none' }} >
+          <Link href={PageUrlsEnum.home} color={'secondary'} sx={{ textDecoration: isCurrentLocation() ? 'underline' : 'none' }} >
             <Typography variant="button" ><Trans>Home</Trans></Typography>
           </Link>
         </Box>
-        {currentUser ? (
+        {currentUser?.userId ? (
           <>
             <Box>
-              <Link href={`/users/${currentUser.userId}`} color={'secondary'} sx={{ textDecoration: isCurrentLocation("users") ? 'underline' :  'none' }}>
+              <Link href={PageUrlsEnum.user.replace(':id', `${currentUser.userId}`)} color={'secondary'} sx={{ textDecoration: isCurrentLocation("users") ? 'underline' :  'none' }}>
                 <Typography variant="button">
                   <Trans>Profile</Trans>
                 </Typography>

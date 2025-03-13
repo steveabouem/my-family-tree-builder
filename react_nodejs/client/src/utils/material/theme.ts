@@ -1,4 +1,5 @@
 import { capitalize, createTheme } from "@mui/material";
+import { white } from "material-ui/styles/colors";
 
 const defaultTypo = {
   fontSize: ".9rem",
@@ -22,12 +23,17 @@ const theme = createTheme({
     info: {
       main: "#fff"
     },
+    warning: {
+      main: "#fff",
+      light: "#fff0b6"
+    },
     grey: {
       "400": "#cecaca3d",
       "100": "#8f97a0"
     },
     error: {
-      main: "#ff9b71"
+      main: "#ff9b71",
+      light: "#ffd8c7",
     },
     success: {
       main: "#5b9279",
@@ -99,7 +105,25 @@ const theme = createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           '.MuiBox-root': {
-            background: theme.palette.primary.light,
+            '&.info': {
+              background: theme.palette.info.main,
+              p: {
+                color: theme.palette.primary.main
+              }
+            },
+            '&.success': {
+              background: theme.palette.success.light,
+              p: {
+                color: theme.palette.success.main
+              }
+            },
+            '&.warning': {
+              background: theme.palette.warning.light,
+              color: theme.palette.warning.main,
+            },
+            '&.error': {
+              background: theme.palette.error.light,
+            },
           }
         })
       }
@@ -107,11 +131,15 @@ const theme = createTheme({
     MuiButtonBase: {
       styleOverrides: {
         root: ({ theme }) => ({
-          fontSize: '.65rem!important'
+          fontSize: '.65rem!important',
+          transition: '.8s',
+          '&:hover': {
+            boxShadow: "1px -1px 2px 0px #5d576b!important",
+            transform: "translate(2px -2px)"
+          }
         })
       }
     },
-
   }
 });
 

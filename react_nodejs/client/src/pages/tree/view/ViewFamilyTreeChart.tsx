@@ -1,16 +1,17 @@
 import React from "react";
 import ReactFamilyTree from 'react-family-tree';
 import { Trans } from "@lingui/macro";
-import { useNavigate, useParams } from "react-router-dom";
-import Page from "../../components/common/Page";
-import { service } from "../../services";
-import TreeNodeBubble from "../family/TreeNodeBubble";
-import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
-import GlobalContext from "contexts/creators/global/global.context";
 import { Box, Grid2 } from "@mui/material";
-import('./tree.scss');
+import { useNavigate, useParams } from "react-router-dom";
+import Page from "components/common/Page";
+import { service } from "services/index";
+import FamilyTreeContext from "contexts/creators/familyTree";
+import GlobalContext from "contexts/creators/global";
+import TreeNodeBubble from "pages/family/TreeNodeBubble";
+import PageUrlsEnum from "utils/urls";
+import('../tree.scss');
 
-const TreeViewPage = () => {
+const ViewFamilyTreeChartPage = () => {
   const [rootId, setRootId] = React.useState<any>();
   const { currentFamilyTree, updateCurrentFamilyTree } = React.useContext(FamilyTreeContext);
   const { toggleLoading, updateModal, loading } = React.useContext(GlobalContext);
@@ -29,7 +30,7 @@ const TreeViewPage = () => {
 
       return tree;
     } else {
-      navigate('/connect');
+      navigate(PageUrlsEnum.auth);
     }
   };
 
@@ -95,5 +96,5 @@ const TreeViewPage = () => {
   }
 }
 
-export default TreeViewPage;
+export default ViewFamilyTreeChartPage;
 

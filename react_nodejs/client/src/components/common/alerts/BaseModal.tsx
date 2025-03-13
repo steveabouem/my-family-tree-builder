@@ -9,8 +9,6 @@ import { TbFileSad } from "react-icons/tb";
 import { RiFileInfoLine } from "react-icons/ri";
 import { TbFileSmile } from "react-icons/tb";
 
-
-
 const BaseModal = ({ onConfirm, onCancel, children, type = 'info' }: DModalProps): JSX.Element => {
   const [processing, setProcessing] = useState<boolean>(false);
   const { modal, updateModal } = React.useContext(GlobalContext);
@@ -45,11 +43,11 @@ const BaseModal = ({ onConfirm, onCancel, children, type = 'info' }: DModalProps
 
   return (
     <Modal open={!modal?.hidden} id={modal?.id || ''}>
-      <Box display="flex" flexDirection="column" gap={2} p={2} height="300px" width="30vw" m="15vh auto" justifyContent="space-between">
+      <Box display="flex" flexDirection="column" gap={2} p={2} height="300px" width="30vw" m="15vh auto" justifyContent="space-between" className={type}>
         <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" borderBottom="1px solid #bec9b2">
           <Box display="flex" gap={1} alignItems="center">
             {headerIcon}
-            <Typography variant="h3" color={theme.palette.primary.dark}>{modal?.title || 'info'}</Typography>
+            <Typography variant="h3" >{modal?.title || 'info'}</Typography>
           </Box>
           <IoCloseCircleSharp fontSize="medium" onClick={handleCancel} color={theme.palette.primary.dark} />
         </Box>

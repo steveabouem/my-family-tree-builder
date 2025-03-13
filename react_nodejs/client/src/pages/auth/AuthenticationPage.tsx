@@ -13,8 +13,9 @@ import { DUserDTO } from "../../services/auth/auth.definitions";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
 import { Box, Button, FormControl } from "@mui/material";
+import PageUrlsEnum from "utils/urls";
 
-const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
+const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [attempts, setAttempts] = React.useState<number>(0);
   const { updateUser } = React.useContext(FamilyTreeContext);
   const navigate = useNavigate();
@@ -138,7 +139,7 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       if (updateUser) {
         updateUser(data);
         changeMode(undefined);
-        navigate(`/users/${data.userId}`);
+        navigate(PageUrlsEnum.user.replace(':id', data.userId));
       }
     } else {
       setAttempts((prev) => prev + 1);
@@ -168,7 +169,7 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       changeMode(undefined);
       if (updateUser) {
         updateUser(registeredUser.data);
-        navigate(`/users/${registeredUser.data.userId}`);
+        navigate(PageUrlsEnum.user.replace(':id', registeredUser.data.userId));
       }
     } else {
       if (updateModal)
@@ -264,4 +265,4 @@ const Authentication = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   );
 }
 
-export default Authentication;
+export default AuthenticationPage;

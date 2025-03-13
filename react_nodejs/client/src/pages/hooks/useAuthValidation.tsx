@@ -1,8 +1,9 @@
+import FamilyTreeContext from "contexts/creators/familyTree";
 import React from "react";
 import { useNavigate } from "react-router";
 import {useLocation} from "react-router"
-import SessionService from "../../services/session/session.service";
-import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
+import SessionService from "services/session/session.service";
+import PageUrlsEnum from "utils/urls";
 
 const useSessionValidation = (): void => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const useSessionValidation = (): void => {
           .then(({data} ) => {
             //TODO: "there's got to be a better way!"
             if (data.error) {
-              navigate('/connect');
+              navigate(PageUrlsEnum.auth);
             } else {
               if (data?.data?.payload) {// ! <= this is hilarious. fix it.
                 const currentUser = JSON.parse(data.data.payload);
@@ -36,7 +37,7 @@ const useSessionValidation = (): void => {
           });
       }
     } else {
-      navigate('/connect');
+      navigate(PageUrlsEnum.auth);
     }
   }, []);
 }
