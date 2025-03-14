@@ -15,7 +15,7 @@ const GlobalContext = createContext<DGlobalContext>({
   tree: {},
   updateTheme: undefined,
   updateModal: undefined,
-  toggleLoading: undefined,
+  toggleLoading: () => {},
 });
 
 export default GlobalContext;

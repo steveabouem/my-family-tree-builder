@@ -89,6 +89,11 @@ const theme = createTheme({
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: '.9rem'
+    },
+    button: { // USE FOR LABELS
+      ...defaultTypo,
+      textTransform: "capitalize",
+      fontSize: '.8rem',
     }
   },
   components: {

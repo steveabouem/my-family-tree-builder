@@ -97,7 +97,7 @@ const UserProfilePage = (): JSX.Element => {
                 <Box display="flex" justifyContent="flex-end" width="100%" alignItems="center">
                   <Button variant="outlined" color="secondary" sx={{ display: 'flex', gap: "1rem" }}>
                     <MdOutlineAddBox size={20} />
-                    <Link underline="none" href="/family-trees/manage"><Trans>create_your_first_tree</Trans></Link>
+                    <Link underline="none" href={PageUrlsEnum.trees}><Trans>create_your_first_tree</Trans></Link>
                   </Button>
                 </Box>
               )

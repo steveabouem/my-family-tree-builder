@@ -65,7 +65,9 @@ const TopNav = () => {
             </Box> */}
 
             <Box>
-              <Link href="/family-trees/manage" color={'secondary'} sx={{ textDecoration: isCurrentLocation("family-trees")? 'underline' :  'none' }}>
+              <Link href={PageUrlsEnum.trees
+                
+              } color={'secondary'} sx={{ textDecoration: isCurrentLocation("family-trees")? 'underline' :  'none' }}>
                 <Typography variant="button" ><Trans>Trees</Trans></Typography>
               </Link>
             </Box>

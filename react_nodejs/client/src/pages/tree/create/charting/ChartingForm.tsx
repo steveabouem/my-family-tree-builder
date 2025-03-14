@@ -189,7 +189,7 @@ const ChartingForm = (): JSX.Element => {
   };
 
   return (
-    <Box display="flex" flexDirection="column" gap={4}>
+    <Box display="flex" flexDirection="column" gap={4} height="100%">
       <Paper sx={{ padding: "2rem" }}>
         <Typography variant="h3"><Trans>preliminary_build_tree_questions_title</Trans></Typography>
         <Box display="flex" justifyContent="space-between" gap={2}>

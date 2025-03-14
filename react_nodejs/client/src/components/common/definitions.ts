@@ -42,7 +42,7 @@ export interface DBaseFormProps {
   title?: string | ReactNode;
   fields: DFormField[];
   handleSubmit: () => void;
-  size: string | ReactNode;
+  size?: string | ReactNode;
   initialValues?: any; // will switch to a generic soon
   handleFieldValueChange?: (field: string , value: string  | number) => void;
   // ! -TOFIX: No any, valiation types are not hard

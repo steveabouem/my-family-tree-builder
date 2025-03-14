@@ -1,9 +1,9 @@
 import React from "react";
 import { Field, FieldArray, useFormikContext } from "formik";
-import { DBaseFormProps, DFormField } from "../definitions";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
 import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/material";
 import { Trans, t } from "@lingui/macro";
+import { DBaseFormProps, DFormField } from "../definitions";
 import CustomField from "./CustomField";
 import('./styles.scss');
 
@@ -11,7 +11,7 @@ const FormFieldsGenerator = ({
   fields, handleSubmit, withPaper = true, name = 'form',
   size, handleFieldValueChange, title, mode = 'write'
 }: DBaseFormProps): JSX.Element => {
-  const { submitForm, values } = useFormikContext();
+  const { submitForm, values } = useFormikContext<any>();
 
   return (
     <Paper elevation={withPaper ? 1 : 0} sx={{width: '100%', padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem"}}>

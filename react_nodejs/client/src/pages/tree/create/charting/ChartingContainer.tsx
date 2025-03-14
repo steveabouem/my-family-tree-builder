@@ -6,10 +6,10 @@ import GenealogyContainer from '../genealogy/GenealogyContainer';
 import ChartingForm from './ChartingForm';
 
 const ChartingContainer = (): JSX.Element => {
-  
-
   return (
-    <ChartingForm />
+    <Page subtitle={<Trans>tree_dashboard_page_subtitle</Trans>} title={<Trans>tree_dashboard_page_title</Trans>}>
+      <ChartingForm />
+    </Page>
   );
 }
 
