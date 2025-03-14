@@ -4,7 +4,8 @@ import logger from "../utils/logger";
 import AuthController from "../controllers/auth/AuthController";
 import { DEndpointResponse, DRequestPayload } from "../controllers/controllers.definitions";
 import { DUserDTO } from "../middleware-classes/user/user..definitions";
-import { DRegistrationResponse } from "../controllers/auth/auth.definitions";
+import { DLoginResponse, DRegistrationResponse } from "../controllers/auth/auth.definitions";
+import RequestHelper from "./RequestHelper";
 
 
 const router = Router();
@@ -30,22 +31,26 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 router.post('/register', (req: Request, res: Response, next: NextFunction) => {
   const authController = new AuthController();
-  authController.register(req, res);
+  const helper = new RequestHelper(req, res);
+  helper.sendResponseFromControllerMethod(authController.register, 'Register');
 });
 
 router.post('/login', (req: Request, res: Response) => {
   const authController = new AuthController();
-  authController.login(req, res);
+  const helper = new RequestHelper(req, res);
+  helper.sendResponseFromControllerMethod(authController.login, 'Login');
 });
 
 router.post('/logout', (req: Request, res: Response) => {
   const authController = new AuthController();
-  authController.logout(req, res);
+  const helper = new RequestHelper(req, res);
+  helper.sendResponseFromControllerMethod(authController.logout, 'Logout');
 });
 
 router.post('/password/change', (req: Request, res: Response) => {
   const authController = new AuthController();
-  authController.changePassword(req, res);
+  const helper = new RequestHelper(req, res);
+  helper.sendResponseFromControllerMethod(authController.changePassword, 'Update Pwd');
 });
 
 export default router;

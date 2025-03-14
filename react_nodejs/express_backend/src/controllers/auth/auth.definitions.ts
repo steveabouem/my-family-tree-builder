@@ -1,20 +1,21 @@
-export type DRegistrationResponse = {
+import { DEndpointResponse } from "../controllers.definitions";
+
+export type DRegistrationResponse = DEndpointResponse & {
     authenticated: boolean;
     email: string;
     userId?: number;
     message?: string;
 }
 
-export type DLoginResponse = {
-    sessionId: string;
+export type DLoginResponse = DEndpointResponse & {
     authenticated: boolean;
-    email: string;
-    firstName: string;
-    lastName: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
     userId?: number;
 }
 
-export type DLogoutResponse = {
+export type DLogoutResponse = DEndpointResponse & {
     authenticated: boolean;
     email: string;
     userId?: number;

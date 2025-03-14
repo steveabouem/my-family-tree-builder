@@ -13,22 +13,13 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare last_name: string;
   declare age: number | null;
   declare dob: string;
-  declare parent_1: number | null;
-  declare parent_2: number | null;
+  declare role_id: number;
   declare occupation: string;
-  // foreign keys are automatically added by associations methods (like Project.belongsTo)
-  // by branding them using the `ForeignKey` type, `Project.init` will know it does not need to
-  // display an error if partner is missing.
-  declare partner: number;
   declare assigned_ips: string[]; //each User has one or more ip assigned to them. ips can be shared between multiple. model: FTIP"
   declare description: string;
   declare email: string;
-  declare role_id: number;
   declare gender: number; // 1:m 2:f"
   declare has_ipa: CreationOptional<number>; //has authority to update authorized ips"
-  declare is_parent: number; // 1/0
-  declare imm_family: number; // Family: immediate family
-  declare marital_status: string;
   declare profile_url: CreationOptional<string>;
   declare password: string;
   declare createdAt: CreationOptional<Date>;
@@ -48,10 +39,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     return this.dob;
   }
   get userParent_1(): NonAttribute<number | null> {
-    return this.parent_1;
-  }
-  get userParent_2(): NonAttribute<number | null> {
-    return this.parent_2;
+    return this.role_id;
   }
 
   get userEmail(): NonAttribute<string> {
@@ -78,28 +66,12 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     return this.has_ipa;
   }
 
-  get userIsParent(): NonAttribute<number> {
-    return this.is_parent;
-  }
-
   get userLastName(): NonAttribute<string> {
     return this.last_name;
   }
 
-  get UserImmediateFamily(): NonAttribute<number> {
-    return this.imm_family;
-  }
-
-  get UserMaritalStatus(): NonAttribute<string> {
-    return this.marital_status;
-  }
-
   get UserOccupation(): NonAttribute<string> {
     return this.occupation;
-  }
-
-  get UserPartner(): NonAttribute<number> {
-    return this.partner;
   }
 
   get UserProfileURL(): NonAttribute<string> {
@@ -111,7 +83,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   }
 
   get UserRole(): NonAttribute<number> {
-      return this.role_id;
+    return this.role_id;
   }
 
   get UserRelatedTo(): NonAttribute<number[]> {
@@ -153,17 +125,6 @@ User.init(
     has_ipa: {
       type: DataTypes.INTEGER,
     },
-    parent_1: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    }, is_parent: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    parent_2: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -173,20 +134,8 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    imm_family: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
-    marital_status: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     occupation: {
       type: DataTypes.STRING,
-    },
-    partner: {
-      type: DataTypes.INTEGER,
-      allowNull: true
     },
     profile_url: {
       type: DataTypes.STRING,
@@ -199,7 +148,8 @@ User.init(
       type: DataTypes.JSON
     },
     role_id: {
-      type: DataTypes.INTEGER
+      type: DataTypes.INTEGER,
+      allowNull: false
     },
     createdAt: {
       type: DataTypes.DATE,

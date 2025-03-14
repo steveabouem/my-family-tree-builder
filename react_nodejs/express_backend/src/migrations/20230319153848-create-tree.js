@@ -19,6 +19,9 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false
       },
+      members: {
+        type: Sequelize.JSON
+      },
       active: {
         type: Sequelize.INTEGER,
         allowNull: false,

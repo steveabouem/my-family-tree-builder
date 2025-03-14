@@ -19,13 +19,14 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare gender: number; //1:M, 2:F
   declare parent_1: number | null; // father, nullable
   declare parent_2: number | null; // mother
+  declare siblings: string;
+  declare children: string;
   declare email: string;
   declare last_name: string;
-  declare imm_family: number;
   declare marital_status: string;
   declare occupation: string;
-  declare partner: number;
   declare profile_url: string;
+  declare partner: number;
   declare created_by: number; //User
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
@@ -68,9 +69,6 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   get familyMemberEmail(): NonAttribute<string> {
     return this.email;
   };
-  get familyMemberImmFamily(): NonAttribute<number> {
-    return this.imm_family;
-  };
   get familyMemberMaritalStatus(): NonAttribute<string> {
     return this.marital_status;
   };
@@ -111,7 +109,8 @@ FamilyMember.init(
     parent_2: { type: DataTypes.INTEGER },
     email: { type: DataTypes.STRING },
     last_name: { type: DataTypes.STRING },
-    imm_family: { type: DataTypes.INTEGER, allowNull: true },
+    children: {type: DataTypes.JSON, defaultValue: ""},
+    siblings: {type: DataTypes.JSON, defaultValue: ""},
     marital_status: { type: DataTypes.STRING, allowNull: true },
     occupation: { type: DataTypes.STRING, allowNull: true },
     partner: { type: DataTypes.INTEGER, allowNull: true },

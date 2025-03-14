@@ -21,6 +21,10 @@ module.exports = {
         allowNull: true,
         type: Sequelize.INTEGER
       },
+      dob: {
+        type: Sequelize.STRING,
+      },
+      role_id: {type: Sequelize.INTEGER},
       email: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -30,21 +34,9 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
-      partner: { type: Sequelize.INTEGER },
-      parent_1: { type: Sequelize.INTEGER },
-      parent_2: { type: Sequelize.INTEGER },
-      siblings: { type: Sequelize.JSON },
-      marital_status: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
       password: {
         allowNull: false,
         type: Sequelize.STRING
-      },
-      is_parent: {
-        allowNull: false,
-        type: Sequelize.INTEGER
       },
       has_ipa: {
         type: Sequelize.INTEGER
@@ -59,11 +51,6 @@ module.exports = {
       },
       profile_url: { type: Sequelize.STRING },
       description: { type: Sequelize.STRING },
-      imm_family: { type: Sequelize.INTEGER },
-      related_to: {
-        type: Sequelize.JSON,
-        defaultValue: '[]'
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

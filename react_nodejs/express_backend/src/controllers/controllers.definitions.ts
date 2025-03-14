@@ -44,9 +44,8 @@ export interface DSession {
 * The generic T will allow controll over whats sent back to the client: only the type defined by T will be acceptable as a response
 * see https://stackoverflow.com/questions/62736335/typescript-and-express-js-change-res-json-response-type
 */
-export interface DEndpointResponse<T> extends Response {
-  json: Send<T, this>;
-  session: string;
+export interface DEndpointResponse {
+  sessionId?: string;
   error: boolean;
   code: number;
   message?: string;
@@ -59,8 +58,8 @@ export interface DEndpointResponse<T> extends Response {
 * The generic T will allow controll over whats sent back to the client: only the type defined by T will be acceptable as a response
 * see https://stackoverflow.com/questions/62736335/typescript-and-express-js-change-res-json-response-type
 */
-export interface DRequestPayload<P> extends Request {
-  payload: P;
+export interface DRequestPayload<P> extends DEndpointResponse {
+  payload?: P;
 }
 
 type Send<ResBody = any, T = Response<ResBody>> = (body?: ResBody) => T;
