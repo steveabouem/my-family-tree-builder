@@ -1,29 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Paper } from "@mui/material";
+import { Formik, useFormikContext } from "formik";
+import { Trans } from "@lingui/macro";
 import StepForm from "components/common/forms/stepform";
-import { Formik } from "formik";
+import { useZDispatch, useZSelector } from "app/hooks";
+import { DFormField } from "@components/common/definitions";
+import { loadStepFormFieldsAction } from "app/slices/forms/stepForm";
+import { DStepFormState } from "@app/slices/definitions";
 
 const GenealogyForm = () => {
-  const [currentFormStep, setCurrentFormStep] = useState<number>(0);
+  const { currentFormStep} = useZSelector((state: {stepForm: DStepFormState}) => state.stepForm);
+  const {setValues, values} = useFormikContext();
+  const dispatch = useZDispatch();
+  const initialFields: DFormField[] = [
+    { fieldName: "mother_first", label: <Trans>your_mothers_first_name</Trans> },
+    { fieldName: "mother_last", label: <Trans>your_mothers_last_name</Trans> },
+    { fieldName: "mother_spouse", label: <Trans>your_mothers_spouse</Trans> },
+  ];
 
-  function goToStep(step: number) {
-    if (step > 0) {
-      setCurrentFormStep(step);
-    }
-  }
+  useEffect(() => {
+    dispatch(loadStepFormFieldsAction(initialFields));
+  }, []);
+ 
 
   return (
     <Paper>
-      <Box>
-        <Formik initialValues={{}} onSubmit={(v) => { }}>
-          {({ }) => (
-            <StepForm
-              currentFields={[]}
-              currentStep={currentFormStep}
-              name="tell-my-story" updateStep={goToStep} />
-          )}
-        </Formik>
-      </Box>
+      <StepForm />
     </Paper>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { DBaseMenuProps, DMenuItem } from "./definitions";
 import { Link } from "react-router-dom";
+import { Box } from "@mui/material";
 
 const BaseMenu = (props: DBaseMenuProps): JSX.Element => {
 

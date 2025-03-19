@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import AppContainer from './components/common/AppContainer';
+import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material';
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import baseEn from "./locales/en/main.js";
 import baseFr from "./locales/fr/main.js";
 import GlobalContextProvider from './contexts/providers/global/GlobalContextProvider';
 import FamilyTreeContextProvider from './contexts/providers/familyTree/FamilyTreeContextProvider';
-import { ThemeProvider } from '@mui/material';
 import theme from './utils/material/theme';
+import { store } from 'app/store';
+import AppContainer from './components/common/AppContainer';
 
 i18n.load({
   en: baseEn.messages,
@@ -19,19 +21,21 @@ i18n.activate("fr", "en");
 
 const root = ReactDOM.createRoot(document.getElementById('root') as Element);
 root.render(
-  <ThemeProvider theme={theme}>
-    <GlobalContextProvider>
-      <FamilyTreeContextProvider>
-        <I18nProvider i18n={i18n}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/*" element={<AppContainer />} />
-            </Routes>
-          </BrowserRouter>
-        </I18nProvider>
-      </FamilyTreeContextProvider>
-    </GlobalContextProvider>
-  </ThemeProvider>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <GlobalContextProvider>
+        <FamilyTreeContextProvider>
+          <I18nProvider i18n={i18n}>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/*" element={<AppContainer />} />
+              </Routes>
+            </BrowserRouter>
+          </I18nProvider>
+        </FamilyTreeContextProvider>
+      </GlobalContextProvider>
+    </ThemeProvider>
+  </Provider>
 );
 
 

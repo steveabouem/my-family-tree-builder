@@ -1,24 +1,19 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Button, Chip, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import FormFieldsGenerator from '../FormFieldsGenerator';
 import { DStepForm } from './definitions';
 import { useFormikContext } from 'formik';
 import LocalSpinner from 'components/common/LocalSpinner';
+import { DStepFormState } from 'app/slices/definitions';
+import { useZDispatch, useZSelector } from 'app/hooks';
+import { fetchNextStepFields, nextFormStepAction, prevFormStepAction } from 'app/slices/forms/stepForm';
 
-const StepForm = <V,>({ currentStep, currentFields, updateStep, sx }: DStepForm) => {
-  const [updating, setUpdating] = useState<boolean>(true);
+const StepForm = <V,>({  sx, handleNext, handlePrev }: DStepForm) => {
   const { submitForm } = useFormikContext<V>();
-
-  function swtichStep(direction: 'prev' | 'next') {
-    setUpdating(true);
-    if (direction === "prev") {
-      updateStep(currentStep - 1);
-    } else {
-      updateStep(currentStep + 1);
-    }
-    setUpdating(false);
-  }
+  const { currentFormStep, currentFormStepFields, updating} = useZSelector(
+    (state: {stepForm: DStepFormState}) => state.stepForm);
+  const dispatch = useZDispatch();
 
   return (
     <Box sx={sx}>
@@ -27,20 +22,23 @@ const StepForm = <V,>({ currentStep, currentFields, updateStep, sx }: DStepForm)
           <Typography variant="caption">
             <Trans>current_form_step</Trans>
           </Typography>
-            <Chip label={currentStep} variant="filled" color="info" size="small" />
+            <Chip label={currentFormStep} variant="filled" color="info" size="small" />
         </Box>
         <Box display="flex" justifyContent="flex-end" alignItems="center">
-          <Button variant="contained" color="secondary" onClick={() => swtichStep('prev')}>
-            <Typography variant="button"><Trans>prev</Trans></Typography>
+          <Button variant="contained" color="secondary" onClick={() => dispatch(fetchNextStepFields(currentFormStep - 1))}>
+            <Trans>prev</Trans>
           </Button>
-          <Button variant="contained" color="secondary" onClick={() => swtichStep('next')}>
-            <Typography variant="button"><Trans>next</Trans></Typography>
+          <Button variant="contained" color="secondary" onClick={() => dispatch(fetchNextStepFields(currentFormStep + 1))}>
+            <Trans>next</Trans>
           </Button>
         </Box>
       </Box>
       {updating ? <LocalSpinner loading /> : (
         <Box>
-          <FormFieldsGenerator fields={currentFields} handleSubmit={submitForm} initialValues={{}} withPaper={false} />
+          <FormFieldsGenerator 
+            fields={currentFormStepFields} handleSubmit={submitForm} 
+            initialValues={{}} withPaper={false} 
+          />
         </Box>
       )}
     </Box>
