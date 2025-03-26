@@ -1,6 +1,7 @@
 import { DFormField } from "@components/common/definitions";
 import BaseService from "../base/base.service";
 import { AxiosResponse } from "axios";
+import { DFamilyTreeDAO } from "@services/api.definitions";
 
 class FamilyTreeService extends BaseService {
   path;
@@ -20,7 +21,7 @@ class FamilyTreeService extends BaseService {
     return results;
   }
 
-  public async create(values: any) { // ! TOFIX: no any
+  public async create(values: DFamilyTreeDAO) { // ! TOFIX: no any
     const results = this.request.post(`${this.path}/create`, { ...values });
     return results;
   }
@@ -40,7 +41,7 @@ class FamilyTreeService extends BaseService {
   */
   public async getGenealogyFormFieldsForStep(step: number): Promise<DFormField[]> {
     // @ts-ignore
-    const results: DFormField[] = this.request.get(`${this.path}/narrator-fields/${step}`);
+    const results: DFormField[] = this.request.get(`${this.path}/narration-fields?step=${step}`);
     return results;
   }
 }

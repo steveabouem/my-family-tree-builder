@@ -3,17 +3,18 @@ import { Formik } from "formik";
 import { Trans, t } from "@lingui/macro";
 import { DAuthProps } from "./definitions";
 import { useNavigate } from "react-router";
-import { DDropdownOption, genderOptions, maritalStatusOptions, parentOptions } from "../../components/common/dropdowns/definitions";
-import { DFormField } from "../../components/common/definitions";
-import { service } from "../../services";
-import FormFieldsGenerator from "../../components/common/forms/FormFieldsGenerator";
-import Page from "../../components/common/Page";
-import BaseDropDown from "../../components/common/dropdowns/BaseDropdown";
-import { DUserDTO } from "../../services/auth/auth.definitions";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
 import { Box, Button, FormControl } from "@mui/material";
 import PageUrlsEnum from "utils/urls";
+import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
+import { DFormField } from "components/common/definitions";
+import { service } from "services/index";
+import Page from "components/common/Page";
+import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
+import BaseDropDown from "components/common/dropdowns/BaseDropdown";
+import { maritalStatusOptions, parentOptions } from "components/common/dropdowns/definitions";
+import { DUserDTO } from "@services/api.definitions";
 
 const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [attempts, setAttempts] = React.useState<number>(0);
@@ -215,12 +216,7 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                   required: true,
                   subComponent: () => (
                     <Box className="field-wrap base" sx={{ width: '100%' }}>
-                      <BaseDropDown
-                        name="gender"
-                        options={genderOptions}
-                        id="gender-selection"
-                        sx={{ height: '1rem' }}
-                      />
+                      <GenderDropdown   name="gender" />
                     </Box>
                   ),
                 },

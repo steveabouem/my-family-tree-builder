@@ -17,17 +17,6 @@ export interface DDropdownOption {
   id?: string;
 }
 
-export const genderOptions: DDropdownOption[] = [
-  {
-    label: 'Male',
-    value: 1,
-  },
-  {
-    label: 'Female',
-    value: 2,
-  },
-];
-
 export const parentOptions: DDropdownOption[] = [
   {
     label: 'Yes',

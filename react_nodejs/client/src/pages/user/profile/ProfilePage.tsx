@@ -2,16 +2,16 @@ import { Trans } from "@lingui/macro";
 import React, { useCallback, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Link, Typography, Paper, Button } from "@mui/material";
-import NotFound from '../../404NotFound';
-import Page from "../../../components/common/Page";
-import { service } from "../../../services";
+import img1 from "utils/assets/images/kids under tree locked.jpg"
 import GlobalContext from "contexts/creators/global/global.context";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
-import img1 from "../../../assets/images/kids under tree locked.jpg";
 import { DChangePasswordValues } from "../definitions";
 import UserCredentials from "./UserCredentials";
 import { MdOutlineAddBox } from "react-icons/md";
 import PageUrlsEnum from "utils/urls";
+import { service } from "services/index";
+import Page from "components/common/Page";
+import NotFound from "pages/404NotFound";
 
 const UserProfilePage = (): JSX.Element => {
   const { currentUser, familyTrees, updateFamilyTrees } = useContext(FamilyTreeContext);

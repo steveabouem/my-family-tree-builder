@@ -1,5 +1,5 @@
+import { DUserRelatedFamily } from "@services/api.definitions";
 import BaseService from "../base/base.service";
-import { DUserRelatedFamily } from "./user.definitions";
 
 class UserService extends BaseService {
   async getRelatedFamilies(id?: string): Promise<DUserRelatedFamily[]> {
@@ -9,7 +9,6 @@ class UserService extends BaseService {
     }
 
     const results = await this.request.get(this.APIBaseUrl + `${id}/families`)
-    console.log({ results });
     return [];
   }
 

@@ -1,5 +1,5 @@
+import { DUserSession } from "@services/api.definitions";
 import { DFamilyTree } from "pages/tree/definitions";
-import { DUserSession } from "services/auth/auth.definitions";
 
 export interface DFTContext {
   currentUser: Partial<DUserSession>;

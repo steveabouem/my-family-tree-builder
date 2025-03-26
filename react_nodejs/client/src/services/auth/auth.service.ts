@@ -1,6 +1,6 @@
 import { DChangePasswordValues } from "pages/user/definitions";
 import BaseService from "../base/base.service";
-import { DUserDTO } from "./auth.definitions";
+import { DUserDTO } from "@services/api.definitions";
 
 class AuthService extends BaseService {
   // ! -TOFIX: axios response typing: Promise<Partial<DUserDTO | null>>

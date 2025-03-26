@@ -1,16 +1,15 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { Formik } from "formik";
 import { Trans } from "@lingui/macro";
-import FormFieldsGenerator from "../../../../components/common/forms/FormFieldsGenerator";
-import { DTreeManagerFields } from "../../definitions";
-import { DFormField } from "../../../../components/common/definitions";
-import { service } from "../../../../services";
-import BaseDropDown from "../../../../components/common/dropdowns/BaseDropdown";
-import { genderOptions } from "../../../../components/common/dropdowns/definitions";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
 import { Box, Typography, Paper } from "@mui/material";
-import CustomField from "components/common/forms/CustomField";
+import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
+import { DFormField } from "components/common/definitions";
+import { DTreeManagerFields } from "pages/tree/definitions";
+import { service } from "services/index";
+import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
+import CustomField from "components/common/forms/customField";
 
 const ChartingForm = (): JSX.Element => {
   // ? single form here to build the treeManagerFormFields. I might add an option on each tree node to allow adding a link for that specific Node. 
@@ -225,9 +224,7 @@ const ChartingForm = (): JSX.Element => {
                       options: [{ label: <Trans>gender_female</Trans>, value: 2 }, { label: <Trans>gender_male</Trans>, value: 1 },],
                       required: true,
                       subComponent: () => <Box className="field-wrap base">
-                        <BaseDropDown
-                          options={genderOptions}
-                          id="marital-status-dd"
+                        <GenderDropdown name="marital-status-dd" 
                           //  TODO typing of your form is not optimal
                           // @ts-ignore:
                           val={values?.spouse?.gender}

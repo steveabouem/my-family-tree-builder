@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
-import { DUserSession } from '../../../services/auth/auth.definitions';
 // import { DFamilyDTO } from '../../components/family/definitions';
 import { DFamilyTree } from '../../../pages/tree/definitions';
 import FamilyTreeContext from 'contexts/creators/familyTree/familyTree.context';
+import { DUserSession } from '@services/api.definitions';
 
 const FamilyTreeContextProvider = ({ children }: {children: ReactNode}) => {
   const [currentUser, setCurrentUser] = React.useState<Partial<DUserSession>>({});

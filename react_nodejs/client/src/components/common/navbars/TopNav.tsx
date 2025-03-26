@@ -4,7 +4,7 @@ import { Trans } from "@lingui/macro";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
 import { Avatar, Box, Button, Link, Typography } from "@mui/material";
-import logo from "assets/images/logo.jpg";
+import logo from "utils/assets/images/logo.jpg";
 import FamilyTreeContext from "contexts/creators/familyTree";
 import { service } from "services";
 import PageUrlsEnum from "utils/urls";

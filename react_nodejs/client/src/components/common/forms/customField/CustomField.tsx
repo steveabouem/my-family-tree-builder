@@ -1,8 +1,8 @@
 import { Trans } from "@lingui/macro";
-import { Box, FormControl, TextField } from "@mui/material";
-import { Field, FieldProps, FormikContextType, useFormikContext } from "formik";
+import {  FormControl, TextField } from "@mui/material";
+import {  FormikContextType, useFormikContext } from "formik";
 import React from "react";
-import { CustomFieldProps } from "./forms.types";
+import { CustomFieldProps } from "../forms.types";
 
 const CustomField = (props: CustomFieldProps) => {
   const helpers: FormikContextType<any> = useFormikContext();
@@ -17,7 +17,7 @@ const CustomField = (props: CustomFieldProps) => {
 
   return (
     <FormControl sx={{display:"flex", flexDirection:"column", height:"35px"}}>
-      <TextField onChange={handleFieldChange} {...props} size="small"/>
+      <TextField onChange={(e: any) => {handleFieldChange(e)}} {...props} size="small"/>
       {props?.name && helpers?.errors?.[props.name] ? <Trans>generic_field_error</Trans> : ''}
     </FormControl>
   );

@@ -12,7 +12,6 @@ import {
 import TopNav from "./navbars/TopNav";
 import Footer from "./navbars/Footer";
 import FTLandingPage from "../FT.Landing";
-import { DUserDTO } from "services/auth/auth.definitions";
 import { DAuthMode } from "pages/auth/definitions";
 import PageUrlsEnum from "utils/urls/";
 import UserProfilePage from "pages/user/profile";
@@ -20,6 +19,7 @@ import FamilyTreeDashboard from "pages/tree/dashboard";
 import ViewFamilyTreeChartPage from "pages/tree";
 import AuthenticationPage from "pages/auth";
 import CreateFamilyTreePage from "pages/tree/create";
+import { DUserDTO } from "@services/api.definitions";
 
 const AppContainer = (): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<DeepPartial<DUserDTO>>({});
