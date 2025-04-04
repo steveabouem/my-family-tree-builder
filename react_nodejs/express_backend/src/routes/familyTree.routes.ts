@@ -71,4 +71,9 @@ router.get('/layouts', (req: Request, res: Response) /**TODO: return type */ => 
   familyTreeController.getTreeLayout(req, res);
 });
 
+router.get('/narration-fields', (req: Request, res: Response) => {
+  const familyTreeController = new FamilyTreeController();
+  familyTreeController.getTreeLayout(req, res);
+});
+
 export default router;

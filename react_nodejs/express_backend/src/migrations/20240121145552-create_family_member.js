@@ -9,27 +9,26 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      age:{ type: Sequelize.INTEGER, allowNull: true},
-      dob:{
-        type: Sequelize.STRING,
+      node_id: { type: Sequelize.STRING},
+      first_name: { type: Sequelize.STRING, allowNull: false },
+      last_name: { type: Sequelize.STRING, allowNull: false },
+      gender: { type: Sequelize.INTEGER, allowNull: false },
+      dob: {
+        type: Sequelize.STRING, allowNull: false
       },
-      user_id: {type: Sequelize.INTEGER},
-      description:{ type: Sequelize.STRING},
-      first_name:{ type: Sequelize.STRING, allowNull: false},
-      last_name:{ type: Sequelize.STRING, allowNull: false},
-      gender:{ type: Sequelize.INTEGER, allowNull: false},
-      parent_1:{ type: Sequelize.INTEGER}, // mother
-      parent_2:{ type: Sequelize.INTEGER},
+      user_id: { type: Sequelize.INTEGER, allowNull: false },
+      email: { type: Sequelize.STRING, allowNull: false },
+      marital_status: { type: Sequelize.STRING, allowNull: false },
+      occupation: { type: Sequelize.STRING, allowNull: false },
+      age: { type: Sequelize.INTEGER, allowNull: false },
+      description: { type: Sequelize.STRING },
+      parents: { type: Sequelize.INTEGER }, // [mother, father]
       siblings: { type: Sequelize.JSON },
       children: { type: Sequelize.JSON },
-      email:{ type: Sequelize.STRING},
-      marital_status:{ type: Sequelize.STRING},
-      occupation:{ type: Sequelize.STRING},
-      partner:{ type: Sequelize.INTEGER},
-      profile_url:{ type: Sequelize.STRING},
-      created_by:{ type: Sequelize.INTEGER},
-      created_at:{ type: Sequelize.DATE},
-      updated_at:{ type: Sequelize.DATE}
+      profile_url: { type: Sequelize.STRING },
+      created_by: { type: Sequelize.INTEGER },
+      created_at: { type: Sequelize.DATE },
+      updated_at: { type: Sequelize.DATE }
     });
   },
   async down(queryInterface, Sequelize) {

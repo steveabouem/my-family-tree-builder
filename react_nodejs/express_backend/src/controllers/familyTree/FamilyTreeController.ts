@@ -7,7 +7,8 @@ import FamilyMemberController from "../familyMember/FamilyMemberController";
 import logger from "../../utils/logger";
 import User from "../../models/User";
 import FamilyMember from "../../models/FamilyMember";
-import dayjs from "dayjs";
+import { DFamilyTreeDAO, DFamilyTreeDTO, DGetFamilyTreeResponse, DSaveTreeFormStepResponse } from "./familyTree.definitions";
+import { DFamilyMemberDAO } from "../familyMember/familyMember.definitions";
 
 class FamilyTreeController extends BaseController<any> {
   constructor() {
@@ -21,68 +22,101 @@ class FamilyTreeController extends BaseController<any> {
     try {
       treeList = await FamilyTree.findAll({ where: { members: { [Op.like]: `%${userId}%` } } });
     } catch (e: unknown) {
-      logger.error('Unable to fetch trees ',e);
+      logger.error('Unable to fetch trees ', e);
     }
 
     return treeList;
   }
 
   /* 
-    ? receives info on members of the family, 
-    ? create the records for each members with the FamilyMemberController callback,
-    ? creates the tree. 
-    ? can only be initiated by a registered user. 
-    ? Used for brand new tree, meaning registered user has no familyMember record for this tree yet
+  * receives info on members of the family, 
+  * create the records for each members with the FamilyMemberController callback,
+  * creates the tree. 
+  * can only be initiated by a registered user. 
   */
-  public async create(req: Request, res: Response):Promise<DRequestPayload<FamilyTree>> {
-    const today = dayjs();
-    let response: DRequestPayload<FamilyTree> =  {code: 500, error: true};
+  public async saveNewTreeFormStep(members: any, name: string): Promise<DSaveTreeFormStepResponse> {
+    let response: DSaveTreeFormStepResponse = { lastStep: false, newFields: [] };;
+
     try {
-      const {
-        father,
-        user_id,
-        is_public,
-        mother,
-        siblings,
-        tree_name,
-        spouse,
-        children
-      } = req.body;
-      const currentUser = await User.findByPk(user_id);
+      const familyMemberController = new FamilyMemberController();
+      const membersRecords = await familyMemberController.bulkCreate(members); //catch block already in the function
+      const newTree = await FamilyTree.create({
+        active: 0,
+        authorized_ips: '[]',
+        created_by: 1,
+        members: JSON.stringify(membersRecords),
+        name,
+        public: 0
+      })
+        .catch((e: unknown) => {
+          logger.error('Failed to create tree: ', e);
+        });
+
+    } catch (e: unknown) {
+
+    };
+
+    return response;
+  }
+
+  /*
+  * Receives an array of family members, within which each member has a list of children, siblings and spouses
+  * loops through the arrays and creates a familyMember record for each member,
+  * for the next memeber, check if the member already exists in the DB, if not create it
+  * create the tree
+  * as all the family members are create, crete a mirror obect if the incoming DAO, but this time with the DB ids.
+  * return the resulting DTO
+  */
+  public async create(req: Request<{}, {}, DFamilyTreeDAO, {}>, res: Response<DGetFamilyTreeResponse, {}>) {
+    let response: DGetFamilyTreeResponse = { code: 500, error: true };
+    try {
+      /*
+      * Only registered users can do CRUD on trees
+      */
+      const currentUser = await User.findByPk(req.body.userId);
 
       if (currentUser?.dataValues) {
         const familyMemberController = new FamilyMemberController();
-        const userFamilyMemberRecord = await FamilyMember.create({
-          ...currentUser.dataValues, id: undefined, user_id, created_by: user_id,
-          age: currentUser?.dob ? today.diff(dayjs(currentUser.dob), 'years') : null,
-        })
+        const membersRecords = await familyMemberController.bulkCreate(req.body.members)
           .catch((e: unknown) => {
-            logger.error('!family tree.create current member ', e);
+            logger.error('Unable to bulk create members. Function call failed', e);
           });
+        /*
+        * tree will usually be created through a step form. front will provide the user with the option to activate
+        */
+        logger.info('membersRecords array', membersRecords);
+        if (membersRecords) {
+          const membersByNodeId = 
+            Object.values(membersRecords).reduce((nodeList: {[nodeId: string]: DFamilyMemberDAO}, curr: DFamilyMemberDAO) => {
+            return ({...nodeList, [curr.node_id]: curr});
+          }, {});
+          const newTree = await FamilyTree.create({
+            active: req.body?.active ? 1 : 0,
+            authorized_ips: '',
+            created_by: req.body.userId,
+            members: JSON.stringify(membersRecords),
+            name: req.body?.treeName || 'temporary_tree_name', //Translation key
+            public: 0
+          })
+            .catch((e: unknown) => {
+              logger.error('Unable to create a tree ', e);
+            });
 
-        // create all the records for family members described in form and return them
-        const familyMembers: any = await familyMemberController
-          .createFamilyUnit({ siblings, father, mother, current: userFamilyMemberRecord?.dataValues, spouse, children })
-          .catch((e: unknown) => {
-            logger.info('BREAKS : ', e);
-          });
-        const newTree = await FamilyTree.create(
-          {
-            active: 1, name: tree_name, members: JSON.stringify(familyMembers),
-            public: is_public, authorized_ips: '[]',
-            created_at: new Date(), created_by: user_id
-          }
-        ).catch((e: any) => {
-          logger.error("! create family tree !", e)
-        });
-
-        response.payload = newTree || undefined;
-        response.code = 200;
-        response.error = false;
-        response.message = 'Family Tree Created Succesfully';
+          response.code = 200;
+          response.error = false;
+          response.message = 'Family Tree Created Succesfully';
+          // @ts-ignore: the typeing here is incorrect, need a better union type
+          response = { ...response, ...newTree?.dataValues, members: membersByNodeId };
+        } else {
+          response.code = 400;
+          response.error = true;
+          response.message = 'Unable to create members';
+          logger.error('Unable to create members: records array empty');
+        }
       } else {
         response.code = 400;
         response.message = 'Creating User not found';
+        logger.error('User not found');
       }
     } catch (e: unknown) {
       logger.error('! FamilyTree.create !', e);
@@ -157,7 +191,7 @@ class FamilyTreeController extends BaseController<any> {
   }
 
   public async getOne(req: Request, res: Response): Promise<DRequestPayload<FamilyTree>> {
-    const response: DRequestPayload<FamilyTree> = { error: true, code: 400};
+    const response: DRequestPayload<FamilyTree> = { error: true, code: 400 };
     try {
       const id = req.query.id;
       const userId = req.session?.details?.userId || 0;
@@ -247,6 +281,10 @@ class FamilyTreeController extends BaseController<any> {
     // res.json(response);
   }
 
+  /*
+  * can be called from the initial step form rsponsible for creating the tree,
+  * or an update made to an active tree by a registered user with appropriate permissions
+  */
   public async addMembers(req: Request, res: Response) { // ! TODO: use family member model here?
     const newMembers = req.body.members;
     const treeId = req.body.id;
@@ -303,7 +341,7 @@ class FamilyTreeController extends BaseController<any> {
   }
 
   public async getMembers(req: Request, res: Response): Promise<DRequestPayload<FamilyMember[]>> {
-    const response: DRequestPayload<FamilyMember[]> = { error: true, code: 400};
+    const response: DRequestPayload<FamilyMember[]> = { error: true, code: 400 };
     const userId = req.session?.details?.userId || 0;
     const id = req.query.id;
     const canViewTree = await this.canUserViewTree(Number(id), userId);
@@ -312,9 +350,9 @@ class FamilyTreeController extends BaseController<any> {
       try {
         // @ts-ignore 
         const tree = await FamilyTree.findByPk(id)
-        .catch((e: unknown) => {
-          logger.error('failed', e);
-        });
+          .catch((e: unknown) => {
+            logger.error('failed', e);
+          });
         const familyMembers = JSON.parse(tree?.members || '[]');
         response.code = 200;
         response.error = false;
@@ -338,6 +376,14 @@ class FamilyTreeController extends BaseController<any> {
     }
 
     return response;
+  }
+
+  /*
+  * Promise<{ step: number; members: []; }> => {DFormField[] | []} 
+  * if no further steps, return empty array
+  */
+  public async saveGenealogyFormStep(req: Request, res: Response) {
+
   }
 
   public async canUserViewTree(treeId: number, userId: number): Promise<boolean> {

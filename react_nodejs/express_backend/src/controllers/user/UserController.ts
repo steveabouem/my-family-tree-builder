@@ -1,12 +1,12 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes } from "sequelize";
 import BaseController from "../Base.controller";
-import { DUserRecord, DUserDTO } from "./user.definitions";
+import { DUserSimplifiedDTO, DUserDTO } from "./user.definitions";
 import User from "../../models/User";
 import logger from "../../utils/logger";
 import Role from "../../models/Role";
 
-class UserController extends BaseController<DUserRecord> {
+class UserController extends BaseController<DUserSimplifiedDTO> {
   constructor() {
     super('Users');
   }

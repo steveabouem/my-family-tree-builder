@@ -72,6 +72,19 @@ export interface DTreeNode {
   children: DSiblingsDetails[];
 }
 
+/*
+* Most basic react flow now (will build upon it once the rendring from the form is stable)
+*/
+export interface DReactFlowNode {
+  id: string;
+  position: { x: number, y: number };
+  data: { label: string };
+}
+export interface DReactFlowEdge {
+  id: string;
+  position: { x: number, y: number };
+  data: { label: string };
+}
 /* END */
 
 export const relationType = {

@@ -2,16 +2,18 @@ import React, { useEffect } from "react";
 import { Box, Paper, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
+import {v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { clearFieldsByStepName, loadStepFormFieldsAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
 import { DStepFormState } from "@app/slices/definitions";
 import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
 import CustomField from "components/common/forms/customField/CustomField";
+import { maritalStatusOptions } from "components/common/dropdowns/definitions";
+import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 
 const initialFields =
   [
-    { fieldName: "tree_name", label: <Trans>tree_name</Trans> },
     { fieldName: "first_name", label: <Trans>first_name</Trans> },
     { fieldName: "last_name", label: <Trans>last_name</Trans> },
     { fieldName: "marital_status", label: <Trans>marital_status</Trans> },
@@ -34,12 +36,12 @@ const initialFields =
 *    since adding those new fields will rerendre the form (values will be taken from the store's globalValues, it has all the field names we need)
 */
 const GenealogyForm = () => {
-  const { totalSteps, currentFormStep, currentFormStepDetails } = useZSelector((state: { stepForm: DStepFormState }) => state.stepForm);
-  const { values } = useFormikContext<any>();
+  const { totalSteps, currentFormStep, currentFormStepDetails } = useZSelector<DStepFormState>(state => state.stepForm);
+  const { values, setFieldValue } = useFormikContext<any>();
   const dispatch = useZDispatch();
 
   useEffect(() => {
-    dispatch(loadStepFormFieldsAction({ name: 'currentUser', fields: initialFields }));
+    dispatch(loadStepFormFieldsAction({ name: 'mother', fields: initialFields }));
     dispatch(setStepsCountAction(3));
   }, []);
   useEffect(() => {
@@ -67,10 +69,10 @@ const GenealogyForm = () => {
         generateKinFields('father', false, false);
         break;
       case 3:
-        generateKinFields('children', false, false);
+        generateKinFields('children-1', false, false);
         break;
       default:
-        generateKinFields(`children-${step}`, false, false);
+        generateKinFields(`children-${step - 2}`, false, false);
     }
   }
   function changeChildrenCount(amount: number) {
@@ -99,13 +101,25 @@ const GenealogyForm = () => {
         ...existingFIelds || [],
         { fieldName: `${stepName}_first_name`, label: <Trans>first_name</Trans>, value: values?.[`${stepName}_first_name`] || '' },
         { fieldName: `${stepName}_last_name`, label: <Trans>last_name</Trans>, value: values?.[`${stepName}_last_name`] || '' },
-        { fieldName: `${stepName}_marital_status`, label: <Trans>marital_status</Trans>, value: values?.[`${stepName}_marital_status`] || '' },
+        { fieldName: `${stepName}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
+            <BaseDropDown
+                name={`${stepName}_marital_status`}
+                options={maritalStatusOptions}
+                id={`${stepName}_marital_status-selection`}
+                sx={{ height: '1rem'}}
+              />
+        ),
+        value: values?.[`${stepName}_marital_status`] || '' },
         { fieldName: `${stepName}_occupation`, label: <Trans>occupation</Trans>, value: values?.[`${stepName}_occupation`] || '' },
         { fieldName: `${stepName}_dob`, label: <Trans>dob</Trans>, type: "date", value: values?.[`${stepName}_dob`] || '' },
         { fieldName: `${stepName}_gender`, label: <Trans>gender</Trans>, subComponent: () => <GenderDropdown name={`${stepName}_gender`} />, value: values?.[`${stepName}_gender`] || '' },
         { fieldName: `${stepName}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${stepName}_email`] || '' },
         { fieldName: `${stepName}_description`, label: <Trans>description</Trans>, value: values?.[`${stepName}_description`] || '' },
       ];
+      /*
+      * Add nodId to formik values for service request payload
+      */
+     setFieldValue(`${stepName}_node_id`, v4());
       dispatch(loadStepFormFieldsAction({ name: stepName, fields, title: <Trans>{`info_on_${stepName}`}</Trans> }));
     }
   }

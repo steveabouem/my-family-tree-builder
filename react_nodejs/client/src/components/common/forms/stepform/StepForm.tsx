@@ -25,7 +25,7 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
   * to allow the step form to be more dynamic, we will use an object to store the fields for each step
   */
   useEffect(() => {
-    if (totalSteps && currentFormStep === totalSteps) {
+    if (totalSteps && currentFormStep >= totalSteps) {
       setShowNextStep(false);
     } else {
       setShowNextStep(true);
@@ -65,7 +65,7 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
         <Box>
           <FormFieldsGenerator
             fields={currentFields} handleSubmit={submitForm}
-            initialValues={{}} withPaper={false} locked={!isLastStep}
+            initialValues={{}} withPaper={false} locked={false}
           />
         </Box>
       )}

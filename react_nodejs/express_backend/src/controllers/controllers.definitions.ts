@@ -1,5 +1,5 @@
 import { Session } from "express-session";
-import { DFamilyTreeRecord } from "./familyTree/familyTree.definitions";
+import { DFamilyTreeDTO } from "./familyTree/familyTree.definitions";
 import { Response, Request } from "express";
 export interface DTableJoin {
   tableName: string;
@@ -29,7 +29,7 @@ export interface DSessionUser {
   email?: string;
   firstName?: string;
   lastName?: string;
-  familyTree?: DFamilyTreeRecord;
+  familyTree?: DFamilyTreeDTO;
 }
 
 export interface DSession {
@@ -61,8 +61,6 @@ export interface DEndpointResponse {
 export interface DRequestPayload<P> extends DEndpointResponse {
   payload?: P;
 }
-
-type Send<ResBody = any, T = Response<ResBody>> = (body?: ResBody) => T;
 
 export interface DHelperResponse {
   error: boolean;

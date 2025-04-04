@@ -1,40 +1,16 @@
-import React, { useCallback, useState } from 'react'
-import { Box, Paper, Typography } from '@mui/material';
-import { useFormikContext } from 'formik';
+import React, { useState } from 'react'
 import { useZDispatch, useZSelector } from 'app/hooks';
-import { DStepFormState } from 'app/slices/definitions';
-import { Trans } from '@lingui/macro';
+import { DFamilyTreeState, DStepFormState } from 'app/slices/definitions';
 import { DFamilyTreeDAO } from '@services/api.definitions';
+import { useFormikContext } from 'formik';
+import TreeLayout from 'pages/tree/layout/TreeLayout';
 
 export const GenealogyNarrator = () => {
-  const [paragraphs, setParagraphs] = useState<DFamilyTreeDAO[]>([]);
-  const { values } = useFormikContext();
-  const dispatch = useZDispatch();
-  const { currentFormStep, currentFormStepDetails, updating } = useZSelector(
-    (state: { stepForm: DStepFormState }) => state.stepForm);
+  const {currentFamilyTree, updating } = useZSelector<DFamilyTreeState>(state => state.tree);
 
-  React.useEffect(() => {
-    generateNarrationBlock(currentFormStep);
-  }, [currentFormStep, currentFormStepDetails]);
-
-  function generateNarrationBlock(step: number) {
-    const excerpt = '';
-    
-
-  }
-
-  return (
-    <Paper>
-      {paragraphs.map((p: DFamilyTreeDAO) => {
-        return (
-          <Box>
-            <Typography variant="subtitle1"><Trans>relatives_name</Trans></Typography>
-            <Typography>{}</Typography>
-          </Box>
-        );
-      })}
-    </Paper>
-  );
+  return  currentFamilyTree ? (
+  <TreeLayout tree={currentFamilyTree || {}} />     
+  ) : '';
 };
 
 export default GenealogyNarrator;

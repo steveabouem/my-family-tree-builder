@@ -1,9 +1,11 @@
 import {configureStore} from "@reduxjs/toolkit";
 import stepFormReducer from "../slices/forms/stepForm";
+import familyTreeReducer from "../slices/trees";
 
 export const store = configureStore({
   reducer: {
     stepForm: stepFormReducer,
+    tree: familyTreeReducer
   }
 });
 

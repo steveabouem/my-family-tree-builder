@@ -1,5 +1,4 @@
 import React from "react";
-import ReactFamilyTree from 'react-family-tree';
 import { Trans } from "@lingui/macro";
 import { Box, Grid2 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -76,19 +75,7 @@ const ViewFamilyTreeChartPage = () => {
       <Page subtitle="" title={`${currentFamilyTree?.name || ''}`}>
         <Grid2 container>
           <Grid2 size={2}></Grid2>
-          <Grid2 size={8}>
-            <ReactFamilyTree
-              nodes={treeData}
-              rootId={rootId}
-              width={50}
-              height={60}
-              renderNode={(node: any) => (
-                <TreeNodeBubble
-                  // @ts-ignore
-                  node={node}
-                />
-              )}
-            /></Grid2>
+          <Grid2 size={8}></Grid2>
           <Grid2 size={2}></Grid2>
         </Grid2>
       </Page >

@@ -11,22 +11,21 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare user_id: number;
+  declare node_id?: string;
+  declare user_id?: number;
   declare age: number | null;
   declare dob: string;
   declare description: string;
   declare first_name: string;
   declare gender: number; //1:M, 2:F
-  declare parent_1: number | null; // father, nullable
-  declare parent_2: number | null; // mother
+  declare parents: string | null; // [mother, father], nullable
   declare siblings: string;
   declare children: string;
   declare email: string;
   declare last_name: string;
   declare marital_status: string;
-  declare occupation: string;
-  declare profile_url: string;
-  declare partner: number;
+  declare occupation?: string;
+  declare profile_url?: string;
   declare created_by: number; //User
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
@@ -39,7 +38,10 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   get FamilyMemberId(): NonAttribute<number> {
     return this.id;
   }
-  get FamilyMemberUserId(): NonAttribute<number> {
+  get FamilyMemberNodeId(): NonAttribute<string | undefined> {
+    return this.node_id;
+  }
+  get FamilyMemberUserId(): NonAttribute<number | undefined> {
     return this.user_id;
   }
   get familyMemberAge(): NonAttribute<number | null> {
@@ -60,11 +62,8 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   get familymemberGender(): NonAttribute<number> {
     return this.gender;
   }
-  get familyMemberParent1(): NonAttribute<number | null> {
-    return this.parent_1;
-  };
-  get familyMemberParent2(): NonAttribute<number | null> {
-    return this.parent_2;
+  get familyMemberParents(): NonAttribute<string | null> {
+    return this.parents;
   };
   get familyMemberEmail(): NonAttribute<string> {
     return this.email;
@@ -72,13 +71,10 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   get familyMemberMaritalStatus(): NonAttribute<string> {
     return this.marital_status;
   };
-  get familyMemberOccupation(): NonAttribute<string> {
+  get familyMemberOccupation(): NonAttribute<string | undefined> {
     return this.occupation;
   };
-  get familyMemberPartner(): NonAttribute<number> {
-    return this.partner;
-  };
-  get familyMemberProfileUrl(): NonAttribute<string> {
+  get familyMemberProfileUrl(): NonAttribute<string | undefined> {
     return this.profile_url;
   };
   get familyMemberCreatedBy(): NonAttribute<number> {
@@ -99,22 +95,22 @@ FamilyMember.init(
       autoIncrement: true,
       primaryKey: true
     },
-    user_id: {type: DataTypes.INTEGER, allowNull: true},
-    age: { type: DataTypes.INTEGER, allowNull: true },
-    dob: { type: DataTypes.STRING },
-    description: { type: DataTypes.STRING, allowNull: true }, // all values allowing null are basically relative to non registered family members
-    first_name: { type: DataTypes.STRING },
-    gender: { type: DataTypes.INTEGER },
-    parent_1: { type: DataTypes.INTEGER,  allowNull: true },
-    parent_2: { type: DataTypes.INTEGER },
-    email: { type: DataTypes.STRING },
-    last_name: { type: DataTypes.STRING },
-    children: {type: DataTypes.JSON, defaultValue: ""},
-    siblings: {type: DataTypes.JSON, defaultValue: ""},
-    marital_status: { type: DataTypes.STRING, allowNull: true },
-    occupation: { type: DataTypes.STRING, allowNull: true },
-    partner: { type: DataTypes.INTEGER, allowNull: true },
-    profile_url: { type: DataTypes.STRING, allowNull: true },
+    node_id:  {type: DataTypes.STRING},
+    // allowNull defaults to true
+    user_id: { type: DataTypes.INTEGER, allowNull: false },
+    age: { type: DataTypes.INTEGER, allowNull: false },
+    occupation: { type: DataTypes.STRING, allowNull: false },
+    dob: { type: DataTypes.STRING, allowNull: false },
+    first_name: { type: DataTypes.STRING, allowNull: false },
+    gender: { type: DataTypes.INTEGER, allowNull: false },
+    email: { type: DataTypes.STRING, allowNull: false },
+    last_name: { type: DataTypes.STRING, allowNull: false },
+    marital_status: { type: DataTypes.STRING, allowNull: false },
+    parents: { type: DataTypes.JSON },
+    profile_url: { type: DataTypes.STRING },
+    description: { type: DataTypes.STRING },
+    children: { type: DataTypes.JSON },
+    siblings: { type: DataTypes.JSON },
     created_by: {
       type: DataTypes.INTEGER
     },

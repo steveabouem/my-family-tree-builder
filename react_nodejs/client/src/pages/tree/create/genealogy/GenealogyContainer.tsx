@@ -1,15 +1,88 @@
-import React, { useContext } from 'react';
-import { Box, Grid2, Typography } from '@mui/material';
+import React, { useContext, useEffect } from 'react';
+import { Box, Button, Grid2, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
+import { AxiosResponse } from 'axios';
 import GenealogyForm from './GenealogyForm';
 import GenealogyNarrator from './GenealogyNarrator';
 import FamilyTreeService from 'services/familyTree/familyTree.service';
-import { DFamilyTreeDAO } from 'services/api.definitions';
+import { DApiResponse, DFamilyMemberDTO, DFamilyTreeDAO } from 'services/api.definitions';
 import FamilyTreeContext from 'contexts/creators/familyTree';
+import { DFamilyTreeState, DStepFormState } from 'app/slices/definitions';
+import { useZDispatch, useZSelector } from 'app/hooks';
+import { DFamilyTreeDTO } from './definitions';
+import { populateTreeAction } from 'app/slices/trees';
 
 const GenealogyContainer: React.FC = () => {
+  const { stepTree = {} } = useZSelector<DStepFormState>(state => state.stepForm);
+  const dispatch = useZDispatch();
   const { currentUser } = useContext(FamilyTreeContext);
+
+  // useEffect(() => {
+  //   const sample = {
+  //     "e652a9cc-d234-46ea-8763-6f5f9ee8f251": {
+  //       "id": 5,
+  //       "dob": "2025-04-03",
+  //       "node_id": "e652a9cc-d234-46ea-8763-6f5f9ee8f251",
+  //       "email": "j@m.s",
+  //       "first_name": "Josh",
+  //       "gender": 1,
+  //       "last_name": "Ham",
+  //       "marital_status": "Married",
+  //       "occupation": "",
+  //       "parents": "\"\"",
+  //       "siblings": "\"\"",
+  //       "age": 0,
+  //       "description": "",
+  //       "profile_url": "",
+  //       "children": "[{\"dob\":\"\",\"node_id\":\"6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f\",\"email\":\"j@m.ssa\",\"first_name\":\"Jordanz\",\"gender\":1,\"last_name\":\"\",\"marital_status\":\"Married\",\"occupation\":\"\",\"parents\":\"\",\"siblings\":\"\",\"age\":\"\",\"description\":\"\",\"profile_url\":\"\",\"userId\":\"\"}]",
+  //       "user_id": 0,
+  //       "created_by": 1
+  //     },
+  //     "6f1c9a77-6bfb-4cdf-8669-cc06d4170c24": {
+  //       "id": 6,
+  //       "dob": "",
+  //       "node_id": "6f1c9a77-6bfb-4cdf-8669-cc06d4170c24",
+  //       "email": "j@m.ss",
+  //       "first_name": "Jordan",
+  //       "gender": 2,
+  //       "last_name": "",
+  //       "marital_status": "Widowed",
+  //       "occupation": "",
+  //       "parents": "\"\"",
+  //       "siblings": "\"\"",
+  //       "age": 0,
+  //       "description": "",
+  //       "profile_url": "",
+  //       "children": "[{\"dob\":\"\",\"node_id\":\"6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f\",\"email\":\"j@m.ssa\",\"first_name\":\"Jordanz\",\"gender\":1,\"last_name\":\"\",\"marital_status\":\"Married\",\"occupation\":\"\",\"parents\":\"\",\"siblings\":\"\",\"age\":\"\",\"description\":\"\",\"profile_url\":\"\",\"userId\":\"\"}]",
+  //       "user_id": 0,
+  //       "created_by": 1
+  //     },
+  //     "6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f": {
+  //       "id": 7,
+  //       "dob": "",
+  //       "node_id": "6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f",
+  //       "email": "j@m.ssa",
+  //       "first_name": "Jordanz",
+  //       "gender": 1,
+  //       "last_name": "",
+  //       "marital_status": "Married",
+  //       "occupation": "",
+  //       "parents": "\"\"",
+  //       "siblings": "\"\"",
+  //       "age": 0,
+  //       "description": "",
+  //       "profile_url": "",
+  //       "user_id": 0,
+  //       "created_by": 1
+  //     }
+  //   }
+  //   const formattedMemberRecords = formatIncomingValues(sample);
+  //   setTimeout(() => {
+  //     dispatch(populateTreeAction(formattedMemberRecords));
+  //   }, 3000);
+  // }, [])
+  //TODO: once you can create the initial unit, focus on adding kins to each node
   /*
   * At every step, the fiel names will be prefixed by the type of kin (fatherm, mother, children etc..)
   * We need to remove that prefix to match the DAO expected by the API
@@ -19,22 +92,102 @@ const GenealogyContainer: React.FC = () => {
   * the API will handle creatig a family member from each of these steps
   */
   function formatOutgoingValues(v: any): DFamilyTreeDAO {
-    const payload = Object.keys(v).reduce((acc: any, curr: any) => {
-      const prefix = curr.split('_')[0];
-      const suffix = curr.split('_').slice(1).join('_');
-      acc[prefix] = { ...acc?.[prefix] || {}, [suffix]: v[curr] };
+    const mappedMembers = Object.keys(stepTree).reduce((acc: any, curr: string) => {
+      const formatted: DFamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
+      if (curr.includes('children')) {
+        acc = {
+          ...acc,
+          // add current child to mother's children
+          mother: {
+            ...acc?.mother || {},
+            children: [...acc?.mother?.children || [], formatted]
+          },
+          // add current child to faTther's children
+          father: {
+            ...acc?.father || {},
+            children: [...acc?.father?.children || [], formatted]
+          },
+          // add current child's own DAO
+          [curr]: { ...acc?.[curr] || {}, ...formatted }
+        };
+      } else if (curr.includes('mother')) {
+        acc = { ...acc, mother: { ...acc?.mother || {}, ...formatted }, father: { ...acc?.father || {}, spouses: [formatted] } };
+      } else if (curr.includes('father')) {
+        acc = { ...acc, father: { ...acc?.father || {}, ...formatted }, mother: { ...acc?.mother || {}, spouses: [formatted] } };
+      }
 
       return acc;
     }, {});
-    return { ...payload, userId: currentUser?.userId || 0 };
+    return { members: mappedMembers, userId: currentUser?.userId || 0, treeName: '' };
+  }
+  function cleanUpValuesPrefixes(indicator: string, valuesObject: any): DFamilyMemberDTO {
+    const formatted: DFamilyMemberDTO = {
+      dob: valuesObject?.[`${indicator}_dob`] || '',
+      node_id: valuesObject?.[`${indicator}_node_id`] || '',
+      email: valuesObject?.[`${indicator}_email`] || '',
+      first_name: valuesObject?.[`${indicator}_first_name`] || '',
+      gender: valuesObject?.[`${indicator}_gender`] || '',
+      last_name: valuesObject?.[`${indicator}_last_name`] || '',
+      marital_status: valuesObject?.[`${indicator}_marital_status`] || '',
+      occupation: valuesObject?.[`${indicator}_occupation`] || '',
+      parents: valuesObject?.[`${indicator}_parents`] || '',
+      siblings: valuesObject?.[`${indicator}_siblings`] || '',
+      age: valuesObject?.[`${indicator}_age`] || '',
+      description: valuesObject?.[`${indicator}_description`] || '',
+      profile_url: valuesObject?.[`${indicator}_profile_url`] || '',
+      userId: valuesObject?.[`${indicator}_userId`] || '',
+    };
+
+    return formatted;
+  }
+  function formatIncomingValues(v: any) {
+    const formattedNodes = Object?.values(v || {})?.reduce((nodeList: any, member: any) => {
+      let childrenIds: any = null;
+      let siblingsIds: any = null;
+      let spousesIds: any = null;
+      if (member?.children) {
+        if (Array.isArray(JSON.parse(member.children))) {
+          childrenIds = JSON.parse(member.children).map((item: any) => item.node_id);
+        }
+      }
+      if (member?.siblings) {
+        if (Array.isArray(JSON.parse(member.siblings))) {
+          siblingsIds = JSON.parse(member.siblings).map((item: any) => item.node_id);
+        }
+      }
+      if (member?.spouses) {
+        if (Array.isArray(JSON.parse(member.spouses))) {
+          spousesIds = JSON.parse(member.spouses).map((item: any) => item.node_id);
+        }
+      }
+
+      return ({
+        ...nodeList,
+        [member.node_id]: {
+          ...member,
+          id: member.node_id,
+          label: `${member.last_name} ${member.first_name} `,// mandatory for react-flow
+          children: childrenIds,
+          siblings: siblingsIds,
+          spouses: spousesIds,
+        }
+      })
+    }, {});
+    return formattedNodes;
   }
   function handleSubmit(v: any) {
     const familyTreeService = new FamilyTreeService();
     const formattedValues: DFamilyTreeDAO = formatOutgoingValues(v);
 
-    familyTreeService.create(formattedValues).then((response: any) => {
-      console.log({ response });
-    });
+    familyTreeService.create(formattedValues).then((response: AxiosResponse<DApiResponse<DFamilyTreeDTO>>) => {
+      if (response.data.code == 200) {
+        const formattedMemberRecords = formatIncomingValues(response.data.members);
+        dispatch(populateTreeAction(formattedMemberRecords));
+      }
+    })
+      .catch((e: unknown) => {
+        console.log('Failed to create tree', e);
+      });
   }
 
   return (
@@ -54,6 +207,6 @@ const GenealogyContainer: React.FC = () => {
       </Formik>
     </Box>
   );
-}
+};
 
 export default GenealogyContainer;

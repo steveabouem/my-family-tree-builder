@@ -1,16 +1,17 @@
 import { DFormField } from "@components/common/definitions";
+import { DFamilyMemberDTO, DFamilyTreeDTO } from "@services/api.definitions";
 import { ReactNode } from "react";
-
+// stepform
 export type DStepFormState = {
-  stepTree?: {[name: string]: DFormField[]}, // TODO: this is required. Optional for now due to time constraints
   currentFormStepDetails: DStepDetails;
   currentFormStep: number;
   updating: boolean;
   globalValues: any;
+  stepTree?: { [name: string]: DFormField[] | DFormField[][] };
   totalSteps?: number;
 };
 export interface DStepDetails {
-  name: string; 
+  name: string;
   fields: DFormField[] | DFormField[][];
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -18,3 +19,10 @@ export interface DStepDetails {
 export type DChangeStepPayload = {
   success: boolean;
 };
+
+//family tree
+export interface DFamilyTreeState {
+  updating: boolean;
+  currentFamilyTree?: DFamilyTreeDTO;
+  name?: string;
+}

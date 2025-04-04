@@ -3,9 +3,9 @@ import User from "../../models/User";
 import { BaseMiddleware } from "../base/base.middleware";
 import { DUserDTO } from "./user..definitions";
 import bcrypt from "bcryptjs";
-import { DUserRecord } from "../../controllers/user/user.definitions";
+import { DUserSimplifiedDTO } from "../../controllers/user/user.definitions";
 
-export class UserMiddleware extends BaseMiddleware<DUserRecord> {
+export class UserMiddleware extends BaseMiddleware<DUserSimplifiedDTO> {
   constructor() {
     super('users');
   }

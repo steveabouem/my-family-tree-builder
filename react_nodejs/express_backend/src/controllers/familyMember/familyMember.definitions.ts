@@ -1,22 +1,53 @@
-export interface DFamilyMemberRecord {
-    id: number;
-    age: number;
-    description: string;
+/*
+* DAOs are typycally sent from front, and  expect the matching DTO in response
+*/
+
+// DAOs
+export interface DFamilyMemberDAO {
+    // Zogh attributes
+    dob: string;
+    node_id: string;
+    email: string;
     first_name: string;
     gender: number; //1 || 2
-    parent_1: number;
-    parent_2: number;
-    email: string;
     last_name: string;
-    tree_id: number;
     marital_status: string;
     occupation: string;
+    parents?: number[];
+    age?: number;
+    description?: string;
+    profile_url?: string;
+    userId?: number;
+    // ReactFlow attributes
+    nodeId?: string;
+    name?: string;
+    type?: string;
+    children?: DFamilyMemberDAO[];
+    siblings?: DFamilyMemberDAO[];
+    spouses?: DFamilyMemberDAO[];
+}
+
+// DTOs
+export interface DFamilyMemberDTO {
+    age: number;
+    created_at: Date;
+    created_by: number;
+    description: string;
+    email: string;
+    first_name: string;
+    gender: number; //1 || 2
+    id: number;
+    last_name: string;
+    marital_status: string;
+    occupation: string;
+    parent_1: number;
+    parent_2: number;
     partner: number;
     profile_url: string;
-    created_by: number;
-    created_at: Date;
+    tree_id: number;
     updated_at: Date;
 }
+
 
 export interface DFamilyTreeNodeDTO {
     age: number;

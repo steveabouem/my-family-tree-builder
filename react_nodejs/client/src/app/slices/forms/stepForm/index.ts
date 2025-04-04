@@ -1,14 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DStepDetails, DStepFormState } from "../../definitions";
 import FamilyTreeService from "services/familyTree/familyTree.service";
-import { clear } from "console";
 
+/*
+* State
+*/
 const initialState: DStepFormState = {
   currentFormStep: 1,
   updating: true,
   currentFormStepDetails: {name: '', fields: []}, // this should be renamed currentStepInfo
   globalValues: {},
 };
+/*
+* mutators
+*/
 const setTotalStep = (state: DStepFormState, action: PayloadAction<number>) => {
   state.updating = true;
   state.totalSteps = action.payload;
@@ -42,8 +47,9 @@ const goToPrev = (state: DStepFormState): DStepFormState => {
 * sends field values to API, which returns next field set
 */
 const setCurrentFields = (state: DStepFormState, action: PayloadAction<DStepDetails>) => {
-  console.log(action);
   state.updating = true;
+  const newStepTree = {...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields}
+  state.stepTree = newStepTree;
   state.currentFormStepDetails = action.payload;
   state.updating = false;
 };
@@ -77,7 +83,9 @@ const setCombinedStepValues = <V,>(state: DStepFormState, action: PayloadAction<
   state.globalValues = { ...state.globalValues, ...action.payload };
   state.updating = false;
 };
-
+/*
+* Slice (reducer)
+*/
 export const stepFormSlice = createSlice({
   name: 'FORM_STEPS',
   initialState,

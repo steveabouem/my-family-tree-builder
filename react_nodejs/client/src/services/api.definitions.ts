@@ -1,6 +1,14 @@
+import { NodeTypes } from "@xyflow/react";
 /*
 * Holds declarations for all the API types, notably DTOs/DAOS
 */
+interface DApiResponseRoot  {
+  sessionId?: string;
+  error: boolean;
+  code: number;
+  message?: string;
+}
+export type DApiResponse<B> = DApiResponseRoot & B;
 // #region user
 export interface DUserRelatedFamily {
   id: number;
@@ -38,17 +46,23 @@ export interface DUserSession {
 }
 // # region family-tree
 export interface DFamilyTreeDAO {
-  active?: boolean;
-  description: string;
-  dob: string;
-  email: string;
-  gender: string;
-  members: DFamilyMemberDAO[];
-  name: string;
-  treeName?: string;
-  userId: number;
+    members: DFamilyMemberDTO[];
+    userId: number;
+    active?: boolean;
+    treeName?: string;
 }
-export interface DFamilyMemberDAO {
+export interface DFamilyTreeDTO {
+  [memberId: string]: {
+    id: string;
+    name: string;
+    type?: string;
+    children?: string[];
+    siblings?: string[];
+    spouses?: string[];
+  }
+}
+export interface DFamilyMemberDTO {
+  // Zogh attributes
   dob: string;
   email: string;
   first_name: string;
@@ -56,12 +70,18 @@ export interface DFamilyMemberDAO {
   last_name: string;
   marital_status: string;
   occupation: string;
+  id?: number;
+  node_id: string;
   parents?: number[];
-  partner?: number;
-  siblings?: number[];
   age?: number;
   description?: string;
-  children?: number[];
   profile_url?: string;
   userId?: number;
+  // ReactFlow attributes
+  nodeId?: string;
+  name?: string;
+  type?: NodeTypes;
+  children?: DFamilyMemberDTO[];
+  siblings?: DFamilyMemberDTO[];
+  spouses?: DFamilyMemberDTO[];
 }

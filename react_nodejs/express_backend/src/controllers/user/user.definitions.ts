@@ -1,4 +1,4 @@
-export interface DUserRecord {
+export interface DUserSimplifiedDTO {
     first_name: string;
     last_name: string;
     email: string;

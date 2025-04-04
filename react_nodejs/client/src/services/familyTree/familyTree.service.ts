@@ -1,6 +1,5 @@
 import { DFormField } from "@components/common/definitions";
 import BaseService from "../base/base.service";
-import { AxiosResponse } from "axios";
 import { DFamilyTreeDAO } from "@services/api.definitions";
 
 class FamilyTreeService extends BaseService {

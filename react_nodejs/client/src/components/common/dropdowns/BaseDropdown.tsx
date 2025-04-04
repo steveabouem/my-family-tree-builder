@@ -1,19 +1,23 @@
 import React from "react";
-import { DBaseDropDownProps, DDropdownOption } from "./definitions";
+import { useFormikContext } from "formik";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import { Trans } from "@lingui/macro";
-import { useFormikContext } from "formik";
+import { DBaseDropDownProps, DDropdownOption } from "./definitions";
 import('./styles.scss');
 
 const BaseDropDown = <V,>({ id, label, name, options, additionalClass, onChangeCB, sx, displayVal }: DBaseDropDownProps<V>): JSX.Element => {
   const { setFieldValue, setFieldTouched, values } = useFormikContext<V>();
 
-  function handleFieldValueChange(v: string | number) {
-    setFieldTouched(name, true);
-    setFieldValue(name, v);
+  function handleFieldValueChange(optionname: string | number) {
+    const selectedOption = options.find((option: DDropdownOption) => option.value === optionname);
 
-    if (onChangeCB)
-      onChangeCB(v);
+    if (selectedOption) {
+      setFieldTouched(name, true);
+      setFieldValue(name, selectedOption.value);
+
+      if (onChangeCB)
+        onChangeCB(selectedOption.value);
+    }
   }
 
   return (
