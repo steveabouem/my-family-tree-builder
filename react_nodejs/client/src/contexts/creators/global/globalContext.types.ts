@@ -15,5 +15,5 @@ export interface DGlobalContext {
   modal?: Partial<DModalProps>;
   tree?: Partial<DFamilyTree>;
   updateTheme?: (value: themeEnum) => void;
-  updateModal?: (values: Partial<DModalProps>) => void;
+  updateModal?: (values: Partial<DModalProps>) => void; // change the modal content
 };

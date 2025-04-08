@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography } from '@mui/material';
 import { DPageProps } from "./definitions";
-import Spinner from "./Spinner";
+import Spinner from "./progressIndicators/Spinner";
 import useSessionValidation from "../../pages/hooks/useAuthValidation";
 import BaseModal from "./alerts/BaseModal";
 import GlobalContext from "contexts/creators/global/global.context";

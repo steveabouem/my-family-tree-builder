@@ -50,5 +50,11 @@ export interface DBaseFormProps {
   validations?: any;
 }
 
-/* +++++=> APP <= +++++ */
+/* +++++=> MODAL <= +++++ */
+export type DModalType =  'error' | 'success' | 'info' | 'warning';
 
+/* +++++=> APP <= +++++ */
+export enum Gendersenum {
+  male = 1,
+  female = 2,
+}

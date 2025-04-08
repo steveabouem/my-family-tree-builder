@@ -15,7 +15,7 @@ class FamilyTreeController extends BaseController<any> {
     super('trees');
   }
 
-  public async getAll(req: Request, res: Response): Promise<FamilyTree[]> {
+  public getAll = async (req: Request, res: Response): Promise<FamilyTree[]> => {
     const userId = req.query.member;
     let treeList: FamilyTree[] = [];
 
@@ -34,7 +34,7 @@ class FamilyTreeController extends BaseController<any> {
   * creates the tree. 
   * can only be initiated by a registered user. 
   */
-  public async saveNewTreeFormStep(members: any, name: string): Promise<DSaveTreeFormStepResponse> {
+  public saveNewTreeFormStep = async (members: any, name: string): Promise<DSaveTreeFormStepResponse> => {
     let response: DSaveTreeFormStepResponse = { lastStep: false, newFields: [] };;
 
     try {
@@ -60,6 +60,90 @@ class FamilyTreeController extends BaseController<any> {
   }
 
   /*
+ * Position the family members in the tree
+ */
+  public positionFamilyMembers = (members: DFamilyMemberDAO[]): DFamilyMemberDAO[] => {
+    const membersWithCoords: any = [];
+
+    members.forEach((currentMember: any, index: number) => {
+      const position = { x: index * 100, y: 0 };
+      const children = JSON.parse(currentMember.children || '[]');
+      const siblings = JSON.parse(currentMember.siblings || '[]');
+      const spouses = JSON.parse(currentMember.spouses || '[]');
+      /*
+      * find all the node children,  position them below it, then update each child's node's position
+      */
+      if (children.length) {
+        /*
+        * if the child was already processed through another incoming node (family member), ignore it
+        */
+        children.forEach((child: any) => {
+          if (membersWithCoords.find((newNode: any) => newNode.node_id === child.node_id)) {
+            logger.info('ignoring family member\'s current child as it is a dupe, ', { child });
+          } else {
+            membersWithCoords.push({
+              ...child,
+              type: 'custom',
+              position: { x: position.x, y: position.y - 50 }, name: 'CHILD', data: { label: `${child.first_name} ${child.last_name}`, ...child }
+            });
+          }
+        });
+      }
+      /*
+      * find all the node siblings,  position them below it, then update each child's node's position
+      */
+      if (siblings.length) {
+        /*
+        * if the child was already processed through another incoming node (family member), ignore it
+        */
+        siblings.forEach((sibling: any) => {
+          if (membersWithCoords.find((newNode: any) => newNode.node_id === sibling.node_id)) {
+            logger.info('ignoring family member\'s current sibling as it is a dupe, ', { sibling });
+          } else {
+            membersWithCoords.push({
+              ...sibling,
+              type: 'custom',
+              position: { x: position.x + 50, y: position.y }, name: 'sibling', data: { label: `${sibling.first_name} ${sibling.last_name}`, ...sibling }
+            });
+          }
+        });
+      }
+      /*
+      * find all the node spouses,  position them below it, then update each child's node's position
+      */
+      if (spouses.length) {
+        /*
+        * if the child was already processed through another incoming node (family member), ignore it
+        */
+        spouses.forEach((spouse: any) => {
+          if (membersWithCoords.find((newNode: any) => newNode.node_id === spouse.node_id)) {
+            logger.info('ignoring family member\'s current spouse as it is a dupe, ', { spouse });
+          } else {
+            membersWithCoords.push({
+              ...spouse,
+              type: 'custom',
+              position: { x: position.x, y: position.y - 50 }, name: 'spouse', data: { label: `${spouse.first_name} ${spouse.last_name}`, ...spouse }
+            });
+          }
+        });
+      }
+      if (membersWithCoords.find((newNode: any) => newNode.node_id === currentMember.node_id)) {
+        logger.info('ignoring family member as it is a dupe, ', { node: currentMember });
+      } else {
+        membersWithCoords.push({
+          ...currentMember,
+          type: 'custom',
+          position,
+          data: { label: `${currentMember.first_name} ${currentMember.last_name}`, ...currentMember }
+        });
+      }
+    });
+    
+    logger.info('newNodeState', membersWithCoords);
+    return membersWithCoords;
+  }
+
+  /*
   * Receives an array of family members, within which each member has a list of children, siblings and spouses
   * loops through the arrays and creates a familyMember record for each member,
   * for the next memeber, check if the member already exists in the DB, if not create it
@@ -67,7 +151,7 @@ class FamilyTreeController extends BaseController<any> {
   * as all the family members are create, crete a mirror obect if the incoming DAO, but this time with the DB ids.
   * return the resulting DTO
   */
-  public async create(req: Request<{}, {}, DFamilyTreeDAO, {}>, res: Response<DGetFamilyTreeResponse, {}>) {
+  public create = async (req: Request<{}, {}, DFamilyTreeDAO, {}>, res: Response<DGetFamilyTreeResponse, {}>) => {
     let response: DGetFamilyTreeResponse = { code: 500, error: true };
     try {
       /*
@@ -86,15 +170,16 @@ class FamilyTreeController extends BaseController<any> {
         */
         logger.info('membersRecords array', membersRecords);
         if (membersRecords) {
-          const membersByNodeId = 
-            Object.values(membersRecords).reduce((nodeList: {[nodeId: string]: DFamilyMemberDAO}, curr: DFamilyMemberDAO) => {
-            return ({...nodeList, [curr.node_id]: curr});
-          }, {});
+          const membersByNodeId =
+            Object.values(membersRecords).reduce((nodeList: { [nodeId: string]: any }, curr: any) => {
+              return ({ ...nodeList, [curr.node_id]: curr.dataValues });
+            }, {});
+          const withCoords = this.positionFamilyMembers(Object.values(membersByNodeId));
           const newTree = await FamilyTree.create({
             active: req.body?.active ? 1 : 0,
             authorized_ips: '',
             created_by: req.body.userId,
-            members: JSON.stringify(membersRecords),
+            members: JSON.stringify(withCoords),
             name: req.body?.treeName || 'temporary_tree_name', //Translation key
             public: 0
           })
@@ -106,7 +191,7 @@ class FamilyTreeController extends BaseController<any> {
           response.error = false;
           response.message = 'Family Tree Created Succesfully';
           // @ts-ignore: the typeing here is incorrect, need a better union type
-          response = { ...response, ...newTree?.dataValues, members: membersByNodeId };
+          response = { ...response, ...newTree?.dataValues, members: withCoords };
         } else {
           response.code = 400;
           response.error = true;
@@ -132,7 +217,7 @@ class FamilyTreeController extends BaseController<any> {
     ? anchor may or may not have a user profile 
     ? can only be initiated by a registered user
   */
-  public async addFamilyUnit(req: Request, res: Response) {
+  public addFamilyUnit = async (req: Request, res: Response) => {
     // const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
 
     // if (req.body?.anchorId) {
@@ -190,7 +275,7 @@ class FamilyTreeController extends BaseController<any> {
     // return res.json(response);
   }
 
-  public async getOne(req: Request, res: Response): Promise<DRequestPayload<FamilyTree>> {
+  public getOne = async (req: Request, res: Response): Promise<DRequestPayload<FamilyTree>> => {
     const response: DRequestPayload<FamilyTree> = { error: true, code: 400 };
     try {
       const id = req.query.id;
@@ -232,7 +317,7 @@ class FamilyTreeController extends BaseController<any> {
     return response;
   }
 
-  public async getTreeLayout(req: Request, res: Response) {
+  public getTreeLayout = async (req: Request, res: Response) => {
     // const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
     // const treeId = req.query?.id;
     // response.payload = `<Box>Test HTML ${treeId}</Box>`;
@@ -242,7 +327,7 @@ class FamilyTreeController extends BaseController<any> {
     return true;
   }
 
-  public async delete(req: Request, res: Response) {
+  public delete = async (req: Request, res: Response) => {
     // const response: Partial<DEndpointResponse<any>> = { error: true, code: 400, session: '' };
     // const treeId = req.body.id;
     // const userId = req.session?.details?.userId || 0;
@@ -285,7 +370,7 @@ class FamilyTreeController extends BaseController<any> {
   * can be called from the initial step form rsponsible for creating the tree,
   * or an update made to an active tree by a registered user with appropriate permissions
   */
-  public async addMembers(req: Request, res: Response) { // ! TODO: use family member model here?
+  public addMembers = async (req: Request, res: Response) => { // ! TODO: use family member model here=> ?
     const newMembers = req.body.members;
     const treeId = req.body.id;
     const userId = req.session?.details?.userId || 0;
@@ -295,7 +380,7 @@ class FamilyTreeController extends BaseController<any> {
     res.json(response);
   }
 
-  public async removeMembers(req: Request, res: Response) {
+  public removeMembers = async (req: Request, res: Response) => {
     // const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
     // const treeId: number = req.body.tree;
     // const membersToRemove: number[] = JSON.parse(req.body.members);
@@ -340,7 +425,7 @@ class FamilyTreeController extends BaseController<any> {
     return true;
   }
 
-  public async getMembers(req: Request, res: Response): Promise<DRequestPayload<FamilyMember[]>> {
+  public getMembers = async (req: Request, res: Response): Promise<DRequestPayload<FamilyMember[]>> => {
     const response: DRequestPayload<FamilyMember[]> = { error: true, code: 400 };
     const userId = req.session?.details?.userId || 0;
     const id = req.query.id;
@@ -382,11 +467,11 @@ class FamilyTreeController extends BaseController<any> {
   * Promise<{ step: number; members: []; }> => {DFormField[] | []} 
   * if no further steps, return empty array
   */
-  public async saveGenealogyFormStep(req: Request, res: Response) {
+  public saveGenealogyFormStep = async (req: Request, res: Response) => {
 
   }
 
-  public async canUserViewTree(treeId: number, userId: number): Promise<boolean> {
+  public canUserViewTree = async (treeId: number, userId: number): Promise<boolean> => {
     // TODO: PERMISSION from DB
     let isPartOfTree = false;
     const tree = await FamilyTree.findByPk(treeId).catch((e: unknown) => {
@@ -403,7 +488,7 @@ class FamilyTreeController extends BaseController<any> {
     return isPartOfTree;
   }
 
-  public async canUserUpdateTree(treeId: number, userId: number): Promise<boolean> {
+  public canUserUpdateTree = async (treeId: number, userId: number): Promise<boolean> => {
     const tree = await FamilyTree.findByPk(treeId).catch((e: unknown) => {
       logger.error('! FamilyTree.isUserAuthorizedOntree ! ', e)
     });

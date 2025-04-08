@@ -52,13 +52,17 @@ export interface DFamilyTreeDAO {
     treeName?: string;
 }
 export interface DFamilyTreeDTO {
-  [memberId: string]: {
-    id: string;
-    name: string;
-    type?: string;
-    children?: string[];
-    siblings?: string[];
-    spouses?: string[];
+  id?: number;
+  name?: string;
+  members: {
+    [memberId: string]: {
+      id: string;
+      name: string;
+      type?: string;
+      children?: string[];
+      siblings?: string[];
+      spouses?: string[];
+    }
   }
 }
 export interface DFamilyMemberDTO {

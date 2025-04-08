@@ -23,7 +23,7 @@ const initialFields =
     { fieldName: "email", label: <Trans>email</Trans>, type: "email" },
     { fieldName: "description", label: <Trans>description</Trans> },
   ];
-
+const childCountStep = 3; // subject to change, but for now, this is the step where user will be able to add children
 /*
 * This implementation of the <StepForm /> follows the following logic:
 * each step uses a unique name to be identified by the store
@@ -49,6 +49,7 @@ const GenealogyForm = () => {
     /*
     * the form will direct user to build one family unit at the time (parents, children)
     * for each child, the user will be able to add partners and children of their own
+    * the naming mother/father here is just meant for parent 1 and parent 2. USer will have the choice to set gender for both
     */
     // 1: mother
     // 2: father
@@ -117,7 +118,7 @@ const GenealogyForm = () => {
         { fieldName: `${stepName}_description`, label: <Trans>description</Trans>, value: values?.[`${stepName}_description`] || '' },
       ];
       /*
-      * Add nodId to formik values for service request payload
+      * Add nodeId to formik values for service request payload
       */
      setFieldValue(`${stepName}_node_id`, v4());
       dispatch(loadStepFormFieldsAction({ name: stepName, fields, title: <Trans>{`info_on_${stepName}`}</Trans> }));
@@ -127,14 +128,7 @@ const GenealogyForm = () => {
   return (
     <Paper>
       <Box display="flex" justifyContent="space-between" gap={2}>
-        {/* <Box display="flex" justifyContent="start" flex="1" gap={2}>
-          <Typography variant="subtitle1"><Trans>marital_status_question_label</Trans></Typography>
-          <Typography variant="body1" aria-label="hasSpouse"><Trans>yes</Trans></Typography>
-          <input readOnly checked={false} type="radio" onClick={updateCurrentFields} />
-          <Typography variant="body1" aria-label="noSpouse"><Trans>no</Trans></Typography>
-          <input readOnly checked={false} type="radio" onClick={updateCurrentFields} />
-        </Box> */}
-        {currentFormStep === 3 ? (
+        {currentFormStep === childCountStep ? (
           <Box display="flex" justifyContent="space-between" flex="1">
             <Typography><Trans>how_many_children</Trans></Typography>
             <CustomField type="number" min={0} onChange={(e: any) => changeChildrenCount(e.target.value)} />

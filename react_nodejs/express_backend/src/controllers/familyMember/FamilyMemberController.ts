@@ -19,7 +19,7 @@ class FamilyMemberController extends BaseController<any> {
   * as all the family members are created, crete a mirror obect if the incoming DAO, but this time with the DB ids.
   * return the resulting DAO
   */
-  public async bulkCreate(members: {[stepName: string]: DFamilyMemberDAO}): Promise<{[id: string]: DFamilyMemberDAO} | null> {
+  public async bulkCreate(members: { [stepName: string]: DFamilyMemberDAO }): Promise<{ [id: string]: DFamilyMemberDAO } | null> {
     const today = dayjs();
     let res: any = [];
     const membersList = Object.values(members);
@@ -42,13 +42,18 @@ class FamilyMemberController extends BaseController<any> {
           siblings: JSON.stringify(m.siblings),
           children: JSON.stringify(m.children),
         })))
-          .catch((e: unknown) => {
-            logger.error('Unable to bulk create members, unknown error ', e);
-          });
-       
-        logger.info('All new members created: ', { newMemberGroup });
-        res = {...newMemberGroup || {}};
-        return res;
+        .catch((e: unknown) => {
+          logger.error('Unable to bulk create members, unknown error ', e);
+        });
+        
+        if (!!newMemberGroup) {
+          logger.info('All new members created: ', { newMemberGroup });
+          res = { ...newMemberGroup || {} };
+          return res;
+        } else {
+          logger.error('Unable to bulk create members, no records created');
+          return null;
+        }
       } else {
         logger.error('No record created, returning empty array', res, Array.isArray(members));
         return null;

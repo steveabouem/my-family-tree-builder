@@ -4,11 +4,11 @@ import { Trans } from '@lingui/macro';
 import FormFieldsGenerator from '../FormFieldsGenerator';
 import { DStepForm } from './definitions';
 import { useFormikContext } from 'formik';
-import LocalSpinner from 'components/common/LocalSpinner';
-import { DStepDetails, DStepFormState } from 'app/slices/definitions';
+import LocalSpinner from 'components/common/progressIndicators/LocalSpinner';
+import { DFormField } from 'components/common/definitions';
+import { DStepFormState } from 'app/slices/definitions';
 import { useZDispatch, useZSelector } from 'app/hooks';
-import { fetchNextStepFields, nextFormStepAction, prevFormStepAction } from 'app/slices/forms/stepForm';
-import { DFormField } from '@components/common/definitions';
+import { nextFormStepAction, prevFormStepAction } from 'app/slices/forms/stepForm';
 
 // TODO: pass validations as props here, prevent save and submit in case of field errors. as well as current step title and otheres alike
 // This will ensure that the redux slice calls the api with no risk 
@@ -31,7 +31,7 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
       setShowNextStep(true);
     }
   }, [totalSteps,currentFormStep]);
-  useEffect(() => setCurrentFields(currentFormStepDetails?.fields?.flat()), [currentFormStepDetails]);
+  useEffect(() => setCurrentFields([...currentFormStepDetails?.fields?.flat() || []]), [currentFormStepDetails?.name]);
   
   return (
     <Box sx={{ display: "flex", flexDirection: "column", ...sx }}>

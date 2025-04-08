@@ -12,76 +12,77 @@ import { DFamilyTreeState, DStepFormState } from 'app/slices/definitions';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import { DFamilyTreeDTO } from './definitions';
 import { populateTreeAction } from 'app/slices/trees';
+import GlobalContext from 'contexts/creators/global';
 
 const GenealogyContainer: React.FC = () => {
   const { stepTree = {} } = useZSelector<DStepFormState>(state => state.stepForm);
   const dispatch = useZDispatch();
   const { currentUser } = useContext(FamilyTreeContext);
+  const { updateModal, toggleLoading, modal, loading } = React.useContext(GlobalContext);
 
-  // useEffect(() => {
-  //   const sample = {
-  //     "e652a9cc-d234-46ea-8763-6f5f9ee8f251": {
-  //       "id": 5,
-  //       "dob": "2025-04-03",
-  //       "node_id": "e652a9cc-d234-46ea-8763-6f5f9ee8f251",
-  //       "email": "j@m.s",
-  //       "first_name": "Josh",
-  //       "gender": 1,
-  //       "last_name": "Ham",
-  //       "marital_status": "Married",
-  //       "occupation": "",
-  //       "parents": "\"\"",
-  //       "siblings": "\"\"",
-  //       "age": 0,
-  //       "description": "",
-  //       "profile_url": "",
-  //       "children": "[{\"dob\":\"\",\"node_id\":\"6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f\",\"email\":\"j@m.ssa\",\"first_name\":\"Jordanz\",\"gender\":1,\"last_name\":\"\",\"marital_status\":\"Married\",\"occupation\":\"\",\"parents\":\"\",\"siblings\":\"\",\"age\":\"\",\"description\":\"\",\"profile_url\":\"\",\"userId\":\"\"}]",
-  //       "user_id": 0,
-  //       "created_by": 1
-  //     },
-  //     "6f1c9a77-6bfb-4cdf-8669-cc06d4170c24": {
-  //       "id": 6,
-  //       "dob": "",
-  //       "node_id": "6f1c9a77-6bfb-4cdf-8669-cc06d4170c24",
-  //       "email": "j@m.ss",
-  //       "first_name": "Jordan",
-  //       "gender": 2,
-  //       "last_name": "",
-  //       "marital_status": "Widowed",
-  //       "occupation": "",
-  //       "parents": "\"\"",
-  //       "siblings": "\"\"",
-  //       "age": 0,
-  //       "description": "",
-  //       "profile_url": "",
-  //       "children": "[{\"dob\":\"\",\"node_id\":\"6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f\",\"email\":\"j@m.ssa\",\"first_name\":\"Jordanz\",\"gender\":1,\"last_name\":\"\",\"marital_status\":\"Married\",\"occupation\":\"\",\"parents\":\"\",\"siblings\":\"\",\"age\":\"\",\"description\":\"\",\"profile_url\":\"\",\"userId\":\"\"}]",
-  //       "user_id": 0,
-  //       "created_by": 1
-  //     },
-  //     "6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f": {
-  //       "id": 7,
-  //       "dob": "",
-  //       "node_id": "6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f",
-  //       "email": "j@m.ssa",
-  //       "first_name": "Jordanz",
-  //       "gender": 1,
-  //       "last_name": "",
-  //       "marital_status": "Married",
-  //       "occupation": "",
-  //       "parents": "\"\"",
-  //       "siblings": "\"\"",
-  //       "age": 0,
-  //       "description": "",
-  //       "profile_url": "",
-  //       "user_id": 0,
-  //       "created_by": 1
-  //     }
-  //   }
-  //   const formattedMemberRecords = formatIncomingValues(sample);
-  //   setTimeout(() => {
-  //     dispatch(populateTreeAction(formattedMemberRecords));
-  //   }, 3000);
-  // }, [])
+
+  useEffect(() => {
+    const sample = {
+      "e652a9cc-d234-46ea-8763-6f5f9ee8f251": {
+        "id": 5,
+        "dob": "2025-04-03",
+        "node_id": "e652a9cc-d234-46ea-8763-6f5f9ee8f251",
+        "email": "j@m.s",
+        "first_name": "Josh",
+        "gender": 1,
+        "last_name": "Ham",
+        "marital_status": "Married",
+        "occupation": "",
+        "parents": "\"\"",
+        "siblings": "\"\"",
+        "age": 0,
+        "description": "",
+        "profile_url": "",
+        "children": "[{\"dob\":\"\",\"node_id\":\"6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f\",\"email\":\"j@m.ssa\",\"first_name\":\"Jordanz\",\"gender\":1,\"last_name\":\"\",\"marital_status\":\"Married\",\"occupation\":\"\",\"parents\":\"\",\"siblings\":\"\",\"age\":\"\",\"description\":\"\",\"profile_url\":\"\",\"userId\":\"\"}]",
+        "user_id": 0,
+        "created_by": 1
+      },
+      "6f1c9a77-6bfb-4cdf-8669-cc06d4170c24": {
+        "id": 6,
+        "dob": "",
+        "node_id": "6f1c9a77-6bfb-4cdf-8669-cc06d4170c24",
+        "email": "j@m.ss",
+        "first_name": "Jordan",
+        "gender": 2,
+        "last_name": "",
+        "marital_status": "Widowed",
+        "occupation": "",
+        "parents": "\"\"",
+        "siblings": "\"\"",
+        "age": 0,
+        "description": "",
+        "profile_url": "",
+        "children": "[{\"dob\":\"\",\"node_id\":\"6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f\",\"email\":\"j@m.ssa\",\"first_name\":\"Jordanz\",\"gender\":1,\"last_name\":\"\",\"marital_status\":\"Married\",\"occupation\":\"\",\"parents\":\"\",\"siblings\":\"\",\"age\":\"\",\"description\":\"\",\"profile_url\":\"\",\"userId\":\"\"}]",
+        "user_id": 0,
+        "created_by": 1
+      },
+      "6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f": {
+        "id": 7,
+        "dob": "",
+        "node_id": "6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f",
+        "email": "j@m.ssa",
+        "first_name": "Jordanz",
+        "gender": 1,
+        "last_name": "",
+        "marital_status": "Married",
+        "occupation": "",
+        "parents": "\"\"",
+        "siblings": "\"\"",
+        "age": 0,
+        "description": "",
+        "profile_url": "",
+        "user_id": 0,
+        "created_by": 1
+      }
+    }
+    //  handleSubmit(sample);
+
+  }, [])
   //TODO: once you can create the initial unit, focus on adding kins to each node
   /*
   * At every step, the fiel names will be prefixed by the type of kin (fatherm, mother, children etc..)
@@ -166,7 +167,6 @@ const GenealogyContainer: React.FC = () => {
         [member.node_id]: {
           ...member,
           id: member.node_id,
-          label: `${member.last_name} ${member.first_name} `,// mandatory for react-flow
           children: childrenIds,
           siblings: siblingsIds,
           spouses: spousesIds,
@@ -182,7 +182,14 @@ const GenealogyContainer: React.FC = () => {
     familyTreeService.create(formattedValues).then((response: AxiosResponse<DApiResponse<DFamilyTreeDTO>>) => {
       if (response.data.code == 200) {
         const formattedMemberRecords = formatIncomingValues(response.data.members);
+        if (updateModal) {
+          updateModal({ hidden: false, content: <Typography variant='body2'>family_tree_save_success_modal</Typography>, type: 'success' });
+        }
         dispatch(populateTreeAction(formattedMemberRecords));
+      } else {
+        if (updateModal) {
+          updateModal({ hidden: false, content: <Typography variant='body2'>family_tree_save_failed_modal</Typography>, type: 'error' });
+        }
       }
     })
       .catch((e: unknown) => {
@@ -192,7 +199,7 @@ const GenealogyContainer: React.FC = () => {
 
   return (
     <Box width="100%">
-      <Typography variant='body1'><Trans>story_mode_tree_intro</Trans></Typography>
+      <Typography variant='body1'><Trans>graph_mode_tree_intro</Trans></Typography>
       <Formik initialValues={{}} onSubmit={handleSubmit}>
         {(props) => (
           <Grid2 container spacing={2} display="flex" justifyContent="space-between">

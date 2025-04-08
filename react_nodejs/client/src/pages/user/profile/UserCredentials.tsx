@@ -7,7 +7,7 @@ import FamilyTreeContext from "contexts/creators/familyTree";
 import { DFormField } from "components/common/definitions";
 import { Formik } from "formik";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
-import Spinner from "components/common/Spinner";
+import Spinner from "components/common/progressIndicators/Spinner";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
 const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: DChangePasswordValues) => void }) => {

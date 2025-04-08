@@ -1,12 +1,13 @@
+import { Gendersenum } from "components/common/definitions";
 import { DDropdownOption } from "../definitions";
 
 export const genderOptions: DDropdownOption[] = [
   {
     label: 'Male',
-    value: 1,
+    value: Gendersenum.male,
   },
   {
     label: 'Female',
-    value: 2,
+    value: Gendersenum.female,
   },
 ];

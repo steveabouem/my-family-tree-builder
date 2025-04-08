@@ -40,7 +40,8 @@ router.get('/index', (req: Request, res: Response) => {
 
 router.get('/details', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
-  familyTreeController.getOne(req, res);
+  const helper = new RequestHelper(req, res);
+  helper.sendResponseFromControllerMethod(familyTreeController.getOne, 'Get tree details');
 });
 
 router.post('/create', (req: Request, res: Response) /**TODO: return type */ => {

@@ -22,6 +22,7 @@ export interface DFamilyMemberDAO {
     nodeId?: string;
     name?: string;
     type?: string;
+    position?: { x: number; y: number };
     children?: DFamilyMemberDAO[];
     siblings?: DFamilyMemberDAO[];
     spouses?: DFamilyMemberDAO[];

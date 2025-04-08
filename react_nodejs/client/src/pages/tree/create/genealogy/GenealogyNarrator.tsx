@@ -1,16 +1,15 @@
 import React, { useState } from 'react'
-import { useZDispatch, useZSelector } from 'app/hooks';
-import { DFamilyTreeState, DStepFormState } from 'app/slices/definitions';
-import { DFamilyTreeDAO } from '@services/api.definitions';
-import { useFormikContext } from 'formik';
+import { useZSelector } from 'app/hooks';
+import { DFamilyTreeState } from 'app/slices/definitions';
 import TreeLayout from 'pages/tree/layout/TreeLayout';
+import DataProgress from 'components/common/progressIndicators/DataProgress';
 
 export const GenealogyNarrator = () => {
-  const {currentFamilyTree, updating } = useZSelector<DFamilyTreeState>(state => state.tree);
+  const {currentFamilyTree } = useZSelector<DFamilyTreeState>(state => state.tree);
 
   return  currentFamilyTree ? (
-  <TreeLayout tree={currentFamilyTree || {}} />     
-  ) : '';
+  <TreeLayout tree={currentFamilyTree} />     
+  ) : <DataProgress />;
 };
 
 export default GenealogyNarrator;
