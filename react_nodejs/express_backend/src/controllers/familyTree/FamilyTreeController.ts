@@ -1,6 +1,6 @@
 import BaseController from "../Base.controller";
 import { Request, Response } from "express";
-import { DEndpointResponse, DRequestPayload } from "../controllers.definitions";
+import { DRequestPayload } from "../controllers.definitions";
 import FamilyTree from "../../models/FamilyTree";
 import { Op } from "sequelize";
 import FamilyMemberController from "../familyMember/FamilyMemberController";
@@ -70,6 +70,7 @@ class FamilyTreeController extends BaseController<any> {
       const children = JSON.parse(currentMember.children || '[]');
       const siblings = JSON.parse(currentMember.siblings || '[]');
       const spouses = JSON.parse(currentMember.spouses || '[]');
+      const parents = JSON.parse(currentMember.parents || '[]');
       /*
       * find all the node children,  position them below it, then update each child's node's position
       */
@@ -84,7 +85,13 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...child,
               type: 'custom',
-              position: { x: position.x, y: position.y - 50 }, name: 'CHILD', data: { label: `${child.first_name} ${child.last_name}`, ...child }
+              position: { x: position.x, y: position.y - 225 },
+              name: '',
+              data: {
+                ...child,
+                label: `${child.first_name} ${child.last_name}`,
+                connections: [...child?.connections || [], { id: `${currentMember.node_id}-${child.node_id}`, source: currentMember.node_id, target: child.node_id }]
+              }
             });
           }
         });
@@ -103,7 +110,12 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...sibling,
               type: 'custom',
-              position: { x: position.x + 50, y: position.y }, name: 'sibling', data: { label: `${sibling.first_name} ${sibling.last_name}`, ...sibling }
+              position: { x: position.x + 400, y: position.y },
+              name: '',
+              data: {
+                ...sibling, label: `${sibling.first_name} ${sibling.last_name}`,
+                connections: [...sibling?.connections || [], { id: `${currentMember.node_id}-${sibling.node_id}`, source: currentMember.node_id, target: sibling.node_id }]
+              }
             });
           }
         });
@@ -122,7 +134,38 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...spouse,
               type: 'custom',
-              position: { x: position.x, y: position.y - 50 }, name: 'spouse', data: { label: `${spouse.first_name} ${spouse.last_name}`, ...spouse }
+              position: { x: position.x + 225, y: position.y },
+              name: '',
+              data: {
+                ...spouse,
+                label: `${spouse.first_name} ${spouse.last_name}`,
+                connections: [...spouse?.connections || [], { id: `${currentMember.node_id}-${spouse.node_id}`, source: currentMember.node_id, target: spouse.node_id }]
+              }
+            });
+          }
+        });
+      }
+      /*
+      * find all the node parents,  position them above it, then update each parent's node's position
+      */
+      if (parents.length) {
+        /*
+        * if the parent was already processed through another incoming node (family member), ignore it
+        */
+        parents.forEach((parent: any) => {
+          if (membersWithCoords.find((newNode: any) => newNode.node_id === parent.node_id)) {
+            logger.info('ignoring family member\'s current spouse as it is a dupe, ', { parent });
+          } else {
+            membersWithCoords.push({
+              ...parent,
+              type: 'custom',
+              position: { x: position.x, y: position.y - 225 },
+              name: '',
+              data: {
+                ...parent,
+                label: `${parent.first_name} ${parent.last_name}`,
+                connections: [...parent?.connections || [], { id: `${currentMember.node_id}-${parent.node_id}`, source: currentMember.node_id, target: parent.node_id }]
+              }
             });
           }
         });
@@ -138,7 +181,7 @@ class FamilyTreeController extends BaseController<any> {
         });
       }
     });
-    
+
     logger.info('newNodeState', membersWithCoords);
     return membersWithCoords;
   }

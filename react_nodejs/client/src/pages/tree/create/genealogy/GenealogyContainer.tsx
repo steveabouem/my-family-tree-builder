@@ -95,26 +95,44 @@ const GenealogyContainer: React.FC = () => {
   function formatOutgoingValues(v: any): DFamilyTreeDAO {
     const mappedMembers = Object.keys(stepTree).reduce((acc: any, curr: string) => {
       const formatted: DFamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
-      if (curr.includes('children')) {
+      
+      if (curr.includes('son') || curr.includes('daughter')) {
         acc = {
           ...acc,
-          // add current child to mother's children
-          mother: {
-            ...acc?.mother || {},
-            children: [...acc?.mother?.children || [], formatted]
+          // add current child to anchor's children
+          anchor: {
+            ...acc?.anchor || {},
+            children: [...acc?.anchor?.children || [], formatted]
           },
-          // add current child to faTther's children
-          father: {
-            ...acc?.father || {},
-            children: [...acc?.father?.children || [], formatted]
-          },
+          // // add current child to faTther's children
+          // father: {
+          //   ...acc?.father || {},
+          //   children: [...acc?.father?.children || [], formatted]
+          // },
           // add current child's own DAO
           [curr]: { ...acc?.[curr] || {}, ...formatted }
         };
-      } else if (curr.includes('mother')) {
-        acc = { ...acc, mother: { ...acc?.mother || {}, ...formatted }, father: { ...acc?.father || {}, spouses: [formatted] } };
-      } else if (curr.includes('father')) {
-        acc = { ...acc, father: { ...acc?.father || {}, ...formatted }, mother: { ...acc?.mother || {}, spouses: [formatted] } };
+      } else if (curr.includes('brother') || curr.includes('sister')) {
+        acc = { 
+          ...acc,
+          anchor: {
+            ...acc?.anchor || {},
+            siblings: [...acc?.anchor?.siblings || [], formatted]
+          }};
+      } else if (curr.includes('mother') || curr.includes('father')) {
+        acc = { 
+          ...acc,
+          anchor: {
+            ...acc?.anchor || {},
+            parents: [...acc?.anchor?.parents || [], formatted]
+          }};
+      } else {
+      // } else if (curr.includes('mother')) {
+      //   acc = { ...acc, mother: { ...acc?.mother || {}, ...formatted }, father: { ...acc?.father || {}, spouses: [formatted] } };
+      // } else if (curr.includes('father')) {
+      //   acc = { ...acc, father: { ...acc?.father || {}, ...formatted }, mother: { ...acc?.mother || {}, spouses: [formatted] } };
+      // } else {
+        acc = { ...acc, [curr]: formatted };
       }
 
       return acc;
@@ -198,7 +216,7 @@ const GenealogyContainer: React.FC = () => {
   }
 
   return (
-    <Box width="100%">
+    <Box width="100%" display="flex" flexDirection="column" gap={2}>
       <Typography variant='body1'><Trans>graph_mode_tree_intro</Trans></Typography>
       <Formik initialValues={{}} onSubmit={handleSubmit}>
         {(props) => (

@@ -14,7 +14,7 @@ const CreateFamilyTreePage = (): JSX.Element => {
   const { modal, updateModal, toggleLoading } = useContext(GlobalContext);
 
   useEffect(() => {
-    if (toggleLoading) toggleLoading(false);
+    toggleLoading(false);
   }, []);
 
   function switchMode() {
@@ -32,7 +32,7 @@ const CreateFamilyTreePage = (): JSX.Element => {
           }
         </Button>
       </Box>
-        {mode === "manual" ? <GenealogyContainer /> : <ChartingContainer />}
+      {mode === "manual" ? <GenealogyContainer /> : <ChartingContainer />}
     </Page>
   );
 }

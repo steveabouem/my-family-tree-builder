@@ -16,8 +16,8 @@ const GlobalContextProvider = ({ children }: {children: ReactNode}) => {
     setModalContent((currentContent) => ({ ...currentContent, ...values }));
   };
 
-  const toggleLoading = (state: boolean) =>  {
-    setLoading(state);
+  const toggleLoading = (state?: boolean) =>  {
+    setLoading(state || false);
   };
 
   return (

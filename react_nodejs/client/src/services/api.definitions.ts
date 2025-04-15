@@ -2,7 +2,7 @@ import { NodeTypes } from "@xyflow/react";
 /*
 * Holds declarations for all the API types, notably DTOs/DAOS
 */
-interface DApiResponseRoot  {
+interface DApiResponseRoot {
   sessionId?: string;
   error: boolean;
   code: number;
@@ -46,10 +46,10 @@ export interface DUserSession {
 }
 // # region family-tree
 export interface DFamilyTreeDAO {
-    members: DFamilyMemberDTO[];
-    userId: number;
-    active?: boolean;
-    treeName?: string;
+  members: DFamilyMemberDTO[];
+  userId: number;
+  active?: boolean;
+  treeName?: string;
 }
 export interface DFamilyTreeDTO {
   id?: number;
@@ -88,4 +88,26 @@ export interface DFamilyMemberDTO {
   children?: DFamilyMemberDTO[];
   siblings?: DFamilyMemberDTO[];
   spouses?: DFamilyMemberDTO[];
+}
+export interface DReactFlowNode {
+  id: string;
+  age?: number;
+  children?: string[];
+  created_by?: number;
+  data: any;
+  description: string;
+  dob: string;
+  email: string;
+  first_name: string;
+  gender: number;
+  last_name: string;
+  marital_status: string;
+  node_id: string;
+  occupation: string;
+  parents: string;
+  profile_url: string;
+  siblings?: string[];
+  spouses?: string[];
+  type?: string;
+  user_id: number;
 }

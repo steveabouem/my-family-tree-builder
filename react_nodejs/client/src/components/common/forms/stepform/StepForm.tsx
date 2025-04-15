@@ -15,11 +15,10 @@ import { nextFormStepAction, prevFormStepAction } from 'app/slices/forms/stepFor
 const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) => {
   const [showNextStep, setShowNextStep] = useState<boolean>(false);
   const [currentFields, setCurrentFields] = useState<DFormField[]>([]);
-  const { submitForm, values } = useFormikContext<V>();
+  const { submitForm } = useFormikContext<V>();
   const { currentFormStep, currentFormStepDetails, updating, totalSteps } = useZSelector(
     (state: { stepForm: DStepFormState }) => state.stepForm);
   const dispatch = useZDispatch();
-  const isLastStep = useMemo(() => currentFormStep === totalSteps, [totalSteps, currentFormStep]);
   /*
   * Some step forms will need several arrays of fields in the same category (exp:the secion for siblings)
   * to allow the step form to be more dynamic, we will use an object to store the fields for each step
@@ -30,18 +29,20 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
     } else {
       setShowNextStep(true);
     }
-  }, [totalSteps,currentFormStep]);
-  useEffect(() => setCurrentFields([...currentFormStepDetails?.fields?.flat() || []]), [currentFormStepDetails?.name]);
-  
+  }, [totalSteps, currentFormStep]);
+  useEffect(() => {
+    setCurrentFields([...currentFormStepDetails?.fields?.flat() || []]);
+  }, [currentFormStepDetails?.name]);
+
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", ...sx }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: '1rem', ...sx }}>
       <Box display="flex" justifyContent="space-between">
-        <Box display="flex" justifyContent="flex-start" gap={2} alignItems="center">
-          <Typography variant="body1">
-            <Trans>current_form_step</Trans>
-          </Typography>
-          <Chip label={currentFormStep} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
-        </Box>
+        <Typography variant="body1">
+          <Trans>current_form_step</Trans>
+        </Typography>
+        <Chip label={currentFormStep} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
+      </Box>
+      <Box display="flex" justifyContent="flex-start" gap={2} alignItems="center">
         <Box display="flex" flexDirection="column" gap={2} justifyContent="center" width="100%">
           {currentFormStepDetails?.title}
           {currentFormStepDetails?.subtitle}

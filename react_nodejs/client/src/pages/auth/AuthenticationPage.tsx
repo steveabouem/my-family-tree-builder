@@ -106,7 +106,6 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   React.useEffect(() => {
     if (updateModal)
       updateModal({ hidden: true })
-    if (toggleLoading)
       toggleLoading(false);
   }, []);
 

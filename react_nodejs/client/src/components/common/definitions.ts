@@ -32,6 +32,7 @@ export interface DFormField {
   type?: string;
   subComponent?: any;
   updateValue?: () => void;
+  callback?: (value: string | number) => void;
   options?: {label: string | ReactElement, value: any}[];
 }
 

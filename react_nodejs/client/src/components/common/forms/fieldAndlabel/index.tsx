@@ -1,0 +1,29 @@
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import { Field, useFormikContext } from "formik";
+import { DFieldAndLabelProps } from "./definitions";
+
+
+const FieldAndLabel = ({ direction = 'row', fieldName, label, fieldStyles, fieldType = 'text', labelStyles, sx, children, required = false }: DFieldAndLabelProps) => {
+  const { values } = useFormikContext<any>();
+
+  return (
+    <Box sx={{ ...sx || {}, display: 'flex', flexDirection: direction, gap: 2 }}>
+      {/* @ts-ignore */}
+      <Typography variant="label">{label}</Typography>
+      {/* {fieldType === 'array' ? (
+        <></>
+        // <FieldArray name={fieldName} render={fields => children} />
+      ) : fieldType === 'select' ? (
+        <FormControl aria-label={label} sx={fieldStyles}>
+          {children}
+        </FormControl>
+      ) : (
+        <Field id={`${label}-field`} name={fieldName} value={values[fieldName]} required={!!required} styles={fieldStyles}/>
+      )} */}
+      <Field id={`${label}-field`} name={fieldName} value={values[fieldName]} required={!!required} styles={fieldStyles} />
+    </Box>
+  );
+};
+
+export default FieldAndLabel;

@@ -7,8 +7,8 @@ export type DStepFormState = {
   currentFormStep: number;
   updating: boolean;
   globalValues: any;
+  totalSteps: number;
   stepTree?: { [name: string]: DFormField[] | DFormField[][] };
-  totalSteps?: number;
 };
 export interface DStepDetails {
   name: string;

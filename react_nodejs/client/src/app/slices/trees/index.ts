@@ -1,4 +1,3 @@
-import { DFamilyMemberDTO, DFamilyTreeDTO } from "@services/api.definitions";
 import { DFamilyTreeState } from "../definitions";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /*

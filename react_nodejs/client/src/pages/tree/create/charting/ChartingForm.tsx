@@ -160,9 +160,7 @@ const ChartingForm = (): JSX.Element => {
     return
   };
   async function submitForm(values: any) {
-    if (toggleLoading) {
-      toggleLoading(true);
-    }
+    toggleLoading(true);
     const familyTreeService = new service.familyTree();
     const { data } = await familyTreeService.create({ ...values, user_id: currentUser.userId });
     if (updateModal) {
@@ -182,9 +180,7 @@ const ChartingForm = (): JSX.Element => {
       }
     }
 
-    if (toggleLoading) {
-      toggleLoading(false);
-    }
+    toggleLoading(false);
   };
 
   return (
@@ -224,7 +220,7 @@ const ChartingForm = (): JSX.Element => {
                       options: [{ label: <Trans>gender_female</Trans>, value: 2 }, { label: <Trans>gender_male</Trans>, value: 1 },],
                       required: true,
                       subComponent: () => <Box className="field-wrap base">
-                        <GenderDropdown name="marital-status-dd" 
+                        <GenderDropdown name="marital-status-dd"
                           //  TODO typing of your form is not optimal
                           // @ts-ignore:
                           val={values?.spouse?.gender}

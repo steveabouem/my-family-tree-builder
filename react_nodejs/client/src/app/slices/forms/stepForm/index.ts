@@ -10,6 +10,7 @@ const initialState: DStepFormState = {
   updating: true,
   currentFormStepDetails: {name: '', fields: []}, // this should be renamed currentStepInfo
   globalValues: {},
+  totalSteps: 1
 };
 /*
 * mutators

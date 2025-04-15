@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode} from 'react';
 import { DModalProps } from '../../../components/common/alerts/definitions';
 import { themeEnum } from 'contexts/creators/global/globalContext.types';
 import GlobalContext from 'contexts/creators/global/global.context';
@@ -16,8 +16,8 @@ const GlobalContextProvider = ({ children }: {children: ReactNode}) => {
     setModalContent((currentContent) => ({ ...currentContent, ...values }));
   };
 
-  const toggleLoading = (state: boolean) =>  {
-    setLoading(state);
+  const toggleLoading = (state?: boolean) =>  {
+    setLoading(state || false);
   };
 
   return (

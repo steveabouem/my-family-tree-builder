@@ -12,8 +12,14 @@ import PageUrlsEnum from "utils/urls";
 import { service } from "services/index";
 import Page from "components/common/Page";
 import NotFound from "pages/404NotFound";
+import LayoutFlow from "pages/tree/layout/TreeLayout";
+import { useZDispatch, useZSelector } from "app/hooks";
+import { DFamilyTreeState } from "app/slices/definitions";
+import { populateTreeAction } from "@app/slices/trees";
 
 const UserProfilePage = (): JSX.Element => {
+  const dispatch = useZDispatch();
+  const { updating, currentFamilyTree, name } = useZSelector<DFamilyTreeState>(state => state.tree);
   const { currentUser, familyTrees, updateFamilyTrees } = useContext(FamilyTreeContext);
   const { toggleLoading, updateModal } = useContext(GlobalContext);
   const { id } = useParams();
@@ -39,8 +45,8 @@ const UserProfilePage = (): JSX.Element => {
       getfamilyTrees()
         .then(({ data }) => {
           if (!data.error) {
-            if (updateFamilyTrees) updateFamilyTrees(data.payload);
-            if (toggleLoading) toggleLoading(false);
+            // dispatch(populateTreeAction(data.members))
+            toggleLoading(false);
           }
         })
         .catch((e: unknown) => {
@@ -50,7 +56,7 @@ const UserProfilePage = (): JSX.Element => {
             content: <Trans>error_modal_message</Trans>,
             title: <Trans>error_modal_title</Trans>,
           });
-          if (toggleLoading) toggleLoading(false);
+          toggleLoading(false);
         });
     }
   }, [currentUser]);
@@ -113,6 +119,8 @@ const UserProfilePage = (): JSX.Element => {
             <Box flex="0 1 30%">
               <Link href={`/family-trees/${tree?.id || ''}`}><Trans>go_check_my_tree</Trans></Link>
             </Box>
+            {/* @ts-ignore */}
+            <LayoutFlow tree={currentFamilyTree || {}} />
           </Box>
         ))
       }

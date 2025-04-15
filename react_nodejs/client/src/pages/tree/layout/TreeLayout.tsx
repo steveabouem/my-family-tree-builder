@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
   Background,
   ReactFlow,
@@ -12,17 +12,19 @@ import {
   OnNodesChange,
   Node,
   NodeMouseHandler,
-
 } from '@xyflow/react';
 import { Box, Button } from '@mui/material';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
 import generateReactFlowLayout from './utils';
-import { DFamilyMemberDTO, DFamilyTreeDTO } from '@services/api.definitions';
+import { DFamilyTreeDTO } from '@services/api.definitions';
 import { DReactFlowEdge, DReactFlowNode } from '../definitions';
 import FamilyTreeService from 'services/familyTree/familyTree.service';
 import { useZDispatch } from 'app/hooks';
 import { populateTreeAction } from 'app/slices/trees';
+import GlobalContext from 'contexts/creators/global';
+import NodeMenu from './NodeMenu';
+import { Trans } from '@lingui/macro';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -32,16 +34,49 @@ const nodeTypes = {
 const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   const [nodesList, setNodesList] = useState<any>([]);
   const [edgesList, setEdgesList] = useState<any>([]);
+  const [showNodeMenu, setShowNodeMenu] = useState<boolean>(false);
+  const { updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
+
   useEffect(() => {
     if (Object.keys(tree)?.length)
-      generateNodes();
-
+      generateNodesAndEdges();
   }, [tree]);
 
-  function generateNodes() {
+  function showEditModal(event: any, node: any) {
+    console.log({ node });
+
+    setTimeout(() => {
+      if (updateModal)
+        updateModal({
+          hidden: false,
+          buttons: {
+            cancel: true,
+            confirm: true
+          },
+          title: <Trans>choose_node_action_title</Trans>,
+          onCancel: () => {
+            setShowNodeMenu(false);
+          },
+          content: <NodeMenu data={node} />,
+        });
+    }, 500);
+  }
+  function generateNodesAndEdges() {
     const incomingNodes: any = Object.values(tree);
+    const incomingEdges = incomingNodes.reduce((listOfEdges: any, node: any) => {
+      // const duplicate = listOfEdges.find((e:any) => e.id === node)
+      if (node?.connections?.length) {
+
+        return [...listOfEdges, node.data?.connections?.flat() || []];
+      } else {
+        return listOfEdges;
+      }
+    }, []);
+    console.log({ incomingEdges });
+
     setNodesList(incomingNodes);
+    setEdgesList(incomingEdges.flat());
   }
   function generateEdge(newEdge: any) {
     console.log({ newEdges: newEdge });
@@ -52,22 +87,16 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
       return ([...prev.filter((edge: DReactFlowEdge) => edge.id !== newEdge.id), targetEdge]);
     });
   }
-  function getNodeContent(event: any, node: Node): void {
-    console.log('getNodeContent', node);
-
-  }
+  /*
+  * Debouncing these, because otherwise it might blow up, especially if we implement group selection
+  */
   function changeNodeContent(c: any) {
     console.log('changeNodeContent', c);
   }
   function moveNode(action: any): void {
-    /*
-    * Debouncing this, because otherwise it might blow up, especially if we implement group selection
-    */
     setTimeout(() => {
       const nodeUpdate = action?.[0];
       if (nodeUpdate?.type === 'position' && !nodeUpdate?.dragging) {
-        console.log('action', action);
-
         const currentNode = nodesList.find((node: any) => node.id === nodeUpdate?.id);
         setNodesList((prev: any) => {
           const newNodes = prev.map((node: any) => {
@@ -87,10 +116,10 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   }
 
   return (
-    <ReactFlow  
+    <ReactFlow
       nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes}
-      onNodeClick={getNodeContent} onNodesChange={moveNode}
-      onConnect={generateEdge} onEdgesChange={generateEdge}
+      onNodeClick={showEditModal} onNodesChange={moveNode}
+    // onConnect={generateEdge} onEdgesChange={generateEdge}      
     >
       <Background />
       <Controls />

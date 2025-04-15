@@ -1,29 +1,17 @@
-import React, { useEffect } from "react";
-import { Box, Paper, Typography } from "@mui/material";
+import React, { ReactNode, useEffect, useState } from "react";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
-import {v4 } from "uuid";
+import { v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { clearFieldsByStepName, loadStepFormFieldsAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
 import { DStepFormState } from "@app/slices/definitions";
 import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
-import CustomField from "components/common/forms/customField/CustomField";
-import { maritalStatusOptions } from "components/common/dropdowns/definitions";
+import { maritalStatusOptions, relationOptions } from "components/common/dropdowns/definitions";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
+import { DFormField } from "@components/common/definitions";
 
-const initialFields =
-  [
-    { fieldName: "first_name", label: <Trans>first_name</Trans> },
-    { fieldName: "last_name", label: <Trans>last_name</Trans> },
-    { fieldName: "marital_status", label: <Trans>marital_status</Trans> },
-    { fieldName: "occupation", label: <Trans>occupation</Trans> },
-    { fieldName: "dob", label: <Trans>dob</Trans>, type: "date" },
-    { fieldName: "gender", label: <Trans>gender</Trans>, subComponent: () => <GenderDropdown name="family_member_gender" /> },
-    { fieldName: "email", label: <Trans>email</Trans>, type: "email" },
-    { fieldName: "description", label: <Trans>description</Trans> },
-  ];
-const childCountStep = 3; // subject to change, but for now, this is the step where user will be able to add children
 /*
 * This implementation of the <StepForm /> follows the following logic:
 * each step uses a unique name to be identified by the store
@@ -37,45 +25,39 @@ const childCountStep = 3; // subject to change, but for now, this is the step wh
 */
 const GenealogyForm = () => {
   const { totalSteps, currentFormStep, currentFormStepDetails } = useZSelector<DStepFormState>(state => state.stepForm);
-  const { values, setFieldValue } = useFormikContext<any>();
+  const { values, setFieldValue} = useFormikContext<any>();
   const dispatch = useZDispatch();
+  const initialFields: DFormField[] =
+    [
+      { fieldName: "first_name", label: <Trans>first_name</Trans>, },
+      { fieldName: "last_name", label: <Trans>last_name</Trans> },
+      { fieldName: "marital_status", label: <Trans>marital_status</Trans> },
+      { fieldName: "occupation", label: <Trans>occupation</Trans> },
+      { fieldName: "dob", label: <Trans>dob</Trans>, type: "date" },
+      { fieldName: "gender", label: <Trans>gender</Trans>, subComponent: () => <GenderDropdown name="family_member_gender" /> },
+      { fieldName: "email", label: <Trans>email</Trans>, type: "email" },
+      { fieldName: "description", label: <Trans>description</Trans> },
+    ];
 
-  useEffect(() => {
-    dispatch(loadStepFormFieldsAction({ name: 'mother', fields: initialFields }));
-    dispatch(setStepsCountAction(3));
-  }, []);
   useEffect(() => {
     // TODO: a nice to have: dropdown to display step number or name above the fields. 
     /*
-    * the form will direct user to build one family unit at the time (parents, children)
-    * for each child, the user will be able to add partners and children of their own
-    * the naming mother/father here is just meant for parent 1 and parent 2. USer will have the choice to set gender for both
+    * the form will direct user to build the tree one  member at the time
+    * for each member, the user will be able to add partners, parents and children (potentially more)
     */
-    // 1: mother
-    // 2: father
-    // 3: children(1) 
-    if (currentFormStep)
-      generateStepforKin(currentFormStep);
+    generateStepforKin(currentFormStep);
   }, [currentFormStep]);
 
   /*
   * Generate fields for current step
   */
   function generateStepforKin(step: number) {
-    switch (step) {
-      case 1:
-        generateKinFields('mother', false, false);
-        break;
-      case 2:
-        generateKinFields('father', false, false);
-        break;
-      case 3:
-        generateKinFields('children-1', false, false);
-        break;
-      default:
-        generateKinFields(`children-${step - 2}`, false, false);
-    }
+    const fieldPrefix = step === 1 ? 'anchor' : `${step}`;
+    generateKinFields(fieldPrefix, false, false);
   }
+  /*
+  * was used when form was forcing user to go mother->father->children
+  */
   function changeChildrenCount(amount: number) {
     const newStepsTotal = (totalSteps || 0) + Number(amount);
 
@@ -91,51 +73,76 @@ const GenealogyForm = () => {
     dispatch(updateGlobalValuesAction({ values }));
   }
   function generateKinFields(stepName: string, edit: boolean, reset: boolean) {
+    // the stepname will likely come from a dropdown or other field's label. they're capitalized
+    const lcName = values?.next_of_kin?.toLocaleLowerCase() || stepName; 
+
     if (reset) {
-      dispatch(clearFieldsByStepName(stepName));
+      dispatch(clearFieldsByStepName(lcName));
     } else {
       /*
-      * user might be trying to add to existing step fields
+      * user might be trying to add to existing step fields, hencewhy we are using the index
       */
       const existingFIelds = edit ? currentFormStepDetails?.fields?.flat() : [];
       const fields = [
         ...existingFIelds || [],
-        { fieldName: `${stepName}_first_name`, label: <Trans>first_name</Trans>, value: values?.[`${stepName}_first_name`] || '' },
-        { fieldName: `${stepName}_last_name`, label: <Trans>last_name</Trans>, value: values?.[`${stepName}_last_name`] || '' },
-        { fieldName: `${stepName}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
+        { fieldName: 
+          `${lcName}_first_name`, label: <Trans>first_name</Trans>, value: values?.[`${lcName}_first_name`] || ''},
+        { fieldName: `${lcName}_last_name`, label: <Trans>last_name</Trans>, value: values?.[`${lcName}_last_name`] || '' },
+        {
+          fieldName: `${lcName}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
             <BaseDropDown
-                name={`${stepName}_marital_status`}
-                options={maritalStatusOptions}
-                id={`${stepName}_marital_status-selection`}
-                sx={{ height: '1rem'}}
-              />
-        ),
-        value: values?.[`${stepName}_marital_status`] || '' },
-        { fieldName: `${stepName}_occupation`, label: <Trans>occupation</Trans>, value: values?.[`${stepName}_occupation`] || '' },
-        { fieldName: `${stepName}_dob`, label: <Trans>dob</Trans>, type: "date", value: values?.[`${stepName}_dob`] || '' },
-        { fieldName: `${stepName}_gender`, label: <Trans>gender</Trans>, subComponent: () => <GenderDropdown name={`${stepName}_gender`} />, value: values?.[`${stepName}_gender`] || '' },
-        { fieldName: `${stepName}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${stepName}_email`] || '' },
-        { fieldName: `${stepName}_description`, label: <Trans>description</Trans>, value: values?.[`${stepName}_description`] || '' },
+              name={`${lcName}_marital_status`}
+              options={maritalStatusOptions}
+              id={`${lcName}_marital_status-selection`}
+              sx={{ height: '1rem' }}
+            />
+          ),
+          value: values?.[`${lcName}_marital_status`] || ''
+        },
+        { fieldName: `${lcName}_occupation`, label: <Trans>occupation</Trans>, value: values?.[`${lcName}_occupation`] || '' },
+        { fieldName: `${lcName}_dob`, label: <Trans>dob</Trans>, type: "date", value: values?.[`${lcName}_dob`] || '' },
+        { fieldName: `${lcName}_gender`, label: <Trans>gender</Trans>, subComponent: () => <GenderDropdown name={`${lcName}_gender`} />,
+          value: values?.[`${lcName}_gender`] || '' },
+        { fieldName: `${lcName}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${lcName}_email`] || '' },
+        { fieldName: `${lcName}_description`, label: <Trans>description</Trans>, value: values?.[`${lcName}_description`] || '' },
       ];
       /*
-      * Add nodeId to formik values for service request payload
+      * Add nodeId to formik values for post request payload
       */
-     setFieldValue(`${stepName}_node_id`, v4());
-      dispatch(loadStepFormFieldsAction({ name: stepName, fields, title: <Trans>{`info_on_${stepName}`}</Trans> }));
+      setFieldValue(`${lcName}_node_id`, v4());
+      dispatch(loadStepFormFieldsAction({ name: lcName, fields, title: <Trans>{`info_on_${lcName}`}</Trans> }));
     }
+  }
+  function addRelative() {
+    /*
+    * user will select the relative type (kinship) for the next step.
+    * this function ensures that 
+      * - 1: the  next step has the right prefix
+      * - 2: the  current step is setup to receive the values based on kinship. 
+      * e.g:  selecting wife/husband fills in current step's node's spouses array.
+    */
+    dispatch(setStepsCountAction(totalSteps + 1));
+  }
+  /*
+  * The value selected in the relatives dropdown is kept in form.
+  * We use that value to identify which kinship array we fill for the current step 
+  */
+ // TODO: this has a flaw, as the dropdown and the step change are not actually dependant on each other
+  function insertRelativeValuesTocurrentMember() {
+    const type = values?.next_of_kin;
+
+    // setFieldValue(`${currentFormStepDetails.name}`)
   }
 
   return (
-    <Paper>
-      <Box display="flex" justifyContent="space-between" gap={2}>
-        {currentFormStep === childCountStep ? (
-          <Box display="flex" justifyContent="space-between" flex="1">
-            <Typography><Trans>how_many_children</Trans></Typography>
-            <CustomField type="number" min={0} onChange={(e: any) => changeChildrenCount(e.target.value)} />
-          </Box>
-        ) : ''}
+    <Paper sx={{ padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem" }}>
+      <Trans>family_tree_building_explanation</Trans>
+      <Box display="flex" justifyContent="space-between" alignItems="center" gap={2}>
+        <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
+        <BaseDropDown name="next_of_kin" options={relationOptions} sx={{width: '60%'}} />
+        <Button variant="outlined" onClick={addRelative}><Trans>confirm</Trans></Button>
       </Box>
-      <StepForm handleSave={saveProgress} />
+      <StepForm handleSave={saveProgress}  />
     </Paper>
   );
 };

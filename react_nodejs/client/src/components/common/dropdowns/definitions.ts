@@ -33,17 +33,17 @@ export const parentOptions: DDropdownOption[] = [
 export const relationOptions: DDropdownOption[] = [
   {
     label: 'Aunt',
-    value: 'Aunt',
+    value: 'aunt',
     id: 'is-aunt-option',
   },
   {
     label: 'Brother',
-    value: 'Brother',
+    value: 'brother',
     id: 'is-brother-option',
   },
   {
     label: 'Father',
-    value: 'Father',
+    value: 'father',
     id: 'is-father-option',
   },
   {
@@ -58,27 +58,27 @@ export const relationOptions: DDropdownOption[] = [
   },
   {
     label: 'Husband',
-    value: 'Husband',
+    value: 'husband',
     id: 'is-husband-option',
   },
   {
     label: 'Mother',
-    value: 'Mother',
+    value: 'mother',
     id: 'is-mother-option',
   },
   {
     label: 'Sister',
-    value: 'Sister',
+    value: 'sister',
     id: 'is-sister-option',
   },
   {
     label: 'Uncle',
-    value: 'Uncle',
+    value: 'uncle',
     id: 'is-uncle-option',
   },
   {
     label: 'Wife',
-    value: 'Wife',
+    value: 'wife',
     id: 'is-wife-option',
   },
 ];
