@@ -6,6 +6,7 @@ import { IoWoman, IoMan, IoSettings  } from "react-icons/io5";
 import { FaChild, FaChildDress  } from "react-icons/fa6";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { DIconProps } from './definitions';
+import { GiFamilyTree } from "react-icons/gi";
 
 export const TreeStructureIcon = ({sx = {}, color = '', size = 20}: DIconProps) => {
   return <PiTreeStructure style={sx} color={color} size={size} />;
@@ -36,4 +37,7 @@ export const  SettingsIcon = ({sx = {}, color = '', size = 20}: DIconProps) => {
 };
 export const  DeleteIcon = ({sx = {}, color = '', size = 20}: DIconProps) => {
   return <RiDeleteBin5Fill style={sx} color={color} size={size} />;
+};
+export const  FamilyTreeIcon = ({sx = {}, color = '', size = 20}: DIconProps) => {
+  return <GiFamilyTree style={sx} color={color} size={size} />;
 };

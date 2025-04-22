@@ -10,7 +10,8 @@ import { DStepFormState } from "@app/slices/definitions";
 import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
 import { maritalStatusOptions, relationOptions } from "components/common/dropdowns/definitions";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
-import { DFormField } from "@components/common/definitions";
+import { DFormField } from "components/common/definitions";
+import FieldAndLabel from "components/common/forms/fieldAndlabel";
 
 /*
 * This implementation of the <StepForm /> follows the following logic:
@@ -27,18 +28,10 @@ const GenealogyForm = () => {
   const { totalSteps, currentFormStep, currentFormStepDetails } = useZSelector<DStepFormState>(state => state.stepForm);
   const { values, setFieldValue} = useFormikContext<any>();
   const dispatch = useZDispatch();
-  const initialFields: DFormField[] =
-    [
-      { fieldName: "first_name", label: <Trans>first_name</Trans>, },
-      { fieldName: "last_name", label: <Trans>last_name</Trans> },
-      { fieldName: "marital_status", label: <Trans>marital_status</Trans> },
-      { fieldName: "occupation", label: <Trans>occupation</Trans> },
-      { fieldName: "dob", label: <Trans>dob</Trans>, type: "date" },
-      { fieldName: "gender", label: <Trans>gender</Trans>, subComponent: () => <GenderDropdown name="family_member_gender" /> },
-      { fieldName: "email", label: <Trans>email</Trans>, type: "email" },
-      { fieldName: "description", label: <Trans>description</Trans> },
-    ];
 
+  useEffect(() => {
+    generateStepforKin(1);
+  }, []);
   useEffect(() => {
     // TODO: a nice to have: dropdown to display step number or name above the fields. 
     /*
@@ -74,7 +67,7 @@ const GenealogyForm = () => {
   }
   function generateKinFields(stepName: string, edit: boolean, reset: boolean) {
     // the stepname will likely come from a dropdown or other field's label. they're capitalized
-    const lcName = values?.next_of_kin?.toLocaleLowerCase() || stepName; 
+    const lcName = currentFormStep > 1 && values?.next_of_kin ? values.next_of_kin.toLocaleLowerCase() + `-${currentFormStep}` : stepName; 
 
     if (reset) {
       dispatch(clearFieldsByStepName(lcName));
@@ -137,9 +130,13 @@ const GenealogyForm = () => {
   return (
     <Paper sx={{ padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem" }}>
       <Trans>family_tree_building_explanation</Trans>
-      <Box display="flex" justifyContent="space-between" alignItems="center" gap={2}>
+      <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
+        <FieldAndLabel direction="row" fieldName="name" label={<Trans>name_your_tree</Trans>} sx={{justifyContent: 'start', flex: '1 1 auto'}} fieldStyles={{marginLeft:'auto',width: '40%'}} /> 
+        <Button variant="outlined" ><Trans>confirm</Trans></Button>
+      </Box>
+      <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
         <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
-        <BaseDropDown name="next_of_kin" options={relationOptions} sx={{width: '60%'}} />
+        <BaseDropDown name="next_of_kin" options={relationOptions} sx={{width: '40%',marginLeft: 'auto'}} />
         <Button variant="outlined" onClick={addRelative}><Trans>confirm</Trans></Button>
       </Box>
       <StepForm handleSave={saveProgress}  />

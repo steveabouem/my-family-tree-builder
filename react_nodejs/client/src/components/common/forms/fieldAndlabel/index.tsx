@@ -9,8 +9,7 @@ const FieldAndLabel = ({ direction = 'row', fieldName, label, fieldStyles, field
 
   return (
     <Box sx={{ ...sx || {}, display: 'flex', flexDirection: direction, gap: 2 }}>
-      {/* @ts-ignore */}
-      <Typography variant="label">{label}</Typography>
+      <Typography variant="subtitle2">{label}</Typography>
       {/* {fieldType === 'array' ? (
         <></>
         // <FieldArray name={fieldName} render={fields => children} />
@@ -21,7 +20,7 @@ const FieldAndLabel = ({ direction = 'row', fieldName, label, fieldStyles, field
       ) : (
         <Field id={`${label}-field`} name={fieldName} value={values[fieldName]} required={!!required} styles={fieldStyles}/>
       )} */}
-      <Field id={`${label}-field`} name={fieldName} value={values[fieldName]} required={!!required} styles={fieldStyles} />
+      <Field id={`${label}-field`} name={fieldName} value={values[fieldName]} required={!!required} style={fieldStyles} />
     </Box>
   );
 };

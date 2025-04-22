@@ -7,7 +7,7 @@ import FamilyMemberController from "../familyMember/FamilyMemberController";
 import logger from "../../utils/logger";
 import User from "../../models/User";
 import FamilyMember from "../../models/FamilyMember";
-import { DFamilyTreeDAO, DFamilyTreeDTO, DGetFamilyTreeResponse, DSaveTreeFormStepResponse } from "./familyTree.definitions";
+import { DFamilyTreeDAO, DGetFamilyTreeResponse, DSaveTreeFormStepResponse } from "./familyTree.definitions";
 import { DFamilyMemberDAO } from "../familyMember/familyMember.definitions";
 
 class FamilyTreeController extends BaseController<any> {
@@ -39,7 +39,7 @@ class FamilyTreeController extends BaseController<any> {
 
     try {
       const familyMemberController = new FamilyMemberController();
-      const membersRecords = await familyMemberController.bulkCreate(members); //catch block already in the function
+      const membersRecords = await familyMemberController.createRecords(members); //catch block already in the function
       const newTree = await FamilyTree.create({
         active: 0,
         authorized_ips: '[]',
@@ -65,16 +65,18 @@ class FamilyTreeController extends BaseController<any> {
   public positionFamilyMembers = (members: DFamilyMemberDAO[]): DFamilyMemberDAO[] => {
     const membersWithCoords: any = [];
 
-    members.forEach((currentMember: any, index: number) => {
+    Object.values(members).forEach((currentMember: any, index: number) => {
       const position = { x: index * 100, y: 0 };
-      const children = JSON.parse(currentMember.children || '[]');
-      const siblings = JSON.parse(currentMember.siblings || '[]');
-      const spouses = JSON.parse(currentMember.spouses || '[]');
-      const parents = JSON.parse(currentMember.parents || '[]');
+      const children = JSON.parse(currentMember?.children || '[]');
+      const siblings = JSON.parse(currentMember?.siblings || '[]');
+      const spouses = JSON.parse(currentMember?.spouses || '[]');
+      const parents = JSON.parse(currentMember?.parents || '[]');
+      logger.info("Collected all anchor's relatives", { children, parents, spouses, siblings, currentMember });
       /*
       * find all the node children,  position them below it, then update each child's node's position
       */
-      if (children.length) {
+      if (Array.isArray(children)) {
+        logger.info('children for current member look like this ', children);
         /*
         * if the child was already processed through another incoming node (family member), ignore it
         */
@@ -85,7 +87,7 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...child,
               type: 'custom',
-              position: { x: position.x, y: position.y - 225 },
+              position: { x: position.x, y: position.y - 125 },
               name: '',
               data: {
                 ...child,
@@ -99,7 +101,8 @@ class FamilyTreeController extends BaseController<any> {
       /*
       * find all the node siblings,  position them below it, then update each child's node's position
       */
-      if (siblings.length) {
+      if (Array.isArray(siblings)) {
+        logger.info('siblings for current member look like this ', siblings);
         /*
         * if the child was already processed through another incoming node (family member), ignore it
         */
@@ -110,7 +113,7 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...sibling,
               type: 'custom',
-              position: { x: position.x + 400, y: position.y },
+              position: { x: position.x + 325, y: position.y },
               name: '',
               data: {
                 ...sibling, label: `${sibling.first_name} ${sibling.last_name}`,
@@ -123,7 +126,8 @@ class FamilyTreeController extends BaseController<any> {
       /*
       * find all the node spouses,  position them below it, then update each child's node's position
       */
-      if (spouses.length) {
+      if (Array.isArray(spouses)) {
+        logger.info('spouses for current member look like this ', spouses);
         /*
         * if the child was already processed through another incoming node (family member), ignore it
         */
@@ -134,7 +138,7 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...spouse,
               type: 'custom',
-              position: { x: position.x + 225, y: position.y },
+              position: { x: position.x + 325, y: position.y },
               name: '',
               data: {
                 ...spouse,
@@ -148,7 +152,8 @@ class FamilyTreeController extends BaseController<any> {
       /*
       * find all the node parents,  position them above it, then update each parent's node's position
       */
-      if (parents.length) {
+      if (Array.isArray(parents)) {
+        logger.info('parents for current member look like this ', parents);
         /*
         * if the parent was already processed through another incoming node (family member), ignore it
         */
@@ -156,10 +161,11 @@ class FamilyTreeController extends BaseController<any> {
           if (membersWithCoords.find((newNode: any) => newNode.node_id === parent.node_id)) {
             logger.info('ignoring family member\'s current spouse as it is a dupe, ', { parent });
           } else {
+            const xOffset = parent.gender == 2 ? position.x + 325 : position.x - 125;
             membersWithCoords.push({
               ...parent,
               type: 'custom',
-              position: { x: position.x, y: position.y - 225 },
+              position: { x: xOffset, y: position.y - 125 },
               name: '',
               data: {
                 ...parent,
@@ -187,11 +193,11 @@ class FamilyTreeController extends BaseController<any> {
   }
 
   /*
-  * Receives an array of family members, within which each member has a list of children, siblings and spouses
+  * Receives an array of family members, within which each member has a list of children, siblings, parents and spouses
   * loops through the arrays and creates a familyMember record for each member,
-  * for the next memeber, check if the member already exists in the DB, if not create it
+  * for the next member, check if the member already exists in the DB, if not create it
   * create the tree
-  * as all the family members are create, crete a mirror obect if the incoming DAO, but this time with the DB ids.
+  * as all the family members are created, crete a mirror obect of the incoming DAO, but this time with the DB ids.
   * return the resulting DTO
   */
   public create = async (req: Request<{}, {}, DFamilyTreeDAO, {}>, res: Response<DGetFamilyTreeResponse, {}>) => {
@@ -204,7 +210,7 @@ class FamilyTreeController extends BaseController<any> {
 
       if (currentUser?.dataValues) {
         const familyMemberController = new FamilyMemberController();
-        const membersRecords = await familyMemberController.bulkCreate(req.body.members)
+        const membersRecords = await familyMemberController.createRecords(req.body.members)
           .catch((e: unknown) => {
             logger.error('Unable to bulk create members. Function call failed', e);
           });
@@ -217,6 +223,7 @@ class FamilyTreeController extends BaseController<any> {
             Object.values(membersRecords).reduce((nodeList: { [nodeId: string]: any }, curr: any) => {
               return ({ ...nodeList, [curr.node_id]: curr.dataValues });
             }, {});
+          logger.info("Prepared object to create positions and edges", { membersByNodeId });
           const withCoords = this.positionFamilyMembers(Object.values(membersByNodeId));
           const newTree = await FamilyTree.create({
             active: req.body?.active ? 1 : 0,

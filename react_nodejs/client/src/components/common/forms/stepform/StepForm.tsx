@@ -13,26 +13,10 @@ import { nextFormStepAction, prevFormStepAction } from 'app/slices/forms/stepFor
 // TODO: pass validations as props here, prevent save and submit in case of field errors. as well as current step title and otheres alike
 // This will ensure that the redux slice calls the api with no risk 
 const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) => {
-  const [showNextStep, setShowNextStep] = useState<boolean>(false);
-  const [currentFields, setCurrentFields] = useState<DFormField[]>([]);
   const { submitForm } = useFormikContext<V>();
   const { currentFormStep, currentFormStepDetails, updating, totalSteps } = useZSelector(
     (state: { stepForm: DStepFormState }) => state.stepForm);
   const dispatch = useZDispatch();
-  /*
-  * Some step forms will need several arrays of fields in the same category (exp:the secion for siblings)
-  * to allow the step form to be more dynamic, we will use an object to store the fields for each step
-  */
-  useEffect(() => {
-    if (totalSteps && currentFormStep >= totalSteps) {
-      setShowNextStep(false);
-    } else {
-      setShowNextStep(true);
-    }
-  }, [totalSteps, currentFormStep]);
-  useEffect(() => {
-    setCurrentFields([...currentFormStepDetails?.fields?.flat() || []]);
-  }, [currentFormStepDetails?.name]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: '1rem', ...sx }}>
@@ -48,24 +32,24 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
           {currentFormStepDetails?.subtitle}
         </Box>
         <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
-          <Button variant="contained" color="secondary" onClick={() => dispatch(prevFormStepAction())}>
+          <Button variant="contained" disabled={currentFormStep === 1} color="secondary" onClick={() => dispatch(prevFormStepAction())}>
             <Trans>prev</Trans>
           </Button>
-          <Button variant="contained" color="secondary" onClick={() => dispatch(nextFormStepAction())} disabled={!showNextStep}>
+          <Button variant="contained" color="secondary" onClick={() => dispatch(nextFormStepAction())} disabled={currentFormStep === totalSteps}>
             <Trans>next</Trans>
           </Button>
-          <Button variant="contained" color="secondary" onClick={handleSave}>
+          {/* <Button variant="contained" color="secondary" onClick={handleSave}>
             <Trans>save</Trans>
-          </Button>
-          <Button variant="contained" color="secondary" onClick={() => setShowNextStep(false)}>
+          </Button> */}
+          {/* <Button variant="contained" color="secondary" onClick={() => setShowNextStep(false)}>
             <Trans>finish</Trans>
-          </Button>
+          </Button> */}
         </Box>
       </Box>
       {updating ? <LocalSpinner loading /> : (
         <Box>
           <FormFieldsGenerator
-            fields={currentFields} handleSubmit={submitForm}
+            fields={currentFormStepDetails.fields.flat()} handleSubmit={submitForm}
             initialValues={{}} withPaper={false} locked={false}
           />
         </Box>

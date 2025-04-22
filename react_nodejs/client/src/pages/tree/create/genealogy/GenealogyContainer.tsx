@@ -22,65 +22,7 @@ const GenealogyContainer: React.FC = () => {
 
 
   useEffect(() => {
-    const sample = {
-      "e652a9cc-d234-46ea-8763-6f5f9ee8f251": {
-        "id": 5,
-        "dob": "2025-04-03",
-        "node_id": "e652a9cc-d234-46ea-8763-6f5f9ee8f251",
-        "email": "j@m.s",
-        "first_name": "Josh",
-        "gender": 1,
-        "last_name": "Ham",
-        "marital_status": "Married",
-        "occupation": "",
-        "parents": "\"\"",
-        "siblings": "\"\"",
-        "age": 0,
-        "description": "",
-        "profile_url": "",
-        "children": "[{\"dob\":\"\",\"node_id\":\"6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f\",\"email\":\"j@m.ssa\",\"first_name\":\"Jordanz\",\"gender\":1,\"last_name\":\"\",\"marital_status\":\"Married\",\"occupation\":\"\",\"parents\":\"\",\"siblings\":\"\",\"age\":\"\",\"description\":\"\",\"profile_url\":\"\",\"userId\":\"\"}]",
-        "user_id": 0,
-        "created_by": 1
-      },
-      "6f1c9a77-6bfb-4cdf-8669-cc06d4170c24": {
-        "id": 6,
-        "dob": "",
-        "node_id": "6f1c9a77-6bfb-4cdf-8669-cc06d4170c24",
-        "email": "j@m.ss",
-        "first_name": "Jordan",
-        "gender": 2,
-        "last_name": "",
-        "marital_status": "Widowed",
-        "occupation": "",
-        "parents": "\"\"",
-        "siblings": "\"\"",
-        "age": 0,
-        "description": "",
-        "profile_url": "",
-        "children": "[{\"dob\":\"\",\"node_id\":\"6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f\",\"email\":\"j@m.ssa\",\"first_name\":\"Jordanz\",\"gender\":1,\"last_name\":\"\",\"marital_status\":\"Married\",\"occupation\":\"\",\"parents\":\"\",\"siblings\":\"\",\"age\":\"\",\"description\":\"\",\"profile_url\":\"\",\"userId\":\"\"}]",
-        "user_id": 0,
-        "created_by": 1
-      },
-      "6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f": {
-        "id": 7,
-        "dob": "",
-        "node_id": "6bc3d1e5-a863-4042-be7e-90f1dcc6fa8f",
-        "email": "j@m.ssa",
-        "first_name": "Jordanz",
-        "gender": 1,
-        "last_name": "",
-        "marital_status": "Married",
-        "occupation": "",
-        "parents": "\"\"",
-        "siblings": "\"\"",
-        "age": 0,
-        "description": "",
-        "profile_url": "",
-        "user_id": 0,
-        "created_by": 1
-      }
-    }
-    //  handleSubmit(sample);
+    
 
   }, [])
   //TODO: once you can create the initial unit, focus on adding kins to each node
@@ -95,8 +37,8 @@ const GenealogyContainer: React.FC = () => {
   function formatOutgoingValues(v: any): DFamilyTreeDAO {
     const mappedMembers = Object.keys(stepTree).reduce((acc: any, curr: string) => {
       const formatted: DFamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
-      
-      if (curr.includes('son') || curr.includes('daughter')) {
+      const prefix = curr.split('-')[0];
+      if (prefix === 'son' || prefix === 'daughter') {
         acc = {
           ...acc,
           // add current child to anchor's children
@@ -104,35 +46,33 @@ const GenealogyContainer: React.FC = () => {
             ...acc?.anchor || {},
             children: [...acc?.anchor?.children || [], formatted]
           },
-          // // add current child to faTther's children
-          // father: {
-          //   ...acc?.father || {},
-          //   children: [...acc?.father?.children || [], formatted]
-          // },
-          // add current child's own DAO
-          [curr]: { ...acc?.[curr] || {}, ...formatted }
         };
-      } else if (curr.includes('brother') || curr.includes('sister')) {
-        acc = { 
+      } else if (prefix === 'brother' || prefix === 'sister') {
+        acc = {
           ...acc,
           anchor: {
             ...acc?.anchor || {},
             siblings: [...acc?.anchor?.siblings || [], formatted]
-          }};
-      } else if (curr.includes('mother') || curr.includes('father')) {
-        acc = { 
+          }
+        };
+      } else if (prefix === 'mother' || prefix === 'father') {
+        acc = {
           ...acc,
           anchor: {
             ...acc?.anchor || {},
             parents: [...acc?.anchor?.parents || [], formatted]
-          }};
+          }
+        };
+      } else if (prefix === 'husband' || prefix === 'wife') {
+        acc = {
+          ...acc,
+          anchor: {
+            ...acc?.anchor || {},
+            spouses: [...acc?.anchor?.spouses || [], formatted]
+          }
+        };
       } else {
-      // } else if (curr.includes('mother')) {
-      //   acc = { ...acc, mother: { ...acc?.mother || {}, ...formatted }, father: { ...acc?.father || {}, spouses: [formatted] } };
-      // } else if (curr.includes('father')) {
-      //   acc = { ...acc, father: { ...acc?.father || {}, ...formatted }, mother: { ...acc?.mother || {}, spouses: [formatted] } };
-      // } else {
-        acc = { ...acc, [curr]: formatted };
+        acc = { ...acc, [prefix]: formatted };
       }
 
       return acc;

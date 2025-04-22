@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Field, FieldArray, useFormikContext } from "formik";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
 import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/material";
@@ -12,7 +12,7 @@ const FormFieldsGenerator = ({
   size, handleFieldValueChange, title, mode = 'write', locked,
 }: DBaseFormProps): JSX.Element => {
   const { submitForm, values } = useFormikContext<any>();
-  
+
   return (
     <Paper elevation={withPaper ? 1 : 0} sx={{ width: '100%', padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem" }}>
       {title ? <Typography variant="h4">{title}</Typography> : null}
@@ -25,17 +25,17 @@ const FormFieldsGenerator = ({
             <>
               {field.subComponent ? (
                 <CustomField id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
-                  required={!!field.required} component={field.subComponent} />
+                  required={!!field.required} component={field.subComponent} key={`${field.fieldName}-custom`} />
               ) : field.type === 'array' ? (
-                <FieldArray name={field.fieldName} render={fields => field.subComponent}  /> // TODO: this is incorrect
+                <FieldArray name={field.fieldName} render={fields => field.subComponent} key={`${field.fieldName}-array`} /> // TODO: this is incorrect
               ) : field.type === 'select' ? (
-                <FormControl aria-label="Default select example">
+                <FormControl aria-label="Default select example" key={`${field.fieldName}-select`}>
                   {field?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</MenuItem>)}
                 </FormControl>
               ) : (
                 <Field
                   id={field?.id || ''} name={field.fieldName} value={values[field.fieldName]}
-                  required={!!field.required} type={field?.type || 'input'}
+                  required={!!field.required} type={field?.type || 'input'} key={`${field.fieldName}-input`}
                 />
               )}
             </>

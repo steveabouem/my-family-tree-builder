@@ -40,11 +40,12 @@ export default memo(({ data }: any) => {
             <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
         }
         {/* <Handle
-          type="target"
+        type="source"
+          id='top'
           position={Position.Top}
           style={{ background: '#555' }}
           isConnectable={true}
-          /> */}
+        /> */}
         <Box display="flex" gap={1} alignItems="center">
           {renderNodeIcon()}
           {/* <Button size='small' sx={{ minWidth: '15px' }} >
@@ -66,6 +67,13 @@ export default memo(({ data }: any) => {
           {data.occupation}
         </Typography>
       </Box>
+      {/* <Handle
+      type="target"
+        id={data.node_id + 'bottom'}
+        position={Position.Bottom}
+        style={{ background: '#555' }}
+        isConnectable={true}
+      /> */}
     </Box>
   );
 });

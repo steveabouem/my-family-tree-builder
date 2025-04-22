@@ -6,34 +6,58 @@ import logger from "../../utils/logger";
 import dayjs from "dayjs";
 
 class FamilyMemberController extends BaseController<any> {
+  anchorKey = 'anchor';
   constructor() {
     super('family_trees');
+    this.anchorKey = this.anchorKey;
   }
 
   /*
   * Using this function for both bulk and single operation
   * Receives an array of family members, within which each member has a list of children, siblings and spouses
   * loops through the arrays and creates a familyMember record for each member,
-  * for the next memeber, check if the member already exists in the DB, if not create it
+  * for the next member, check if the member already exists in the DB, if not create it
   * create the tree
   * as all the family members are created, crete a mirror obect if the incoming DAO, but this time with the DB ids.
   * return the resulting DAO
   */
-  public async bulkCreate(members: { [stepName: string]: DFamilyMemberDAO }): Promise<{ [id: string]: DFamilyMemberDAO } | null> {
+  public async createRecords(members: { [stepName: string]: DFamilyMemberDAO }): Promise<{ [id: string]: DFamilyMemberDAO } | null> {
     const today = dayjs();
     let res: any = [];
-    const membersList = Object.values(members);
+    const anchor = members?.[this.anchorKey];
     try {
-      if (membersList.length) {
-        const membersRecords = membersList.forEach((m) => {
-          m.age = today.diff(dayjs(m.dob), 'years');
-        });
-        logger.info('All new members age is calculated: ', { membersRecords });
+      
+      if (anchor) {
+        const children = anchor?.children || [];
+        const siblings = anchor?.siblings || [];
+        const spouses = anchor?.spouses || [];
+        const parents = anchor?.parents || [];
+
+          anchor.age = today.diff(dayjs(anchor.dob), 'years');
+          children?.forEach((c: any) => {
+            c.age = today.diff(dayjs(c.dob), 'years');
+            c.parents = JSON.stringify([...c?.parents || [], anchor]);
+          });
+          siblings?.forEach((s: any) => {
+            s.siblings = JSON.stringify([...s.siblings || [], anchor]);
+            s.age = today.diff(dayjs(s.dob), 'years');
+          });
+          parents?.forEach((p: any) => {
+            p.age = today.diff(dayjs(p.dob), 'years');
+            p.children = JSON.stringify([...p?.children || [], anchor]);
+          });
+          spouses?.forEach((s: any) => {
+            s.age = today.diff(dayjs(s.dob), 'years');
+            s.spouses = JSON.stringify([...s?.spouses || [], anchor]);
+          });
+        const payload: any = [anchor, ...children, ...siblings, ...parents, ...spouses];
+        
+        logger.info("Resulting flat array for members: ", { payload });
         /*
         * since we're using a step form, we don't have to worry about drilling through the array.
         * every member's info is at the first level of the array. The repetition is necessary for the ui library responsible for rendering the tree
         */
-        const newMemberGroup = await FamilyMember.bulkCreate(membersList.map((m: DFamilyMemberDAO) => ({
+        const newMemberGroup = await FamilyMember.bulkCreate(payload.map((m: DFamilyMemberDAO) => ({
           ...m,
           description: m?.description || '',
           user_id: m?.userId || 0,
@@ -42,20 +66,20 @@ class FamilyMemberController extends BaseController<any> {
           siblings: JSON.stringify(m.siblings),
           children: JSON.stringify(m.children),
         })))
-        .catch((e: unknown) => {
-          logger.error('Unable to bulk create members, unknown error ', e);
-        });
-        
+          .catch((e: unknown) => {
+            logger.error('Unable to bulk create members, unknown error ', e);
+          });
+
         if (!!newMemberGroup) {
           logger.info('All new members created: ', { newMemberGroup });
-          res = { ...newMemberGroup || {} };
+          res = [ ...newMemberGroup || []];
           return res;
         } else {
           logger.error('Unable to bulk create members, no records created');
           return null;
         }
       } else {
-        logger.error('No record created, returning empty array', res, Array.isArray(members));
+        logger.error('No record created, missing anchor node. Returning empty array', res);
         return null;
       }
     } catch (e: unknown) {

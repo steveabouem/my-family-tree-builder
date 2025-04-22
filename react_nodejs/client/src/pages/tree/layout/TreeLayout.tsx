@@ -16,7 +16,6 @@ import {
 import { Box, Button } from '@mui/material';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
-import generateReactFlowLayout from './utils';
 import { DFamilyTreeDTO } from '@services/api.definitions';
 import { DReactFlowEdge, DReactFlowNode } from '../definitions';
 import FamilyTreeService from 'services/familyTree/familyTree.service';
@@ -30,10 +29,9 @@ const nodeTypes = {
   custom: CustomNode,
 };
 
-
 const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
-  const [nodesList, setNodesList] = useState<any>([]);
-  const [edgesList, setEdgesList] = useState<any>([]);
+  const [nodesList, setNodesList] = useNodesState<any>([]);
+  const [edgesList, setEdgesList] = useEdgesState<any>([]);
   const [showNodeMenu, setShowNodeMenu] = useState<boolean>(false);
   const { updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
@@ -66,17 +64,23 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
     const incomingNodes: any = Object.values(tree);
     const incomingEdges = incomingNodes.reduce((listOfEdges: any, node: any) => {
       // const duplicate = listOfEdges.find((e:any) => e.id === node)
-      if (node?.connections?.length) {
-
-        return [...listOfEdges, node.data?.connections?.flat() || []];
+      console.log('the connections: ', node?.data?.connections);
+      
+      if (node?.data?.connections?.length) {
+        return [...listOfEdges.flat(), node.data?.connections?.flat() || []];
       } else {
-        return listOfEdges;
+        return listOfEdges.flat();
       }
     }, []);
     console.log({ incomingEdges });
 
     setNodesList(incomingNodes);
-    setEdgesList(incomingEdges.flat());
+    setTimeout(() => {
+      incomingEdges.forEach((e: any) => {
+        e.targetHandle = "top"
+        setEdgesList((eds) => addEdge(e, edgesList));
+      })
+    }, 2000);
   }
   function generateEdge(newEdge: any) {
     console.log({ newEdges: newEdge });

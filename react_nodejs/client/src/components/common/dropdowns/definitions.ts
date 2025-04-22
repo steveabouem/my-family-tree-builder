@@ -4,7 +4,7 @@ export interface DBaseDropDownProps<V> {
   additionalClass?: string;
   onChangeCB?: (value: string | number) => void;
   label?: string;
-  sx?: {[key: string]: string},
+  sx?: { [key: string]: string },
   id?: string;
   displayVal?: string | number;
 }
@@ -80,6 +80,16 @@ export const relationOptions: DDropdownOption[] = [
     label: 'Wife',
     value: 'wife',
     id: 'is-wife-option',
+  },
+  {
+    label: 'Son',
+    value: 'son',
+    id: 'is-son-option',
+  },
+  {
+    label: 'Daughter',
+    value: 'daughter',
+    id: 'is-daughter-option',
   },
 ];
 
