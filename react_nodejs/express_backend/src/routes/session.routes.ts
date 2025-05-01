@@ -3,6 +3,7 @@ import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import cookieParser from "cookie-parser";
 import winston from "winston";
 import SessionController from "../controllers/session/SessionController";
+import RequestHelper from "./RequestHelper";
 
 const router = Router();
 router.use(cookieParser());
@@ -29,8 +30,9 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 // ! -TOFIX: req, res typing
 router.get('/', (req: Request, res: Response) => {
+  const helper = new RequestHelper(req, res);
   const sessionController = new SessionController();
-  sessionController.getCurrent(req, res);
+  helper.sendResponseFromControllerMethod(sessionController.getCurrent, 'Get Current Session');
 });
 
 router.post('/set-data', (req: Request, res: Response) => {

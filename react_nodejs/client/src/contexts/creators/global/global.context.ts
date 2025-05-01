@@ -9,12 +9,13 @@ const GlobalContext = createContext<DGlobalContext>({
     hidden: true,
     content: '',
     title: '',
+    transferData: undefined,
     id: 'app-modal',
     buttons: {cancel: true, confirm: true}
   },
+  updateModal: () => {},
   tree: {},
   updateTheme: undefined,
-  updateModal: undefined,
   toggleLoading: () => {},
 });
 

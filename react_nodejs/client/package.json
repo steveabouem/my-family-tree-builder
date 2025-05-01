@@ -68,7 +68,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "extract": "lingui extract",
-    "compile": "lingui compile"
+    "compile": "lingui compile",
+    "make_dropdown": "mkdir ./src/components/common/dropdowns/$NAME && touch ./src/components/common/dropdowns/$NAME && touch ./src/components/common/dropdowns/$NAME/${NAME}Dropdown.tsx ./src/components/common/dropdowns/$NAME/definitions.ts"
   },
   "eslintConfig": {
     "extends": [

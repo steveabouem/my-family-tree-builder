@@ -104,9 +104,8 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   };
 
   React.useEffect(() => {
-    if (updateModal)
-      updateModal({ hidden: true })
-      toggleLoading(false);
+    updateModal({ hidden: true })
+    toggleLoading(false);
   }, []);
 
   const proceedToFormSubmission = async (values: Partial<DUserDTO>) => {
@@ -143,13 +142,12 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
       }
     } else {
       setAttempts((prev) => prev + 1);
-      if (updateModal)
-        updateModal({
-          ...modal,
-          hidden: false,
-          title: <Trans>login_failure</Trans>,
-          content: <Trans>login_failure_msg {attempts}</Trans>,
-        });
+      updateModal({
+        ...modal,
+        hidden: false,
+        title: <Trans>login_failure</Trans>,
+        content: <Trans>login_failure_msg {attempts}</Trans>,
+      });
     }
     toggleLoading(false);
   }
@@ -172,13 +170,12 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         navigate(PageUrlsEnum.user.replace(':id', registeredUser.data.userId));
       }
     } else {
-      if (updateModal)
-        updateModal({
-          ...modal,
-          hidden: false,
-          title: <Trans>login_failure</Trans>,
-          content: <Trans>login_failure_msg {attempts}</Trans>,
-        });
+      updateModal({
+        ...modal,
+        hidden: false,
+        title: <Trans>login_failure</Trans>,
+        content: <Trans>login_failure_msg {attempts}</Trans>,
+      });
       console.log('Registration failure');
     }
     toggleLoading(false);
@@ -215,7 +212,7 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                   required: true,
                   subComponent: () => (
                     <Box className="field-wrap base" sx={{ width: '100%' }}>
-                      <GenderDropdown   name="gender" />
+                      <GenderDropdown name="gender" />
                     </Box>
                   ),
                 },

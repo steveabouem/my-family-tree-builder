@@ -1,4 +1,6 @@
-export interface DBaseDropDownProps<V> {
+import { Gendersenum } from "../definitions";
+
+export interface DBaseDropDownProps {
   options: DDropdownOption[];
   name: string;
   additionalClass?: string;
@@ -17,6 +19,16 @@ export interface DDropdownOption {
   id?: string;
 }
 
+export const genderOptions: DDropdownOption[] = [
+  {
+    label: 'Male',
+    value: Gendersenum.male,
+  },
+  {
+    label: 'Female',
+    value: Gendersenum.female,
+  },
+];
 export const parentOptions: DDropdownOption[] = [
   {
     label: 'Yes',

@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
@@ -7,11 +7,9 @@ import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { clearFieldsByStepName, loadStepFormFieldsAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
 import { DStepFormState } from "@app/slices/definitions";
-import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
-import { maritalStatusOptions, relationOptions } from "components/common/dropdowns/definitions";
-import BaseDropDown from "components/common/dropdowns/BaseDropdown";
-import { DFormField } from "components/common/definitions";
 import FieldAndLabel from "components/common/forms/fieldAndlabel";
+import BaseDropDown from "components/common/dropdowns/BaseDropdown";
+import { genderOptions, maritalStatusOptions, relationOptions } from "components/common/dropdowns/definitions";
 
 /*
 * This implementation of the <StepForm /> follows the following logic:
@@ -26,7 +24,7 @@ import FieldAndLabel from "components/common/forms/fieldAndlabel";
 */
 const GenealogyForm = () => {
   const { totalSteps, currentFormStep, currentFormStepDetails } = useZSelector<DStepFormState>(state => state.stepForm);
-  const { values, setFieldValue} = useFormikContext<any>();
+  const { values, setFieldValue } = useFormikContext<any>();
   const dispatch = useZDispatch();
 
   useEffect(() => {
@@ -49,17 +47,6 @@ const GenealogyForm = () => {
     generateKinFields(fieldPrefix, false, false);
   }
   /*
-  * was used when form was forcing user to go mother->father->children
-  */
-  function changeChildrenCount(amount: number) {
-    const newStepsTotal = (totalSteps || 0) + Number(amount);
-
-    dispatch(setStepsCountAction(newStepsTotal));
-    for (let i = 0; i < amount; i++) {
-      generateKinFields(`children-${i}`, false, false);
-    }
-  }
-  /*
   * save each step of the form in redux store
   */
   function saveProgress() {
@@ -67,10 +54,10 @@ const GenealogyForm = () => {
   }
   function generateKinFields(stepName: string, edit: boolean, reset: boolean) {
     // the stepname will likely come from a dropdown or other field's label. they're capitalized
-    const lcName = currentFormStep > 1 && values?.next_of_kin ? values.next_of_kin.toLocaleLowerCase() + `-${currentFormStep}` : stepName; 
+    const prefix = currentFormStep > 1 && values?.next_of_kin ? values.next_of_kin.toLocaleLowerCase() + `-${currentFormStep}` : stepName;
 
     if (reset) {
-      dispatch(clearFieldsByStepName(lcName));
+      dispatch(clearFieldsByStepName(prefix));
     } else {
       /*
       * user might be trying to add to existing step fields, hencewhy we are using the index
@@ -78,32 +65,40 @@ const GenealogyForm = () => {
       const existingFIelds = edit ? currentFormStepDetails?.fields?.flat() : [];
       const fields = [
         ...existingFIelds || [],
-        { fieldName: 
-          `${lcName}_first_name`, label: <Trans>first_name</Trans>, value: values?.[`${lcName}_first_name`] || ''},
-        { fieldName: `${lcName}_last_name`, label: <Trans>last_name</Trans>, value: values?.[`${lcName}_last_name`] || '' },
         {
-          fieldName: `${lcName}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
+          fieldName:
+            `${prefix}_first_name`, label: <Trans>first_name</Trans>, value: values?.[`${prefix}_first_name`] || ''
+        },
+        { fieldName: `${prefix}_last_name`, label: <Trans>last_name</Trans>, value: values?.[`${prefix}_last_name`] || '' },
+        {
+          fieldName: `${prefix}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
             <BaseDropDown
-              name={`${lcName}_marital_status`}
+              name={`${prefix}_marital_status`}
               options={maritalStatusOptions}
-              id={`${lcName}_marital_status-selection`}
+              id={`${prefix}_marital_status-selection`}
               sx={{ height: '1rem' }}
             />
           ),
-          value: values?.[`${lcName}_marital_status`] || ''
+          value: values?.[`${prefix}_marital_status`] || ''
         },
-        { fieldName: `${lcName}_occupation`, label: <Trans>occupation</Trans>, value: values?.[`${lcName}_occupation`] || '' },
-        { fieldName: `${lcName}_dob`, label: <Trans>dob</Trans>, type: "date", value: values?.[`${lcName}_dob`] || '' },
-        { fieldName: `${lcName}_gender`, label: <Trans>gender</Trans>, subComponent: () => <GenderDropdown name={`${lcName}_gender`} />,
-          value: values?.[`${lcName}_gender`] || '' },
-        { fieldName: `${lcName}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${lcName}_email`] || '' },
-        { fieldName: `${lcName}_description`, label: <Trans>description</Trans>, value: values?.[`${lcName}_description`] || '' },
+        { fieldName: `${prefix}_occupation`, label: <Trans>occupation</Trans>, value: values?.[`${prefix}_occupation`] || '' },
+        { fieldName: `${prefix}_dob`, label: <Trans>dob</Trans>, type: "date", value: values?.[`${prefix}_dob`] || '' },
+        { fieldName: `${prefix}_dod`, label: <Trans>dod</Trans>, type: "date", value: values?.[`${prefix}_dod`] || '' },
+        {
+          fieldName: `${prefix}_gender`, label: <Trans>gender</Trans>, subComponent: () => (
+            <BaseDropDown
+              options={genderOptions} id="gender-selection" name={`${prefix}_gender`}
+            />),
+          value: values?.[`${prefix}_gender`] || ''
+        },
+        { fieldName: `${prefix}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${prefix}_email`] || '' },
+        { fieldName: `${prefix}_description`, label: <Trans>description</Trans>, value: values?.[`${prefix}_description`] || '' },
       ];
       /*
       * Add nodeId to formik values for post request payload
       */
-      setFieldValue(`${lcName}_node_id`, v4());
-      dispatch(loadStepFormFieldsAction({ name: lcName, fields, title: <Trans>{`info_on_${lcName}`}</Trans> }));
+      setFieldValue(`${prefix}_node_id`, v4());
+      dispatch(loadStepFormFieldsAction({ name: prefix, fields, title: <Trans>info_on_node {prefix}</Trans> }));
     }
   }
   function addRelative() {
@@ -116,30 +111,20 @@ const GenealogyForm = () => {
     */
     dispatch(setStepsCountAction(totalSteps + 1));
   }
-  /*
-  * The value selected in the relatives dropdown is kept in form.
-  * We use that value to identify which kinship array we fill for the current step 
-  */
- // TODO: this has a flaw, as the dropdown and the step change are not actually dependant on each other
-  function insertRelativeValuesTocurrentMember() {
-    const type = values?.next_of_kin;
-
-    // setFieldValue(`${currentFormStepDetails.name}`)
-  }
 
   return (
     <Paper sx={{ padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem" }}>
       <Trans>family_tree_building_explanation</Trans>
       <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
-        <FieldAndLabel direction="row" fieldName="name" label={<Trans>name_your_tree</Trans>} sx={{justifyContent: 'start', flex: '1 1 auto'}} fieldStyles={{marginLeft:'auto',width: '40%'}} /> 
+        <FieldAndLabel direction="row" fieldName="name" label={<Trans>name_your_tree</Trans>} sx={{ justifyContent: 'start', flex: '1 1 auto' }} fieldStyles={{ marginLeft: 'auto', width: '40%' }} />
         <Button variant="outlined" ><Trans>confirm</Trans></Button>
       </Box>
       <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
         <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
-        <BaseDropDown name="next_of_kin" options={relationOptions} sx={{width: '40%',marginLeft: 'auto'}} />
+        <BaseDropDown name="next_of_kin" options={relationOptions} sx={{ width: '40%', marginLeft: 'auto' }} />
         <Button variant="outlined" onClick={addRelative}><Trans>confirm</Trans></Button>
       </Box>
-      <StepForm handleSave={saveProgress}  />
+      <StepForm handleSave={saveProgress} />
     </Paper>
   );
 };

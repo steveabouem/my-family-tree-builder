@@ -43,7 +43,7 @@ const ViewFamilyTreeChartPage = () => {
         }
       })
       .catch(e => {
-        if (updateModal) updateModal({
+        updateModal({
           hidden: false,
           buttons: { confirm: true, cancel: false },
           content: <Trans>error_modal_message</Trans>,

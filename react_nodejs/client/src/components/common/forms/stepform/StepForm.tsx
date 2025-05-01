@@ -5,7 +5,6 @@ import FormFieldsGenerator from '../FormFieldsGenerator';
 import { DStepForm } from './definitions';
 import { useFormikContext } from 'formik';
 import LocalSpinner from 'components/common/progressIndicators/LocalSpinner';
-import { DFormField } from 'components/common/definitions';
 import { DStepFormState } from 'app/slices/definitions';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import { nextFormStepAction, prevFormStepAction } from 'app/slices/forms/stepForm';
@@ -28,8 +27,8 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
       </Box>
       <Box display="flex" justifyContent="flex-start" gap={2} alignItems="center">
         <Box display="flex" flexDirection="column" gap={2} justifyContent="center" width="100%">
-          {currentFormStepDetails?.title}
-          {currentFormStepDetails?.subtitle}
+          <Typography variant="body1">{currentFormStepDetails?.title}</Typography>
+          <Typography variant="body1">{currentFormStepDetails?.subtitle}</Typography>
         </Box>
         <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
           <Button variant="contained" disabled={currentFormStep === 1} color="secondary" onClick={() => dispatch(prevFormStepAction())}>

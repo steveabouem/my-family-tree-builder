@@ -1,6 +1,5 @@
-import { DSession } from "../../routes/definitions";
 import BaseController from "../Base.controller";
-import { DEndpointResponse, DSessionUser } from "../controllers.definitions";
+import { DEndpointResponse, DSession, DSessionUser } from "../controllers.definitions";
 import logger from "../../utils/logger";
 import { Request, Response } from "express";
 import { QueryTypes } from "sequelize";
@@ -13,8 +12,8 @@ class SessionController extends BaseController<DSession> {
         super('sessions');
     }
 
-    public async getCurrent(req: Request, res: Response) {
-        const response: DEndpointResponse = { error: true, status: 400, session: '' };
+    public async getCurrent(req: Request, res: Response): Promise<DSession | null> {
+        const response: any = { code: 500, authenticated: false, error: true };
         try {
             if (req.query?.id) {
                 const sessionId = `${req.query.id}`;
@@ -29,31 +28,30 @@ class SessionController extends BaseController<DSession> {
 
                         res.status(400);
                     });
-
                 res.status(200);
+
+                response.code = 200;
                 response.error = false;
 
                 if (currentSession?.length) {
-                    //   TODO: FIX TS IGNORES
-                    //   @ts-ignore either find a way to use the store, or refactor migration
-                    response.payload = currentSession[0];
+                    response.current = currentSession[0];
                 } else {
                     response.message = 'No existing session.';
                 }
             } else {
                 throw new Error('Missing mandatory parameters.');
-                }
-                } catch (e) {
-                    response.error = true;
-                    logger.error('! login ! ', e)
-                    response.payload = 'Unable to find session' + e;
-                    response.status = 400;
+            }
+        } catch (e) {
+            response.error = true;
+            logger.error('Unable to retrieve session ', e);
+            response.message = 'Unable to find session' + e;
+            response.status = 400;
 
             res.status(400);
         }
-        console.log('current session', { response });
+        logger.info('current session', { response });
 
-        res.json(response);
+        return(response);
     }
 }
 

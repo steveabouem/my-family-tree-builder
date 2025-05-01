@@ -7,8 +7,9 @@ export interface DModalProps {
   title: string | ReactNode;
   buttons: {cancel: boolean, confirm: boolean};
   type: DModalType;
-  onConfirm?: () => void;
-  onCancel?: () => void;
+  transferData?: any;
+  onConfirm?: (v?: any) => void;
+  onCancel?: (v?: any) => void;
   content?: string | ReactNode;
   children?: ReactNode;
 }

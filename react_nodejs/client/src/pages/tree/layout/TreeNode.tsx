@@ -1,15 +1,16 @@
-import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
-import { Handle, Position } from '@xyflow/react';
-import { Box, Button, Typography } from '@mui/material';
+import React, { memo } from 'react';
+import { Box, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import Initials from 'components/common/Initials';
 import { Gendersenum } from 'components/common/definitions';
-import { BabyIcon, DeleteIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon, SettingsIcon, WritingIcon } from 'utils/assets/icons';
+import { BabyIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon } from 'utils/assets/icons';
 
 export default memo(({ data }: any) => {
-
   function getInitialsBG() {
     return data?.gender === Gendersenum.female ? '#f4ceff' : '#f2efff';
+  }
+  function getNodeBG() {
+    return !!data?.dod?.length ? '#8989892e' : '#fff8efb3';
   }
   function renderNodeIcon() {
     const isAdult = data?.age > 15;
@@ -31,8 +32,8 @@ export default memo(({ data }: any) => {
 
   return (
     <Box
-      width="250px" height="90px" padding={1} display="flex"
-      flexDirection="column" gap={1} justifyContent="start" alignItems="center" bgcolor="#fff8ef"
+      width="250px" height="90px" padding={1} display="flex" border=".6px solid #8e6c75"
+      flexDirection="column" gap={1} justifyContent="start" alignItems="center" bgcolor={getNodeBG()}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
         {

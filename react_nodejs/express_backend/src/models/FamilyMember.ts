@@ -15,12 +15,14 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare user_id?: number;
   declare age: number | null;
   declare dob: string;
+  declare dod: string | null;
   declare description: string;
   declare first_name: string;
   declare gender: number; //1:M, 2:F
-  declare parents: string | null; // [mother, father], nullable
-  declare siblings: string;
-  declare children: string;
+  declare parents: string | null;
+  declare siblings: string | null;
+  declare spouses: string | null;
+  declare children: string | null;
   declare email: string;
   declare last_name: string;
   declare marital_status: string;
@@ -49,6 +51,9 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   };
   get familyMemberDOB(): NonAttribute<string> {
     return this.dob;
+  };
+  get familyMemberDOD(): NonAttribute<string | null> {
+    return this.dod;
   };
   get familyMemberDescription(): NonAttribute<string> {
     return this.description;
@@ -95,18 +100,20 @@ FamilyMember.init(
       autoIncrement: true,
       primaryKey: true
     },
-    node_id:  {type: DataTypes.STRING},
+    node_id: { type: DataTypes.STRING },
     // allowNull defaults to true
     user_id: { type: DataTypes.INTEGER, allowNull: false },
     age: { type: DataTypes.INTEGER, allowNull: false },
     occupation: { type: DataTypes.STRING, allowNull: false },
     dob: { type: DataTypes.STRING, allowNull: false },
+    dod: { type: DataTypes.STRING },
     first_name: { type: DataTypes.STRING, allowNull: false },
     gender: { type: DataTypes.INTEGER, allowNull: false },
     email: { type: DataTypes.STRING, allowNull: false },
     last_name: { type: DataTypes.STRING, allowNull: false },
     marital_status: { type: DataTypes.STRING, allowNull: false },
     parents: { type: DataTypes.JSON },
+    spouses: { type: DataTypes.JSON },
     profile_url: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING },
     children: { type: DataTypes.JSON },

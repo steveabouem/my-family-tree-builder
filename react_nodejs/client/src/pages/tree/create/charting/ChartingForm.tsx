@@ -4,12 +4,12 @@ import { Trans } from "@lingui/macro";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import GlobalContext from "contexts/creators/global/global.context";
 import { Box, Typography, Paper } from "@mui/material";
-import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
-import { DFormField } from "components/common/definitions";
 import { DTreeManagerFields } from "pages/tree/definitions";
 import { service } from "services/index";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
 import CustomField from "components/common/forms/customField";
+import { DFormField } from "components/common/definitions";
+import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
 
 const ChartingForm = (): JSX.Element => {
   // ? single form here to build the treeManagerFormFields. I might add an option on each tree node to allow adding a link for that specific Node. 
@@ -163,21 +163,19 @@ const ChartingForm = (): JSX.Element => {
     toggleLoading(true);
     const familyTreeService = new service.familyTree();
     const { data } = await familyTreeService.create({ ...values, user_id: currentUser.userId });
-    if (updateModal) {
-      if (data?.error) {
-        updateModal({
-          hidden: false,
-          title: 'Err',
-          content: 'Error'
-        });
-      } else {
-        updateModal({
-          hidden: false,
-          title: 'Success',
-          content: 'Success',
-          buttons: { confirm: false, cancel: true }
-        });
-      }
+    if (data?.error) {
+      updateModal({
+        hidden: false,
+        title: 'Err',
+        content: 'Error'
+      });
+    } else {
+      updateModal({
+        hidden: false,
+        title: 'Success',
+        content: 'Success',
+        buttons: { confirm: false, cancel: true }
+      });
     }
 
     toggleLoading(false);

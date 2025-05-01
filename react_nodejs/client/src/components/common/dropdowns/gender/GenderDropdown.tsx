@@ -1,9 +1,8 @@
 import React from 'react'
 import BaseDropDown from '../BaseDropdown';
-import { genderOptions } from './definitions';
-import { DBaseDropDownProps } from '../definitions';
+import { DBaseDropDownProps, genderOptions } from '../definitions';
 
-const GenderDropdown = (props: Pick<DBaseDropDownProps<any>, 'name' | 'sx' >) => {
+const GenderDropdown = (props: Pick<DBaseDropDownProps, 'name' | 'sx' >) => {
   return (
     <BaseDropDown
       name={props.name}

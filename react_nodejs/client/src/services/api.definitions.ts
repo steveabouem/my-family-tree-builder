@@ -74,6 +74,7 @@ export interface DFamilyMemberDTO {
   last_name: string;
   marital_status: string;
   occupation: string;
+  dod?: string;
   id?: number;
   node_id: string;
   parents?: number[];

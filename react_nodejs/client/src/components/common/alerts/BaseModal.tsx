@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { Trans } from "@lingui/macro";
 import { DModalProps } from "./definitions";
@@ -9,36 +9,35 @@ import { TbFileSad } from "react-icons/tb";
 import { RiFileInfoLine } from "react-icons/ri";
 import { TbFileSmile } from "react-icons/tb";
 
-const BaseModal = ({ onConfirm, onCancel, children, type = 'info' }: DModalProps): JSX.Element => {
-  const [processing, setProcessing] = useState<boolean>(false);
+const BaseModal = ({ children, type = 'info' }: DModalProps): JSX.Element => {
   const { modal, updateModal } = React.useContext(GlobalContext);
   const headerIcon = useMemo(() => {
     switch (type) {
       case 'error':
-        return <TbFileSad size={30} color="#e07e7e"/>;
+        return <TbFileSad size={30} color="#e07e7e" />;
       case 'info':
         return <RiFileInfoLine size={30} color="#7eb4e0" />;
       case 'success':
         return <TbFileSmile size={30} color="#89e07e" />;
       default:
-        return ''
+        return '';
     }
   }, [type]);
 
   const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
+    if (modal?.onCancel) {
+      modal?.onCancel();
     }
 
-    if (updateModal) updateModal({ ...modal, hidden: true });
+    updateModal({ ...modal, hidden: true });
   };
 
   const handleConfirm = () => {
-    if (onConfirm) {
-      onConfirm();
-    }
 
-    if (updateModal) updateModal({ ...modal, hidden: true });
+    if (modal?.onConfirm) {
+      modal.onConfirm(modal?.transferData);
+    }
+    updateModal({ ...modal, hidden: true });
   };
 
   return (

@@ -1,5 +1,5 @@
 import BaseController from "../Base.controller";
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { DRequestPayload } from "../controllers.definitions";
 import FamilyTree from "../../models/FamilyTree";
 import { Op } from "sequelize";
@@ -34,16 +34,16 @@ class FamilyTreeController extends BaseController<any> {
   * creates the tree. 
   * can only be initiated by a registered user. 
   */
-  public saveNewTreeFormStep = async (members: any, name: string): Promise<DSaveTreeFormStepResponse> => {
+  public saveNewTreeFormStep = async (members: any, name: string, userId: number): Promise<DSaveTreeFormStepResponse> => {
     let response: DSaveTreeFormStepResponse = { lastStep: false, newFields: [] };;
 
     try {
       const familyMemberController = new FamilyMemberController();
-      const membersRecords = await familyMemberController.createRecords(members); //catch block already in the function
+      const membersRecords = await familyMemberController.createRecords(members, userId); //catch block already in the function
       const newTree = await FamilyTree.create({
         active: 0,
         authorized_ips: '[]',
-        created_by: 1,
+        created_by: userId,
         members: JSON.stringify(membersRecords),
         name,
         public: 0
@@ -66,7 +66,7 @@ class FamilyTreeController extends BaseController<any> {
     const membersWithCoords: any = [];
 
     Object.values(members).forEach((currentMember: any, index: number) => {
-      const position = { x: index * 100, y: 0 };
+      const position = { x: index * 125, y: 0 };
       const children = JSON.parse(currentMember?.children || '[]');
       const siblings = JSON.parse(currentMember?.siblings || '[]');
       const spouses = JSON.parse(currentMember?.spouses || '[]');
@@ -76,18 +76,17 @@ class FamilyTreeController extends BaseController<any> {
       * find all the node children,  position them below it, then update each child's node's position
       */
       if (Array.isArray(children)) {
-        logger.info('children for current member look like this ', children);
         /*
         * if the child was already processed through another incoming node (family member), ignore it
         */
-        children.forEach((child: any) => {
+        children.forEach((child: any, childIndex: number) => {
           if (membersWithCoords.find((newNode: any) => newNode.node_id === child.node_id)) {
             logger.info('ignoring family member\'s current child as it is a dupe, ', { child });
           } else {
             membersWithCoords.push({
               ...child,
               type: 'custom',
-              position: { x: position.x, y: position.y - 125 },
+              position: { x: position.x + (125 * childIndex), y: position.y + 125 },
               name: '',
               data: {
                 ...child,
@@ -102,18 +101,17 @@ class FamilyTreeController extends BaseController<any> {
       * find all the node siblings,  position them below it, then update each child's node's position
       */
       if (Array.isArray(siblings)) {
-        logger.info('siblings for current member look like this ', siblings);
         /*
         * if the child was already processed through another incoming node (family member), ignore it
         */
-        siblings.forEach((sibling: any) => {
+        siblings.forEach((sibling: any, siblingIndex: number) => {
           if (membersWithCoords.find((newNode: any) => newNode.node_id === sibling.node_id)) {
             logger.info('ignoring family member\'s current sibling as it is a dupe, ', { sibling });
           } else {
             membersWithCoords.push({
               ...sibling,
               type: 'custom',
-              position: { x: position.x + 325, y: position.y },
+              position: { x: position.x + (325 * siblingIndex), y: position.y },
               name: '',
               data: {
                 ...sibling, label: `${sibling.first_name} ${sibling.last_name}`,
@@ -127,18 +125,17 @@ class FamilyTreeController extends BaseController<any> {
       * find all the node spouses,  position them below it, then update each child's node's position
       */
       if (Array.isArray(spouses)) {
-        logger.info('spouses for current member look like this ', spouses);
         /*
         * if the child was already processed through another incoming node (family member), ignore it
         */
-        spouses.forEach((spouse: any) => {
+        spouses.forEach((spouse: any, spousIndex: number) => {
           if (membersWithCoords.find((newNode: any) => newNode.node_id === spouse.node_id)) {
             logger.info('ignoring family member\'s current spouse as it is a dupe, ', { spouse });
           } else {
             membersWithCoords.push({
               ...spouse,
               type: 'custom',
-              position: { x: position.x + 325, y: position.y },
+              position: { x: position.x + (325 * spousIndex), y: position.y },
               name: '',
               data: {
                 ...spouse,
@@ -153,7 +150,6 @@ class FamilyTreeController extends BaseController<any> {
       * find all the node parents,  position them above it, then update each parent's node's position
       */
       if (Array.isArray(parents)) {
-        logger.info('parents for current member look like this ', parents);
         /*
         * if the parent was already processed through another incoming node (family member), ignore it
         */
@@ -161,7 +157,7 @@ class FamilyTreeController extends BaseController<any> {
           if (membersWithCoords.find((newNode: any) => newNode.node_id === parent.node_id)) {
             logger.info('ignoring family member\'s current spouse as it is a dupe, ', { parent });
           } else {
-            const xOffset = parent.gender == 2 ? position.x + 325 : position.x - 125;
+            const xOffset = parent.gender == 2 ? position.x + 225 : position.x - 125;
             membersWithCoords.push({
               ...parent,
               type: 'custom',
@@ -202,15 +198,17 @@ class FamilyTreeController extends BaseController<any> {
   */
   public create = async (req: Request<{}, {}, DFamilyTreeDAO, {}>, res: Response<DGetFamilyTreeResponse, {}>) => {
     let response: DGetFamilyTreeResponse = { code: 500, error: true };
+    const userId = req.body.userId;
+    
     try {
       /*
       * Only registered users can do CRUD on trees
       */
-      const currentUser = await User.findByPk(req.body.userId);
+      const currentUser = await User.findByPk(userId);
 
       if (currentUser?.dataValues) {
         const familyMemberController = new FamilyMemberController();
-        const membersRecords = await familyMemberController.createRecords(req.body.members)
+        const membersRecords = await familyMemberController.createRecords(req.body.members, userId)
           .catch((e: unknown) => {
             logger.error('Unable to bulk create members. Function call failed', e);
           });
@@ -262,71 +260,8 @@ class FamilyTreeController extends BaseController<any> {
     return response;
   }
 
-  /* 
-    ? add a family around existing tree member.
-    ? anchor may or may not have a user profile 
-    ? can only be initiated by a registered user
-  */
-  public addFamilyUnit = async (req: Request, res: Response) => {
-    // const response: DEndpointResponse = { error: true, status: 400, payload: undefined, session: '' };
-
-    // if (req.body?.anchorId) {
-    //   try {
-    //     const currentTree = await FamilyTree.findByPk(req.body?.treeId)
-    //       .catch((e: any) => {
-    //         logger.error('! FamilyTree.addUnit', e);
-    //       });
-    //     const anchorFamilyMemberRecord = await FamilyMember.findByPk(req.body.anchorId)
-    //       .catch((e: unknown) => {
-    //         logger.error('!family tree.add sub #119 ', e);
-    //       });
-
-    //     if (currentTree?.dataValues && anchorFamilyMemberRecord?.dataValues) {
-    //       console.log('\n \n FOUND TREE ND ANCHOR');
-
-    //       const familyMemberController = new FamilyMemberController();
-    //       // create all the records for family members described in form and return them
-    //       const anchorsFamily: any = await familyMemberController
-    //         .addFamilyUnit({ ...req.body, current: anchorFamilyMemberRecord.dataValues })
-    //         .catch((e: unknown) => {
-    //           logger.info('BREAKS : ', e);
-    //         });
-
-    //       if (anchorsFamily) {
-    //         const updatedMembersList = { ...JSON.parse(currentTree.members), ...anchorsFamily };
-    //         console.log(`\n\n new list , \n ${JSON.stringify(updatedMembersList)}, \n ${JSON.parse(currentTree.members)}`);
-
-    //         await FamilyTree.update({ members: JSON.stringify(updatedMembersList) }, { where: { id: { [Op.eq]: req.body.treeId } } });
-    //       }
-    //       console.log('\n \n RESULTING SUB ', anchorsFamily);
-
-    //       response.payload = anchorsFamily;
-    //       response.status = 200;
-    //       response.error = false;
-    //       response.message = 'Family member updated Succesfully';
-    //     } else {
-    //       response.status = 400;
-    //       response.message = 'FAmily member recored not found';
-    //       res.status(400);
-    //     }
-    //   } catch (e: unknown) {
-    //     logger.error('! FamilyTree.addUnit !', e);
-    //     response.status = 400;
-    //     response.message = 'FAIL';
-    //     res.status(400);
-    //   }
-    // } else {
-    //   logger.error('! FamilyTree.addUnit ! No anchor provided');
-    //   response.error = true;
-    //   response.message = 'No anchor provided';
-    // }
-
-    return true;
-    // return res.json(response);
-  }
-
   public getOne = async (req: Request, res: Response): Promise<DRequestPayload<FamilyTree>> => {
-    const response: DRequestPayload<FamilyTree> = { error: true, code: 400 };
+    const response: DRequestPayload<FamilyTree> = this.defaultResponse;
     try {
       const id = req.query.id;
       const userId = req.session?.details?.userId || 0;
@@ -416,6 +351,15 @@ class FamilyTreeController extends BaseController<any> {
     // res.json(response);
   }
 
+  public async update(req: Request, res: Response) {
+    const familyMemberController = new FamilyMemberController();
+    const membersRecords = await familyMemberController.updateRecordAndRelations(req, res)
+    .catch((e: unknown) => {
+      logger.error('Failed to update members ', e);
+    });
+    logger.info('Route handler returns this response ', membersRecords);
+    return membersRecords;
+  }
   /*
   * can be called from the initial step form rsponsible for creating the tree,
   * or an update made to an active tree by a registered user with appropriate permissions
@@ -476,7 +420,7 @@ class FamilyTreeController extends BaseController<any> {
   }
 
   public getMembers = async (req: Request, res: Response): Promise<DRequestPayload<FamilyMember[]>> => {
-    const response: DRequestPayload<FamilyMember[]> = { error: true, code: 400 };
+    const response: DRequestPayload<FamilyMember[]> = this.defaultResponse;
     const userId = req.session?.details?.userId || 0;
     const id = req.query.id;
     const canViewTree = await this.canUserViewTree(Number(id), userId);
@@ -508,6 +452,17 @@ class FamilyTreeController extends BaseController<any> {
       response.error = false;
       response.code = 403;
       response.message = 'User is not allowed to view this tree.';
+    }
+
+    return response;
+  }
+
+  public updateTreeMembers = async (req: Request, res: Response): Promise<DRequestPayload<FamilyTree>> => {
+    const response = this.defaultResponse;
+    try {
+
+    } catch(e: unknown) {
+      logger.info('send error to helper function: updateTreeMembers ');
     }
 
     return response;

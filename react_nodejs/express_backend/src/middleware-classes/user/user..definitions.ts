@@ -5,6 +5,7 @@ export interface DUserDTO {
     dob: string,
     occupation: string,
     id: number;
+    role_id: number;
     marital_status: string,
     password: string,
     email: string,

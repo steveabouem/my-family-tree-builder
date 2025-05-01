@@ -1,15 +1,17 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes, Sequelize } from "sequelize";
-import { DTableJoin } from "./controllers.definitions";
+import { DEndpointResponse, DTableJoin } from "./controllers.definitions";
 import db from "../db";
 
 class BaseController<GProps> {
     tableName: string;
     dataBase: Sequelize;
     salt: string;
-
+    defaultResponse: Pick<DEndpointResponse, 'code' | 'error'>;
+    
     constructor(table: string) {
         this.dataBase = db;
+        this.defaultResponse = { error: true, code: 400 };
         this.tableName = table;
         this.salt = bcrypt.genSaltSync(8);
     }

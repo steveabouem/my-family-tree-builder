@@ -22,7 +22,7 @@ const GenealogyContainer: React.FC = () => {
 
 
   useEffect(() => {
-    
+
 
   }, [])
   //TODO: once you can create the initial unit, focus on adding kins to each node
@@ -82,6 +82,7 @@ const GenealogyContainer: React.FC = () => {
   function cleanUpValuesPrefixes(indicator: string, valuesObject: any): DFamilyMemberDTO {
     const formatted: DFamilyMemberDTO = {
       dob: valuesObject?.[`${indicator}_dob`] || '',
+      dod: valuesObject?.[`${indicator}_dod`] || '',
       node_id: valuesObject?.[`${indicator}_node_id`] || '',
       email: valuesObject?.[`${indicator}_email`] || '',
       first_name: valuesObject?.[`${indicator}_first_name`] || '',
@@ -140,14 +141,10 @@ const GenealogyContainer: React.FC = () => {
     familyTreeService.create(formattedValues).then((response: AxiosResponse<DApiResponse<DFamilyTreeDTO>>) => {
       if (response.data.code == 200) {
         const formattedMemberRecords = formatIncomingValues(response.data.members);
-        if (updateModal) {
-          updateModal({ hidden: false, content: <Typography variant='body2'>family_tree_save_success_modal</Typography>, type: 'success' });
-        }
+        updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
         dispatch(populateTreeAction(formattedMemberRecords));
       } else {
-        if (updateModal) {
-          updateModal({ hidden: false, content: <Typography variant='body2'>family_tree_save_failed_modal</Typography>, type: 'error' });
-        }
+        updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_failed_modal</Trans></Typography>, type: 'error' });
       }
     })
       .catch((e: unknown) => {

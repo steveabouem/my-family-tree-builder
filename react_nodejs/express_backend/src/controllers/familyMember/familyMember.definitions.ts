@@ -13,7 +13,7 @@ export interface DFamilyMemberDAO {
     last_name: string;
     marital_status: string;
     occupation: string;
-    parents?: number[];
+    dod?: string;
     age?: number;
     description?: string;
     profile_url?: string;
@@ -23,6 +23,7 @@ export interface DFamilyMemberDAO {
     name?: string;
     type?: string;
     position?: { x: number; y: number };
+    parents?: DFamilyMemberDAO[];
     children?: DFamilyMemberDAO[];
     siblings?: DFamilyMemberDAO[];
     spouses?: DFamilyMemberDAO[];
@@ -47,6 +48,7 @@ export interface DFamilyMemberDTO {
     profile_url: string;
     tree_id: number;
     updated_at: Date;
+    dod?: string;
 }
 
 

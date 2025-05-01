@@ -73,12 +73,36 @@ export interface DTreeNode {
 }
 
 /*
-* Most basic react flow now (will build upon it once the rendring from the form is stable)
+* React flow
 */
-export interface DReactFlowNode {
-  id: string;
-  position: { x: number, y: number };
-  data: { label: string };
+export interface DNodeInfo {
+  label: string;
+  id: number;
+  dob: string;
+  dod?: string;
+  node_id: string;
+  email: string;
+  first_name: string;
+  gender: number;
+  last_name: string;
+  marital_status: string;
+  occupation: string;
+  parents: string;
+  siblings: string;
+  spouses: string;
+  children: string;
+  age: number;
+  description: string;
+  profile_url: string;
+  user_id: number;
+  created_by: number;
+}
+export type DReactFlowNode = DNodeInfo & {
+    type: string;
+    position: {x: number, y: number},
+    children: string;
+    spouses: string;
+    data: DNodeInfo;
 }
 export interface DReactFlowEdge {
   id: string;

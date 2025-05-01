@@ -11,9 +11,9 @@ export interface DGlobalContext {
   theme: themeEnum;
   loading: boolean;
   toggleLoading: (value?: boolean) => void;
+  updateModal: (values: Partial<DModalProps>) => void; // change the modal content
   session?: string;
   modal?: Partial<DModalProps>;
   tree?: Partial<DFamilyTree>;
   updateTheme?: (value: themeEnum) => void;
-  updateModal?: (values: Partial<DModalProps>) => void; // change the modal content
 };

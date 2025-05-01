@@ -50,7 +50,7 @@ const UserProfilePage = (): JSX.Element => {
           }
         })
         .catch((e: unknown) => {
-          if (updateModal) updateModal({
+          updateModal({
             hidden: false,
             buttons: { confirm: true, cancel: false },
             content: <Trans>error_modal_message</Trans>,
@@ -67,7 +67,7 @@ const UserProfilePage = (): JSX.Element => {
     authService.submitPasswordChangeForm(values)
       .then((updatedUser) => {
         toggleLoading(false);
-        if (updateModal) updateModal({
+        updateModal({
           hidden: false,
           buttons: { confirm: true, cancel: false },
           content: <Trans>operation_success_text</Trans>,
@@ -79,7 +79,7 @@ const UserProfilePage = (): JSX.Element => {
         toggleLoading(false);
 
         // ! -TOFIX: handle error
-        if (updateModal) updateModal({
+        updateModal({
           hidden: false,
           buttons: { confirm: true, cancel: false },
           content: <Trans>operation_failure_text</Trans>,

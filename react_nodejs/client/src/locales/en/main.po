@@ -11,239 +11,646 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:146
-#: src/pages/tree/create/CreateFamilyTreePage.tsx:23
+#. js-lingui-explicit-id
+#: src/pages/auth/AuthenticationPage.tsx:24
+#~ msgid "Marital.status"
+#~ msgstr "Marital Status"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:145
 msgid "added_spouse_fields"
-msgstr "Added Spouse!"
+msgstr "added_spouse_fields"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:106
+#: src/pages/tree/create/charting/ChartingForm.tsx:145
+#~ msgid "Added_spouse_fields"
+#~ msgstr "Added Spouse!"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:105
 msgid "age_of_sibling {0}"
-msgstr "age of sibling #{0}"
+msgstr "age_of_sibling {0}"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:135
+#: src/pages/tree/create/charting/ChartingForm.tsx:105
+#~ msgid "Age_of_sibling {0}"
+#~ msgstr "age of sibling #{0}"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:134
 msgid "age_of_spouse"
-msgstr "age of spouse"
+msgstr "age_of_spouse"
 
-#: src/pages/auth/AuthenticationPage.tsx:190
+#: src/pages/tree/create/charting/ChartingForm.tsx:134
+#~ msgid "Age_of_spouse"
+#~ msgstr "age of spouse"
+
+#: src/pages/auth/AuthenticationPage.tsx:187
 msgid "auth_page_subtitle"
-msgstr "Please authenticate yourself below."
+msgstr "auth_page_subtitle"
 
-#: src/pages/auth/AuthenticationPage.tsx:189
+#: src/pages/auth/AuthenticationPage.tsx:187
+#~ msgid "Auth_page_subtitle"
+#~ msgstr "Please authenticate yourself below."
+
+#: src/pages/auth/AuthenticationPage.tsx:186
 msgid "auth_page_title"
-msgstr "Authentication"
+msgstr "auth_page_title"
 
-#: src/components/common/alerts/BaseModal.tsx:57
+#: src/pages/auth/AuthenticationPage.tsx:186
+#~ msgid "Auth_page_title"
+#~ msgstr "Authentication"
+
+#: src/components/common/alerts/BaseModal.tsx:56
 #: src/pages/user/profile/UserCredentials.tsx:58
 msgid "cancel"
-msgstr "Cancel"
+msgstr "cancel"
 
-#: src/components/common/alerts/BaseModal.tsx:58
+#: src/components/common/alerts/BaseModal.tsx:56
+#: src/pages/user/profile/UserCredentials.tsx:58
+#~ msgid "Cancel"
+#~ msgstr "Cancel"
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:27
+msgid "change_mode"
+msgstr "change_mode"
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:27
+#~ msgid "Change_mode"
+#~ msgstr "change_mode"
+
+#: src/pages/tree/layout/TreeLayout.tsx:68
+#~ msgid "Choose_node_action_title"
+#~ msgstr "Data for {node}"
+
+#: src/pages/tree/layout/TreeLayout.tsx:68
+msgid "choose_node_action_title {0}"
+msgstr "choose_node_action_title {0}"
+
+#: src/pages/tree/layout/TreeLayout.tsx:68
+#~ msgid "Choose_node_action_title {node}"
+#~ msgstr "View {node}'s details"
+
+#: src/components/common/alerts/BaseModal.tsx:57
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:120
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:125
 msgid "confirm"
-msgstr "Confirm"
+msgstr "confirm"
 
-#: src/components/common/navbars/TopNav.tsx:76
+#: src/components/common/alerts/BaseModal.tsx:57
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:119
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:124
+#~ msgid "Confirm"
+#~ msgstr "Confirm"
+
+#: src/components/common/navbars/TopNav.tsx:78
 msgid "Connect"
 msgstr "Authentication"
 
-#: src/pages/user/profile/ProfilePage.tsx:100
-msgid "create_your_first_tree"
-msgstr "Add"
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:12
+msgid "create_new_tree"
+msgstr "create_new_tree"
 
-#: src/pages/tree/create/CreateFamilyTreePage.tsx:31
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:12
+#~ msgid "Create_new_tree"
+#~ msgstr "C"
+
+#: src/pages/user/profile/ProfilePage.tsx:106
+msgid "create_your_first_tree"
+msgstr "create_your_first_tree"
+
+#: src/pages/user/profile/ProfilePage.tsx:106
+#~ msgid "Create_your_first_tree"
+#~ msgstr "Add"
+
+#: src/components/common/forms/stepform/StepForm.tsx:24
+msgid "current_form_step"
+msgstr "current_form_step"
+
+#: src/components/common/forms/stepform/StepForm.tsx:24
+#~ msgid "Current_form_step"
+#~ msgstr "Current step"
+
+#: src/pages/tree/layout/NodeMenu.tsx:47
+msgid "delete"
+msgstr "delete"
+
+#: src/pages/tree/layout/NodeMenu.tsx:47
+#~ msgid "Delete"
+#~ msgstr "delete"
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:25
 msgid "describe_your_family"
-msgstr "Describe your family"
+msgstr "describe_your_family"
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:25
+#~ msgid "Describe_your_family"
+#~ msgstr "Describe your family"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:95
+msgid "description"
+msgstr "description"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:94
+#~ msgid "Description"
+#~ msgstr "description"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:85
+msgid "dob"
+msgstr "dob"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:85
+#~ msgid "Dob"
+#~ msgstr "Date of birth"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:86
+msgid "dod"
+msgstr "Date of passing (leave blank if not deceased)"
 
 #: src/pages/user/profile/UserCredentials.tsx:52
 msgid "edit"
-msgstr "Edit"
+msgstr "edit"
+
+#: src/pages/user/profile/UserCredentials.tsx:52
+#~ msgid "Edit"
+#~ msgstr "Edit"
+
+#: src/pages/tree/layout/NodeMenu.tsx:29
+msgid "edit_node"
+msgstr "edit_node"
+
+#: src/pages/tree/layout/NodeMenu.tsx:29
+#~ msgid "Edit_node"
+#~ msgstr "Make changes"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:94
+msgid "email"
+msgstr "email"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:93
+#~ msgid "Email"
+#~ msgstr "email"
 
 #: src/pages/user/profile/UserCredentials.tsx:25
 msgid "email_form_label"
-msgstr "Email"
+msgstr "email_form_label"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:100
+#: src/pages/user/profile/UserCredentials.tsx:25
+#~ msgid "Email_form_label"
+#~ msgstr "Email"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:99
 msgid "email_of_sibling {0}"
-msgstr "email of sibling {0}"
+msgstr "email_of_sibling {0}"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:99
+#~ msgid "Email_of_sibling {0}"
+#~ msgstr "email of sibling {0}"
+
+#: src/pages/tree/view/ViewFamilyTreeChart.tsx:49
+#: src/pages/user/profile/ProfilePage.tsx:56
+msgid "error_modal_message"
+msgstr "error_modal_message"
+
+#: src/pages/tree/view/ViewFamilyTreeChart.tsx:49
+#: src/pages/user/profile/ProfilePage.tsx:56
+#~ msgid "Error_modal_message"
+#~ msgstr "error modal message"
 
 #: src/pages/tree/view/ViewFamilyTreeChart.tsx:50
-#: src/pages/user/profile/ProfilePage.tsx:50
-msgid "error_modal_message"
-msgstr "error modal message"
-
-#: src/pages/tree/view/ViewFamilyTreeChart.tsx:51
-#: src/pages/user/profile/ProfilePage.tsx:51
+#: src/pages/user/profile/ProfilePage.tsx:57
 msgid "error_modal_title"
-msgstr "An error has occured"
+msgstr "error_modal_title"
+
+#: src/pages/tree/view/ViewFamilyTreeChart.tsx:50
+#: src/pages/user/profile/ProfilePage.tsx:57
+#~ msgid "Error_modal_title"
+#~ msgstr "An error has occured"
 
 #: src/components/common/navbars/TopNav.tsx:47
 #~ msgid "Families"
 #~ msgstr "Families"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:69
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:117
+msgid "family_tree_building_explanation"
+msgstr "family_tree_building_explanation"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:116
+#~ msgid "Family_tree_building_explanation"
+#~ msgstr "Please fill in the form below. The first step of the form will be used as the center for all the other steps. Any other family member added will be in reference to the first step."
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:68
 msgid "family_tree_name_label"
-msgstr "Tree's name"
+msgstr "family_tree_name_label"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:56
+#: src/pages/tree/create/charting/ChartingForm.tsx:68
+#~ msgid "Family_tree_name_label"
+#~ msgstr "Tree's name"
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:147
+msgid "family_tree_save_failed_modal"
+msgstr "family_tree_save_failed_modal"
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:146
+#~ msgid "Family_tree_save_failed_modal"
+#~ msgstr "The tree could not be generated. Please try again or contact the admin."
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:144
+msgid "family_tree_save_success_modal"
+msgstr "family_tree_save_success_modal"
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:143
+#~ msgid "Family_tree_save_success_modal"
+#~ msgstr "The family tree was successfully generated"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:55
 msgid "father_age"
-msgstr "father's age"
+msgstr "father_age"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:44
+#: src/pages/tree/create/charting/ChartingForm.tsx:55
+#~ msgid "Father_age"
+#~ msgstr "father's age"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:43
 msgid "father_first_name"
-msgstr "father's first name"
+msgstr "father_first_name"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:50
+#: src/pages/tree/create/charting/ChartingForm.tsx:43
+#~ msgid "Father_first_name"
+#~ msgstr "father's first name"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:49
 msgid "father_last_name"
-msgstr "father's last name"
+msgstr "father_last_name"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:87
+#: src/pages/tree/create/charting/ChartingForm.tsx:49
+#~ msgid "Father_last_name"
+#~ msgstr "father's last name"
+
+#: src/pages/tree/create/genealogy/GenealogyNarrator.tsx:17
+msgid "fill_in_the_form_first"
+msgstr "fill_in_the_form_first"
+
+#: src/pages/tree/create/genealogy/GenealogyNarrator.tsx:17
+#~ msgid "Fill_in_the_form_first"
+#~ msgstr "Please submt at least one family member"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:70
+msgid "first_name"
+msgstr "first_name"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:70
+#~ msgid "First_name"
+#~ msgstr "first name"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:86
 msgid "first_name_of_sibling {0}"
-msgstr "first name of sibling #{0}"
+msgstr "first_name_of_sibling {0}"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:123
+#: src/pages/tree/create/charting/ChartingForm.tsx:86
+#~ msgid "First_name_of_sibling {0}"
+#~ msgstr "first name of sibling #{0}"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:122
 msgid "first_name_of_spouse"
-msgstr "spouse's first name"
+msgstr "first_name_of_spouse"
 
-#: src/pages/auth/AuthenticationPage.tsx:213
+#: src/pages/tree/create/charting/ChartingForm.tsx:122
+#~ msgid "First_name_of_spouse"
+#~ msgstr "spouse's first name"
+
+#: src/pages/auth/AuthenticationPage.tsx:210
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:88
 msgid "gender"
-msgstr "Gender"
+msgstr "gender"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:225
-#: src/pages/tree/create/charting/ChartingForm.tsx:235
+#: src/pages/auth/AuthenticationPage.tsx:210
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:87
+#~ msgid "Gender"
+#~ msgstr "Gender"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:218
+#: src/pages/tree/create/charting/ChartingForm.tsx:226
 msgid "gender_female"
-msgstr "female"
+msgstr "gender_female"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:225
-#: src/pages/tree/create/charting/ChartingForm.tsx:235
+#: src/pages/tree/create/charting/ChartingForm.tsx:218
+#: src/pages/tree/create/charting/ChartingForm.tsx:226
+#~ msgid "Gender_female"
+#~ msgstr "female"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:218
+#: src/pages/tree/create/charting/ChartingForm.tsx:226
 msgid "gender_male"
-msgstr "male"
+msgstr "gender_male"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:111
+#: src/pages/tree/create/charting/ChartingForm.tsx:218
+#: src/pages/tree/create/charting/ChartingForm.tsx:226
+#~ msgid "Gender_male"
+#~ msgstr "male"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:110
 msgid "gender_of_sibling {0}"
-msgstr "gender of sibling #{0}"
+msgstr "gender_of_sibling {0}"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:223
+#: src/pages/tree/create/charting/ChartingForm.tsx:110
+#~ msgid "Gender_of_sibling {0}"
+#~ msgstr "gender of sibling #{0}"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:216
 msgid "gender_of_spouse"
-msgstr "Spouse's gender"
+msgstr "gender_of_spouse"
 
-#: src/components/common/forms/CustomField.tsx:21
+#: src/pages/tree/create/charting/ChartingForm.tsx:216
+#~ msgid "Gender_of_spouse"
+#~ msgstr "Spouse's gender"
+
+#: src/components/common/forms/customField/CustomField.tsx:21
 msgid "generic_field_error"
-msgstr "A error has occured. Please contact the administrator"
+msgstr "generic_field_error"
 
-#: src/pages/user/profile/ProfilePage.tsx:114
+#: src/components/common/forms/customField/CustomField.tsx:21
+#~ msgid "Generic_field_error"
+#~ msgstr "A error has occured. Please contact the administrator"
+
+#: src/pages/user/profile/ProfilePage.tsx:120
 msgid "go_check_my_tree"
-msgstr "Check Out my Tree"
+msgstr "go_check_my_tree"
+
+#: src/pages/user/profile/ProfilePage.tsx:120
+#~ msgid "Go_check_my_tree"
+#~ msgstr "Check Out my Tree"
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:157
+msgid "graph_mode_tree_intro"
+msgstr "graph_mode_tree_intro"
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:156
+#~ msgid "Graph_mode_tree_intro"
+#~ msgstr "To generate a visual family tree, please fill out the form below."
 
 #: src/components/common/navbars/TopNav.tsx:50
 msgid "Home"
 msgstr "Home"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:202
+#: src/pages/tree/create/charting/ChartingForm.tsx:195
 msgid "how_many_siblings"
-msgstr "How many siblings do you have?"
+msgstr "how_many_siblings"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:94
+#: src/pages/tree/create/charting/ChartingForm.tsx:195
+#~ msgid "How_many_siblings"
+#~ msgstr "How many siblings do you have?"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:101
+msgid "info_on_node {prefix}"
+msgstr "info_on_node {prefix}"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:100
+#~ msgid "Info_on_node {prefix}"
+#~ msgstr "Informations de {prefix}"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:72
+msgid "last_name"
+msgstr "last_name"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:72
+#~ msgid "Last_name"
+#~ msgstr "last name"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:93
 msgid "last_name_of_sibling {0}"
-msgstr "last name of sibling {0}"
+msgstr "last_name_of_sibling {0}"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:129
+#: src/pages/tree/create/charting/ChartingForm.tsx:93
+#~ msgid "Last_name_of_sibling {0}"
+#~ msgstr "last name of sibling {0}"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:128
 msgid "last_name_of_spouse"
-msgstr "last name of spouse"
+msgstr "last_name_of_spouse"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:128
+#~ msgid "Last_name_of_spouse"
+#~ msgstr "last name of spouse"
 
 #: src/components/common/menus/UserMenu.jsx:23
 msgid "login"
 msgstr "login"
 
-#: src/pages/auth/AuthenticationPage.tsx:131
-#: src/pages/auth/AuthenticationPage.tsx:150
-#: src/pages/auth/AuthenticationPage.tsx:179
+#: src/components/common/menus/UserMenu.jsx:23
+#~ msgid "Login"
+#~ msgstr "login"
+
+#: src/pages/auth/AuthenticationPage.tsx:130
+#: src/pages/auth/AuthenticationPage.tsx:148
+#: src/pages/auth/AuthenticationPage.tsx:176
 msgid "login_failure"
-msgstr "Login Failure!"
+msgstr "login_failure"
 
-#: src/pages/auth/AuthenticationPage.tsx:132
-#: src/pages/auth/AuthenticationPage.tsx:151
-#: src/pages/auth/AuthenticationPage.tsx:180
+#: src/pages/auth/AuthenticationPage.tsx:130
+#: src/pages/auth/AuthenticationPage.tsx:148
+#: src/pages/auth/AuthenticationPage.tsx:176
+#~ msgid "Login_failure"
+#~ msgstr "Login Failure!"
+
+#: src/pages/auth/AuthenticationPage.tsx:131
+#: src/pages/auth/AuthenticationPage.tsx:149
+#: src/pages/auth/AuthenticationPage.tsx:177
 msgid "login_failure_msg {attempts}"
-msgstr "Failed to Connect. Please check your credentials and try again.({attempts} attempts)"
+msgstr "login_failure_msg {attempts}"
 
-#~ msgid "login_success"
+#: src/pages/auth/AuthenticationPage.tsx:131
+#: src/pages/auth/AuthenticationPage.tsx:149
+#: src/pages/auth/AuthenticationPage.tsx:177
+#~ msgid "Login_failure_msg {attempts}"
+#~ msgstr "Failed to Connect. Please check your credentials and try again.({attempts} attempts)"
+
+#~ msgid "Login_success"
 #~ msgstr "Logged in Succesfully!"
 
-#: src/components/common/navbars/TopNav.tsx:86
+#: src/components/common/navbars/TopNav.tsx:88
 msgid "logout"
-msgstr "Logout"
+msgstr "logout"
+
+#: src/components/common/navbars/TopNav.tsx:88
+#~ msgid "Logout"
+#~ msgstr "Logout"
 
 #: src/components/FT.Landing.tsx:8
 msgid "main_welcome_header"
-msgstr "Welcome to your Family Tree"
+msgstr "main_welcome_header"
+
+#: src/components/FT.Landing.tsx:8
+#~ msgid "Main_welcome_header"
+#~ msgstr "Welcome to your Family Tree"
 
 #: src/components/FT.Landing.tsx:9
 msgid "main_welcome_subheader"
-msgstr "Head to the authentication page for now"
+msgstr "main_welcome_subheader"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:62
+#: src/components/FT.Landing.tsx:9
+#~ msgid "Main_welcome_subheader"
+#~ msgstr "Head to the authentication page for now"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:61
 msgid "make_tree_private"
-msgstr "Make the family tree to private?"
+msgstr "make_tree_private"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:61
+#~ msgid "Make_tree_private"
+#~ msgstr "Make the family tree to private?"
 
 #. js-lingui-explicit-id
-#: src/pages/auth/AuthenticationPage.tsx:23
+#: src/pages/auth/AuthenticationPage.tsx:24
 msgid "marital.status"
 msgstr "Marital Status"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:197
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:74
+msgid "marital_status"
+msgstr "marital_status"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:74
+#~ msgid "Marital_status"
+#~ msgstr "marital status"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:190
 msgid "marital_status_question_label"
-msgstr "Are you married or with partner?"
+msgstr "marital_status_question_label"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:38
+#: src/pages/tree/create/charting/ChartingForm.tsx:190
+#~ msgid "Marital_status_question_label"
+#~ msgstr "Are you married or with partner?"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:37
 msgid "mother_age"
-msgstr "mother's age"
+msgstr "mother_age"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:26
+#: src/pages/tree/create/charting/ChartingForm.tsx:37
+#~ msgid "Mother_age"
+#~ msgstr "mother's age"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:25
 msgid "mother_first_name"
-msgstr "mother's first name"
+msgstr "mother_first_name"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:32
+#: src/pages/tree/create/charting/ChartingForm.tsx:25
+#~ msgid "Mother_first_name"
+#~ msgstr "mother's first name"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:31
 msgid "mother_last_name"
-msgstr "mother's last name"
+msgstr "mother_last_name"
 
-#: src/pages/tree/create/CreateFamilyTreePage.tsx:31
+#: src/pages/tree/create/charting/ChartingForm.tsx:31
+#~ msgid "Mother_last_name"
+#~ msgstr "mother's last name"
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:25
 msgid "my_tree_page_title"
-msgstr "Manage my family tree"
+msgstr "my_tree_page_title"
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:25
+#~ msgid "My_tree_page_title"
+#~ msgstr "Manage my family tree"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:119
+msgid "name_your_tree"
+msgstr "name_your_tree"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:118
+#~ msgid "Name_your_tree"
+#~ msgstr "Family tree name"
 
 #: src/pages/user/profile/UserCredentials.tsx:27
 msgid "new_password_form_label"
-msgstr "Nouveau mot de passe"
+msgstr "new_password_form_label"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:199
+#: src/pages/user/profile/UserCredentials.tsx:27
+#~ msgid "New_password_form_label"
+#~ msgstr "Nouveau mot de passe"
+
+#: src/components/common/forms/stepform/StepForm.tsx:38
+msgid "next"
+msgstr "next"
+
+#: src/components/common/forms/stepform/StepForm.tsx:38
+#~ msgid "Next"
+#~ msgstr "next"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:192
 msgid "no"
 msgstr "no"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:192
+#~ msgid "No"
+#~ msgstr "no"
 
 #: src/components/common/menus/UserMenu.jsx:18
 msgid "notifications"
 msgstr "notifications"
 
-#: src/pages/user/profile/ProfilePage.tsx:79
+#: src/components/common/menus/UserMenu.jsx:18
+#~ msgid "Notifications"
+#~ msgstr "notifications"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:84
+msgid "occupation"
+msgstr "occupation"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:84
+#~ msgid "Occupation"
+#~ msgstr "occupation"
+
+#: src/pages/user/profile/ProfilePage.tsx:85
 msgid "operation_failure_text"
-msgstr "L'opération a échoué. Veuillez réessayer, en vous assurant d'utiliser les bonnes données."
+msgstr "operation_failure_text"
 
-#: src/pages/user/profile/ProfilePage.tsx:80
+#: src/pages/user/profile/ProfilePage.tsx:85
+#~ msgid "Operation_failure_text"
+#~ msgstr "L'opération a échoué. Veuillez réessayer, en vous assurant d'utiliser les bonnes données."
+
+#: src/pages/user/profile/ProfilePage.tsx:86
 msgid "operation_failure_title"
-msgstr "Assia!"
+msgstr "operation_failure_title"
 
-#: src/pages/user/profile/ProfilePage.tsx:67
+#: src/pages/user/profile/ProfilePage.tsx:86
+#~ msgid "Operation_failure_title"
+#~ msgstr "Assia!"
+
+#: src/pages/user/profile/ProfilePage.tsx:73
 msgid "operation_success_text"
-msgstr "Your request was processed correctly!"
+msgstr "operation_success_text"
 
-#: src/pages/user/profile/ProfilePage.tsx:68
+#: src/pages/user/profile/ProfilePage.tsx:73
+#~ msgid "Operation_success_text"
+#~ msgstr "Your request was processed correctly!"
+
+#: src/pages/user/profile/ProfilePage.tsx:74
 msgid "operation_success_title"
-msgstr "Operation Successful!"
+msgstr "operation_success_title"
+
+#: src/pages/user/profile/ProfilePage.tsx:74
+#~ msgid "Operation_success_title"
+#~ msgstr "Operation Successful!"
 
 #: src/pages/user/profile/UserCredentials.tsx:26
 msgid "password_form_label"
-msgstr "Password"
+msgstr "password_form_label"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:194
+#: src/pages/user/profile/UserCredentials.tsx:26
+#~ msgid "Password_form_label"
+#~ msgstr "Password"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:187
 msgid "preliminary_build_tree_questions_title"
-msgstr "Please answer the couple of questions below to better build the family tree form"
+msgstr "preliminary_build_tree_questions_title"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:187
+#~ msgid "Preliminary_build_tree_questions_title"
+#~ msgstr "Please answer the couple of questions below to better build the family tree form"
+
+#: src/components/common/forms/stepform/StepForm.tsx:35
+msgid "prev"
+msgstr "prev"
+
+#: src/components/common/forms/stepform/StepForm.tsx:35
+#~ msgid "Prev"
+#~ msgstr "prev"
 
 #: src/components/common/navbars/TopNav.tsx:58
 msgid "Profile"
@@ -251,60 +658,166 @@ msgstr "Profile"
 
 #: src/pages/user/profile/UserCredentials.tsx:43
 msgid "profile_management_label"
-msgstr "Profile Management"
+msgstr "profile_management_label"
 
-#: src/pages/user/profile/ProfilePage.tsx:121
+#: src/pages/user/profile/UserCredentials.tsx:43
+#~ msgid "Profile_management_label"
+#~ msgstr "Profile Management"
+
+#: src/pages/user/profile/ProfilePage.tsx:129
 msgid "profile_not_found"
-msgstr "Profile Not Found"
+msgstr "profile_not_found"
 
-#: src/pages/user/profile/ProfilePage.tsx:86
+#: src/pages/user/profile/ProfilePage.tsx:129
+#~ msgid "Profile_not_found"
+#~ msgstr "Profile Not Found"
+
+#: src/pages/user/profile/ProfilePage.tsx:92
 msgid "profile_page_subtitle"
-msgstr "On this page, you can find general information related to your profile."
+msgstr "profile_page_subtitle"
 
-#: src/pages/user/profile/ProfilePage.tsx:86
+#: src/pages/user/profile/ProfilePage.tsx:92
+#~ msgid "Profile_page_subtitle"
+#~ msgstr "On this page, you can find general information related to your profile."
+
+#: src/pages/user/profile/ProfilePage.tsx:92
 msgid "profile_page_title {0}"
-msgstr "Welcome {0}"
+msgstr "profile_page_title {0}"
+
+#: src/pages/user/profile/ProfilePage.tsx:92
+#~ msgid "Profile_page_title {0}"
+#~ msgstr "Welcome {0}"
 
 #: src/pages/user/profile/UserCredentials.tsx:28
 msgid "repeat_new_password_form_label"
-msgstr "Confirmez le Nouveau mot de passe"
+msgstr "repeat_new_password_form_label"
 
-#: src/components/common/dropdowns/BaseDropdown.tsx:24
+#: src/pages/user/profile/UserCredentials.tsx:28
+#~ msgid "Repeat_new_password_form_label"
+#~ msgstr "Confirmez le Nouveau mot de passe"
+
+#: src/components/common/dropdowns/BaseDropdown.tsx:28
 msgid "select"
-msgstr "Select"
+msgstr "select"
+
+#: src/components/common/dropdowns/BaseDropdown.tsx:28
+#~ msgid "Select"
+#~ msgstr "Select"
 
 #: src/components/common/menus/UserMenu.jsx:19
 msgid "settings"
 msgstr "settings"
 
+#: src/components/common/menus/UserMenu.jsx:19
+#~ msgid "Settings"
+#~ msgstr "settings"
+
 #: src/pages/tree/create/genealogy/GenealogyContainer.tsx:10
-msgid "story_mode_tree_intro"
-msgstr "Please answer these few questions and I will write your genealogy for you."
+#~ msgid "Story_mode_tree_intro"
+#~ msgstr "Please answer these few questions and I will write your genealogy for you."
 
-#: src/components/common/forms/FormFieldsGenerator.tsx:48
+#: src/components/common/forms/FormFieldsGenerator.tsx:49
 msgid "submit"
-msgstr "Submit"
+msgstr "submit"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:208
+#: src/components/common/forms/FormFieldsGenerator.tsx:49
+#~ msgid "Submit"
+#~ msgstr "Submit"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:201
 msgid "tell_me_more_about_your_family_title"
-msgstr "Tell me more about your family"
+msgstr "tell_me_more_about_your_family_title"
 
-#: src/pages/user/profile/ProfilePage.tsx:90
+#: src/pages/tree/create/charting/ChartingForm.tsx:201
+#~ msgid "Tell_me_more_about_your_family_title"
+#~ msgstr "Tell me more about your family"
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:11
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:15
+msgid "tree_dashboard_lists_title"
+msgstr "tree_dashboard_lists_title"
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:11
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:15
+#~ msgid "Tree_dashboard_lists_title"
+#~ msgstr "My existing family trees"
+
+#: src/pages/tree/create/charting/ChartingContainer.tsx:10
+msgid "tree_dashboard_page_subtitle"
+msgstr "tree_dashboard_page_subtitle"
+
+#: src/pages/tree/create/charting/ChartingContainer.tsx:10
+#~ msgid "Tree_dashboard_page_subtitle"
+#~ msgstr "your starting point for everything related to managing your family trees"
+
+#: src/pages/tree/create/charting/ChartingContainer.tsx:10
+msgid "tree_dashboard_page_title"
+msgstr "tree_dashboard_page_title"
+
+#: src/pages/tree/create/charting/ChartingContainer.tsx:10
+#~ msgid "Tree_dashboard_page_title"
+#~ msgstr "tree_dashboard_page_title"
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:9
+msgid "tree_dashboard_subtitle"
+msgstr "tree_dashboard_subtitle"
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:9
+#~ msgid "Tree_dashboard_subtitle"
+#~ msgstr "your starting point for everything related to managing your family trees"
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:9
+msgid "tree_dashboard_title"
+msgstr "tree_dashboard_title"
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:9
+#~ msgid "Tree_dashboard_title"
+#~ msgstr "Family trees"
+
+#: src/pages/user/profile/ProfilePage.tsx:96
 msgid "tree_management_label"
-msgstr "Family Trees Management"
+msgstr "tree_management_label"
 
-#: src/components/common/navbars/TopNav.tsx:69
+#: src/pages/user/profile/ProfilePage.tsx:96
+#~ msgid "Tree_management_label"
+#~ msgstr "Family Trees Management"
+
+#: src/components/common/navbars/TopNav.tsx:71
 msgid "Trees"
 msgstr "Trees"
 
-#: src/pages/tree/create/charting/ChartingForm.tsx:198
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:123
+msgid "whos_next?"
+msgstr "whos_next?"
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:122
+#~ msgid "Whos_next?"
+#~ msgstr "Add a step for"
+
+#: src/pages/tree/layout/TreeNode.tsx:61
+msgid "years_old"
+msgstr "years_old"
+
+#: src/pages/tree/layout/TreeNode.tsx:61
+#~ msgid "Years_old"
+#~ msgstr "years_old"
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:191
 msgid "yes"
 msgstr "yes"
 
+#: src/pages/tree/create/charting/ChartingForm.tsx:191
+#~ msgid "Yes"
+#~ msgstr "yes"
+
 #: src/components/user/Profile.tsx:37
-#~ msgid "your_families_title"
+#~ msgid "Your_families_title"
 #~ msgstr "Manage your families"
 
-#: src/pages/user/profile/ProfilePage.tsx:94
+#: src/pages/user/profile/ProfilePage.tsx:100
 msgid "your_tree_title"
-msgstr "Checkout your Tree"
+msgstr "your_tree_title"
+
+#: src/pages/user/profile/ProfilePage.tsx:100
+#~ msgid "Your_tree_title"
+#~ msgstr "Checkout your Tree"

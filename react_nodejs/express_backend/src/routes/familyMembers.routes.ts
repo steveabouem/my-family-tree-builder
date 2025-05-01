@@ -2,6 +2,8 @@ import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import FamilyMemberController from "../controllers/familyMember/FamilyMemberController";
+import { DFamilyMemberDTO } from "../controllers/familyMember/familyMember.definitions";
+import RequestHelper from "./RequestHelper";
 
 const router = Router();
 
@@ -11,7 +13,6 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   const maxAge = req?.session?.cookie?.expires?.getTime() || 0;
   const now = new Date().getTime();
   const canProceed = maxAge > now;
-  console.log({canProceed, maxAge});
   
   if (canProceed) {
     ftAuthMiddleware.verifyIp(ip)
@@ -46,7 +47,7 @@ familyMember.getList();
 
 router.post('/create', (req: Request, res: Response) /**TODO: return type */ => {
  const familyMember = new FamilyMemberController();
- familyMember.create(req, res);
+ return familyMember;
 });
 
 // router.post('/delete', (req: Request, res: Response) /**TODO: return type */ => {

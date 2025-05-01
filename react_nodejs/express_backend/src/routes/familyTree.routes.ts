@@ -5,6 +5,7 @@ import logger from "../utils/logger";
 import FamilyTree from "../models/FamilyTree";
 import { DEndpointResponse, DRequestPayload } from "../controllers/controllers.definitions";
 import RequestHelper from "./RequestHelper";
+import FamilyMemberController from "../controllers/familyMember/FamilyMemberController";
 
 const router = Router();
 
@@ -29,9 +30,6 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   next();
 })
 
-// ! -TOFIX: override Request type with something more precise 
-// Ideally make a base route handlers class that will accept generics in request 
-// and return appropriate types...maybe generics as well ?
 router.get('/index', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   const helper = new RequestHelper(req, res);
@@ -44,30 +42,31 @@ router.get('/details', (req: Request, res: Response) => {
   helper.sendResponseFromControllerMethod(familyTreeController.getOne, 'Get tree details');
 });
 
-router.post('/create', (req: Request, res: Response) /**TODO: return type */ => {
+router.post('/create', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   const helper = new RequestHelper(req, res);
   helper.sendResponseFromControllerMethod(familyTreeController.create, 'Create family tree');
 });
 
-router.post('/delete', (req: Request, res: Response) /**TODO: return type */ => {
+router.post('/delete', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   const helper = new RequestHelper(req, res);
   helper.sendResponseFromControllerMethod(familyTreeController.delete, 'Delete tree');
 });
 
-router.get('/members', (req: Request, res: Response) /**TODO: return type */ => {
+router.get('/members', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   const helper = new RequestHelper(req, res);
   helper.sendResponseFromControllerMethod(familyTreeController.getMembers, 'Get tree members');
 });
 
-router.put('/members', (req: Request, res: Response) /**TODO: return type */ => {
+router.put('/members', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
-  familyTreeController.addFamilyUnit(req, res);
+  const helper = new RequestHelper(req, res);
+  helper.sendResponseFromControllerMethod(familyTreeController.update, 'Update tree records');
 });
 
-router.get('/layouts', (req: Request, res: Response) /**TODO: return type */ => {
+router.get('/layouts', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   familyTreeController.getTreeLayout(req, res);
 });

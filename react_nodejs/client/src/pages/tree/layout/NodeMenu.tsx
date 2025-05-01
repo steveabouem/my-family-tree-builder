@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material'
 import { Trans } from '@lingui/macro';
+import GlobalContext from 'contexts/creators/global';
+import { DReactFlowNode } from '@services/api.definitions';
 
-const NodeMenu = ({ data }: { data: Node }) => {
+const NodeMenu = ({ data }: { data: Pick<DReactFlowNode, 'data'> }) => {
   const [selectedAction, setSelectedAction] = useState<'edit' | 'delete' | 'expand'>("expand");
+  const {updateModal, modal} = useContext(GlobalContext);
+
+  function selectOption(e: any) {
+    setSelectedAction(e.target.value);
+    updateModal({...modal, transferData: e.target.value});
+  }
 
   return (
     <Box display="flex" flexDirection="column" alignItems="start" gap={2}>
@@ -14,7 +22,7 @@ const NodeMenu = ({ data }: { data: Node }) => {
           value={selectedAction}
         >
           <FormControlLabel
-            value="female" control={<Radio />}
+            value="edit_node" control={<Radio size='small' onClick={selectOption} />}
             label={
               <Typography variant='body1'
                 fontWeight="bold">
@@ -22,17 +30,17 @@ const NodeMenu = ({ data }: { data: Node }) => {
               </Typography>
             }
           />
-          <FormControlLabel
-            value="female" control={<Radio />}
+          {/* <FormControlLabel
+            value="add_node_relative" control={<Radio size='small' onClick={selectOption} />}
             label={
               <Typography variant='body1'
                 fontWeight="bold">
                 <Trans>add_node_relative</Trans>
               </Typography>
             }
-          />
+          /> */}
           <FormControlLabel
-            value="female" control={<Radio />}
+            value="delete" control={<Radio size='small' onClick={selectOption} />}
             label={
               <Typography variant='body1'
                 fontWeight="bold">

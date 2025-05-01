@@ -3,36 +3,35 @@ import {
   Background,
   ReactFlow,
   addEdge,
-  ConnectionLineType,
-  Panel,
   useNodesState,
   useEdgesState,
   Controls,
-  NodeChange,
-  OnNodesChange,
-  Node,
-  NodeMouseHandler,
 } from '@xyflow/react';
-import { Box, Button } from '@mui/material';
+import { useFormikContext } from 'formik';
+import { Trans } from '@lingui/macro';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
 import { DFamilyTreeDTO } from '@services/api.definitions';
 import { DReactFlowEdge, DReactFlowNode } from '../definitions';
-import FamilyTreeService from 'services/familyTree/familyTree.service';
 import { useZDispatch } from 'app/hooks';
-import { populateTreeAction } from 'app/slices/trees';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
-import { Trans } from '@lingui/macro';
+import { loadStepFormFieldsAction, setStepsCountAction, updateGlobalValuesAction } from 'app/slices/forms/stepForm';
+import abstractLogo from 'utils/assets/images/abstract_logo.png';
 
 const nodeTypes = {
   custom: CustomNode,
+};
+enum nodeMenuActions {
+  edit = 'edit_node',
+  add = 'add_node_relative',
+  delete = 'delete',
 };
 
 const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   const [nodesList, setNodesList] = useNodesState<any>([]);
   const [edgesList, setEdgesList] = useEdgesState<any>([]);
-  const [showNodeMenu, setShowNodeMenu] = useState<boolean>(false);
+  const { setValues } = useFormikContext<any>();
   const { updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
 
@@ -41,31 +40,59 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
       generateNodesAndEdges();
   }, [tree]);
 
-  function showEditModal(event: any, node: any) {
+  function populateFormWithNodeValues(node: DReactFlowNode) {
+    console.log('Populate form with current values ', node);
+    
+    setValues({
+      anchor_first_name: node?.first_name || '',
+      anchor_last_name: node?.last_name || '',
+      anchor_occupation: node?.occupation || '',
+      anchor_dob: node?.dob || '',
+      anchor_dod: node?.dod || '',
+      anchor_email: node?.email || '',
+      anchor_description: node?.description || '',
+      anchor_gender: node.gender,
+      anchor_marital_status: node.marital_status,
+      anchor_node_id: node.node_id,
+      parents: JSON.parse(node?.parents || ''),
+      siblings: JSON.parse(node?.siblings || ''),
+      spouses: JSON.parse(node?.spouses || ''),
+      children: JSON.parse(node?.children || ''),
+    });
+  }
+  function showEditModal(event: any, node: DReactFlowNode) {
     console.log({ node });
+    updateModal({
+      hidden: false,
+      buttons: {
+        cancel: true,
+        confirm: true
+      },
+      title: <Trans>choose_node_action_title {node.first_name}</Trans>,
+      onConfirm: (transferData: string) => {
+        switch (transferData) {
+          case nodeMenuActions.edit:
+            dispatch(updateGlobalValuesAction({ values: {} }));
+            populateFormWithNodeValues(node);
+            dispatch(setStepsCountAction(1));
+            break;
+          case nodeMenuActions.add:
 
-    setTimeout(() => {
-      if (updateModal)
-        updateModal({
-          hidden: false,
-          buttons: {
-            cancel: true,
-            confirm: true
-          },
-          title: <Trans>choose_node_action_title</Trans>,
-          onCancel: () => {
-            setShowNodeMenu(false);
-          },
-          content: <NodeMenu data={node} />,
-        });
-    }, 500);
+            break;
+          case nodeMenuActions.delete:
+
+            break;
+        }
+      },
+      content: <NodeMenu data={node} />,
+    });
   }
   function generateNodesAndEdges() {
     const incomingNodes: any = Object.values(tree);
     const incomingEdges = incomingNodes.reduce((listOfEdges: any, node: any) => {
       // const duplicate = listOfEdges.find((e:any) => e.id === node)
       console.log('the connections: ', node?.data?.connections);
-      
+
       if (node?.data?.connections?.length) {
         return [...listOfEdges.flat(), node.data?.connections?.flat() || []];
       } else {
@@ -75,12 +102,9 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
     console.log({ incomingEdges });
 
     setNodesList(incomingNodes);
-    setTimeout(() => {
-      incomingEdges.forEach((e: any) => {
-        e.targetHandle = "top"
-        setEdgesList((eds) => addEdge(e, edgesList));
-      })
-    }, 2000);
+    // incomingEdges.forEach((e: any) => {
+    //   setEdgesList((eds) => addEdge(e, edgesList));
+    // });
   }
   function generateEdge(newEdge: any) {
     console.log({ newEdges: newEdge });
@@ -94,9 +118,6 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   /*
   * Debouncing these, because otherwise it might blow up, especially if we implement group selection
   */
-  function changeNodeContent(c: any) {
-    console.log('changeNodeContent', c);
-  }
   function moveNode(action: any): void {
     setTimeout(() => {
       const nodeUpdate = action?.[0];
@@ -122,10 +143,17 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   return (
     <ReactFlow
       nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes}
-      onNodeClick={showEditModal} onNodesChange={moveNode}
+      onNodeClick={showEditModal} onNodesChange={moveNode} fitView={true}
     // onConnect={generateEdge} onEdgesChange={generateEdge}      
     >
-      <Background />
+      <Background style={{
+        backgroundSize: '100% 100%',
+        backgroundBlendMode: 'overlay',
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: '#fff6f6c9',
+        backgroundImage: `url(${abstractLogo})`,
+        borderRadius: '5px'
+      }} />
       <Controls />
     </ReactFlow>
   );
