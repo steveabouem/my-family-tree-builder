@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import FamilyMember from "../../models/FamilyMember";
-import { DFamilyMemberDAO, DFamilyMemberDTO } from "./familyMember.definitions";
+import { DFamilyMemberArrayKeys, DFamilyMemberDAO, DFamilyMemberDTO } from "./familyMember.definitions";
 import logger from "../../utils/logger";
 
 class FamilyMemberController extends BaseController<any> {
@@ -104,7 +104,7 @@ class FamilyMemberController extends BaseController<any> {
     const siblings = data?.siblings || [];
     const spouses = data?.spouses || [];
     const parents = data?.parents || [];
-
+    logger.info('Received info to generate record ', data);
     data.age = today.diff(dayjs(data.dob), 'years');
     children?.forEach((c: any) => {
       c.age = today.diff(dayjs(c.dob), 'years');
@@ -130,20 +130,32 @@ class FamilyMemberController extends BaseController<any> {
     * since we're using a step form, we don't have to worry about drilling through the array.
     * every member's info is at the first level of the array. The repetition is necessary for the ui library responsible for rendering the tree
     */
-    //  TODO: avoid duplicate, this function will also be used to update existing records
-    const newMemberGroup = await FamilyMember.bulkCreate(payload.map((m: DFamilyMemberDAO) => ({
-      ...m,
-      description: m?.description || '',
-      user_id: m?.userId || 0,
-      created_by: 1,
-      parents: JSON.stringify(m.parents),
-      siblings: JSON.stringify(m.siblings),
-      children: JSON.stringify(m.children),
-    })))
-      .catch((e: unknown) => {
-        logger.error('Unable to bulk create members, unknown error ', e);
-      });
+    //  TODO: avoid duplicate
+    const newMemberGroup: FamilyMember[] = [];
+    // ? for of are usually best for async
+    for (const m of payload) {
+      const duplicateRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: m.node_id } } });
 
+      if (!duplicateRecord?.dataValues) {
+        const addedRecord = await FamilyMember.create({
+          ...m,
+          description: m?.description || '',
+          user_id: m?.userId || 0,
+          created_by: 1,
+          parents: JSON.stringify(m.parents),
+          spouses: JSON.stringify(m.spouses),
+          siblings: JSON.stringify(m.siblings),
+          children: JSON.stringify(m.children),
+        })
+          .catch((e: unknown) => {
+            logger.error('Failed adding new record ', e);
+          });
+
+        if (addedRecord)
+          newMemberGroup.push(addedRecord);
+      }
+    };
+ 
     if (!!newMemberGroup) {
       logger.info('All new members created: ', { newMemberGroup });
       const newMembersMap = newMemberGroup.reduce((map: { [nodeId: string]: FamilyMember }, currentMember: FamilyMember) => {
@@ -163,126 +175,62 @@ class FamilyMemberController extends BaseController<any> {
   * returns a hashmap of the records keyed to their ids, for all members and their respective  connections
   */
   private async getMembersFromUpdateAction(data: DFamilyMemberDAO, userId: number): Promise<{ [id: string]: DFamilyMemberDAO } | null> {
-    const childrenNodeIds = data?.children?.map((c: DFamilyMemberDAO) => c.node_id) || [];
-    const siblingsNodeIds = data?.siblings?.map((s: DFamilyMemberDAO) => s.node_id) || [];
-    const spousesNodeIds = data?.spouses?.map((s: DFamilyMemberDAO) => s.node_id) || [];
-    const parentsNodeIds = data?.parents?.map((p: DFamilyMemberDAO) => p.node_id) || [];
-    const matchingRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: data.node_id } } })
-      .catch((e: unknown) => {
-        logger.error('Forward error to base: ', e);
-      });
+    const matchingRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: data.node_id } } });
+    const kinshipMapping: { relation: DFamilyMemberArrayKeys, inverseRelation: DFamilyMemberArrayKeys, }[] = [
+      { relation: 'children', inverseRelation: 'parents' }, { relation: 'siblings', inverseRelation: 'siblings' },
+      { relation: 'parents', inverseRelation: 'children' }, { relation: 'spouses', inverseRelation: 'spouses' }
+    ];
+    let updatedRecord: FamilyMember | void;
 
     if (matchingRecord?.dataValues) {
-      let payload = {};
-      logger.info('Found matching family member: ', matchingRecord);
-      //  TODO: avoid duplicate, this function will also be used to update existing records
+      let unsavedfamilyMembers: any = [];
+      let payload: any = {};
+      logger.info('Found matching family member: ', matchingRecord.dataValues);
       /*
-      * Create records for any additional children
+      * Create records for any additional kin (children, siblings, parents, spouses)
       */
-      if (data?.children?.length) {
-        const existingChildren = await FamilyMember.findAll({ where: { node_id: { [Op.in]: childrenNodeIds } } })
-          .catch((e: unknown) => {
-            logger.error('Failed to lookup duplicate children', e);
+      for (const { relation, inverseRelation } of kinshipMapping) {
+        // ? Go through each type of relation
+        const nodeIdsForKinshipType = data?.[relation]?.map((c: DFamilyMemberDAO) => c.node_id) || [];
+
+        if (data?.[relation]?.length) {
+          // ? If the current relation type has a family member associtated to it, check for duplicates then create records for non duplicates
+          const existingRecords = await FamilyMember.findAll({ where: { node_id: { [Op.in]: nodeIdsForKinshipType } } });
+          const nodeIdsForExistingRecords = existingRecords?.map((r: FamilyMember) => r.node_id);
+          // ? non duplicates 
+          const unsavedRecords = data[relation].filter((member: DFamilyMemberDAO) => !nodeIdsForExistingRecords?.includes(member.node_id));
+          unsavedfamilyMembers = [...unsavedfamilyMembers, ...unsavedRecords];
+          logger.info('List of records to be added after check: ', { unsavedRecords, existingRecords });
+
+          await Promise.all(
+            // ? create records for non duplicates
+            unsavedRecords.map(async (c: DFamilyMemberDAO) => {
+              try {
+                // ? include current related member into the correct kinship array, then update the current record witht that info
+                const savedRecord = await this.getMembersFromCreateAction({ ...c, [inverseRelation]: [data] }, userId);
+                payload = { ...payload, ...savedRecord };
+                logger.info('Payload after ', { newRecord: savedRecord, payload });
+              } catch (error) {
+                logger.error('Update for unsaved records failed ', error);
+              }
+            })
+          );
+
+          // ? update the matching record and add the new memebers to the matching kinship array
+          updatedRecord = await matchingRecord.update({
+            ...matchingRecord.dataValues,
+            [relation]: JSON.stringify([...unsavedRecords, ...existingRecords || []])
           });
-        const existingChildrenNodeIds = existingChildren?.map((c: FamilyMember) => c.node_id);
-        const newChildren = data.children.filter((c: DFamilyMemberDAO) => !existingChildrenNodeIds?.includes(c.node_id));
-        logger.info('List of children to be added after check: ', { newChildren, existingChildren });
-
-        newChildren.forEach(async (c: DFamilyMemberDAO) => {
-          const childreRecords = await this.getMembersFromCreateAction(c, userId)
-            .catch((e: unknown) => {
-              logger.error('Update for childreRecords failed ', e);
-            });
-          payload = { ...payload, ...childreRecords };
-          logger.info('Payload after ', childreRecords);
-        });
-        await matchingRecord.update({
-          ...matchingRecord.dataValues,
-          children: JSON.stringify([...newChildren, ...existingChildren || []])
-        })
-          .catch((e: unknown) => {
-            logger.error('Failed to update record with new children ', e);
-          });
-        logger.info('Resulting list of new children: ', newChildren);
-      }
-
-      if (data?.siblings?.length) {
-        const existingSiblings = await FamilyMember.findAll({ where: { node_id: { [Op.in]: siblingsNodeIds } } })
-          .catch((e: unknown) => {
-            logger.error('Failed to lookup duplicate siblings', e);
-          });
-
-        const existingSiblingsNodeIds = existingSiblings?.map((s: FamilyMember) => s.node_id);
-        const newSiblings = data.siblings.filter((s: DFamilyMemberDAO) => !existingSiblingsNodeIds?.includes(s.node_id));
-        logger.info('List of siblings to be added after check: ', { newSiblings, existingSiblings });
-
-        newSiblings.forEach(async (s: DFamilyMemberDAO) => {
-          const siblingRecords = await this.getMembersFromCreateAction(s, userId);
-          payload = { ...payload, ...siblingRecords };
-          logger.info('Payload after ', siblingRecords);
-        });
-        await matchingRecord.update({
-          ...matchingRecord.dataValues,
-          siblings: JSON.stringify([...newSiblings, ...existingSiblings || []])
-        })
-          .catch((e: unknown) => {
-            logger.error('Failed to update record with new children ', e);
-          });
-        logger.info('Resulting list of new siblings: ', newSiblings);
-      }
-
-      if (data?.spouses?.length) {
-        const existingSpouses = await FamilyMember.findAll({ where: { node_id: { [Op.in]: spousesNodeIds } } })
-          .catch((e: unknown) => {
-            logger.error('Failed to lookup duplicate spouses', e);
-          });
-
-        const existingSpousesNodeIds = existingSpouses?.map((s: FamilyMember) => s.node_id);
-        const newSpouses = data.spouses.filter((s: DFamilyMemberDAO) => !existingSpousesNodeIds?.includes(s.node_id));
-        logger.info('List of spouses to be added after check: ', { newSpouses, existingSpouses });
-
-        newSpouses.forEach(async (s: DFamilyMemberDAO) => {
-          const spouseRecords = await this.getMembersFromCreateAction(s, userId);
-          payload = { ...payload, ...spouseRecords };
-          logger.info('Payload after ', spouseRecords);
-        });
-        await matchingRecord.update({
-          ...matchingRecord.dataValues,
-          spouses: JSON.stringify([...newSpouses, ...existingSpouses || []])
-        })
-          .catch((e: unknown) => {
-            logger.error('Failed to update record with new children ', e);
-          });
-        logger.info('Resulting list of new spouses: ', newSpouses);
-      }
-
-      if (data?.parents?.length) {
-        const existingParents = await FamilyMember.findAll({ where: { node_id: { [Op.in]: parentsNodeIds } } })
-          .catch((e: unknown) => {
-            logger.error('Failed to lookup duplicate parents', e);
-          });
-
-        const existingParentsNodeIds = existingParents?.map((p: FamilyMember) => p.node_id);
-        const newParents = data.parents.filter((p: DFamilyMemberDAO) => !existingParentsNodeIds?.includes(p.node_id));
-        logger.info('List of parents to be added after check: ', { newParents, existingParents });
-
-        newParents.forEach(async (p: DFamilyMemberDAO) => {
-          const parentRecords = await this.getMembersFromCreateAction(p, userId);
-          payload = { ...payload, ...parentRecords };
-          logger.info('Payload after ', parentRecords);
-        });
-        await matchingRecord.update({
-          ...matchingRecord.dataValues,
-          parents: JSON.stringify([...newParents, ...existingParents || []])
-        })
-          .catch((e: unknown) => {
-            logger.error('Failed to update record with new children ', e);
-          });
-        logger.info('Resulting list of new parents: ', newParents);
+          logger.info('Resulting list of new records: ', { unsavedRecords, updatedRecord });
+          if (updatedRecord?.id) {
+            // ? add the updated record to the mapping of family members in order to return it to the route handler
+            payload[updatedRecord.id] = updatedRecord;
+          }
+        }
       }
       logger.info('Final payload ', { ...payload });
 
-      return { ...payload, [matchingRecord.id]: matchingRecord };
+      return payload;
     } else {
       logger.error('No record matches the member to update ', data);
     }

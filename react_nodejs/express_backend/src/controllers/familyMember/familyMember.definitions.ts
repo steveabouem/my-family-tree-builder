@@ -82,3 +82,5 @@ export interface DFamilyTreeNodeDTO {
         type: "blood"
     }[];
 }
+
+export type DFamilyMemberArrayKeys  = keyof Pick<DFamilyMemberDAO, 'children' | 'parents' | 'siblings' | 'spouses'>;
