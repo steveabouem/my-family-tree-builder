@@ -1,0 +1,54 @@
+{
+  "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v10/terminal-keeper.json",
+  "theme": "tribe",
+  "active": "default",
+  "activateOnStartup": true,
+  "keepExistingTerminals": false,
+  "sessions": {
+    "default": [
+      {
+        "name": "React-Express",
+        "autoExecuteCommands": true,
+        "icon": "folder-opened",
+        "color": "terminal.ansiWhite",
+        "commands": [
+          "echo hello"
+        ]
+      },
+      [
+        {
+          "name": "Front",
+          "icon": "vm-active",
+          "color": "terminal.ansiBrightCyan",
+          "commands": [
+            "family && cd react_nodejs/client && yarn start \n"
+          ]
+        },
+        {
+          "name": "Back",
+          "icon": "hubot",
+          "color": "terminal.ansiBrightYellow",
+          "commands": [
+            "family && cd react_nodejs/express_backend && yarn dev \n"
+          ]
+        },
+        {
+          "name": "DB",
+          "icon": "menu",
+          "color": "terminal.ansiBrightMagenta",
+          "commands": [
+            "mysql -u root -p \n"
+          ]
+        }
+      ]
+    ],
+    "saved-session": [
+      {
+        "name": "connect",
+        "commands": [
+          ""
+        ]
+      }
+    ]
+  }
+}

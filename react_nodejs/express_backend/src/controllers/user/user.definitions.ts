@@ -1,4 +1,4 @@
-export interface DUserSimplifiedDTO {
+export interface APIUserSimplifiedDTO {
     first_name: string;
     last_name: string;
     email: string;
@@ -9,7 +9,7 @@ export interface DUserSimplifiedDTO {
     ip_authority: number;
 }
 
-export interface DUserDTO {
+export interface APIUserDTO {
     first_name: string,
     last_name: string,
     dob: string,

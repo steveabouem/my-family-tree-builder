@@ -2,9 +2,9 @@ import { Router, Request, Response, NextFunction } from "express";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import logger from "../utils/logger";
 import AuthController from "../controllers/auth/AuthController";
-import { DEndpointResponse, DRequestPayload } from "../controllers/controllers.definitions";
-import { DUserDTO } from "../middleware-classes/user/user..definitions";
-import { DLoginResponse, DRegistrationResponse } from "../controllers/auth/auth.definitions";
+import { APIEndpointResponse, APIRequestPayload } from "../controllers/controllers.definitions";
+import { APIUserDTO } from "../middleware-classes/user/user..definitions";
+import { APILoginResponse, APIRegistrationResponse } from "../controllers/auth/auth.definitions";
 import RequestHelper from "./RequestHelper";
 
 

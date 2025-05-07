@@ -1,5 +1,5 @@
 import { Sequelize, QueryTypes } from 'sequelize';
-import { DTableJoin } from '../../controllers/controllers.definitions';
+import { APITableJoin } from '../../controllers/controllers.definitions';
 import bcrypt from "bcryptjs";
 import db from '../../db';
 import winston from 'winston';
@@ -32,7 +32,7 @@ export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlew
     return results[0];
   }
 
-  async getList(columns?: string[], incomingWhere?: string, incomingJoins?: DTableJoin[], incomingLimit?: number): Promise<any> {
+  async getList(columns?: string[], incomingWhere?: string, incomingJoins?: APITableJoin[], incomingLimit?: number): Promise<any> {
     let joins = '';
     let where = '';
     let limit = '';
@@ -45,7 +45,7 @@ export class BaseMiddleware<T> {// NO MATHING MODEL, base fof all of our middlew
       selector = columns?.join(', ');
     }
     if (joins) {
-      joins = incomingJoins?.reduce((joinStatement: string, currentJoin: DTableJoin) => {
+      joins = incomingJoins?.reduce((joinStatement: string, currentJoin: APITableJoin) => {
         return `${joinStatement} JOIN ${currentJoin.tableName} ON ${currentJoin.on}`
       }, joins) || '';
     }

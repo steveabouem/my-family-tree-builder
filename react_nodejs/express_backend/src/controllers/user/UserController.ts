@@ -1,17 +1,17 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes } from "sequelize";
 import BaseController from "../Base.controller";
-import { DUserSimplifiedDTO, DUserDTO } from "./user.definitions";
+import { APIUserSimplifiedDTO, APIUserDTO } from "./user.definitions";
 import User from "../../models/User";
 import logger from "../../utils/logger";
 import Role from "../../models/Role";
 
-class UserController extends BaseController<DUserSimplifiedDTO> {
+class UserController extends BaseController<APIUserSimplifiedDTO> {
   constructor() {
     super('Users');
   }
 
-  public async create(values: DUserDTO): Promise<Partial<DUserDTO> | null> {
+  public async create(values: APIUserDTO): Promise<Partial<APIUserDTO> | null> {
     const hashedPassword = bcrypt.hashSync(values.password, this.salt);
     const defaultUserRole = await Role.findOne({ where: { name: 'user' } });
     if (defaultUserRole) {
@@ -83,7 +83,7 @@ class UserController extends BaseController<DUserSimplifiedDTO> {
   }
   // ! -TOFIX: no any
   public async getExtendedFamiliesDetails(id: number): Promise<any> {
-    const currentUser: DUserDTO = await this.getUserData(id)
+    const currentUser: APIUserDTO = await this.getUserData(id)
       .catch((e) => {
         // ! -TOFIX: logging
         console.log('ERROR', e);
@@ -139,7 +139,7 @@ class UserController extends BaseController<DUserSimplifiedDTO> {
     return completed;
   }
 
-  private validateUserFields(values: DUserDTO): boolean {
+  private validateUserFields(values: APIUserDTO): boolean {
     console.log('RECEIVED VALUES: ', values);
 
     if (!values.dob) {

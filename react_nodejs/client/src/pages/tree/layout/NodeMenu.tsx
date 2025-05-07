@@ -30,15 +30,6 @@ const NodeMenu = ({ data }: { data: Pick<DReactFlowNode, 'data'> }) => {
               </Typography>
             }
           />
-          {/* <FormControlLabel
-            value="add_node_relative" control={<Radio size='small' onClick={selectOption} />}
-            label={
-              <Typography variant='body1'
-                fontWeight="bold">
-                <Trans>add_node_relative</Trans>
-              </Typography>
-            }
-          /> */}
           <FormControlLabel
             value="delete" control={<Radio size='small' onClick={selectOption} />}
             label={

@@ -1,19 +1,20 @@
-import { DEndpointResponse } from "../controllers.definitions";
-import { DFamilyMemberDAO } from "../familyMember/familyMember.definitions";
+import { APIEndpointResponse } from "../controllers.definitions";
+import { APIFamilyMemberDAO } from "../familyMember/familyMember.definitions";
 /*
 * DAOs are typycally sent from front, and  expect the matching DTO in response
 */
 
 // DAOs
-export interface DFamilyTreeDAO {
-    members: {[stepName: string]: DFamilyMemberDAO};
+export interface APIFamilyTreeDAO {
+    members: {[stepName: string]: APIFamilyMemberDAO};
     userId: number;
     active?: boolean;
     treeName?: string;
+    treeId?: number;
 }
 
 //DTOs
-export interface DFamilyTreeDTO {
+export interface APIFamilyTreeDTO {
     public: number;
     name: string;
     authorized_ips: string;
@@ -25,23 +26,23 @@ export interface DFamilyTreeDTO {
     active: number;
 }
 
-export type DGetFamilyTreeResponse = DEndpointResponse & Partial<DFamilyTreeDTO> & {members?: {[nodeId: string]: DFamilyMemberDAO}};
+export type APIGetFamilyTreeResponse = APIEndpointResponse & Partial<APIFamilyTreeDTO> & {members?: {[nodeId: string]: APIFamilyMemberDAO}};
 export interface DSaveTreeFormStepResponse {
     lastStep: boolean;
-    newFields: DStepFormFieldDTO[];
+    newFields: APIStepFormFieldDTO[];
 };
 
-export type DStepFormFieldDTO = {
+export type APIStepFormFieldDTO = {
     fieldName: string;
     index: number;
     label: string;
 };
 
-export interface DReactFlowNode {
+export interface APIReactFlowNode {
     id: string;
     name: string;
-    children?: DFamilyMemberDAO[];
-    siblings?: DFamilyMemberDAO[];
-    spouses?: DFamilyMemberDAO[];
+    children?: APIFamilyMemberDAO[];
+    siblings?: APIFamilyMemberDAO[];
+    spouses?: APIFamilyMemberDAO[];
     type?: any;
 }

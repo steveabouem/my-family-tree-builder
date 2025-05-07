@@ -7,12 +7,12 @@ import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';
 import familyMemberHandler from './src/routes/familyMembers.routes';
 import sessionHandler from './src/routes/session.routes';
-import { DSessionUser } from './src/controllers/controllers.definitions';
+import { APISessionUser } from './src/controllers/controllers.definitions';
 
 declare module "express-session" {
   // see https://akoskm.com/how-to-use-express-session-with-custom-sessiondata-typescript
   interface SessionData {
-    details: Partial<DSessionUser>,
+    details: Partial<APISessionUser>,
     sessionId: string
   }
 }

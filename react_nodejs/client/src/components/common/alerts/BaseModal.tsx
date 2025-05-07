@@ -33,7 +33,6 @@ const BaseModal = ({ children, type = 'info' }: DModalProps): JSX.Element => {
   };
 
   const handleConfirm = () => {
-
     if (modal?.onConfirm) {
       modal.onConfirm(modal?.transferData);
     }

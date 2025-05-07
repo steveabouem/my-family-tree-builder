@@ -1,5 +1,5 @@
 import BaseController from "../Base.controller";
-import { DEndpointResponse, DSession, DSessionUser } from "../controllers.definitions";
+import { APIEndpointResponse, APISession, APISessionUser } from "../controllers.definitions";
 import logger from "../../utils/logger";
 import { Request, Response } from "express";
 import { QueryTypes } from "sequelize";
@@ -7,12 +7,12 @@ import { QueryTypes } from "sequelize";
 /** 
 // ?: Used to  manage session records, in case we dont use the default express-session (and session store)
 **/
-class SessionController extends BaseController<DSession> {
+class SessionController extends BaseController<APISession> {
     constructor() {
         super('sessions');
     }
 
-    public async getCurrent(req: Request, res: Response): Promise<DSession | null> {
+    public async getCurrent(req: Request, res: Response): Promise<APISession | null> {
         const response: any = { code: 500, authenticated: false, error: true };
         try {
             if (req.query?.id) {

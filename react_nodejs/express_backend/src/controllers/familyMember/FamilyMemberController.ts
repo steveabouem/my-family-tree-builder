@@ -3,8 +3,9 @@ import { Request, Response } from "express";
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import FamilyMember from "../../models/FamilyMember";
-import { DFamilyMemberArrayKeys, DFamilyMemberDAO, DFamilyMemberDTO } from "./familyMember.definitions";
+import { APIFamilyMemberArrayKeys, APIFamilyMemberDAO, APIFamilyMemberDTO } from "./familyMember.definitions";
 import logger from "../../utils/logger";
+import { APIFamilyTreeDAO } from "../familyTree/familyTree.definitions";
 
 class FamilyMemberController extends BaseController<any> {
   anchorKey: string;
@@ -22,8 +23,7 @@ class FamilyMemberController extends BaseController<any> {
   * as all the family members are created, crete a mirror obect if the incoming DAO, but this time with the DB ids.
   * return the resulting DAO
   */
-  public async createRecords(members: { [stepName: string]: DFamilyMemberDAO }, userId: number): Promise<{ [id: string]: DFamilyMemberDAO } | null> {
-    const today = dayjs();
+  public async createRecords(members: { [stepName: string]: APIFamilyMemberDAO }, userId: number): Promise<{ [id: string]: APIFamilyMemberDAO } | null> {
     let res: any = [];
     const anchor = members?.[this.anchorKey];
 
@@ -57,40 +57,34 @@ class FamilyMemberController extends BaseController<any> {
   }
 
   /*
-  * @request: {data: DFamilyMemberDTO[], treeId: number}
+  * @request: {data: APIFamilyMemberDTO[], treeId: number}
   * Receives an array of family members from the same, existing tree
   * Update their individual records in db
   * Update the tree's members value
   * Returns updated tree and members
   */
-  public async updateRecordAndRelations(req: Request, res: Response) {
+  public async updateRecordAndRelations(req: Request<{}, {}, APIFamilyTreeDAO, {}>, res: Response): Promise<{[key: string]: APIFamilyMemberDAO} | null> {
     // TODO: inactive trees should not allow this operation
-
     try {
-      let response = { error: true, code: 400 };
-      const data: DFamilyMemberDAO = req.body.data;
-      const nodeId = data.node_id;
-      const userId: number = req.body.userId;
-      const matchingMembers = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: nodeId } } })
-        .catch((e: unknown) => {
-          logger.info('forwarding error to Base controller method ', e);
-        });
-      logger.info('The matchingMembers results: ', matchingMembers);
+      /*
+      * The anchor is the initial step of the family tree step form,
+      * on which all the relations are based
+      */
+      const data = req.body.members?.anchor;
 
-      if (matchingMembers) {
-        logger.info('Found matching member: ', matchingMembers);
-        const payload = await this.getMembersFromUpdateAction(data, userId);
-        response.code = 200;
-        res.status(200);
-        return ({ ...response, ...payload });
+      if (data) {
+        const userId: number = req.body.userId;
+        const payload = await this.getMembersFromUpdateAction({ ...data, tree_id: req.body.treeId }, userId);
+
+        return payload;
       } else {
-        logger.info('No matching data found', data);
+        logger.error('No anchor provided for update ', req.body);
       }
-      return response;
     } catch (e: unknown) {
       logger.error('Forwarding error to base controller ', e);
     }
 
+    return null;
   }
 
   /*
@@ -98,7 +92,7 @@ class FamilyMemberController extends BaseController<any> {
   * @userId
   * returns a hashmap of the records keyed to their ids, for all members and their respective  connections
   */
-  private async getMembersFromCreateAction(data: DFamilyMemberDAO, userId: number): Promise<{ [id: string]: DFamilyMemberDAO } | null> {
+  private async getMembersFromCreateAction(data: APIFamilyMemberDAO, userId: number): Promise<{ [id: string]: APIFamilyMemberDAO } | null> {
     const today = dayjs();
     const children = data?.children || [];
     const siblings = data?.siblings || [];
@@ -130,7 +124,6 @@ class FamilyMemberController extends BaseController<any> {
     * since we're using a step form, we don't have to worry about drilling through the array.
     * every member's info is at the first level of the array. The repetition is necessary for the ui library responsible for rendering the tree
     */
-    //  TODO: avoid duplicate
     const newMemberGroup: FamilyMember[] = [];
     // ? for of are usually best for async
     for (const m of payload) {
@@ -155,7 +148,7 @@ class FamilyMemberController extends BaseController<any> {
           newMemberGroup.push(addedRecord);
       }
     };
- 
+
     if (!!newMemberGroup) {
       logger.info('All new members created: ', { newMemberGroup });
       const newMembersMap = newMemberGroup.reduce((map: { [nodeId: string]: FamilyMember }, currentMember: FamilyMember) => {
@@ -174,9 +167,9 @@ class FamilyMemberController extends BaseController<any> {
   * Receives a familyMember DAO with additional data to update the record with (including a kinship array potentially)
   * returns a hashmap of the records keyed to their ids, for all members and their respective  connections
   */
-  private async getMembersFromUpdateAction(data: DFamilyMemberDAO, userId: number): Promise<{ [id: string]: DFamilyMemberDAO } | null> {
+  private async getMembersFromUpdateAction(data: APIFamilyMemberDAO, userId: number): Promise<{ [id: string]: APIFamilyMemberDAO } | null> {
     const matchingRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: data.node_id } } });
-    const kinshipMapping: { relation: DFamilyMemberArrayKeys, inverseRelation: DFamilyMemberArrayKeys, }[] = [
+    const kinshipMapping: { relation: APIFamilyMemberArrayKeys, inverseRelation: APIFamilyMemberArrayKeys, }[] = [
       { relation: 'children', inverseRelation: 'parents' }, { relation: 'siblings', inverseRelation: 'siblings' },
       { relation: 'parents', inverseRelation: 'children' }, { relation: 'spouses', inverseRelation: 'spouses' }
     ];
@@ -191,25 +184,25 @@ class FamilyMemberController extends BaseController<any> {
       */
       for (const { relation, inverseRelation } of kinshipMapping) {
         // ? Go through each type of relation
-        const nodeIdsForKinshipType = data?.[relation]?.map((c: DFamilyMemberDAO) => c.node_id) || [];
+        const nodeIdsForKinshipType = (data?.[relation] || []).map((c: APIFamilyMemberDAO) => c.node_id) || [];
 
         if (data?.[relation]?.length) {
           // ? If the current relation type has a family member associtated to it, check for duplicates then create records for non duplicates
           const existingRecords = await FamilyMember.findAll({ where: { node_id: { [Op.in]: nodeIdsForKinshipType } } });
+          logger.info('List of existing records ', existingRecords);
           const nodeIdsForExistingRecords = existingRecords?.map((r: FamilyMember) => r.node_id);
           // ? non duplicates 
-          const unsavedRecords = data[relation].filter((member: DFamilyMemberDAO) => !nodeIdsForExistingRecords?.includes(member.node_id));
+          const unsavedRecords = data[relation].filter((member: APIFamilyMemberDAO) => !nodeIdsForExistingRecords?.includes(member.node_id));
           unsavedfamilyMembers = [...unsavedfamilyMembers, ...unsavedRecords];
           logger.info('List of records to be added after check: ', { unsavedRecords, existingRecords });
 
           await Promise.all(
             // ? create records for non duplicates
-            unsavedRecords.map(async (c: DFamilyMemberDAO) => {
+            unsavedRecords.map(async (c: APIFamilyMemberDAO) => {
               try {
                 // ? include current related member into the correct kinship array, then update the current record witht that info
                 const savedRecord = await this.getMembersFromCreateAction({ ...c, [inverseRelation]: [data] }, userId);
                 payload = { ...payload, ...savedRecord };
-                logger.info('Payload after ', { newRecord: savedRecord, payload });
               } catch (error) {
                 logger.error('Update for unsaved records failed ', error);
               }

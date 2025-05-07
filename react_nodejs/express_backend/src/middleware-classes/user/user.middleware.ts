@@ -1,17 +1,17 @@
 import { QueryTypes } from "sequelize";
 import User from "../../models/User";
 import { BaseMiddleware } from "../base/base.middleware";
-import { DUserDTO } from "./user..definitions";
+import { APIUserDTO } from "./user..definitions";
 import bcrypt from "bcryptjs";
-import { DUserSimplifiedDTO } from "../../controllers/user/user.definitions";
+import { APIUserSimplifiedDTO } from "../../controllers/user/user.definitions";
 
-export class UserMiddleware extends BaseMiddleware<DUserSimplifiedDTO> {
+export class UserMiddleware extends BaseMiddleware<APIUserSimplifiedDTO> {
   constructor() {
     super('users');
   }
 
 
-  public create = async (values: DUserDTO): Promise<Partial<DUserDTO> | null> => {
+  public create = async (values: APIUserDTO): Promise<Partial<APIUserDTO> | null> => {
     const hashedPassword = bcrypt.hashSync(values.password, this.salt);
     // ! -TOFIX: implement search by name as user enter their last name. 
     // Does it make sense to offer them choices given the security aspect?
@@ -62,7 +62,7 @@ export class UserMiddleware extends BaseMiddleware<DUserSimplifiedDTO> {
   }
   // ! -TOFIX: no any
   public getExtendedFamiliesDetails = async (id: number): Promise<any> => {
-    const currentUser: DUserDTO = await this.getUserData(id)
+    const currentUser: APIUserDTO = await this.getUserData(id)
       .catch((e) => {
         // ! -TOFIX: logging
         console.log('ERROR', e);
@@ -85,7 +85,7 @@ export class UserMiddleware extends BaseMiddleware<DUserSimplifiedDTO> {
 
   }
 
-  private validateUserFields = (values: DUserDTO): boolean => {
+  private validateUserFields = (values: APIUserDTO): boolean => {
     console.log('RECEIVED VALUES: ', values);
 
     // if (values.age < 0 || !values.age) {

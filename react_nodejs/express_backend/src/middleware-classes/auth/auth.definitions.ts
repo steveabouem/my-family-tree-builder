@@ -1,10 +1,10 @@
 /** TRACKER */
-export interface DTrackerRegistrationFields { //registration form fields
+export interface APITrackerRegistrationFields { //registration form fields
 
 }
 
 /** FT */
-export interface DFTRegistrationFields { //registration form fields
+export interface APIFTRegistrationFields { //registration form fields
     firstName: string;
     lastName: string;
     age?: number;
@@ -17,7 +17,7 @@ export interface DFTRegistrationFields { //registration form fields
     profileUrl?: string;
 }
 
-export interface DFTLoginFields { //registration form fields
+export interface APIFTLoginFields { //registration form fields
     email: string;
     password: string;
 }
@@ -25,6 +25,6 @@ export interface DFTLoginFields { //registration form fields
 
 /** ADMIN */
 
-export interface DAdminRegistrationFields { //registration form fields
+export interface APIAdminRegistrationFields { //registration form fields
 
 }

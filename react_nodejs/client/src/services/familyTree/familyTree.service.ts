@@ -1,6 +1,8 @@
 import { DFormField } from "@components/common/definitions";
 import BaseService from "../base/base.service";
-import { DFamilyTreeDAO } from "@services/api.definitions";
+import { DApiResponse, DFamilyTreeDAO, DFamilyTreeDTO, DFamilyTreeRecord } from "services/api.definitions";
+import { DFamilyMember } from "@pages/user/definitions";
+import { AxiosResponse } from "axios";
 
 class FamilyTreeService extends BaseService {
   path;
@@ -30,8 +32,8 @@ class FamilyTreeService extends BaseService {
     return results;
   }
 
-  public async addMembers(treeId: number, members: number[]) { // ! TOFIX: no any
-    const results = this.request.put(`${this.path}/members?id=${treeId}`, { members });
+  public async addMembers(treeData: DFamilyTreeDAO): Promise<AxiosResponse<DApiResponse<{payload: DFamilyTreeRecord}>>> { // ! TOFIX: no any
+    const results: any = this.request.put(`${this.path}/members`, {  ...treeData });
     return results;
   }
 

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DStepDetails, DStepFormState } from "../../definitions";
+import { DStepDetails, DStepFormState, stepFormModes } from "../../definitions";
 import FamilyTreeService from "services/familyTree/familyTree.service";
 
 /*
@@ -8,9 +8,10 @@ import FamilyTreeService from "services/familyTree/familyTree.service";
 const initialState: DStepFormState = {
   currentFormStep: 1,
   updating: true,
-  currentFormStepDetails: {name: '', fields: []}, // this should be renamed currentStepInfo
+  currentFormStepDetails: { name: '', fields: [] }, // this should be renamed currentStepInfo
   globalValues: {},
-  totalSteps: 1
+  totalSteps: 1,
+  mode: 'create'
 };
 /*
 * mutators
@@ -44,19 +45,25 @@ const goToPrev = (state: DStepFormState): DStepFormState => {
   state.updating = false;
   return state;
 };
+const changeMode = (state: DStepFormState, action: PayloadAction<stepFormModes>): DStepFormState => {
+  state.updating = true;
+  state.mode = action.payload;
+  state.updating = false;
+  return state;
+};
 /*
 * sends field values to API, which returns next field set
 */
 const setCurrentFields = (state: DStepFormState, action: PayloadAction<DStepDetails>) => {
   state.updating = true;
-  const newStepTree = {...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields}
+  const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
   state.stepTree = newStepTree;
   state.currentFormStepDetails = action.payload;
   state.updating = false;
 };
-const removeFieldsByStepName = (state: DStepFormState, action: PayloadAction<string>) => { 
+const removeFieldsByStepName = (state: DStepFormState, action: PayloadAction<string>) => {
   state.updating = true;
-  state.currentFormStepDetails = {name: action.payload, fields: []};
+  state.currentFormStepDetails = { name: action.payload, fields: [] };
   state.updating = false;
   return state;
 };
@@ -100,12 +107,13 @@ export const stepFormSlice = createSlice({
     updateGlobalValuesAction: setCombinedStepValues,
     getGlobalValuesAction: getCombinedStepValues,
     setStepsCountAction: setTotalStep,
-    clearFieldsByStepName: removeFieldsByStepName
+    clearFieldsByStepName: removeFieldsByStepName,
+    changeModeAction: changeMode
   }
 });
 export const {
   changeformStepAction, nextFormStepAction, prevFormStepAction, clearFieldsByStepName,
   loadStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields,
-  getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction
+  getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction, changeModeAction
 } = stepFormSlice.actions;
 export default stepFormSlice.reducer;

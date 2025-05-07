@@ -1,11 +1,12 @@
 import { NodeTypes } from "@xyflow/react";
+import { HttpStatusCode } from "axios";
 /*
 * Holds declarations for all the API types, notably DTOs/DAOS
 */
 interface DApiResponseRoot {
-  sessionId?: string;
   error: boolean;
   code: number;
+  sessionId?: string;
   message?: string;
 }
 export type DApiResponse<B> = DApiResponseRoot & B;
@@ -50,6 +51,18 @@ export interface DFamilyTreeDAO {
   userId: number;
   active?: boolean;
   treeName?: string;
+  treeId?: number;
+}
+export interface DFamilyTreeRecord {
+    id: number;
+    authorized_ips: string;
+    members: string;
+    name: string;
+    public: 1 | 0;
+    active: 1 | 0;
+    created_at: string;
+    created_by: number;
+    updated_at: string | null;
 }
 export interface DFamilyTreeDTO {
   id?: number;

@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import FamilyMemberController from "../controllers/familyMember/FamilyMemberController";
-import { DFamilyMemberDTO } from "../controllers/familyMember/familyMember.definitions";
+import { APIFamilyMemberDTO } from "../controllers/familyMember/familyMember.definitions";
 import RequestHelper from "./RequestHelper";
 
 const router = Router();

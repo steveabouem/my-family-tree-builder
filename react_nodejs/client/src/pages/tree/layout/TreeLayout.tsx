@@ -16,8 +16,9 @@ import { DReactFlowEdge, DReactFlowNode } from '../definitions';
 import { useZDispatch } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
-import { loadStepFormFieldsAction, setStepsCountAction, updateGlobalValuesAction } from 'app/slices/forms/stepForm';
+import { setStepsCountAction, updateGlobalValuesAction, changeModeAction } from 'app/slices/forms/stepForm';
 import abstractLogo from 'utils/assets/images/abstract_logo.png';
+import { stepFormModes } from 'app/slices/definitions';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -41,8 +42,6 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   }, [tree]);
 
   function populateFormWithNodeValues(node: DReactFlowNode) {
-    console.log('Populate form with current values ', node);
-    
     setValues({
       anchor_first_name: node?.first_name || '',
       anchor_last_name: node?.last_name || '',
@@ -54,14 +53,13 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
       anchor_gender: node.gender,
       anchor_marital_status: node.marital_status,
       anchor_node_id: node.node_id,
-      parents: JSON.parse(node?.parents || ''),
-      siblings: JSON.parse(node?.siblings || ''),
-      spouses: JSON.parse(node?.spouses || ''),
-      children: JSON.parse(node?.children || ''),
+      parents: JSON.parse(node?.parents || '[]'),
+      siblings: JSON.parse(node?.siblings || '[]'),
+      spouses: JSON.parse(node?.spouses || '[]'),
+      children: JSON.parse(node?.children || '[]'),
     });
   }
   function showEditModal(event: any, node: DReactFlowNode) {
-    console.log({ node });
     updateModal({
       hidden: false,
       buttons: {
@@ -72,6 +70,7 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
       onConfirm: (transferData: string) => {
         switch (transferData) {
           case nodeMenuActions.edit:
+            dispatch(changeModeAction(stepFormModes.edit));
             dispatch(updateGlobalValuesAction({ values: {} }));
             populateFormWithNodeValues(node);
             dispatch(setStepsCountAction(1));
@@ -80,13 +79,15 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
 
             break;
           case nodeMenuActions.delete:
-
+            //reset form state in case it was in edit mode
+            dispatch(changeModeAction(stepFormModes.create));
             break;
         }
       },
       content: <NodeMenu data={node} />,
     });
   }
+  // TODO: this is not being managed properly. Edges are not showing
   function generateNodesAndEdges() {
     const incomingNodes: any = Object.values(tree);
     const incomingEdges = incomingNodes.reduce((listOfEdges: any, node: any) => {

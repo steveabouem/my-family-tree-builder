@@ -1,13 +1,13 @@
-import { DEndpointResponse } from "../controllers.definitions";
+import { APIEndpointResponse } from "../controllers.definitions";
 
-export type DRegistrationResponse = DEndpointResponse & {
+export type APIRegistrationResponse = APIEndpointResponse & {
     authenticated: boolean;
     email: string;
     userId?: number;
     message?: string;
 }
 
-export type DLoginResponse = DEndpointResponse & {
+export type APILoginResponse = APIEndpointResponse & {
     authenticated: boolean;
     email?: string;
     firstName?: string;
@@ -15,13 +15,13 @@ export type DLoginResponse = DEndpointResponse & {
     userId?: number;
 }
 
-export type DLogoutResponse = DEndpointResponse & {
+export type APILogoutResponse = APIEndpointResponse & {
     authenticated: boolean;
     email: string;
     userId?: number;
 }
 
-export interface DFTRegistrationFields { //registration form fields
+export interface APIRegistrationFields { //registration form fields
     firstName: string;
     lastName: string;
     age: number;

@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import { DFTLoginFields } from "./auth.definitions";
-import { DUserDTO } from "../user/user..definitions";
+import { APIFTLoginFields } from "./auth.definitions";
+import { APIUserDTO } from "../user/user..definitions";
 import { BaseMiddleware } from "../base/base.middleware";
 import User from "../../models/User";
 import FTIP from "../../models/Ip";
@@ -20,7 +20,7 @@ class FTAuthMiddleware extends BaseMiddleware<any> { // ! -TOFIX: no any
         return !!ip;
     }
 
-    verifyUser = async (values: DFTLoginFields): Promise<Partial<DUserDTO> | null> => {
+    verifyUser = async (values: APIFTLoginFields): Promise<Partial<APIUserDTO> | null> => {
         const currentUser = await User.findOne({ where: { email: values.email } });
         if (!currentUser) {
             return null;

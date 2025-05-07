@@ -2,10 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import FamilyTreeController from "../controllers/familyTree/FamilyTreeController";
 import logger from "../utils/logger";
-import FamilyTree from "../models/FamilyTree";
-import { DEndpointResponse, DRequestPayload } from "../controllers/controllers.definitions";
 import RequestHelper from "./RequestHelper";
-import FamilyMemberController from "../controllers/familyMember/FamilyMemberController";
 
 const router = Router();
 
@@ -63,6 +60,7 @@ router.get('/members', (req: Request, res: Response) => {
 router.put('/members', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   const helper = new RequestHelper(req, res);
+
   helper.sendResponseFromControllerMethod(familyTreeController.update, 'Update tree records');
 });
 

@@ -3,7 +3,7 @@
 */
 
 // DAOs
-export interface DFamilyMemberDAO {
+export interface APIFamilyMemberDAO {
     // Zogh attributes
     dob: string;
     node_id: string;
@@ -23,14 +23,15 @@ export interface DFamilyMemberDAO {
     name?: string;
     type?: string;
     position?: { x: number; y: number };
-    parents?: DFamilyMemberDAO[];
-    children?: DFamilyMemberDAO[];
-    siblings?: DFamilyMemberDAO[];
-    spouses?: DFamilyMemberDAO[];
+    parents?: APIFamilyMemberDAO[];
+    children?: APIFamilyMemberDAO[];
+    siblings?: APIFamilyMemberDAO[];
+    spouses?: APIFamilyMemberDAO[];
+    tree_id?: number;
 }
 
 // DTOs
-export interface DFamilyMemberDTO {
+export interface APIFamilyMemberDTO {
     age: number;
     created_at: Date;
     created_by: number;
@@ -52,7 +53,7 @@ export interface DFamilyMemberDTO {
 }
 
 
-export interface DFamilyTreeNodeDTO {
+export interface APIFamilyTreeNodeDTO {
     age: number;
     first_name: string;
     last_name: string;
@@ -83,4 +84,4 @@ export interface DFamilyTreeNodeDTO {
     }[];
 }
 
-export type DFamilyMemberArrayKeys  = keyof Pick<DFamilyMemberDAO, 'children' | 'parents' | 'siblings' | 'spouses'>;
+export type APIFamilyMemberArrayKeys  = keyof Pick<APIFamilyMemberDAO, 'children' | 'parents' | 'siblings' | 'spouses'>;

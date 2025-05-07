@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { DLoginResponse, DLogoutResponse, DRegistrationResponse } from "./auth.definitions";
+import { APILoginResponse, APILogoutResponse, APIRegistrationResponse } from "./auth.definitions";
 import BaseController from "../Base.controller";
 import { Request, Response } from "express";
 import dayjs from "dayjs";
@@ -11,10 +11,10 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
         super('');
     }
 
-    public async register(req: Request, res: Response): Promise<DRegistrationResponse> {
+    public async register(req: Request, res: Response): Promise<APIRegistrationResponse> {
         const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
         const formattedValues = { ...req.body, assigned_ips: [ip], created_at: dayjs() };
-        const response: DRegistrationResponse = { authenticated: false, email: '', userId: 0, message: '', error: true, code: 500};
+        const response: APIRegistrationResponse = { authenticated: false, email: '', userId: 0, message: '', error: true, code: 500};
         req.session.details = {};
         
         try {
@@ -61,8 +61,8 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
         return response;
     }
 
-    public async login(req: Request, res: Response): Promise<DLoginResponse> {
-        const response: DLoginResponse = { code: 500, authenticated: false, error: true };
+    public async login(req: Request, res: Response): Promise<APILoginResponse> {
+        const response: APILoginResponse = { code: 500, authenticated: false, error: true };
         try {
             const userController = new UserController();
             const currentUser = await userController.getByEmail(req.body.email).catch(e => {
@@ -114,8 +114,8 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
         return response;
     }
 
-    public async logout(req: Request, res: Response): Promise<DLoginResponse> {
-        const response: DLoginResponse = { code: 500, authenticated: false, error: true };
+    public async logout(req: Request, res: Response): Promise<APILoginResponse> {
+        const response: APILoginResponse = { code: 500, authenticated: false, error: true };
         try {
             req.session.destroy(() => { });
             response.error = false;
@@ -130,8 +130,8 @@ class AuthController extends BaseController<any> { // ! -TOFIX: no any
         return response;
     }
 
-    public async changePassword(req: Request, res: Response): Promise<DLoginResponse> {
-        const response: DLoginResponse = { code: 500, authenticated: false, error: true };
+    public async changePassword(req: Request, res: Response): Promise<APILoginResponse> {
+        const response: APILoginResponse = { code: 500, authenticated: false, error: true };
         try {
             const userController = new UserController();
             const updatedUser = await userController.updatePassword(req.body);

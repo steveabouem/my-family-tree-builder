@@ -1,14 +1,14 @@
 import BaseController from "../Base.controller";
 import { Request, response, Response } from "express";
-import { DRequestPayload } from "../controllers.definitions";
+import { APIRequestPayload } from "../controllers.definitions";
 import FamilyTree from "../../models/FamilyTree";
 import { Op } from "sequelize";
 import FamilyMemberController from "../familyMember/FamilyMemberController";
 import logger from "../../utils/logger";
 import User from "../../models/User";
 import FamilyMember from "../../models/FamilyMember";
-import { DFamilyTreeDAO, DGetFamilyTreeResponse, DSaveTreeFormStepResponse } from "./familyTree.definitions";
-import { DFamilyMemberDAO } from "../familyMember/familyMember.definitions";
+import { APIFamilyTreeDAO, APIGetFamilyTreeResponse, DSaveTreeFormStepResponse } from "./familyTree.definitions";
+import { APIFamilyMemberDAO } from "../familyMember/familyMember.definitions";
 
 class FamilyTreeController extends BaseController<any> {
   constructor() {
@@ -62,7 +62,7 @@ class FamilyTreeController extends BaseController<any> {
   /*
  * Position the family members in the tree
  */
-  public positionFamilyMembers = (members: DFamilyMemberDAO[]): DFamilyMemberDAO[] => {
+  public positionFamilyMembers = (members: APIFamilyMemberDAO[]): APIFamilyMemberDAO[] => {
     const membersWithCoords: any = [];
 
     Object.values(members).forEach((currentMember: any, index: number) => {
@@ -196,10 +196,10 @@ class FamilyTreeController extends BaseController<any> {
   * as all the family members are created, crete a mirror obect of the incoming DAO, but this time with the DB ids.
   * return the resulting DTO
   */
-  public create = async (req: Request<{}, {}, DFamilyTreeDAO, {}>, res: Response<DGetFamilyTreeResponse, {}>) => {
-    let response: DGetFamilyTreeResponse = { code: 500, error: true };
+  public create = async (req: Request<{}, {}, APIFamilyTreeDAO, {}>, res: Response<APIGetFamilyTreeResponse, {}>) => {
+    let response: APIGetFamilyTreeResponse = { code: 500, error: true };
     const userId = req.body.userId;
-    
+
     try {
       /*
       * Only registered users can do CRUD on trees
@@ -224,7 +224,7 @@ class FamilyTreeController extends BaseController<any> {
           logger.info("Prepared object to create positions and edges", { membersByNodeId });
           const withCoords = this.positionFamilyMembers(Object.values(membersByNodeId));
           const newTree = await FamilyTree.create({
-            active: req.body?.active ? 1 : 0,
+            active: 1,
             authorized_ips: '',
             created_by: req.body.userId,
             members: JSON.stringify(withCoords),
@@ -260,8 +260,8 @@ class FamilyTreeController extends BaseController<any> {
     return response;
   }
 
-  public getOne = async (req: Request, res: Response): Promise<DRequestPayload<FamilyTree>> => {
-    const response: DRequestPayload<FamilyTree> = this.defaultResponse;
+  public getOne = async (req: Request, res: Response): Promise<APIRequestPayload<FamilyTree>> => {
+    const response: APIRequestPayload<FamilyTree> = this.defaultResponse;
     try {
       const id = req.query.id;
       const userId = req.session?.details?.userId || 0;
@@ -351,15 +351,41 @@ class FamilyTreeController extends BaseController<any> {
     // res.json(response);
   }
 
-  public async update(req: Request, res: Response) {
-    const familyMemberController = new FamilyMemberController();
-    const membersRecords = await familyMemberController.updateRecordAndRelations(req, res)
-    .catch((e: unknown) => {
-      logger.error('Failed to update members ', e);
-    });
-    logger.info('Route handler returns this response ', membersRecords);
-    return membersRecords;
+  public update = async (req: Request, res: Response) => {
+    const response: APIRequestPayload<FamilyTree | null> = this.defaultResponse;
+
+    try {
+      const familyMemberController = new FamilyMemberController();
+      const matchingTree = await FamilyTree.findByPk(req.body.treeId);
+      logger.info('Found matching tree',  matchingTree);
+      if (matchingTree?.dataValues?.active) {
+        const membersRecords = await familyMemberController.updateRecordAndRelations(req, res);
+        const withCoords = this.positionFamilyMembers(Object.values(membersRecords || {}));
+
+        await matchingTree.update({
+          ...matchingTree.dataValues,
+          members: JSON.stringify(withCoords)
+        });
+        logger.info('Route handler returns this response ', matchingTree);
+        response.code = 200;
+        response.error = false;
+        response.payload = matchingTree;
+      } else {
+        logger.error('Invalid treeId ', req.body.treeId);
+        response.code = 500;
+        response.error = true;
+        response.payload = null;
+      }
+    } catch (e: unknown) {
+      logger.error('Unable to update tree ', e);
+      response.code = 500;
+      response.error = true;
+      response.payload = null;
+    }
+
+    return response;
   }
+
   /*
   * can be called from the initial step form rsponsible for creating the tree,
   * or an update made to an active tree by a registered user with appropriate permissions
@@ -419,8 +445,8 @@ class FamilyTreeController extends BaseController<any> {
     return true;
   }
 
-  public getMembers = async (req: Request, res: Response): Promise<DRequestPayload<FamilyMember[]>> => {
-    const response: DRequestPayload<FamilyMember[]> = this.defaultResponse;
+  public getMembers = async (req: Request, res: Response): Promise<APIRequestPayload<FamilyMember[]>> => {
+    const response: APIRequestPayload<FamilyMember[]> = this.defaultResponse;
     const userId = req.session?.details?.userId || 0;
     const id = req.query.id;
     const canViewTree = await this.canUserViewTree(Number(id), userId);
@@ -457,11 +483,11 @@ class FamilyTreeController extends BaseController<any> {
     return response;
   }
 
-  public updateTreeMembers = async (req: Request, res: Response): Promise<DRequestPayload<FamilyTree>> => {
+  public updateTreeMembers = async (req: Request, res: Response): Promise<APIRequestPayload<FamilyTree>> => {
     const response = this.defaultResponse;
     try {
 
-    } catch(e: unknown) {
+    } catch (e: unknown) {
       logger.info('send error to helper function: updateTreeMembers ');
     }
 

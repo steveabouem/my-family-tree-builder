@@ -1,13 +1,13 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes, Sequelize } from "sequelize";
-import { DEndpointResponse, DTableJoin } from "./controllers.definitions";
+import { APIEndpointResponse, APITableJoin } from "./controllers.definitions";
 import db from "../db";
 
 class BaseController<GProps> {
     tableName: string;
     dataBase: Sequelize;
     salt: string;
-    defaultResponse: Pick<DEndpointResponse, 'code' | 'error'>;
+    defaultResponse: Pick<APIEndpointResponse, 'code' | 'error'>;
     
     constructor(table: string) {
         this.dataBase = db;
@@ -16,7 +16,7 @@ class BaseController<GProps> {
         this.salt = bcrypt.genSaltSync(8);
     }
 
-    public async getList(columns?: string[], incomingWhere?: string, incomingJoins?: DTableJoin[], incomingLimit?: number): Promise<any> {
+    public async getList(columns?: string[], incomingWhere?: string, incomingJoins?: APITableJoin[], incomingLimit?: number): Promise<any> {
         let joins = '';
         let where = '';
         let limit = '';
@@ -29,7 +29,7 @@ class BaseController<GProps> {
             selector = columns?.join(', ');
         }
         if (joins) {
-            joins = incomingJoins?.reduce((joinStatement: string, currentJoin: DTableJoin) => {
+            joins = incomingJoins?.reduce((joinStatement: string, currentJoin: APITableJoin) => {
                 return `${joinStatement} JOIN ${currentJoin.tableName} ON ${currentJoin.on}`
             }, joins) || '';
         }

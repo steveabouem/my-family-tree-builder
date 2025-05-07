@@ -9,6 +9,7 @@ export type DStepFormState = {
   globalValues: any;
   totalSteps: number;
   stepTree?: { [name: string]: DFormField[] | DFormField[][] };
+  mode?: string;
 };
 export interface DStepDetails {
   name: string;
@@ -20,9 +21,14 @@ export type DChangeStepPayload = {
   success: boolean;
 };
 
+export enum stepFormModes {
+  'edit' = 'edit',
+  'create' = 'create',
+}
 //family tree
 export interface DFamilyTreeState {
   updating: boolean;
+  treeId: number;
   currentFamilyTree?: DFamilyTreeDTO;
   name?: string;
 }

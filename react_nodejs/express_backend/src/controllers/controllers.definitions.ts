@@ -1,7 +1,7 @@
 import { Session } from "express-session";
-import { DFamilyTreeDTO } from "./familyTree/familyTree.definitions";
+import { APIFamilyTreeDTO } from "./familyTree/familyTree.definitions";
 import { Response, Request } from "express";
-export interface DTableJoin {
+export interface APITableJoin {
   tableName: string;
   on: string;
 }
@@ -21,7 +21,7 @@ export enum HTTPMethodEnum {
   patch = 'patch',
 }
 
-export interface DSessionUser {
+export interface APISessionUser {
   userId: number;
   authenticated: boolean;
   ip?: string;
@@ -29,12 +29,12 @@ export interface DSessionUser {
   email?: string;
   firstName?: string;
   lastName?: string;
-  familyTree?: DFamilyTreeDTO;
+  familyTree?: APIFamilyTreeDTO;
 }
 
-export interface DSession {
+export interface APISession {
   type: string;
-  user: DSessionUser;
+  user: APISessionUser;
   session: Session;
 }
 
@@ -44,7 +44,7 @@ export interface DSession {
 * The generic T will allow controll over whats sent back to the client: only the type defined by T will be acceptable as a response
 * see https://stackoverflow.com/questions/62736335/typescript-and-express-js-change-res-json-response-type
 */
-export interface DEndpointResponse {
+export interface APIEndpointResponse {
   sessionId?: string;
   error: boolean;
   code: number;
@@ -58,11 +58,11 @@ export interface DEndpointResponse {
 * The generic T will allow controll over whats sent back to the client: only the type defined by T will be acceptable as a response
 * see https://stackoverflow.com/questions/62736335/typescript-and-express-js-change-res-json-response-type
 */
-export interface DRequestPayload<P> extends DEndpointResponse {
+export interface APIRequestPayload<P> extends APIEndpointResponse {
   payload?: P;
 }
 
-export interface DHelperResponse {
+export interface APIHelperResponse {
   error: boolean;
   data: unknown;
 }
