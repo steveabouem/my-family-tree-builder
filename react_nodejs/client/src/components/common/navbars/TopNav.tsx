@@ -9,6 +9,7 @@ import FamilyTreeContext from "contexts/creators/familyTree";
 import { service } from "services";
 import PageUrlsEnum from "utils/urls";
 import theme from "utils/material/theme";
+import ThemeSelector from "../ThemeSelector";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -59,11 +60,6 @@ const TopNav = () => {
                 </Typography>
               </Link>
             </Box>
-
-            {/* <Box>
-              <Link href="/families" color={'secondary'} sx={{ textDecoration: isCurrentLocation() 'none' }}><Trans>Families<? 'underline' : /Trans></Link>
-            </Box> */}
-
             <Box>
               <Link href={PageUrlsEnum.trees
                 
@@ -87,7 +83,7 @@ const TopNav = () => {
         ) : <LiaUserSecretSolid />}
         {menuOpened && currentUser?.firstName && <Button variant="contained" color="success" onClick={processLogout} ><Trans>logout</Trans></Button>}
       </Box>
-      {/* <ThemeSelector /> */}
+      <ThemeSelector />
     </Box>
   );
 };

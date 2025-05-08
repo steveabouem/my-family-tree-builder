@@ -1,6 +1,17 @@
 import { DFormField } from "@components/common/definitions";
-import { DFamilyMemberDTO, DFamilyTreeDTO } from "@services/api.definitions";
+import { DFamilyTreeDTO } from "@services/api.definitions";
 import { ReactNode } from "react";
+
+// theme
+export interface DThemeState {
+  season: ThemeSeasons;
+};
+export enum ThemeSeasons {
+'fall' = 'fall' ,
+'winter' = 'winter' ,
+'spring'= 'spring',
+'summer'= 'summer',
+};
 // stepform
 export type DStepFormState = {
   currentFormStepDetails: DStepDetails;

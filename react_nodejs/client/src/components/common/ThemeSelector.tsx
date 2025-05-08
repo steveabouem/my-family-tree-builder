@@ -1,37 +1,47 @@
-import React from "react";
-import { IoColorPaletteSharp } from "react-icons/io5";
-import usePrimary from "../../pages/hooks/usePrimary.hook";
-import GlobalContext from "contexts/creators/global/global.context";
-import { themeEnum } from "contexts/creators/global/globalContext.types";
-import { Box } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { Trans } from "@lingui/macro";
+import { AutumnIcon, FlowerIcon, SnowmanIcon, SunIcon, ThemeSelectIcon } from "utils/assets/icons";
+import { useZDispatch, useZSelector } from "app/hooks";
+import { DThemeState, ThemeSeasons } from "app/slices/definitions";
+import { switchThemeAction } from "app/slices/theme";
 
 const ThemeSelector = () => {
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const triggerColor = usePrimary();
-  const { updateTheme } = React.useContext(GlobalContext);
+  const [opened, setOpened] = useState<boolean>(false);
+  const { season } = useZSelector<DThemeState>(state => state.theme);
+  const dispatch = useZDispatch();
 
   return (
-    <Box>
-      <Box className="trigger" onClick={() => setIsOpen(!isOpen)} >
-        <IoColorPaletteSharp color={triggerColor} />
-      </Box>
-      {/* {isOpen ? (
-        <Box className="choices">
-          <Box onClick={() => { if (updateTheme) updateTheme(themeEnum.dark) }} >
-            <IoColorPaletteSharp color="#070707" />
+    <Box position="relative" >
+      <ThemeSelectIcon size={20} onClick={() => setOpened(!opened)} sx={{ cursor: 'pointer' }} />
+      {opened && (
+        <Box display="flex" flexDirection="column" gap={1} position="absolute" right="0" p={1} top="35px" width="60px" sx={{background: 'white', borderRadius: '100px'}}>
+          <Box display="flex" justifyContent="space-between">
+            <Box display="flex" gap={0}>
+              {/* <Typography variant="body1"><Trans>spring</Trans></Typography> */}
+              <FlowerIcon size={15} onClick={() => dispatch(switchThemeAction(ThemeSeasons.spring))} sx={{ cursor: 'pointer', borderRadius: '50px', background: '#1b573d',color: '#aceecc' }} />
+            </Box>
+            <Box display="flex" gap={0}>
+              {/* <Typography variant="body1"><Trans>summer</Trans></Typography> */}
+              <SunIcon size={15} onClick={() => dispatch(switchThemeAction(ThemeSeasons.summer))} sx={{ cursor: 'pointer', borderRadius: '50px', background: '#ffe289',color: '#8a7b3a' }} />
+            </Box>
           </Box>
-          <Box onClick={() => { if (updateTheme) updateTheme(themeEnum.green) }} >
-            <IoColorPaletteSharp color="#003231" />
+          <Box display="flex" justifyContent="space-between">
+            <Box display="flex" gap={0}>
+              {/* <Typography variant="body1"><Trans>fall</Trans></Typography> */}
+              <AutumnIcon size={15} onClick={() => dispatch(switchThemeAction(ThemeSeasons.fall))} sx={{ cursor: 'pointer', borderRadius: '50px', background: '#f9c391',color: '#c0731b' }} />
+            </Box>
+            <Box display="flex" gap={0}>
+              {/* <Typography variant="body1"><Trans>winter</Trans></Typography> */}
+              <SnowmanIcon size={15} onClick={() => dispatch(switchThemeAction(ThemeSeasons.winter))} sx={{ cursor: 'pointer', borderRadius: '50px', background: '#26444d',color: '#edfbff' }} />
+            </Box>
           </Box>
-          <Box onClick={() => { if (updateTheme) updateTheme(themeEnum.light) }} >
-            <IoColorPaletteSharp color="#fff" />
+          <Box>
           </Box>
         </Box>
-      ) : null} */}
-      <Box>
-      </Box>
+      )}
     </Box>
-  )
-
+  );
 }
+
 export default ThemeSelector;
