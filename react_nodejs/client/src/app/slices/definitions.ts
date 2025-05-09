@@ -11,6 +11,7 @@ export enum ThemeSeasons {
 'winter' = 'winter' ,
 'spring'= 'spring',
 'summer'= 'summer',
+'default'= 'default',
 };
 // stepform
 export type DStepFormState = {

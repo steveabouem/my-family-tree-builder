@@ -1,43 +1,47 @@
 import { capitalize, createTheme } from "@mui/material";
-import { white } from "material-ui/styles/colors";
+import { seasonalPaletteConfig } from "./definitions";
+import { ThemeSeasons } from "@app/slices/definitions";
 
 const defaultTypo = {
   fontSize: ".9rem",
-  color: "#5d576b"
 };
 
-const theme = createTheme({
+/*
+* Theme are following the seasons. the config object maps the color codes to the key names used in the palette values below
+* in turn, the MUI components configured here use those dynamic palette values to define the compnents color palette
+*/
+const theme = (season: ThemeSeasons) =>  createTheme({
   palette: {
     background: {
-      default: '#FFFFF6'
+      default: seasonalPaletteConfig.bgDefault[season]
     },
     primary: {
-      main: "#5d576b", //dark purple
-      light: "#e6ebe0", // light green
+      main: seasonalPaletteConfig.primaryMain[season],
+      light: seasonalPaletteConfig.primaryLight[season],
     },
     secondary: {
-      main: "#7498b4", // blue
-      dark: "#041a46", // dark blue
-      light: "#FFFFF6", // white
+      main: seasonalPaletteConfig.secondaryMain[season],
+      dark: seasonalPaletteConfig.secondaryDark[season],
+      light: seasonalPaletteConfig.bgDefault[season],
     },
     info: {
-      main: "#fff"
+      main: seasonalPaletteConfig.infoMain[season]
     },
     warning: {
-      main: "#fff",
-      light: "#fff0b6"
+      main: seasonalPaletteConfig.warningMain[season],
+      light: seasonalPaletteConfig.warningLight[season]
     },
     grey: {
-      "400": "#cecaca3d",
-      "100": "#8f97a0"
+      "400": seasonalPaletteConfig.grey400[season],
+      "100": seasonalPaletteConfig.grey100[season]
     },
     error: {
-      main: "#ff9b71",
-      light: "#ffd8c7",
+      main: seasonalPaletteConfig.errorMain[season],
+      light: seasonalPaletteConfig.errorLight[season]
     },
     success: {
-      main: "#5b9279",
-      light: "#f4f1bb"
+      main: seasonalPaletteConfig.successMain[season],
+      light:  seasonalPaletteConfig.successLight[season],
     },
   },
   typography: {
@@ -45,28 +49,28 @@ const theme = createTheme({
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "2rem",
-      color: "#041a46",
+      color: seasonalPaletteConfig.secondaryDark[season],
       padding: ".8rem 0"
     },
     h2: {
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.5rem",
-      color: "#041a46",
+      color: seasonalPaletteConfig.secondaryDark[season],
       padding: ".8rem 0"
     },
     h3: {
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.2rem",
-      color: "#041a46",
+      color: seasonalPaletteConfig.secondaryDark[season],
       padding: ".8rem 0"
     },
     h4: {
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.1rem",
-      color: "#041a46",
+      color: seasonalPaletteConfig.secondaryDark[season],
       padding: ".8rem 0"
     },
     body1: {
@@ -79,7 +83,7 @@ const theme = createTheme({
     subtitle2: {
       ...defaultTypo,
       fontSize: ".9rem",
-      color: "#5b9279"
+      color: seasonalPaletteConfig.successMain[season]
     },
     caption: {
       ...defaultTypo,
@@ -145,7 +149,7 @@ const theme = createTheme({
           fontSize: '.65rem!important',
           transition: '.8s',
           '&:hover': {
-            boxShadow: "1px -1px 2px 0px #5d576b!important",
+            boxShadow: `1px -1px 2px 0px ${seasonalPaletteConfig.successMain[season]}!important`,
             transform: "translate(2px -2px)"
           }
         })
@@ -155,14 +159,4 @@ const theme = createTheme({
 });
 
 export default theme;
-
-// palette options:
-// 2
-// dark: #2C363F,
-// red/pink: e75a7c
-// lighter green: f2f5ea
-// light green: d6dbd2
-// olive green: BBC7A4
-
-
 

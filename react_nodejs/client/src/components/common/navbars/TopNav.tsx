@@ -3,19 +3,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Trans } from "@lingui/macro";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
-import { Avatar, Box, Button, Link, Typography } from "@mui/material";
+import { Avatar, Box, Button, Link, Typography, useTheme } from "@mui/material";
 import logo from "utils/assets/images/logo.jpg";
 import FamilyTreeContext from "contexts/creators/familyTree";
 import { service } from "services";
 import PageUrlsEnum from "utils/urls";
-import theme from "utils/material/theme";
 import ThemeSelector from "../ThemeSelector";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = useState(false);
   const { currentUser, updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
-  const {pathname} = useLocation();
+  const { pathname } = useLocation();
+  const seasonalTheme = useTheme();
 
   const processLogout = () => {
     const authService = new service.auth('auth');
@@ -32,16 +32,19 @@ const TopNav = () => {
       });
   }
 
-  const isCurrentLocation = (path?:string) => {
+  const isCurrentLocation = (path?: string) => {
     if (path) {
       return pathname.split('/')[1] === path;
-    } else { 
+    } else {
       return pathname === "/";
     }
   };
 
   return (
-    <Box display="flex" position="absolute" top="0" right={0} height={50} width="100vw" zIndex={2} py={1} px={2} justifyContent="space-between" alignItems="center" sx={{ background: theme.palette.grey['400'] }}>
+    <Box
+      display="flex" position="absolute" top="0" right={0} height={50} width="100vw" zIndex={2} py={1} px={2}
+      justifyContent="space-between" alignItems="center" sx={{ background: seasonalTheme.palette.grey['400'] }}
+    >
       <Box display="flex" gap={2} alignItems="center">
         <span>Zogh</span><Avatar src={logo} alt="app logo" sizes="40px 40px" variant="circular" />
       </Box>
@@ -54,7 +57,7 @@ const TopNav = () => {
         {currentUser?.userId ? (
           <>
             <Box>
-              <Link href={PageUrlsEnum.user.replace(':id', `${currentUser.userId}`)} color={'secondary'} sx={{ textDecoration: isCurrentLocation("users") ? 'underline' :  'none' }}>
+              <Link href={PageUrlsEnum.user.replace(':id', `${currentUser.userId}`)} color={'secondary'} sx={{ textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
                 <Typography variant="button">
                   <Trans>Profile</Trans>
                 </Typography>
@@ -62,15 +65,15 @@ const TopNav = () => {
             </Box>
             <Box>
               <Link href={PageUrlsEnum.trees
-                
-              } color={'secondary'} sx={{ textDecoration: isCurrentLocation("family-trees")? 'underline' :  'none' }}>
+
+              } color={'secondary'} sx={{ textDecoration: isCurrentLocation("family-trees") ? 'underline' : 'none' }}>
                 <Typography variant="button" ><Trans>Trees</Trans></Typography>
               </Link>
             </Box>
           </>
         ) : null}
         <Box>
-          <Link href="/connect" color={'secondary'} sx={{ textDecoration: isCurrentLocation("connect")? 'underline' :  'none' }}>
+          <Link href="/connect" color={'secondary'} sx={{ textDecoration: isCurrentLocation("connect") ? 'underline' : 'none' }}>
             <Typography variant="button" ><Trans>Connect</Trans></Typography>
           </Link>
         </Box>

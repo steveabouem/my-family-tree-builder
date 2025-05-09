@@ -1,9 +1,10 @@
 import React from "react";
+import { Box, Typography, useTheme } from "@mui/material";
 import Dayjs from 'dayjs';
-import { Box, Typography } from "@mui/material";
-import theme from "utils/material/theme";
 
 const Footer = () => {
+  const seasonalTheme = useTheme();
+
   return (
     <Box sx={{
       height: 40,
@@ -14,7 +15,7 @@ const Footer = () => {
       gap: "2rem",
       bottom: 0,
       left: 0,
-      background: theme.palette.success.main,
+      background: seasonalTheme.palette.success.main,
       padding: "1rem"
     }}>
       <Typography variant="caption" color="info">V1</Typography>

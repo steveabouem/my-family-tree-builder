@@ -12,6 +12,7 @@ import FamilyTreeContextProvider from './contexts/providers/familyTree/FamilyTre
 import theme from './utils/material/theme';
 import { store } from 'app/store';
 import AppContainer from './components/common/AppContainer';
+import ThemeGenerator from 'components/common/ThemeGenerator';
 
 i18n.load({
   en: baseEn.messages,
@@ -20,9 +21,10 @@ i18n.load({
 i18n.activate("fr", "en");
 
 const root = ReactDOM.createRoot(document.getElementById('root') as Element);
+const getTheme = (season: string) => theme
 root.render(
   <Provider store={store}>
-    <ThemeProvider theme={theme}>
+    <ThemeGenerator>
       <GlobalContextProvider>
         <FamilyTreeContextProvider>
           <I18nProvider i18n={i18n}>
@@ -34,7 +36,7 @@ root.render(
           </I18nProvider>
         </FamilyTreeContextProvider>
       </GlobalContextProvider>
-    </ThemeProvider>
+    </ThemeGenerator>
   </Provider>
 );
 

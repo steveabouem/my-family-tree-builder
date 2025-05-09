@@ -15,6 +15,9 @@ declare module '@mui/material/styles' {
       },
       success: {
         [key: string]: string;
+      },
+      info: {
+        [key: string]: string;
       }
     }
   }
@@ -35,6 +38,9 @@ interface ThemeOptions {
       [key: string]: string;
     },
     success: {
+      [key: string]: string;
+    },
+    info: {
       [key: string]: string;
     }
   }
