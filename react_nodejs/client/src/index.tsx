@@ -21,7 +21,6 @@ i18n.load({
 i18n.activate("fr", "en");
 
 const root = ReactDOM.createRoot(document.getElementById('root') as Element);
-const getTheme = (season: string) => theme
 root.render(
   <Provider store={store}>
     <ThemeGenerator>

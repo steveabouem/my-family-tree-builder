@@ -32,7 +32,7 @@ export default memo(({ data }: any) => {
 
   return (
     <Box
-      width="250px" height="90px" padding={1} display="flex" border=".6px solid #8e6c75"
+      width="250px" height="90px" padding={1} display="flex" border=".6px solid #8e6c75" borderRadius={2}
       flexDirection="column" gap={1} justifyContent="start" alignItems="center" bgcolor={getNodeBG()}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">

@@ -113,16 +113,17 @@ const GenealogyForm = () => {
   }
 
   return (
-    <Paper sx={{ padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem" }}>
-      <Trans>family_tree_building_explanation</Trans>
+      //  sx below extends custom theme
+    <Paper sx={{ flexDirection: "column"}}>
+      <Typography variant="body2"><Trans>family_tree_building_explanation</Trans></Typography>
       <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
         <FieldAndLabel direction="row" fieldName="name" label={<Trans>name_your_tree</Trans>} sx={{ justifyContent: 'start', flex: '1 1 auto' }} fieldStyles={{ marginLeft: 'auto', width: '40%' }} />
-        <Button variant="outlined" ><Trans>confirm</Trans></Button>
+        <Button variant="contained" color="secondary" ><Trans>confirm</Trans></Button>
       </Box>
       <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
         <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
         <BaseDropDown name="next_of_kin" options={relationOptions} sx={{ width: '40%', marginLeft: 'auto' }} />
-        <Button variant="outlined" onClick={addRelative}><Trans>confirm</Trans></Button>
+        <Button variant="contained" color="secondary" onClick={addRelative}><Trans>confirm</Trans></Button>
       </Box>
       <StepForm handleSave={saveProgress} />
     </Paper>

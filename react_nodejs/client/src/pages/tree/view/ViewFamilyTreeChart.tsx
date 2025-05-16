@@ -8,7 +8,6 @@ import FamilyTreeContext from "contexts/creators/familyTree";
 import GlobalContext from "contexts/creators/global";
 import TreeNodeBubble from "pages/family/TreeNodeBubble";
 import PageUrlsEnum from "utils/urls";
-import('../tree.scss');
 
 const ViewFamilyTreeChartPage = () => {
   const [rootId, setRootId] = React.useState<any>();

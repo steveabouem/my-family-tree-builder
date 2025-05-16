@@ -31,16 +31,16 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
           <Typography variant="body1">{currentFormStepDetails?.subtitle}</Typography>
         </Box>
         <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
-          <Button variant="contained" disabled={currentFormStep === 1} color="secondary" onClick={() => dispatch(prevFormStepAction())}>
+          <Button variant="contained" disabled={currentFormStep === 1} color="primary" onClick={() => dispatch(prevFormStepAction())}>
             <Trans>prev</Trans>
           </Button>
-          <Button variant="contained" color="secondary" onClick={() => dispatch(nextFormStepAction())} disabled={currentFormStep === totalSteps}>
+          <Button variant="contained" color="primary" onClick={() => dispatch(nextFormStepAction())} disabled={currentFormStep === totalSteps}>
             <Trans>next</Trans>
           </Button>
-          {/* <Button variant="contained" color="secondary" onClick={handleSave}>
+          {/* <Button variant="contained" color="primary" onClick={handleSave}>
             <Trans>save</Trans>
           </Button> */}
-          {/* <Button variant="contained" color="secondary" onClick={() => setShowNextStep(false)}>
+          {/* <Button variant="contained" color="primary" onClick={() => setShowNextStep(false)}>
             <Trans>finish</Trans>
           </Button> */}
         </Box>

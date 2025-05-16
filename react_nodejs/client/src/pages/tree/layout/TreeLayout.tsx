@@ -19,6 +19,7 @@ import NodeMenu from './NodeMenu';
 import { setStepsCountAction, updateGlobalValuesAction, changeModeAction } from 'app/slices/forms/stepForm';
 import abstractLogo from 'utils/assets/images/abstract_logo.png';
 import { stepFormModes } from 'app/slices/definitions';
+import { useTheme } from '@mui/material';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -28,6 +29,7 @@ enum nodeMenuActions {
   add = 'add_node_relative',
   delete = 'delete',
 };
+const treeBgUrl = 'https://images.pexels.com/photos/22821246/pexels-photo-22821246/free-photo-of-plants-leaves-in-black-and-white.jpeg';
 
 const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   const [nodesList, setNodesList] = useNodesState<any>([]);
@@ -35,6 +37,7 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   const { setValues } = useFormikContext<any>();
   const { updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
+  const theme = useTheme();
 
   useEffect(() => {
     if (Object.keys(tree)?.length)
@@ -151,8 +154,8 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
         backgroundSize: '100% 100%',
         backgroundBlendMode: 'overlay',
         backgroundRepeat: 'no-repeat',
-        backgroundColor: '#fff6f6c9',
-        backgroundImage: `url(${abstractLogo})`,
+        backgroundColor: theme.palette.grey['400'],
+        backgroundImage: `url(${treeBgUrl})`,
         borderRadius: '5px'
       }} />
       <Controls />

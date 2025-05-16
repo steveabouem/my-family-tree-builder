@@ -3,8 +3,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /*
 * State
 */
+const previousTheme = localStorage.getItem('ZTheme');
 const initialState: DThemeState = {
-  season: ThemeSeasons.spring,
+  // @ts-ignore
+  season: previousTheme || ThemeSeasons.spring,
 };
 
 /*
@@ -12,6 +14,7 @@ const initialState: DThemeState = {
 */
 const changeSeason = (state: DThemeState, action: PayloadAction<ThemeSeasons>) => {
   state.season = action.payload;
+  localStorage.setItem('ZTheme', action.payload);
   return state;
 };
 /*

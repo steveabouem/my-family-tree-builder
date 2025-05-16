@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Trans } from "@lingui/macro";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
-import { Avatar, Box, Button, Link, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Button, Typography, useTheme } from "@mui/material";
 import logo from "utils/assets/images/logo.jpg";
 import FamilyTreeContext from "contexts/creators/familyTree";
 import { service } from "services";
@@ -15,7 +15,7 @@ const TopNav = () => {
   const { currentUser, updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const seasonalTheme = useTheme();
+  const theme = useTheme();
 
   const processLogout = () => {
     const authService = new service.auth('auth');
@@ -43,37 +43,39 @@ const TopNav = () => {
   return (
     <Box
       display="flex" position="absolute" top="0" right={0} height={50} width="100vw" zIndex={2} py={1} px={2}
-      justifyContent="space-between" alignItems="center" sx={{ background: seasonalTheme.palette.grey['400'] }}
+      justifyContent="space-between" alignItems="center" sx={{ background: theme.palette.secondary.main }}
     >
       <Box display="flex" gap={2} alignItems="center">
         <span>Zogh</span><Avatar src={logo} alt="app logo" sizes="40px 40px" variant="circular" />
       </Box>
       <Box display="flex" justifyContent="end" gap={2}>
         <Box>
-          <Link href={PageUrlsEnum.home} color={'secondary'} sx={{ textDecoration: isCurrentLocation() ? 'underline' : 'none' }} >
+           <Link to={PageUrlsEnum.home} style={{color: theme.palette.secondary.dark,  textDecoration: isCurrentLocation() ? 'underline' : 'none' }} >
             <Typography variant="button" ><Trans>Home</Trans></Typography>
           </Link>
+          
         </Box>
         {currentUser?.userId ? (
           <>
             <Box>
-              <Link href={PageUrlsEnum.user.replace(':id', `${currentUser.userId}`)} color={'secondary'} sx={{ textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
+              <Link to={PageUrlsEnum.user.replace(':id', `${currentUser.userId}`)} style={{color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
                 <Typography variant="button">
                   <Trans>Profile</Trans>
                 </Typography>
               </Link>
+              
             </Box>
             <Box>
-              <Link href={PageUrlsEnum.trees
+              <Link to={PageUrlsEnum.trees
 
-              } color={'secondary'} sx={{ textDecoration: isCurrentLocation("family-trees") ? 'underline' : 'none' }}>
+              } style={{ color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("family-trees") ? 'underline' : 'none' }}>
                 <Typography variant="button" ><Trans>Trees</Trans></Typography>
               </Link>
             </Box>
           </>
         ) : null}
         <Box>
-          <Link href="/connect" color={'secondary'} sx={{ textDecoration: isCurrentLocation("connect") ? 'underline' : 'none' }}>
+          <Link to="/connect" style={{color: theme.palette.secondary.dark,  textDecoration: isCurrentLocation("connect") ? 'underline' : 'none' }}>
             <Typography variant="button" ><Trans>Connect</Trans></Typography>
           </Link>
         </Box>

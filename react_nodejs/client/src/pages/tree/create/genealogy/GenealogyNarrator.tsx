@@ -13,7 +13,7 @@ export const GenealogyNarrator = () => {
     <TreeLayout tree={currentFamilyTree} />
   ) : <DataProgress
     msg={<Trans>fill_in_the_form_first</Trans>}
-    bg={abstractLogo}
+    // bg={abstractLogo}
   />;
 };
 

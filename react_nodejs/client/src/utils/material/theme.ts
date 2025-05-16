@@ -10,38 +10,20 @@ const defaultTypo = {
 * Theme are following the seasons. the config object maps the color codes to the key names used in the palette values below
 * in turn, the MUI components configured here use those dynamic palette values to define the compnents color palette
 */
-const theme = (season: ThemeSeasons) =>  createTheme({
+const theme = (season: ThemeSeasons) => createTheme({
   palette: {
+    primary: { main: seasonalPaletteConfig.primary[season], dark: seasonalPaletteConfig.dark[season], contrastText: seasonalPaletteConfig.secondary[season] },
+    secondary: { main: seasonalPaletteConfig.light[season], dark: seasonalPaletteConfig.secondary[season], contrastText: seasonalPaletteConfig.dark[season] },
+    error: { main: seasonalPaletteConfig.cancel[season] },
+    text: { primary: seasonalPaletteConfig.dark[season] },
+    // warning: {main: seasonalPaletteConfig.[season]}
+    // info: {main: seasonalPaletteConfig.cancel[season]}
+    grey: { "400": seasonalPaletteConfig.accentBg[season] }, // used for tree layout bg, to contrast w bg image
+    // action: {main: seasonalPaletteConfig.cancel[season]}
+    success: { main: seasonalPaletteConfig.confirm[season], contrastText: seasonalPaletteConfig.dark[season] },
     background: {
-      default: seasonalPaletteConfig.bgDefault[season]
-    },
-    primary: {
-      main: seasonalPaletteConfig.primaryMain[season],
-      light: seasonalPaletteConfig.primaryLight[season],
-    },
-    secondary: {
-      main: seasonalPaletteConfig.secondaryMain[season],
-      dark: seasonalPaletteConfig.secondaryDark[season],
-      light: seasonalPaletteConfig.bgDefault[season],
-    },
-    info: {
-      main: seasonalPaletteConfig.infoMain[season]
-    },
-    warning: {
-      main: seasonalPaletteConfig.warningMain[season],
-      light: seasonalPaletteConfig.warningLight[season]
-    },
-    grey: {
-      "400": seasonalPaletteConfig.grey400[season],
-      "100": seasonalPaletteConfig.grey100[season]
-    },
-    error: {
-      main: seasonalPaletteConfig.errorMain[season],
-      light: seasonalPaletteConfig.errorLight[season]
-    },
-    success: {
-      main: seasonalPaletteConfig.successMain[season],
-      light:  seasonalPaletteConfig.successLight[season],
+      default: seasonalPaletteConfig.primary[season],
+      paper: seasonalPaletteConfig.light[season]
     },
   },
   typography: {
@@ -49,56 +31,60 @@ const theme = (season: ThemeSeasons) =>  createTheme({
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "2rem",
-      color: seasonalPaletteConfig.secondaryDark[season],
+      color: seasonalPaletteConfig.dark[season],
       padding: ".8rem 0"
     },
     h2: {
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.5rem",
-      color: seasonalPaletteConfig.secondaryDark[season],
+      color: seasonalPaletteConfig.secondary[season],
       padding: ".8rem 0"
     },
     h3: {
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.2rem",
-      color: seasonalPaletteConfig.secondaryDark[season],
+      color: seasonalPaletteConfig.secondary[season],
       padding: ".8rem 0"
     },
     h4: {
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.1rem",
-      color: seasonalPaletteConfig.secondaryDark[season],
+      color: seasonalPaletteConfig.dark[season],
       padding: ".8rem 0"
     },
     body1: {
-      ...defaultTypo
+      ...defaultTypo,
+      color: seasonalPaletteConfig.dark[season],
     },
     body2: {
       ...defaultTypo,
       fontSize: ".88rem",
+      color: seasonalPaletteConfig.dark[season],
     },
     subtitle2: {
       ...defaultTypo,
       fontSize: ".9rem",
-      color: seasonalPaletteConfig.successMain[season]
+      color: seasonalPaletteConfig.secondary[season]
     },
     caption: {
       ...defaultTypo,
-      fontSize: '.6rem'
+      fontSize: '.6rem',
+      color: seasonalPaletteConfig.light[season]
     },
     subtitle1: {
       ...defaultTypo,
       textTransform: "capitalize",
+      color: seasonalPaletteConfig.dark[season],
       fontSize: '.9rem'
     },
-    // @ts-ignore
-    label: {
+    h6: {
       ...defaultTypo,
       textTransform: "capitalize",
-      fontSize: '.9rem'
+      fontSize: '.9rem',
+      color: seasonalPaletteConfig.secondary[season],
     },
     button: {
       ...defaultTypo,
@@ -110,9 +96,27 @@ const theme = (season: ThemeSeasons) =>  createTheme({
     MuiContainer: {
       styleOverrides: {
         root: ({ theme }) => ({
-          background: theme.palette.secondary.light,
+          background: theme.palette.primary.main,
           height: "100vh",
           overflow: "hidden"
+        })
+      }
+    },
+    MuiGrid: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          background: theme.palette.secondary.main,
+        })
+      }
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          // background: theme.palette.secondary.main,
+          padding: '1rem',
+          display: "flex",
+          gap: '1rem',
+          border: `.8px solid ${theme.palette.text.primary}`
         })
       }
     },
@@ -120,26 +124,24 @@ const theme = (season: ThemeSeasons) =>  createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           '.MuiBox-root': {
+            background: theme.palette.background.paper,
             '&.info': {
-              background: theme.palette.info.main,
-              p: {
-                color: theme.palette.primary.main
-              }
+              h3: {
+                color: theme.palette.info.main
+              },
             },
             '&.success': {
-              background: theme.palette.success.light,
-              p: {
+              h3: {
                 color: theme.palette.success.main
-              }
+              },
             },
             '&.warning': {
-              background: theme.palette.warning.light,
               color: theme.palette.warning.main,
             },
             '&.error': {
               background: theme.palette.error.light,
             },
-          }
+          },
         })
       }
     },
@@ -148,13 +150,16 @@ const theme = (season: ThemeSeasons) =>  createTheme({
         root: ({ theme }) => ({
           fontSize: '.65rem!important',
           transition: '.8s',
-          '&:hover': {
-            boxShadow: `1px -1px 2px 0px ${seasonalPaletteConfig.successMain[season]}!important`,
-            transform: "translate(2px -2px)"
-          }
         })
       }
     },
+    MuiSelect: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          background: 'white'
+        })
+      }
+    }
   }
 });
 

@@ -1,7 +1,7 @@
 import { Trans } from "@lingui/macro";
 import React, { useCallback, useContext, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Box, Link, Typography, Paper, Button } from "@mui/material";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Box, Typography, Paper, Button, useTheme } from "@mui/material";
 import img1 from "utils/assets/images/kids under tree locked.jpg"
 import GlobalContext from "contexts/creators/global/global.context";
 import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
@@ -24,6 +24,7 @@ const UserProfilePage = (): JSX.Element => {
   const { toggleLoading, updateModal } = useContext(GlobalContext);
   const { id } = useParams();
   const navigate = useNavigate();
+  const theme = useTheme();
   const getfamilyTrees = useCallback(async (): Promise<any> => {
     const familyTreeService = new service.familyTree();
     const userId = currentUser?.userId;
@@ -103,7 +104,8 @@ const UserProfilePage = (): JSX.Element => {
                 <Box display="flex" justifyContent="flex-end" width="100%" alignItems="center">
                   <Button variant="outlined" color="secondary" sx={{ display: 'flex', gap: "1rem" }}>
                     <MdOutlineAddBox size={20} />
-                    <Link underline="none" href={PageUrlsEnum.trees}><Trans>create_your_first_tree</Trans></Link>
+                    <Link style={{textDecoration:"none"}} to={PageUrlsEnum.trees}>
+                    <Typography variant="body2"><Trans>create_your_first_tree</Trans></Typography></Link>
                   </Button>
                 </Box>
               )
@@ -117,7 +119,7 @@ const UserProfilePage = (): JSX.Element => {
               {tree?.name}
             </Box>
             <Box flex="0 1 30%">
-              <Link href={`/family-trees/${tree?.id || ''}`}><Trans>go_check_my_tree</Trans></Link>
+              <Link to={`/family-trees/${tree?.id || ''}`} style={{color: theme.palette.secondary.dark, textDecoration: 'none'}}><Trans>go_check_my_tree</Trans></Link>
             </Box>
             {/* @ts-ignore */}
             <LayoutFlow tree={currentFamilyTree || {}} />
