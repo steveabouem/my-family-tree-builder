@@ -1,7 +1,9 @@
 import React, { ReactNode } from 'react';
-import { Box, Typography} from '@mui/material';
+import { Box, Typography, useTheme} from '@mui/material';
 
 const DataProgress = ({ bg, sx, msg }: { msg: ReactNode, bg?: ReactNode, sx?: { [key: string]: string } }) => {
+  const theme = useTheme();
+
   return (
     <Box sx={{
       position: 'relative',
@@ -11,12 +13,13 @@ const DataProgress = ({ bg, sx, msg }: { msg: ReactNode, bg?: ReactNode, sx?: { 
       flexDirection: 'column',
       alignItems: 'center',
       gap: '1rem',
-      backgroundImage: `url(${bg})`,
+      // backgroundImage: `url(${bg})`,
       backgroundSize: '100% 100%',
       backgroundBlendMode: 'overlay',
       backgroundRepeat: 'no-repeat',
-      backgroundColor: '#fff6f6c9',
+      background: theme.palette.primary.light,
       padding: '1rem',
+      borderRadius: '5px',
       ...sx
     }}
     >

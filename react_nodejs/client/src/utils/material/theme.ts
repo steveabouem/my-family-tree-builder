@@ -11,6 +11,7 @@ const defaultTypo = {
 * in turn, the MUI components configured here use those dynamic palette values to define the compnents color palette
 */
 const theme = (season: ThemeSeasons) => createTheme({
+  cssVariables: true,
   palette: {
     primary: { main: seasonalPaletteConfig.primary[season], dark: seasonalPaletteConfig.dark[season], contrastText: seasonalPaletteConfig.secondary[season] },
     secondary: { main: seasonalPaletteConfig.light[season], dark: seasonalPaletteConfig.secondary[season], contrastText: seasonalPaletteConfig.dark[season] },
@@ -64,7 +65,7 @@ const theme = (season: ThemeSeasons) => createTheme({
       fontSize: ".88rem",
       color: seasonalPaletteConfig.dark[season],
     },
-    subtitle2: {
+    subtitle2: { // label
       ...defaultTypo,
       fontSize: ".9rem",
       color: seasonalPaletteConfig.secondary[season]

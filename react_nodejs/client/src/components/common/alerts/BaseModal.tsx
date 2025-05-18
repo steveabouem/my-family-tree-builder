@@ -41,7 +41,10 @@ const BaseModal = ({ children, type = 'info' }: DModalProps): JSX.Element => {
 
   return (
     <Modal open={!modal?.hidden} id={modal?.id || ''}>
-      <Box display="flex" flexDirection="column" gap={2} p={2} height="300px" width="30vw" m="15vh auto" justifyContent="space-between" className={type}>
+      <Box 
+        display="flex" flexDirection="column" gap={2} p={2} height="300px" width="30vw" m="15vh auto"
+        justifyContent="space-between" className={type} borderRadius={2}
+      >
         <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" borderBottom="1px solid #bec9b2">
           <Box display="flex" gap={1} alignItems="center">
             {headerIcon}

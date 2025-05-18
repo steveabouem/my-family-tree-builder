@@ -37,7 +37,6 @@
     "@types/react-redux": "^7.1.25",
     "@xyflow/react": "^12.5.1",
     "axios": "^1.4.0",
-    "boostrap": "^2.0.0",
     "dayjs": "^1.11.9",
     "entitree-flex": "^0.4.1",
     "formik": "^2.2.9",
