@@ -6,7 +6,7 @@ import FamilyTreeService from "services/familyTree/familyTree.service";
 * State
 */
 const initialState: DStepFormState = {
-  currentFormStep: 1,
+  currentFormStep: 0,
   updating: true,
   currentFormStepDetails: { name: '', fields: [] }, // this should be renamed currentStepInfo
   globalValues: {},
@@ -39,7 +39,7 @@ const goToNext = (state: DStepFormState): DStepFormState => {
 };
 const goToPrev = (state: DStepFormState): DStepFormState => {
   state.updating = true;
-  if (state.currentFormStep > 1) {
+  if (state.currentFormStep >= 1) {
     state.currentFormStep--;
   }
   state.updating = false;
@@ -60,6 +60,14 @@ const setCurrentFields = (state: DStepFormState, action: PayloadAction<DStepDeta
   state.stepTree = newStepTree;
   state.currentFormStepDetails = action.payload;
   state.updating = false;
+};
+const setStepFields = (state: DStepFormState, action: PayloadAction<DStepDetails & {step: number}>) => {
+  state.updating = true;
+  const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
+  state.stepTree = newStepTree;
+  state.totalSteps = action.payload.step;
+  state.updating = false;
+  return state;
 };
 const removeFieldsByStepName = (state: DStepFormState, action: PayloadAction<string>) => {
   state.updating = true;
@@ -102,6 +110,7 @@ export const stepFormSlice = createSlice({
     fetchNextStepFields: fetchFields,
     getStepFormValuesAction: getCurrentFields,
     loadStepFormFieldsAction: setCurrentFields,
+    populateStepAction: setStepFields,
     nextFormStepAction: goToNext,
     prevFormStepAction: goToPrev,
     updateGlobalValuesAction: setCombinedStepValues,
@@ -113,7 +122,7 @@ export const stepFormSlice = createSlice({
 });
 export const {
   changeformStepAction, nextFormStepAction, prevFormStepAction, clearFieldsByStepName,
-  loadStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields,
+  loadStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, populateStepAction,
   getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction, changeModeAction
 } = stepFormSlice.actions;
 export default stepFormSlice.reducer;

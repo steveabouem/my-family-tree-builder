@@ -86,7 +86,7 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...child,
               type: 'custom',
-              position: { x: position.x + (125 * childIndex), y: position.y + 125 },
+              position: { x: position.x + (125 * (childIndex + 1)), y: position.y + 125 },
               name: '',
               data: {
                 ...child,
@@ -102,7 +102,7 @@ class FamilyTreeController extends BaseController<any> {
       */
       if (Array.isArray(siblings)) {
         /*
-        * if the child was already processed through another incoming node (family member), ignore it
+        * if the sibling was already processed through another incoming node (family member), ignore it
         */
         siblings.forEach((sibling: any, siblingIndex: number) => {
           if (membersWithCoords.find((newNode: any) => newNode.node_id === sibling.node_id)) {
@@ -111,8 +111,8 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...sibling,
               type: 'custom',
-              position: { x: position.x + (325 * siblingIndex), y: position.y },
-              name: '',
+              position: { x: position.x + (325 * (siblingIndex + 1)), y: position.y },
+              name: `${sibling.first_name} ${sibling.last_name}`,
               data: {
                 ...sibling, label: `${sibling.first_name} ${sibling.last_name}`,
                 connections: [...sibling?.connections || [], { id: `${currentMember.node_id}-${sibling.node_id}`, source: currentMember.node_id, target: sibling.node_id }]
@@ -135,7 +135,7 @@ class FamilyTreeController extends BaseController<any> {
             membersWithCoords.push({
               ...spouse,
               type: 'custom',
-              position: { x: position.x + (325 * spousIndex), y: position.y },
+              position: { x: position.x + (325 * (spousIndex + 1)), y: position.y },
               name: '',
               data: {
                 ...spouse,
@@ -153,11 +153,11 @@ class FamilyTreeController extends BaseController<any> {
         /*
         * if the parent was already processed through another incoming node (family member), ignore it
         */
-        parents.forEach((parent: any) => {
+        parents.forEach((parent: any, parentIndex: number) => {
           if (membersWithCoords.find((newNode: any) => newNode.node_id === parent.node_id)) {
             logger.info('ignoring family member\'s current spouse as it is a dupe, ', { parent });
           } else {
-            const xOffset = parent.gender == 2 ? position.x + 225 : position.x - 125;
+            const xOffset = parent.gender == 2 ? position.x + (225 * (parentIndex + 1)) : position.x - 125;
             membersWithCoords.push({
               ...parent,
               type: 'custom',
@@ -357,7 +357,7 @@ class FamilyTreeController extends BaseController<any> {
     try {
       const familyMemberController = new FamilyMemberController();
       const matchingTree = await FamilyTree.findByPk(req.body.treeId);
-      logger.info('Found matching tree',  matchingTree);
+      logger.info('Found matching tree', matchingTree);
       if (matchingTree?.dataValues?.active) {
         const membersRecords = await familyMemberController.updateRecordAndRelations(req, res);
         const withCoords = this.positionFamilyMembers(Object.values(membersRecords || {}));

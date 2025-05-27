@@ -26,6 +26,10 @@ const theme = (season: ThemeSeasons) => createTheme({
       default: seasonalPaletteConfig.primary[season],
       paper: seasonalPaletteConfig.light[season]
     },
+    info: {
+      main: seasonalPaletteConfig.pillBg[season],
+      contrastText: seasonalPaletteConfig.pillBgInverse[season]
+    }
   },
   typography: {
     h1: {

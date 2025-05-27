@@ -7,6 +7,8 @@ export type seasonalCssVariable =
   "light" |
   "primary" |
   "accentBg" |
+  "pillBg" |
+  "pillBgInverse" |
   "secondary" ;
 export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeasons, string>> = {
   primary: {
@@ -29,6 +31,20 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
     spring: "#e8fff4",
     summer: "#51400ba3",
     winter: "#4c5054"
+  },
+  pillBg: {
+    default: "#ffffffe8",
+    fall: "#ffffffe8",
+    spring: "#ffffffe8",
+    summer: "#ffffffe8",
+    winter: "#83b2c7e8"
+  },
+  pillBgInverse: {
+    default: "#ffffffe8",
+    fall: "#ffffffe8",
+    spring: "#ffffffe8",
+    summer: "#ffffffe8",
+    winter: "#684f73e8"
   },
   cancel: {
     default: "#000",

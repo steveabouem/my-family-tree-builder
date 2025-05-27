@@ -23,15 +23,6 @@ const CreateFamilyTreePage = (): JSX.Element => {
 
   return (
     <Page title={<Trans>my_tree_page_title</Trans>} subtitle={<Trans>describe_your_family</Trans>}>
-      <Box display="flex" justifyContent="flex-end" alignItems="center" gap={1}>
-        <Typography variant="body2"><Trans>change_mode</Trans></Typography>
-        <Button variant="outlined" color="primary" sx={{ cursor: 'pointer' }} onClick={switchMode} size="small">
-          {mode === "manual" ?
-            <TreeStructureIcon sx={{ transform: "rotate(45deg)" }} />
-            : <WritingIcon />
-          }
-        </Button>
-      </Box>
       {mode === "manual" ? <GenealogyContainer /> : <ChartingContainer />}
     </Page>
   );

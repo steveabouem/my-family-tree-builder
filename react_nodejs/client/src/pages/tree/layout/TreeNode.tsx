@@ -1,16 +1,18 @@
 import React, { memo } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import Initials from 'components/common/Initials';
 import { Gendersenum } from 'components/common/definitions';
 import { BabyIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon } from 'utils/assets/icons';
 
 export default memo(({ data }: any) => {
+  const theme = useTheme();
+
   function getInitialsBG() {
-    return data?.gender === Gendersenum.female ? '#f4ceff' : '#f2efff';
+    return data?.gender === Gendersenum.female ? theme.palette.info.contrastText : theme.palette.info.main;
   }
   function getNodeBG() {
-    return !!data?.dod?.length ? '#8989892e' : '#fff8efb3';
+    return !data?.dod?.length ? theme.palette.info.main : '#737373';
   }
   function renderNodeIcon() {
     const isAdult = data?.age > 15;
@@ -32,7 +34,7 @@ export default memo(({ data }: any) => {
 
   return (
     <Box
-      width="250px" height="90px" padding={1} display="flex" border=".6px solid #8e6c75" borderRadius={2}
+      width="250px" height="120px" padding={1} display="flex" border=".6px solid #8e6c75" borderRadius={2}
       flexDirection="column" gap={1} justifyContent="start" alignItems="center" bgcolor={getNodeBG()}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
@@ -59,12 +61,12 @@ export default memo(({ data }: any) => {
       </Box>
       <Box display="flex" flexDirection="column" width="100%" overflow="hidden scroll" position="relative">
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant='caption'>{data.first_name} {data.last_name}</Typography>
-          <Typography variant='caption'>
+          <Typography variant='body1'>{data.first_name} {data.last_name}</Typography>
+          <Typography variant='body2'>
             {data.age} <Trans>years_old</Trans>
           </Typography>
         </Box>
-        <Typography variant='caption'>
+        <Typography variant='body1'>
           {data.occupation}
         </Typography>
       </Box>

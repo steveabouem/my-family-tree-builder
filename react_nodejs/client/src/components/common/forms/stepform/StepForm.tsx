@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React from 'react'
 import { Box, Button, Chip, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import FormFieldsGenerator from '../FormFieldsGenerator';
@@ -23,7 +23,8 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
         <Typography variant="body1">
           <Trans>current_form_step</Trans>
         </Typography>
-        <Chip label={currentFormStep} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
+        {/* // stepTree starts at 0 in the store */}
+        <Chip label={currentFormStep + 1} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
       </Box>
       <Box display="flex" justifyContent="flex-start" gap={2} alignItems="center">
         <Box display="flex" flexDirection="column" gap={2} justifyContent="center" width="100%">
@@ -31,18 +32,12 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: DStepForm<V>) 
           <Typography variant="body1">{currentFormStepDetails?.subtitle}</Typography>
         </Box>
         <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
-          <Button variant="contained" disabled={currentFormStep === 1} color="primary" onClick={() => dispatch(prevFormStepAction())}>
+          <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(prevFormStepAction())}>
             <Trans>prev</Trans>
           </Button>
-          <Button variant="contained" color="primary" onClick={() => dispatch(nextFormStepAction())} disabled={currentFormStep === totalSteps}>
+          <Button variant="contained" color="primary" onClick={() => dispatch(nextFormStepAction())} disabled={currentFormStep === totalSteps - 1}>
             <Trans>next</Trans>
           </Button>
-          {/* <Button variant="contained" color="primary" onClick={handleSave}>
-            <Trans>save</Trans>
-          </Button> */}
-          {/* <Button variant="contained" color="primary" onClick={() => setShowNextStep(false)}>
-            <Trans>finish</Trans>
-          </Button> */}
         </Box>
       </Box>
       {updating ? <LocalSpinner loading /> : (

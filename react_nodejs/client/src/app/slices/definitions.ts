@@ -20,12 +20,12 @@ export type DStepFormState = {
   updating: boolean;
   globalValues: any;
   totalSteps: number;
-  stepTree?: { [name: string]: DFormField[] | DFormField[][] };
+  stepTree?: { [name: string]: DFormField[] };
   mode?: string;
 };
 export interface DStepDetails {
   name: string;
-  fields: DFormField[] | DFormField[][];
+  fields: DFormField[];
   title?: ReactNode;
   subtitle?: ReactNode;
 }

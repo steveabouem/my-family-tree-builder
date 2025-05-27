@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Box, Typography } from '@mui/material';
 
 const Initials = ({ firstName, lastName, size = 25, bg }: { firstName: string, lastName: string, bg?: string, size?: number }) => {
   return (
@@ -17,7 +17,7 @@ const Initials = ({ firstName, lastName, size = 25, bg }: { firstName: string, l
           color: '#8c7272'
         }}
       >
-        {firstName?.charAt(0)?.toUpperCase()}{lastName?.charAt(0)?.toUpperCase()}
+        <Typography variant='body2'>{firstName?.charAt(0)?.toUpperCase()}{lastName?.charAt(0)?.toUpperCase()}</Typography>
       </Box>
     </Box>
   );
