@@ -1,6 +1,6 @@
 import { Session } from "express-session";
 import { APIFamilyTreeDTO } from "./familyTree/familyTree.definitions";
-import { Response, Request } from "express";
+
 export interface APITableJoin {
   tableName: string;
   on: string;
@@ -51,7 +51,6 @@ export interface APIEndpointResponse {
   message?: string;
 }
 
-
 /*
 * Pass a generic type to the response.
 * All controllers will use the json method from Express.
@@ -59,7 +58,7 @@ export interface APIEndpointResponse {
 * see https://stackoverflow.com/questions/62736335/typescript-and-express-js-change-res-json-response-type
 */
 export interface APIRequestPayload<P> extends APIEndpointResponse {
-  payload?: P;
+  payload: P;
 }
 
 export interface APIHelperResponse {

@@ -2,8 +2,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import FamilyMemberController from "../controllers/familyMember/FamilyMemberController";
-import { APIFamilyMemberDTO } from "../controllers/familyMember/familyMember.definitions";
-import RequestHelper from "./RequestHelper";
 
 const router = Router();
 
@@ -13,7 +11,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   const maxAge = req?.session?.cookie?.expires?.getTime() || 0;
   const now = new Date().getTime();
   const canProceed = maxAge > now;
-  
+
   if (canProceed) {
     ftAuthMiddleware.verifyIp(ip)
       .then((valid: boolean) => {
@@ -23,7 +21,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
         }
       })
       .catch((e: unknown) => {
-      winston.log('error' ,  e);
+        winston.log('error', e);
         // ! -TOFIX: catch return false doesnt actually catch falty logic, 
         // just wrong syntax and maybe wrong typing. FIX
         res.status(500);
@@ -41,23 +39,14 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 // Ideally make a base route handlers class that will accept generics in request 
 // and return appropriate types...maybe generics as well ?
 router.get('/index', (req: Request, res: Response) => {
-const familyMember = new FamilyMemberController();
-familyMember.getList();
+  const familyMember = new FamilyMemberController();
+  return true;
 });
 
 router.post('/create', (req: Request, res: Response) /**TODO: return type */ => {
- const familyMember = new FamilyMemberController();
- return familyMember;
+  const familyMember = new FamilyMemberController();
+  return true;
 });
 
-// router.post('/delete', (req: Request, res: Response) /**TODO: return type */ => {
-//   const familyMember = new FamilyMemberController();
-//   familyMember.delete(req, res);
-//  });
-
-//  router.post('/join_tree', (req: Request, res: Response) /**TODO: return type */ => {
-//   const familyMember = new FamilyMemberController();
-//   familyMember.addMembers(req, res);
-//  });
 export default router;
 

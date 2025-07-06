@@ -136,3 +136,9 @@ export const relationTypeCode = {
   u: 'u',
   w: 'w',
 } as const;
+
+export enum NodeMenuActions {
+  edit = 'edit_node',
+  add = 'add_node_relative',
+  delete = 'delete',
+};

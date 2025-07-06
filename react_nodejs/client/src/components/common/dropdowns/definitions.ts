@@ -21,22 +21,22 @@ export interface DDropdownOption {
 
 export const genderOptions: DDropdownOption[] = [
   {
-    label: 'Male',
+    label: 'male',
     value: Gendersenum.male,
   },
   {
-    label: 'Female',
+    label: 'female',
     value: Gendersenum.female,
   },
 ];
 export const parentOptions: DDropdownOption[] = [
   {
-    label: 'Yes',
+    label: 'yes',
     value: 1,
     id: 'is-parent-option',
   },
   {
-    label: 'No',
+    label: 'no',
     value: 0,
     id: 'not-parent-option',
   },
@@ -44,62 +44,42 @@ export const parentOptions: DDropdownOption[] = [
 
 export const relationOptions: DDropdownOption[] = [
   {
-    label: 'Aunt',
-    value: 'aunt',
-    id: 'is-aunt-option',
-  },
-  {
-    label: 'Brother',
+    label: 'brother',
     value: 'brother',
     id: 'is-brother-option',
   },
   {
-    label: 'Father',
+    label: 'father',
     value: 'father',
     id: 'is-father-option',
   },
   {
-    label: 'Grand-father',
-    value: 'Grand-father',
-    id: 'is-grand-father-option',
-  },
-  {
-    label: 'Grand-mother',
-    value: 'Grand-mother',
-    id: 'is-grand-mother-option',
-  },
-  {
-    label: 'Husband',
+    label: 'husband',
     value: 'husband',
     id: 'is-husband-option',
   },
   {
-    label: 'Mother',
+    label: 'mother',
     value: 'mother',
     id: 'is-mother-option',
   },
   {
-    label: 'Sister',
+    label: 'sister',
     value: 'sister',
     id: 'is-sister-option',
   },
   {
-    label: 'Uncle',
-    value: 'uncle',
-    id: 'is-uncle-option',
-  },
-  {
-    label: 'Wife',
+    label: 'wife',
     value: 'wife',
     id: 'is-wife-option',
   },
   {
-    label: 'Son',
+    label: 'son',
     value: 'son',
     id: 'is-son-option',
   },
   {
-    label: 'Daughter',
+    label: 'daughter',
     value: 'daughter',
     id: 'is-daughter-option',
   },
@@ -107,32 +87,32 @@ export const relationOptions: DDropdownOption[] = [
 
 export const maritalStatusOptions: DDropdownOption[] = [
   {
-    label: 'Single',
+    label: 'single',
     value: 'Single',
     id: 'single-option',
   },
   {
-    label: 'Married',
+    label: 'married',
     value: 'Married',
     id: 'married-option',
   },
   {
-    label: 'Divorced',
+    label: 'divorced',
     value: 'Divorced',
     id: 'Divorced-option',
   },
   {
-    label: 'Separated',
+    label: 'separated',
     value: 'Separated',
     id: 'separated-option',
   },
   {
-    label: 'Widowed',
+    label: 'widowed',
     value: 'Widowed',
     id: 'widowed-option',
   },
   {
-    label: 'Not telling',
+    label: 'not telling',
     value: 'Not telling',
     id: 'not-telling-option',
   },

@@ -20,17 +20,12 @@ const sequelize_1 = require("sequelize");
 **/
 class SessionController extends Base_controller_1.default {
     constructor() {
-        super('Sessions'); // default name table from library, hence the capitalization
-    }
-    // ?: creates session secret and initial session record
-    create(user) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
+        super('sessions');
     }
     getCurrent(req, res) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const response = { error: true, status: 400, session: '' };
+            const response = { code: 500, authenticated: false, error: true };
             try {
                 if ((_a = req.query) === null || _a === void 0 ? void 0 : _a.id) {
                     const sessionId = `${req.query.id}`;
@@ -39,17 +34,16 @@ class SessionController extends Base_controller_1.default {
                         .query("SELECT * FROM `Sessions` WHERE `sid` = :s limit 1", { replacements: { s: sessionId }, type: sequelize_1.QueryTypes.SELECT })
                         .catch((e) => {
                         logger_1.default.error('get current session: ', e);
-                        response.status = 400;
                         response.error = true;
-                        response.data = 'Unable to find session' + e;
+                        response.payload = 'Unable to find session' + e;
+                        response.status = 400;
                         res.status(400);
                     });
                     res.status(200);
+                    response.code = 200;
                     response.error = false;
                     if (currentSession === null || currentSession === void 0 ? void 0 : currentSession.length) {
-                        //   TODO: FIX TS IGNORES
-                        //   @ts-ignore either find a way to use the store, or refactor migration
-                        response.data = currentSession[0];
+                        response.current = currentSession[0];
                     }
                     else {
                         response.message = 'No existing session.';
@@ -60,13 +54,14 @@ class SessionController extends Base_controller_1.default {
                 }
             }
             catch (e) {
-                response.status = 400;
                 response.error = true;
-                response.data = 'Unable to find session' + e;
+                logger_1.default.error('Unable to retrieve session ', e);
+                response.message = 'Unable to find session' + e;
+                response.status = 400;
                 res.status(400);
             }
-            console.log({ response });
-            res.json(response);
+            logger_1.default.info('current session', { response });
+            return (response);
         });
     }
 }

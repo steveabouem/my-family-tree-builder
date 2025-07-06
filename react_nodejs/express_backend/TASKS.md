@@ -196,43 +196,49 @@ Family.hasMany(User, {
 THEME: 
 - four seasons since weère talking about a tree. Even when the app will expand to more than that it will still be relevant
 - Spring theme (green) alternative: https://dribbble.com/shots/25813846-Flos-Alternative-Medicine-Holistic-Health-Elementor-Template
-    buttons
-      primary
-      color: #e8fff4;
-      background: #2a3c2b;
-    disbled:
-      color: rgba(0, 0, 0, 0.26);
-      box-shadow: none;
-      background-color: rgba(0, 0, 0, 0.12);
-    headers color: #1c4604
-    main/page bg: #dce394
-    section/component:
-      background-color: #97b37d;
-      color: rgb(14 43 7);
-    labels: #e3ffd3
-    navlinks: #5d576b
-
-- Summer theme (yellowéorange) // see https://dribbble.com/shots/16775614-Garlicoin-Crypto-coin-Landin-Page
-    buttons
-      primary
-        background: #f4c84e;
-        color: #0a0000;
-      success:
-        background: #87c271;
-        color: #e8ffe2;
-    disbled:
-      background: #88733940;
-      color: #0a00006b;
-    secondary:
-      background: #f7f0c9;
-      color: #3d3326;
-    headers color: #040000
-    main/page bg: #ffe347
-    section/component:
-      background-color: #faeecb
-      color: rgba(0, 0, 0, 0.87);
-    labels: #987928
-    navlinks: #5d576b
-
+- Summer them
 - Fall theme (brown) https://dribbble.com/shots/25876138-Gourmet-Resto-A-Cinematic-Odoo-Theme-for-Elegant-Dining-Brands
 - Winter theme (whiteégrey) https://dribbble.com/shots/25983784-Yacht-and-Boat-Storage-Service-Landing-page
+
+# Bug on tree update
+- Need to reset the form values and totalSteps when  tree is generated.
+- once thre tree is created , it should be redirected to the trees page
+[x] can create a tree with one anchor
+[x] can create a tree with one anchor amd father/mother
+[x] can create a tree with one anchor amd sister/brother
+[x] can create a tree with one anchor amd son/daughter
+[x] can create a tree with one anchor one of each nuclear family member 
+[x] after confirming the addition of one family member we can move back and forth and the correct values are displayed
+[x] after confirming the addition of multiple family members we can move back and forth and the correct values are displayed
+[x] can create a tree with one anchor and multiple father/mother 
+[x] can create a tree with one anchor and multiple sister/brother (works, but alignment fails)
+[x] can create a tree with one anchor and multiple son/daughter
+[x] can create a tree with one anchor and one of each nuclear family member 
+[x] can create a tree with one anchor and multiple of each nuclear family member 
+[] *is assigning node area width based on number of children, spouses and parents to avoid those displaying under/over the next kin*
+[ ] can add one child to ANY node
+[ ] can add one parent to ANY node
+[ ] can add one siblings to ANY node
+[ ] can add one spouses to ANY node
+[ ] can add one children to ANY node
+[ ] can add multiple instances of child to ANY node
+[ ] can add multiple instances of parent to ANY node
+[ ] can add multiple instances of siblings to ANY node
+[ ] can add multiple instances of spouses to ANY node
+[ ] can add multiple instances of children to ANY node
+[ ] can delete child from ANY node's relations
+[ ] can delete parent from ANY node's relations
+[ ] can delete siblings from ANY node's relations
+[ ] can delete spouses from ANY node's relations
+[ ] can delete children from ANY node's relations
+[ ] applies form validations to each step
+[ ] disables the submit button if any step doesnt have all valid values
+[ ] nodes are initially connected
+[ ] nodes stay connected upon adding relation
+[ ] nodes stay connected upon deleting relation
+[ ] can create family tree name
+[ ] can edit family tree name
+[ ] can fetch and display existing family tree
+[ ] clicking existing family tree redirects to form
+[ ] upon redirects form is prefilled
+

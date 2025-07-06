@@ -1,10 +1,10 @@
-import React, { useContext, useEffect } from 'react';
-import { Box, Button, Grid2, Typography } from '@mui/material';
+import React, { useContext, useState } from 'react';
+import { Box, Grid2, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
 import { AxiosResponse } from 'axios';
 import GenealogyForm from './GenealogyForm';
-import GenealogyNarrator from './GenealogyNarrator';
+import TreePlayground from './GenealogyNarrator';
 import FamilyTreeService from 'services/familyTree/familyTree.service';
 import { DApiResponse, DFamilyMemberDTO, DFamilyTreeDAO, DFamilyTreeRecord } from 'services/api.definitions';
 import FamilyTreeContext from 'contexts/creators/familyTree';
@@ -13,8 +13,10 @@ import { useZDispatch, useZSelector } from 'app/hooks';
 import { DFamilyTreeDTO } from './definitions';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import GlobalContext from 'contexts/creators/global';
+import { formatTreeMemberDAOList } from 'pages/tree/create/genealogy/utils';
 
 const GenealogyContainer: React.FC = () => {
+  const [treeCopy, setTreeCopy] = useState({});
   const { stepTree = {}, mode } = useZSelector<DStepFormState>(state => state.stepForm);
   const { treeId } = useZSelector<DFamilyTreeState>(state => state.tree);
   const dispatch = useZDispatch();
@@ -32,6 +34,13 @@ const GenealogyContainer: React.FC = () => {
   function formatOutgoingValues(v: any): DFamilyTreeDAO {
     const mappedMembers = Object.keys(stepTree).reduce((acc: any, curr: string) => {
       const formatted: DFamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
+      // TODO: back currently has a new currentAnchor prop to determine who among the members submitted should be the anchor
+      if (!formatted?.node_id) {
+        // TODO: this is to do a quick fix for key duplication when switching steps right after changing to edit mode and selecting a next of kin
+        // the useEffect in the form attempts to generate the keys for the new kin, and somewhre along the way  we end up with brother and brother-[stepNumber], where brother has no values
+        return acc;
+      }
+
       const prefix = curr.split('-')[0];
       if (prefix === 'son' || prefix === 'daughter') {
         acc = {
@@ -95,42 +104,7 @@ const GenealogyContainer: React.FC = () => {
 
     return formatted;
   }
-  function formatIncomingValues(v: any) {
-    console.log('incoming ', v);
-    const formattedNodes = Object?.values(v || {})?.reduce((nodeList: any, member: any) => {
-      let childrenIds: any = null;
-      let siblingsIds: any = null;
-      let spousesIds: any = null;
-
-      if (member?.children) {
-        if (Array.isArray(JSON.parse(member.children))) {
-          childrenIds = JSON.parse(member.children).map((item: any) => item.node_id);
-        }
-      }
-      if (member?.siblings) {
-        if (Array.isArray(JSON.parse(member.siblings))) {
-          siblingsIds = JSON.parse(member.siblings).map((item: any) => item.node_id);
-        }
-      }
-      if (member?.spouses) {
-        if (Array.isArray(JSON.parse(member.spouses))) {
-          spousesIds = JSON.parse(member.spouses).map((item: any) => item.node_id);
-        }
-      }
-
-      return ({
-        ...nodeList,
-        [member.node_id]: {
-          ...member,
-          id: member.node_id,
-          children: childrenIds,
-          siblings: siblingsIds,
-          spouses: spousesIds,
-        }
-      })
-    }, {});
-    return formattedNodes;
-  }
+  
   function handleSubmit(v: any) {
     const familyTreeService = new FamilyTreeService();
     const formattedValues: DFamilyTreeDAO = formatOutgoingValues(v);
@@ -142,7 +116,7 @@ const GenealogyContainer: React.FC = () => {
         }>, any>) => {
           if (response.data.code == 200) {
             const updatedListOfMembers = JSON.parse(response.data.payload.members);
-            const formattedMemberRecords = formatIncomingValues(updatedListOfMembers);
+            const formattedMemberRecords = formatTreeMemberDAOList(updatedListOfMembers);
             updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_success_modal</Trans></Typography>, type: 'success' });
             dispatch(populateTreeAction(formattedMemberRecords));
           } else {
@@ -152,7 +126,7 @@ const GenealogyContainer: React.FC = () => {
       } else {
         familyTreeService.create(formattedValues).then((response: AxiosResponse<DApiResponse<DFamilyTreeDTO>>) => {
           if (response.data.code == 200) {
-            const formattedMemberRecords: any = formatIncomingValues(response.data.members);
+            const formattedMemberRecords: any = formatTreeMemberDAOList(response.data.members);
             updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
             dispatch(populateTreeAction(formattedMemberRecords));
             dispatch(saveTreeIdAction(response.data.id));
@@ -173,10 +147,10 @@ const GenealogyContainer: React.FC = () => {
         {(props) => (
           <Grid2 container spacing={2} display="flex" justifyContent="space-between">
             <Grid2 size={6} >
-              <GenealogyForm />
+              <GenealogyForm treeCopy={treeCopy} setTreeCopy={setTreeCopy} />
             </Grid2>
             <Grid2 size={6}>
-              <GenealogyNarrator />
+              <TreePlayground />
             </Grid2>
           </Grid2>
         )}

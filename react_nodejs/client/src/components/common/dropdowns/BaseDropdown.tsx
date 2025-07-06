@@ -28,7 +28,7 @@ const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, s
         placeholder={`${<Trans>select</Trans>}`}
         labelId=""
         id={id || ''}
-        label={label}
+        label={<Trans>{label}</Trans>}
         size="small"
         onChange={(e) => handleFieldValueChange(e.target.value)}
         className={additionalClass}

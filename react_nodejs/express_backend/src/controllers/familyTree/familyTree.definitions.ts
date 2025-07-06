@@ -6,7 +6,8 @@ import { APIFamilyMemberDAO } from "../familyMember/familyMember.definitions";
 
 // DAOs
 export interface APIFamilyTreeDAO {
-    members: {[stepName: string]: APIFamilyMemberDAO};
+    //! TODO: keep an eye here, it was previously an object keyed with the noe id for the front. the conversion functions will be used for that if necessary
+    members: APIFamilyMemberDAO[];
     userId: number;
     active?: boolean;
     treeName?: string;
@@ -21,16 +22,11 @@ export interface APIFamilyTreeDTO {
     id: number;
     created_at: Date;
     created_by: number;
-    members: string;
     updated_at: Date;
     active: number;
 }
 
-export type APIGetFamilyTreeResponse = APIEndpointResponse & Partial<APIFamilyTreeDTO> & {members?: {[nodeId: string]: APIFamilyMemberDAO}};
-export interface DSaveTreeFormStepResponse {
-    lastStep: boolean;
-    newFields: APIStepFormFieldDTO[];
-};
+export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & {members?: APIFamilyMemberDAO[]};
 
 export type APIStepFormFieldDTO = {
     fieldName: string;

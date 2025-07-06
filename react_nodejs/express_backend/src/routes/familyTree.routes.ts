@@ -3,6 +3,8 @@ import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import FamilyTreeController from "../controllers/familyTree/FamilyTreeController";
 import logger from "../utils/logger";
 import RequestHelper from "./RequestHelper";
+import FamilyTree from "../models/FamilyTree";
+import { APIGetFamilyTreeResponse } from "../controllers/familyTree/familyTree.definitions";
 
 const router = Router();
 
@@ -30,19 +32,19 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 router.get('/index', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod(familyTreeController.getAll, 'Get trees index');
+  helper.sendResponseFromControllerMethod<FamilyTree[]>(familyTreeController.getAll, 'Get trees index');
 });
 
-router.get('/details', (req: Request, res: Response) => {
+router.get('/details', (req: Request<{}, {}, { id: string }, {}>, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod(familyTreeController.getOne, 'Get tree details');
+  helper.sendResponseFromControllerMethod<FamilyTree | null>(familyTreeController.getOne, 'Get tree details');
 });
 
 router.post('/create', (req: Request, res: Response) => {
   const familyTreeController = new FamilyTreeController();
   const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod(familyTreeController.create, 'Create family tree');
+  helper.sendResponseFromControllerMethod<APIGetFamilyTreeResponse | null>(familyTreeController.create, 'Create family tree');
 });
 
 router.post('/delete', (req: Request, res: Response) => {
@@ -62,16 +64,6 @@ router.put('/members', (req: Request, res: Response) => {
   const helper = new RequestHelper(req, res);
 
   helper.sendResponseFromControllerMethod(familyTreeController.update, 'Update tree records');
-});
-
-router.get('/layouts', (req: Request, res: Response) => {
-  const familyTreeController = new FamilyTreeController();
-  familyTreeController.getTreeLayout(req, res);
-});
-
-router.get('/narration-fields', (req: Request, res: Response) => {
-  const familyTreeController = new FamilyTreeController();
-  familyTreeController.getTreeLayout(req, res);
 });
 
 export default router;

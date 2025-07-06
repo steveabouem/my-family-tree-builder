@@ -1,13 +1,11 @@
-import { APIEndpointResponse } from "../controllers.definitions";
-
-export type APIRegistrationResponse = APIEndpointResponse & {
+export interface APIRegistrationResponse {
     authenticated: boolean;
     email: string;
     userId?: number;
     message?: string;
 }
 
-export type APILoginResponse = APIEndpointResponse & {
+export interface APILoginResponse  {
     authenticated: boolean;
     email?: string;
     firstName?: string;
@@ -15,7 +13,7 @@ export type APILoginResponse = APIEndpointResponse & {
     userId?: number;
 }
 
-export type APILogoutResponse = APIEndpointResponse & {
+export interface APILogoutResponse  {
     authenticated: boolean;
     email: string;
     userId?: number;
@@ -33,12 +31,6 @@ export interface APIRegistrationFields { //registration form fields
     gender: string;
     profileUrl?: string;
 }
-
-export interface DFTLoginFields { //registration form fields
-    email: string;
-    password: string;
-}
-
 
 /** ADMIN */
 

@@ -66,10 +66,14 @@ app.use((req, res, next) => {
 app.use('/api/users', userHandler);
 app.use('/api/sessions', sessionHandler);
 app.use('/api/auth', authHandler);
-app.use('/api/trees', familyTreeHandler);
-app.use('/api/members', familyMemberHandler);
-app.use('/api/users', userHandler);
+// app.use('/api/trees', familyTreeHandler);
+// app.use('/api/members', familyMemberHandler);
 /** END */
 
 const port = 4000;
-app.listen(port, () => console.log(`Server running on port ${port}. .PLEASE CHECK TODOS/TOFIX`));
+try {
+
+  app.listen(port, () => console.log(`Server running on port ${port}. .PLEASE CHECK TODOS/TOFIX`));
+} catch(e) {
+  console.log('Server error ', e);
+}

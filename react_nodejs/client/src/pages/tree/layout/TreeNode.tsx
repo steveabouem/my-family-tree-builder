@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import Initials from 'components/common/Initials';
@@ -6,6 +6,7 @@ import { Gendersenum } from 'components/common/definitions';
 import { BabyIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon } from 'utils/assets/icons';
 
 export default memo(({ data }: any) => {
+  const [showDetails, setShowDetails] = useState(false);
   const theme = useTheme();
 
   function getInitialsBG() {
@@ -34,8 +35,10 @@ export default memo(({ data }: any) => {
 
   return (
     <Box
-      width="250px" height="120px" padding={1} display="flex" border=".6px solid #8e6c75" borderRadius={2}
-      flexDirection="column" gap={1} justifyContent="start" alignItems="center" bgcolor={getNodeBG()}
+      width={showDetails ? '250px' : '70px'} height={showDetails ? '120px' : '40px'} padding={1}
+      onMouseEnter={() => {setShowDetails(true)}} onMouseLeave={() => {setShowDetails(false)}} 
+      display="flex" border=".6px solid #8e6c75" borderRadius={2} flexDirection="column"
+      gap={1} justifyContent="start" alignItems="center" bgcolor={getNodeBG()}
     >
       <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
         {
@@ -59,17 +62,20 @@ export default memo(({ data }: any) => {
           </Button> */}
         </Box>
       </Box>
-      <Box display="flex" flexDirection="column" width="100%" overflow="hidden scroll" position="relative">
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant='body1'>{data.first_name} {data.last_name}</Typography>
-          <Typography variant='body2'>
-            {data.age} <Trans>years_old</Trans>
+      {showDetails ? (
+        <Box display="flex" flexDirection="column" width="100%" overflow="hidden scroll" position="relative">
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant='body1'>{data.first_name} {data.last_name}</Typography>
+            <Typography variant='body2'>
+              {data.age} <Trans>years_old</Trans>
+            </Typography>
+          </Box>
+          <Typography variant='body1'>
+            {data.occupation}
           </Typography>
         </Box>
-        <Typography variant='body1'>
-          {data.occupation}
-        </Typography>
-      </Box>
+      ) : ''
+      }
       {/* <Handle
       type="target"
         id={data.node_id + 'bottom'}

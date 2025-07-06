@@ -19,6 +19,7 @@ export interface DPageProps {
   children?: React.ReactNode;
   loading?: boolean;
   bg?: string;
+  prevUrl?: string;
 }
 
 /* +++++=> FORMS <= +++++ */

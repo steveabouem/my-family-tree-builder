@@ -5,15 +5,13 @@ import TreeLayout from 'pages/tree/layout/TreeLayout';
 import DataProgress from 'components/common/progressIndicators/DataProgress';
 import { Trans } from '@lingui/macro';
 
-export const GenealogyNarrator = () => {
+export const TreePlayground = React.memo(() => {
   const { currentFamilyTree } = useZSelector<DFamilyTreeState>(state => state.tree);
 
   return currentFamilyTree ? (
     <TreeLayout tree={currentFamilyTree} />
   ) : <DataProgress
-    msg={<Trans>fill_in_the_form_first</Trans>}
-    // bg={abstractLogo}
-  />;
-};
+    msg={<Trans>fill_in_the_form_first</Trans>} />;
+});
 
-export default GenealogyNarrator;
+export default TreePlayground;

@@ -2,13 +2,13 @@ import React from 'react';
 import { TfiWrite } from "react-icons/tfi";
 import { LuImagePlus } from "react-icons/lu";
 import { PiTreeStructure, PiBabyFill  } from 'react-icons/pi';
-import { IoWoman, IoMan, IoSettings  } from "react-icons/io5";
-import { FaChild, FaChildDress  } from "react-icons/fa6";
+import { IoWoman, IoMan, IoSettings, IoCaretBackOutline  } from "react-icons/io5";
+import { FaChild, FaChildDress, FaUsers  } from "react-icons/fa6";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import { GiFamilyTree } from "react-icons/gi";
 import { HiColorSwatch } from "react-icons/hi";
 import { CiSun } from "react-icons/ci";
-import { FaSnowman } from "react-icons/fa";
+import { FaSnowman, FaEye } from "react-icons/fa";
 import { TbLeaf } from "react-icons/tb";
 import { LuFlower2 } from "react-icons/lu";
 import { DIconProps } from './definitions';
@@ -60,4 +60,13 @@ export const  SnowmanIcon = ({sx = {}, color = '', size = 20, onClick}: DIconPro
 };
 export const  FamilyTreeIcon = ({sx = {}, color = '', size = 20, onClick}: DIconProps) => {
   return <GiFamilyTree style={sx} color={color} size={size} onClick={onClick}/>;
+};
+export const  BackIcon = ({sx = {}, color = '', size = 30, onClick}: DIconProps) => {
+  return <IoCaretBackOutline style={sx} color={color} size={size} onClick={onClick} />;
+};
+export const  EyeIcon = ({sx = {}, color = '', size = 20, onClick}: DIconProps) => {
+  return <FaEye style={sx} color={color} size={size} onClick={onClick} />;
+};
+export const  GroupIcon = ({sx = {}, color = '', size = 20, onClick}: DIconProps) => {
+  return <FaUsers style={sx} color={color} size={size} onClick={onClick} />;
 };

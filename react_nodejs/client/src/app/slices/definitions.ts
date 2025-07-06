@@ -43,4 +43,5 @@ export interface DFamilyTreeState {
   treeId: number;
   currentFamilyTree?: DFamilyTreeDTO;
   name?: string;
+  list: any[];
 }

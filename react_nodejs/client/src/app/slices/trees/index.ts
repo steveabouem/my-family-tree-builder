@@ -6,7 +6,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 const initialState: DFamilyTreeState = {
   updating: true,
   name: '',
-  treeId: 0
+  treeId: 0,
+  list: []
 };
 
 /*
@@ -27,6 +28,17 @@ const saveTreeId = (state: DFamilyTreeState, action: PayloadAction<number>) => {
 const toggleLoading = (state: DFamilyTreeState, action: PayloadAction<void>) => {
 
 };
+const saveTreeList = (state: DFamilyTreeState, action: PayloadAction<any>) => {
+  state.updating = true;
+  state.list = action.payload;
+  state.updating = false;
+};
+const resetTree = (state: DFamilyTreeState) => {
+  state.updating = true;
+  state = {...initialState};
+  state.updating = false;
+  return state;
+}
 /*
 * Slice (reducer)
 */
@@ -36,10 +48,12 @@ export const familyTreeSlice = createSlice({
   reducers: {
     populateTreeAction: updateTree,
     saveTreeIdAction: saveTreeId, // this is duplicating info, it should go in the currentTree object
-    toggleTreeLoadingAction: toggleLoading
+    toggleTreeLoadingAction: toggleLoading,
+    saveTreesListAction: saveTreeList,
+    resetAction: resetTree
   }
 });
 export const {
-  populateTreeAction, toggleTreeLoadingAction, saveTreeIdAction
+  populateTreeAction, toggleTreeLoadingAction, saveTreeIdAction, saveTreesListAction, resetAction
 } = familyTreeSlice.actions;
 export default familyTreeSlice.reducer;

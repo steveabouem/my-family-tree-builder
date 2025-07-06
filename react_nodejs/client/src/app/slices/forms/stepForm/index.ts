@@ -61,7 +61,7 @@ const setCurrentFields = (state: DStepFormState, action: PayloadAction<DStepDeta
   state.currentFormStepDetails = action.payload;
   state.updating = false;
 };
-const setStepFields = (state: DStepFormState, action: PayloadAction<DStepDetails & {step: number}>) => {
+const setStepFields = (state: DStepFormState, action: PayloadAction<DStepDetails & { step: number }>) => {
   state.updating = true;
   const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
   state.stepTree = newStepTree;
@@ -83,13 +83,7 @@ const getCurrentFields = (state: DStepFormState) => {
 const fetchFields = (state: DStepFormState, action: PayloadAction<number>) => {
   const familyTreeService = new FamilyTreeService();
   state.updating = true;
-  // /*
-  // * might setup a middleware for async, but I dont see the point since I'll still be using "thenable" functions
-  // */
-  // familyTreeService.getGenealogyFormFieldsForStep(action.payload)
-  // .then((newFields: DFormField[]) => {
-  //   state.currentFormStepDetails = newFields;
-  // })
+
   state.updating = false;
   return state;
 };
@@ -98,6 +92,17 @@ const setCombinedStepValues = <V,>(state: DStepFormState, action: PayloadAction<
   state.updating = true;
   state.globalValues = { ...state.globalValues, ...action.payload };
   state.updating = false;
+};
+const cleanup = (state: DStepFormState) => {
+  state.updating = true;
+    state.currentFormStep = 0;
+    state.currentFormStepDetails = { name: '', fields: [] };
+    state.globalValues = {};
+    state.totalSteps = 1;
+    state.updating = false;
+    state.stepTree = {};
+  
+    return state;
 };
 /*
 * Slice (reducer)
@@ -117,11 +122,12 @@ export const stepFormSlice = createSlice({
     getGlobalValuesAction: getCombinedStepValues,
     setStepsCountAction: setTotalStep,
     clearFieldsByStepName: removeFieldsByStepName,
-    changeModeAction: changeMode
+    changeModeAction: changeMode,
+    cleanupAction: cleanup
   }
 });
 export const {
-  changeformStepAction, nextFormStepAction, prevFormStepAction, clearFieldsByStepName,
+  changeformStepAction, nextFormStepAction, prevFormStepAction, clearFieldsByStepName, cleanupAction,
   loadStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, populateStepAction,
   getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction, changeModeAction
 } = stepFormSlice.actions;

@@ -1,7 +1,4 @@
-# `PROJECT STRUCTURE`
  
-## Family tree: `APP #1`
-All routes and entities are prefixed by `FT`. They are seggragated from the others for now.
 
 ### Workflow (tree generation)
 #### Option 1: standalone to greater tree (Fam != Tree)
@@ -87,6 +84,7 @@ Perform the business logic related operations along with all the sql. This is th
 ## Routes
 Gateway to the controllers, provide the API endpoints for the front to call any of the available controllers. Apply any relevant middleware before any other request.
 - **Typing**: DTOS only
+    - Responses will always follow the typing DEndpointResponse<response_body_type>, where the generic will be use in the Express' res.json()
 
 ## Logs and Error handling
 Expressjs has a [recommended way to handle errors](https://expressjs.com/en/guide/error-handling.html#error-handling). Thats what I will follow.
@@ -102,68 +100,3 @@ Make it a habit to global search TODOs (or add it to the precommit scripts). The
 # `COMMANDS`
 #
  `Good source:` [here](https://gist.github.com/bgoonz/cd6312bfeae2d3f07655cb84e30413e9)
-#
-## DB
-- New: 
-    ```
-    npx sequelize-cli db:create
-    ```
-
-- Drop: 
-
-
-## Models
-- New: 
-    
-    ```
-    ... model:create --name SampleModel --attributes sampleAttr:string,secondAtt:json
-    ```
-- Update: create new migration and perform update in migration file (make sure to use add/removeColumn in the up/down methods)
-    
-## Migrations
-- Create one:
-```
-npx sequelize-cli migration:create --name descriptiveName
-```
-- Migrate: 
-    ```
-    npx sequelize-cli db:migrate
-    ```
-
-- Rollback:
-    ```
-    npx sequelize-cli db:migrate:undo
-    ```
-
-- Rollback all:
-    ```
-    npx sequelize-cli db:migrate:undo:all
-    ```
-
-## Seeds
-
-- Generate:
-    ```
-    npx sequelize-cli seed:generate --name <descriptiveName>
-    ```
-
-- Run all:
-    ```
-    npx sequelize-cli db:seed:all
-    ```
-
-- Rollback latest: 
-    ```
-    npx sequelize-cli db:seed:undo
-    ```
-
-- Rollback all:
-    ```
-    npx sequelize-cli db:seed:undo:all
-    ```
-
-## Playground
-- Run ts file: 
-```
-
-```

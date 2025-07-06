@@ -4,7 +4,7 @@
 
 // DAOs
 export interface APIFamilyMemberDAO {
-    // Zogh attributes
+    // Default attributes
     dob: string;
     node_id: string;
     email: string;
@@ -18,7 +18,8 @@ export interface APIFamilyMemberDAO {
     description?: string;
     profile_url?: string;
     userId?: number;
-    // ReactFlow attributes
+    // ReactFlow related attributes
+    currentAnchor?: boolean; //TODO: used for conversion functions
     nodeId?: string;
     name?: string;
     type?: string;
@@ -51,7 +52,6 @@ export interface APIFamilyMemberDTO {
     updated_at: Date;
     dod?: string;
 }
-
 
 export interface APIFamilyTreeNodeDTO {
     age: number;

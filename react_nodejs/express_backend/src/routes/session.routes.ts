@@ -19,11 +19,12 @@ router.use((req: Request, res: Response, next: NextFunction) => {
       }
     })
     .catch((e: unknown) => {
-    winston.log('error' ,  e);
+      winston.log('error', e);
       // ! -TOFIX: catch return false doesnt actually catch falty logic, 
       // just wrong syntax and maybe wrong typing. FIX
       res.status(400);
       res.json({ ipIsValid: false, message: e });
+      return;
     });
   next();
 });
@@ -32,7 +33,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 router.get('/', (req: Request, res: Response) => {
   const helper = new RequestHelper(req, res);
   const sessionController = new SessionController();
-  helper.sendResponseFromControllerMethod(sessionController.getCurrent, 'Get Current Session');
+  // helper.sendResponseFromControllerMethod(sessionController.getCurrent, 'Get Current Session');
 });
 
 router.post('/set-data', (req: Request, res: Response) => {

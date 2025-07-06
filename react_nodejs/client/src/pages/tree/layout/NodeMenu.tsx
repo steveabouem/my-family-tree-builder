@@ -3,6 +3,7 @@ import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography } fro
 import { Trans } from '@lingui/macro';
 import GlobalContext from 'contexts/creators/global';
 import { DReactFlowNode } from '@services/api.definitions';
+import { NodeMenuActions } from '../definitions';
 
 const NodeMenu = ({ data }: { data: Pick<DReactFlowNode, 'data'> }) => {
   const [selectedAction, setSelectedAction] = useState<'edit' | 'delete' | 'expand'>("expand");
@@ -22,7 +23,7 @@ const NodeMenu = ({ data }: { data: Pick<DReactFlowNode, 'data'> }) => {
           value={selectedAction}
         >
           <FormControlLabel
-            value="edit_node" control={<Radio size='small' onClick={selectOption} />}
+            value={NodeMenuActions.edit} control={<Radio size='small' onClick={selectOption} />}
             label={
               <Typography variant='body1'
                 fontWeight="bold">

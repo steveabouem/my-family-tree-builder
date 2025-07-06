@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useContext, useEffect} from 'react';
 import {
   Background,
   ReactFlow,
@@ -9,25 +9,19 @@ import {
 } from '@xyflow/react';
 import { useFormikContext } from 'formik';
 import { Trans } from '@lingui/macro';
+import { useTheme } from '@mui/material';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
 import { DFamilyTreeDTO } from '@services/api.definitions';
-import { DReactFlowEdge, DReactFlowNode } from '../definitions';
+import { DReactFlowEdge, DReactFlowNode, NodeMenuActions } from '../definitions';
 import { useZDispatch } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
-import { setStepsCountAction, updateGlobalValuesAction, changeModeAction } from 'app/slices/forms/stepForm';
-import abstractLogo from 'utils/assets/images/abstract_logo.png';
+import { setStepsCountAction, updateGlobalValuesAction, changeModeAction, changeformStepAction } from 'app/slices/forms/stepForm';
 import { stepFormModes } from 'app/slices/definitions';
-import { useTheme } from '@mui/material';
 
 const nodeTypes = {
   custom: CustomNode,
-};
-enum nodeMenuActions {
-  edit = 'edit_node',
-  add = 'add_node_relative',
-  delete = 'delete',
 };
 const treeBgUrl = 'https://images.pexels.com/photos/22821246/pexels-photo-22821246/free-photo-of-plants-leaves-in-black-and-white.jpeg';
 
@@ -56,13 +50,9 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
       anchor_gender: node.gender,
       anchor_marital_status: node.marital_status,
       anchor_node_id: node.node_id,
-      parents: JSON.parse(node?.parents || '[]'),
-      siblings: JSON.parse(node?.siblings || '[]'),
-      spouses: JSON.parse(node?.spouses || '[]'),
-      children: JSON.parse(node?.children || '[]'),
     });
   }
-  function showEditModal(event: any, node: DReactFlowNode) {
+  function showEditModal(event: any, node: any) {
     updateModal({
       hidden: false,
       buttons: {
@@ -72,16 +62,16 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
       title: <Trans>choose_node_action_title {node.first_name}</Trans>,
       onConfirm: (transferData: string) => {
         switch (transferData) {
-          case nodeMenuActions.edit:
+          case NodeMenuActions.edit:
             dispatch(changeModeAction(stepFormModes.edit));
-            dispatch(updateGlobalValuesAction({ values: {} }));
-            populateFormWithNodeValues(node);
             dispatch(setStepsCountAction(1));
-            break;
-          case nodeMenuActions.add:
+            dispatch(changeformStepAction(0));
+            populateFormWithNodeValues(node.data);
 
             break;
-          case nodeMenuActions.delete:
+          case NodeMenuActions.add:
+            break;
+          case NodeMenuActions.delete:
             //reset form state in case it was in edit mode
             dispatch(changeModeAction(stepFormModes.create));
             break;
@@ -94,21 +84,17 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   function generateNodesAndEdges() {
     const incomingNodes: any = Object.values(tree);
     const incomingEdges = incomingNodes.reduce((listOfEdges: any, node: any) => {
-      // const duplicate = listOfEdges.find((e:any) => e.id === node)
-      console.log('the connections: ', node?.data?.connections);
-
       if (node?.data?.connections?.length) {
         return [...listOfEdges.flat(), node.data?.connections?.flat() || []];
       } else {
         return listOfEdges.flat();
       }
     }, []);
-    console.log({ incomingEdges });
 
     setNodesList(incomingNodes);
-    // incomingEdges.forEach((e: any) => {
-    //   setEdgesList((eds) => addEdge(e, edgesList));
-    // });
+    incomingEdges.forEach((e: any) => {
+      setEdgesList((eds) => addEdge(e, edgesList));
+    });
   }
   function generateEdge(newEdge: any) {
     console.log({ newEdges: newEdge });
@@ -148,7 +134,7 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
     <ReactFlow
       nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes}
       onNodeClick={showEditModal} onNodesChange={moveNode} fitView={true}
-    // onConnect={generateEdge} onEdgesChange={generateEdge}      
+    onEdgesChange={generateEdge}
     >
       <Background style={{
         backgroundSize: '100% 100%',

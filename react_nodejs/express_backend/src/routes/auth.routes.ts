@@ -1,11 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
 import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import logger from "../utils/logger";
-import AuthController from "../controllers/auth/AuthController";
 import { APIEndpointResponse, APIRequestPayload } from "../controllers/controllers.definitions";
 import { APIUserDTO } from "../middleware-classes/user/user..definitions";
 import { APILoginResponse, APIRegistrationResponse } from "../controllers/auth/auth.definitions";
 import RequestHelper from "./RequestHelper";
+import AuthController from "../controllers/auth/AuthController";
 
 
 const router = Router();
@@ -38,19 +38,19 @@ router.post('/register', (req: Request, res: Response, next: NextFunction) => {
 router.post('/login', (req: Request, res: Response) => {
   const authController = new AuthController();
   const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod(authController.login, 'Login');
+  // helper.sendResponseFromControllerMethod(authController.login, 'Login');
 });
 
 router.post('/logout', (req: Request, res: Response) => {
   const authController = new AuthController();
   const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod(authController.logout, 'Logout');
+  // helper.sendResponseFromControllerMethod(authController.logout, 'Logout');
 });
 
 router.post('/password/change', (req: Request, res: Response) => {
   const authController = new AuthController();
   const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod(authController.changePassword, 'Update Pwd');
+  // helper.sendResponseFromControllerMethod(authController.changePassword, 'Update Pwd');
 });
 
 export default router;

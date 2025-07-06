@@ -17,6 +17,7 @@ const sequelize_1 = require("sequelize");
 const Base_controller_1 = __importDefault(require("../Base.controller"));
 const User_1 = __importDefault(require("../../models/User"));
 const logger_1 = __importDefault(require("../../utils/logger"));
+const Role_1 = __importDefault(require("../../models/Role"));
 class UserController extends Base_controller_1.default {
     constructor() {
         super('Users');
@@ -24,28 +25,40 @@ class UserController extends Base_controller_1.default {
     create(values) {
         return __awaiter(this, void 0, void 0, function* () {
             const hashedPassword = bcryptjs_1.default.hashSync(values.password, this.salt);
-            // ! -TOFIX: implement search by name as user enter their last name. 
-            // Does it make sense to offer them choices given the security aspect?
-            const formattedValues = Object.assign(Object.assign({}, values), { related_to: [1], imm_family: 2, password: hashedPassword, created_at: new Date });
-            const fieldsValid = yield this.validateUserFields(formattedValues);
-            const duplicate = yield User_1.default.findOne({ where: { email: values.email } });
-            let newUser = null;
-            if (duplicate) {
-                logger_1.default.error('! User.create ! User already exists');
-                return null;
+            const defaultUserRole = yield Role_1.default.findOne({ where: { name: 'user' } });
+            if (defaultUserRole) {
+                try {
+                    // ! -TOFIX: implement search by name as user enter their last name. 
+                    // Does it make sense to offer them choices given the security aspect?
+                    const formattedValues = Object.assign(Object.assign({}, values), { related_to: [1], password: hashedPassword, role_id: defaultUserRole.id, created_at: new Date });
+                    const fieldsValid = yield this.validateUserFields(formattedValues);
+                    const duplicate = yield User_1.default.findOne({ where: { email: values.email } });
+                    let newUser = null;
+                    if (duplicate) {
+                        logger_1.default.error('! User.create ! User already exists');
+                        return null;
+                    }
+                    if (fieldsValid) {
+                        // @ts-ignore: partner needs to always be optional
+                        newUser = yield User_1.default.create(formattedValues).catch((e) => {
+                            logger_1.default.error('! User.create !', e);
+                            return null;
+                        });
+                        if (newUser) {
+                            yield newUser.save();
+                        }
+                        else {
+                            logger_1.default.error('! User.create !', 'User wasn\'t created, unable to save');
+                        }
+                        return Object.assign(Object.assign({}, newUser === null || newUser === void 0 ? void 0 : newUser.dataValues), { password: undefined });
+                    }
+                }
+                catch (e) {
+                    logger_1.default.error('Failed registration: ', e);
+                }
             }
-            if (fieldsValid) {
-                newUser = yield User_1.default.create(formattedValues).catch((e) => {
-                    logger_1.default.error('! User.create !', e);
-                    return null;
-                });
-                if (newUser) {
-                    yield newUser.save();
-                }
-                else {
-                    logger_1.default.error('! User.create !', 'User wasn\'t createDecipheriv, unable to save');
-                }
-                return Object.assign(Object.assign({}, newUser === null || newUser === void 0 ? void 0 : newUser.dataValues), { password: undefined });
+            else {
+                logger_1.default.error('Unable to create new user: no default role available');
             }
             return null;
         });
@@ -102,12 +115,46 @@ class UserController extends Base_controller_1.default {
             return extendedFamilies;
         });
     }
+    updatePassword(values) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let completed = false;
+            const currentUser = yield User_1.default.findOne({ where: { email: values.email } })
+                .catch(e => {
+                logger_1.default.info('QUERY FAILSL ', e);
+            });
+            if (currentUser) {
+                try {
+                    const newPasswordIsVerified = bcryptjs_1.default.compareSync(values.password, currentUser.password);
+                    const passwordIsValid = values.newPassword === values.repeatNewPassword;
+                    const newPasswordIsUnused = values.newPassword !== values.password;
+                    if (passwordIsValid && newPasswordIsVerified && newPasswordIsUnused) {
+                        const updatedUser = yield currentUser.update({ password: bcryptjs_1.default.hashSync(values.newPassword, this.salt) })
+                            .catch((e) => {
+                            logger_1.default.error('Update user error', e);
+                        });
+                        logger_1.default.info('password changed: ', updatedUser);
+                        completed = true;
+                    }
+                    else {
+                        logger_1.default.error('Reset PAssword. Passwords not matching');
+                    }
+                }
+                catch (e) {
+                    logger_1.default.error('Failed password change: ', e);
+                }
+            }
+            else {
+                logger_1.default.error('Reset PAssword. No matching user');
+            }
+            return completed;
+        });
+    }
     validateUserFields(values) {
         var _a;
         console.log('RECEIVED VALUES: ', values);
-        if (values.age < 0 || !values.age) {
-            console.log('missing age');
-            logger_1.default.error('! User.validateUserFields ! missing age');
+        if (!values.dob) {
+            console.log('missing dob');
+            logger_1.default.error('! User.validateUserFields ! missing dob');
             return false;
         }
         if (!((_a = values === null || values === void 0 ? void 0 : values.assigned_ips) === null || _a === void 0 ? void 0 : _a.length) || !values.assigned_ips) {
@@ -136,7 +183,7 @@ class UserController extends Base_controller_1.default {
             logger_1.default.error('! User.validateUserFields ! missing is_parent');
             return false;
         }
-        if (!values.email || !values.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+        if (!values.email) {
             console.log('missing email');
             logger_1.default.error('! User.validateUserFields ! missing email');
             return false;
@@ -146,11 +193,11 @@ class UserController extends Base_controller_1.default {
             logger_1.default.error('! User.validateUserFields ! missing last_name');
             return false;
         }
-        if (!values.imm_family) {
-            console.log('missing imm_family');
-            logger_1.default.error('! User.validateUserFields ! missing imm_family');
-            return false;
-        }
+        // if (!values.imm_family) {
+        //   console.log('missing imm_family');
+        //   logger.error('! User.validateUserFields ! missing imm_family');
+        //   return false;
+        // }
         if (!values.marital_status) {
             console.log('missing marital_status');
             logger_1.default.error('! User.validateUserFields ! missing marital_status');

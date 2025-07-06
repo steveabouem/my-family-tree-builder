@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
@@ -6,10 +6,13 @@ import { v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { clearFieldsByStepName, loadStepFormFieldsAction, populateStepAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
-import { DStepFormState } from "@app/slices/definitions";
+import {resetAction} from "app/slices/trees";
+import { DStepFormState, stepFormModes } from "app/slices/definitions";
 import FieldAndLabel from "components/common/forms/fieldAndlabel";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import { genderOptions, maritalStatusOptions, relationOptions } from "components/common/dropdowns/definitions";
+import GlobalContext from "contexts/creators/global";
+import { NodeMenuActions } from "pages/tree/definitions";
 
 /*
 * This implementation of the <StepForm /> follows the following logic:
@@ -22,13 +25,16 @@ import { genderOptions, maritalStatusOptions, relationOptions } from "components
 * Should the user modify a fields list (eg: adding children or partner to a fields list), Formik will prepopulate the form with the previous values,
 *    since adding those new fields will rerendre the form (values will be taken from the store's globalValues, it has all the field names we need)
 */
-const GenealogyForm = () => {
-  const { totalSteps, currentFormStep, stepTree } = useZSelector<DStepFormState>(state => state.stepForm);
-  const { values, setFieldValue } = useFormikContext<any>();
+// @ts-ignore
+const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
+  const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<DStepFormState>(state => state.stepForm);
+  const { values, setFieldValue, setValues } = useFormikContext<any>();
+  const { modal} = useContext(GlobalContext);
   const dispatch = useZDispatch();
+  const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
 
   useEffect(() => {
-    generateStepforKin(0);
+    generateFieldsForRelative(0, false);
   }, []);
   useEffect(() => {
     // TODO: a nice to have: dropdown to display step number or name above the fields. 
@@ -36,15 +42,19 @@ const GenealogyForm = () => {
     * the form will direct user to build the tree one  member at the time
     * for each member, the user will be able to add partners, parents and children (potentially more)
     */
-    generateStepforKin(currentFormStep);
+    generateFieldsForRelative(currentFormStep, false);
   }, [currentFormStep]);
+  useEffect(() => {
+    if (modal?.transferData === NodeMenuActions.edit) {
+      setValues({});
+      dispatch(updateGlobalValuesAction({values: {}}));
+    }
+  }, [modal?.transferData])
 
-  /*
-  * Generate fields for current step
-  */
-  function generateStepforKin(step: number) {
-    //TODO:  in the store, tree starts at index 0
-    generateKinFields(step, false, false);
+  function resetAll() {
+    setValues({});
+    dispatch(updateGlobalValuesAction({values: {}}));
+    dispatch(resetAction());
   }
   /*
   * save each step of the form in redux store
@@ -52,7 +62,7 @@ const GenealogyForm = () => {
   function saveProgress() {
     dispatch(updateGlobalValuesAction({ values }));
   }
-  function generateKinFields(stepNumber: number, edit: boolean, reset: boolean) {
+  function generateFieldsForRelative(stepNumber: number, reset: boolean) {
     /*
     * listener for user changing step in the form
     * step change can only happen if step name has already been set through addRelative function
@@ -61,12 +71,26 @@ const GenealogyForm = () => {
     * 2 - if existing fields, display them, no further actions
     * 3 - if no existing fields, proceed with function execution
     */
-    const matchingStepNameInTree = Object.keys(stepTree || {})
+
+    /* 
+    * this causes a problem because when you add a kin to a random node in the tree, it messes with the index.
+    * Thats because you remove all the indexes and use the selecte node as an anchor, and add the new kin as the next step.
+    * in other words, if step 2 had previously existed in the slice, regardless of what kin youre trying to add, it will match with whatever that step 2 was in the slice
+    * adding id in the store dosnt change anything since you would need to know the id from within this component to check in the store what it refers to. 
+    * an alternative is to ave a state property that gets updated every time the next_of_kin value is confirmed,
+    * since when that happens the new kin is added as the last step you can then cross reference that object to determine the value of matchingSteNameInTree. 
+    * It should work as long as you make sure to update is when you go in edit mode (press confirm in the modal)
+    */
+    //  @ts-ignore
+    const matchingStepNameInTree =  isEditMode ? treeCopy[stepNumber] : Object.keys(stepTree || {})
       .find(((key: string, index: number) => index === stepNumber));
     const nameOfStep = matchingStepNameInTree || "anchor";
     const fieldsInTree = stepTree?.[nameOfStep];
+    console.log('generate fields ', {nameOfStep, stepNumber, stepTree, treeCopy});
 
     if (fieldsInTree?.length) {
+      console.log({ fieldsInTree });
+
       dispatch(loadStepFormFieldsAction({ name: nameOfStep, fields: stepTree?.[nameOfStep] || [], title: <Trans>info_on_node {nameOfStep}</Trans> }));
       return;
     }
@@ -121,6 +145,10 @@ const GenealogyForm = () => {
     */
     dispatch(setStepsCountAction(totalSteps + 1));
     dispatch(populateStepAction({ name: `${values.next_of_kin}-${totalSteps}`, fields: [], step: totalSteps + 1 }));
+    if (isEditMode) 
+    //   this does allow to get the new node name for the next stepFormModes, but upon sumbission,
+    //  there are a lot of empty objects that seem to be replacing previously generated kinships. Investigate the formattingOutgoingValues. The issue might be there
+      setTreeCopy({ ...treeCopy, [`${totalSteps}`]: values.next_of_kin });
   }
 
   return (

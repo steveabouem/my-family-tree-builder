@@ -51,7 +51,7 @@ class SessionController extends BaseController<APISession> {
         }
         logger.info('current session', { response });
 
-        return(response);
+        return (response);
     }
 }
 

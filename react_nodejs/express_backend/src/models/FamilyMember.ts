@@ -2,6 +2,7 @@ import {
   DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute
 } from 'sequelize';
 import db from "../db";
+import FamilyTree from "./FamilyTree";
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAttributes<FamilyMember>> {
@@ -15,6 +16,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare user_id?: number;
   declare age: number | null;
   declare dob: string;
+  declare tree_ids: string | null;
   declare dod: string | null;
   declare description: string;
   declare first_name: string;
@@ -31,6 +33,9 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare created_by: number; //User
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
+
+  // Associations
+  declare FamilyTrees?: NonAttribute<FamilyTree[]>;
 
   /**
    *  Attributes Getters/Setters
@@ -101,6 +106,7 @@ FamilyMember.init(
       primaryKey: true
     },
     node_id: { type: DataTypes.STRING },
+    tree_ids: { type: DataTypes.JSON },
     // allowNull defaults to true
     user_id: { type: DataTypes.INTEGER, allowNull: false },
     age: { type: DataTypes.INTEGER, allowNull: false },
@@ -134,5 +140,13 @@ FamilyMember.init(
     sequelize: db // passing the `sequelize` instance is required
   }
 );
+
+// Define associations
+FamilyMember.belongsToMany(FamilyTree, {
+  through: 'FamilyTreeMembers',
+  foreignKey: 'family_member_id',
+  otherKey: 'family_tree_id',
+  as: 'FamilyTrees'
+});
 
 export default FamilyMember;
