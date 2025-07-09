@@ -1,6 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
 import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
-import FamilyTreeController from "../controllers/familyTree/FamilyTreeController";
 import logger from "../utils/logger";
 import FamilyTree from "../models/FamilyTree";
 import { APIGetFamilyTreeResponse } from "../controllers/familyTree/familyTree.definitions";

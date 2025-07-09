@@ -1,7 +1,8 @@
 import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
 import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
-import UserController from "../controllers/user/UserController";
+import logger from "../utils/logger";
+import userService from '../v2/services/user';
 
 const router = Router();
 
@@ -27,63 +28,50 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-router.get('/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  // Not sure what to do with this yet
-  const userController = new UserController;
-  userController.getUserData(id)
-    .then((user: any) => {
-      console.log('DONE');
-      res.json(user);
-    })
-    .catch((e: unknown) => {
-      winston.log('error', e); //TODO: logging and error handling
-      console.log('ERRORRRR: ', e);
+// router.get('/:id', (req: Request, res: Response) => {
+//   const id = parseInt(req.params.id);
+//   userService.getUserById(id)
+//     .then((user: any) => {
+//       console.log('DONE');
+//       res.json(user);
+//     })
+//     .catch((e: unknown) => {
+//       logger.error('error', e);
+//       console.log('ERRORRRR: ', e);
 
-      res.status(500);
-      res.json('failed');
-    });
-});
+//       res.status(500);
+//       res.json('failed');
+//     });
+// });
 
-router.get('/:id/families', (req: Request, res: Response) => {
-  const userController = new UserController;
+// router.get('/:id/families', (req: Request, res: Response) => {
+//   userService.getRelatedFamilies(parseInt(req.params.id))
+//     .then((fams: any) => {
+//       console.log('DONE');
+//       res.json({ "relatedFamilies": fams });
+//     })
+//     .catch((e: unknown) => {
+//       winston.log('error', e); //TODO: logging and error handling
+//       console.log('ERRORRRR: ', e);
 
-  userController.getRelatedFamilies(parseInt(req.params.id))
-    .then((fams: any) => {
-      console.log('DONE');
-      res.json({ "relatedFamilies": fams });
-    })
-    .catch((e: unknown) => {
-      winston.log('error', e); //TODO: logging and error handling
-      console.log('ERRORRRR: ', e);
+//       res.status(500);
+//       res.json('failed');
+//     });
+// });
 
-      res.status(500);
-      res.json('failed');
-    });
-});
+// router.get('/:id/extended-families', (req: Request, res: Response) => {
+//   userService.getExtendedFamiliesDetails(parseInt(req.params.id))
+//     .then((fams: any) => {
+//       console.log('DONE');
+//       res.json({ "relatedFamilies": fams });
+//     })
+//     .catch((e: unknown) => {
+//       winston.log('error', e); //TODO: logging and error handling
+//       console.log('ERRORRRR: ', e);
 
-router.get('/:id/extended-families', (req: Request, res: Response) => {
-  const userController = new UserController;
+//       res.status(500);
+//       res.json('failed');
+//     });
+// });
 
-  userController.getExtendedFamiliesDetails(parseInt(req.params.id))
-    .then((fams: any) => {
-      console.log('DONE');
-      res.json({ "relatedFamilies": fams });
-    })
-    .catch((e: unknown) => {
-      winston.log('error', e); //TODO: logging and error handling
-      console.log('ERRORRRR: ', e);
-
-      res.status(500);
-      res.json('failed');
-    });
-});
-
-
-router.post('/create', (req: Request, res: Response) => {
-  const userController = new UserController();
-  const ip = '';
-  const newUserFieldValues = { ...req.body, authorizedIps: [ip], roles: '[1]' };
-  res.send('ok');
-});
 export default router;

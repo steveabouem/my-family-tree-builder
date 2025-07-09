@@ -2,7 +2,6 @@ import { Router, Request, Response, NextFunction } from "express";
 import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import cookieParser from "cookie-parser";
 import winston from "winston";
-import SessionController from "../controllers/session/SessionController";
 
 const router = Router();
 router.use(cookieParser());

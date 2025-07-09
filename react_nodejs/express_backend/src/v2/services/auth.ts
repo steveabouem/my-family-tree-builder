@@ -1,47 +1,106 @@
 import dayjs from "dayjs";
-import { APIRegistrationResponse } from "../../controllers/auth/auth.definitions";
+import bcrypt from "bcryptjs";
+import { APIRegistrationResponse, APILoginResponse, APILogoutResponse } from "../../controllers/auth/auth.definitions";
+import { PasswordChangeData } from "../../services/auth/types";
 import { ServiceResponseWithPayload } from "../../services/service.definitions";
 import logger from "../../utils/logger";
-import { createUser, getUserByEmail } from "./user";
+import userService from "./user";
+import { generateResponseData } from "./serviceHelpers";
+import { Op } from "sequelize";
+import User from "@models/User";
 
-export const registerV2 = async(userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
-    const ip = userData.ip;
-    const formattedValues = { ...userData, assigned_ips: [ip], created_at: dayjs() };
-    const response: ServiceResponseWithPayload<APIRegistrationResponse | null> = {
-      error: true,
-      code: 500,
-      payload: { authenticated: false, email: '', userId: 0, }
-    };
+export const  register = async (userData: any): Promise<any> =>{
+ return true
+};
 
-    try {
-      const duplicate = await getUserByEmail(userData.email);
-      if (duplicate) {
-        response.error = true;
-        logger.error('Email address is already in use');
-        response.code = 400;
-        return response;
-      }
+// const login = async ({ email, password }: { email: string, password: string }): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
+//   const payloadData = { authenticated: false, email: '', userId: 0 };
+//   const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData(payloadData);
 
-      const newUser = await createUser(formattedValues);
-      if (newUser) {
-        logger.info('New user created ', newUser);
-        response.error = false;
-        response.payload = {
-          userId: newUser.id || 0,
-          authenticated: true,
-          email: userData.email
-        };
-        response.code = 200;
-      } else {
-        logger.error('Unable to create new user: ', { newUser });
-        response.code = 401;
-        response.message = 'Unable to create user';
-      }
-    } catch (e: unknown) {
-      logger.error('Unable to register ', e);
-      response.message = `Caught ERR ${e}`;
-      response.code = 400;
-    }
+//   try {
+//     const currentUser = await User.findOne({ where: { email: { [Op.eq]: email } } })
 
-    return response;
-  };
+//     if (!currentUser) {
+//       response.error = true;
+//       response.message = 'Unable to find user';
+//       logger.error('! login ! User not found');
+//       return response;
+//     }
+//     const passwordIsValid = bcrypt.compareSync(password, currentUser.password);
+//     if (passwordIsValid) {
+//       response.error = false;
+//       response.payload = {
+//         userId: currentUser.id,
+//         authenticated: true,
+//         email: email,
+//         firstName: currentUser.first_name,
+//         lastName: currentUser.last_name,
+//       }
+//       response.code = 200;
+//     } else {
+//       response.error = true;
+//       logger.error('! login ! User authentication failed');
+//       response.message = 'Unable to authenticate user';
+//       response.code = 400;
+//     }
+//   } catch (e: unknown) {
+//     response.message = `Login failed - ${e}`;
+//     logger.error('! login !', e);
+//     response.code = 400;
+//   }
+//   return response;
+// };
+
+// const logout = async (): Promise<ServiceResponseWithPayload<APILogoutResponse>> => {
+//   const response: ServiceResponseWithPayload<APILogoutResponse> = generateResponseData({
+//     authenticated: false, email: ''
+//   });
+
+//   return response;
+// };
+
+// const changePassword = async (passwordData: PasswordChangeData): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
+//   const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData({ authenticated: false });
+//   try {
+//     // The v2 user service expects passwordData to have: email, password (current), newPassword, repeatNewPassword
+//     const user = await User.findOne({ where: { email: { [Op.eq]: passwordData.email } } })
+
+//     if (!user) {
+//       response.error = true;
+//       response.message = 'User not found';
+//       logger.error('Unable to reset password: user not found');
+//       response.code = 404;
+//       return response;
+//     }
+//     // Compose the expected structure for updatePassword
+//     const updateData = {
+//       email: passwordData.email,
+//       password: passwordData.currentPassword,
+//       newPassword: passwordData.newPassword,
+//       repeatNewPassword: passwordData.newPassword // Assume confirmation is handled elsewhere or add a param if needed
+//     };
+//     // updatePassword returns the updated user or null
+//     const updatedUser = await userService.updatePassword(updateData);
+//     if (updatedUser) {
+//       response.payload = {
+//         authenticated: true,
+//         email: updatedUser.email,
+//         firstName: updatedUser.first_name,
+//         lastName: updatedUser.last_name,
+//         userId: updatedUser.id
+//       };
+//       response.code = 200;
+//       response.error = false;
+//     } else {
+//       logger.error('Reset password: update function returned nothing');
+//       response.code = 500;
+//       response.message = 'Failed to update password';
+//     }
+//   } catch (e: unknown) {
+//     response.error = true;
+//     response.code = 500;
+//     response.message = 'Invalid operation';
+//     logger.error('Unable to reset password. ', e);
+//   }
+//   return response;
+// };
