@@ -1,14 +1,13 @@
 import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
-import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
-import { UserMiddleware } from "../middleware-classes/user/user.middleware";
+import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import UserController from "../controllers/user/UserController";
 
 const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const authMiddleware = new FTAuthMiddleware();
+  const authMiddleware = new AuthMiddleware();
   // const sessionMiddleware = new FTSessionMiddleware();
 
   authMiddleware.verifyIp(ip)
@@ -31,8 +30,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 router.get('/:id', (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   // Not sure what to do with this yet
-  const userMiddleware = new UserMiddleware;
-  userMiddleware.getUserData(id)
+  const userController = new UserController;
+  userController.getUserData(id)
     .then((user: any) => {
       console.log('DONE');
       res.json(user);
@@ -47,9 +46,9 @@ router.get('/:id', (req: Request, res: Response) => {
 });
 
 router.get('/:id/families', (req: Request, res: Response) => {
-  const userMiddleware = new UserMiddleware;
+  const userController = new UserController;
 
-  userMiddleware.getRelatedFamilies(parseInt(req.params.id))
+  userController.getRelatedFamilies(parseInt(req.params.id))
     .then((fams: any) => {
       console.log('DONE');
       res.json({ "relatedFamilies": fams });
@@ -64,9 +63,9 @@ router.get('/:id/families', (req: Request, res: Response) => {
 });
 
 router.get('/:id/extended-families', (req: Request, res: Response) => {
-  const userMiddleware = new UserMiddleware;
+  const userController = new UserController;
 
-  userMiddleware.getExtendedFamiliesDetails(parseInt(req.params.id))
+  userController.getExtendedFamiliesDetails(parseInt(req.params.id))
     .then((fams: any) => {
       console.log('DONE');
       res.json({ "relatedFamilies": fams });

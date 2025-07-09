@@ -1,15 +1,10 @@
 import bcrypt from "bcryptjs";
 import { APIFTLoginFields } from "./auth.definitions";
-import { APIUserDTO } from "../user/user..definitions";
-import { BaseMiddleware } from "../base/base.middleware";
 import User from "../../models/User";
 import FTIP from "../../models/Ip";
+import { APIUserDTO } from "../../controllers/user/user.definitions";
 
-class FTAuthMiddleware extends BaseMiddleware<any> { // ! -TOFIX: no any
-    constructor() {
-        super('ip_addresses');
-    }
-
+class AuthMiddleware { 
     verifyIp = async (currentIp?: string | string[]): Promise<boolean> => {
         if (!currentIp) {
             return false;
@@ -38,4 +33,4 @@ class FTAuthMiddleware extends BaseMiddleware<any> { // ! -TOFIX: no any
     }
 
 }
-export default FTAuthMiddleware;
+export default AuthMiddleware;

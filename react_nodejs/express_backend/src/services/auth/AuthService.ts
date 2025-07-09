@@ -3,19 +3,14 @@ import dayjs from "dayjs";
 import logger from "../../utils/logger";
 import { UserRegistrationData, UserLoginData, PasswordChangeData } from "./types";
 import { APILoginResponse, APILogoutResponse, APIRegistrationResponse } from "../../controllers/auth/auth.definitions";
-import UserController from "../../controllers/user/UserController";
 import { ServiceResponseWithPayload } from "../service.definitions";
+import { UserService } from "../user";
 
 export class AuthService {
-  private userController: UserController;
-
-  constructor() {
-    this.userController = new UserController();
-  }
-
   async register(userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> {
     const ip = userData.ip;
     const formattedValues = { ...userData, assigned_ips: [ip], created_at: dayjs() };
+    const userService = new UserService;
     const response: ServiceResponseWithPayload<APIRegistrationResponse | null> = {
       error: true,
       code: 500,
@@ -23,7 +18,7 @@ export class AuthService {
     };
 
     try {
-      const duplicate = await this.userController.getByEmail(userData.email);
+      const duplicate = await userService.getUserByEmail(userData.email);
       if (duplicate) {
         response.error = true;
         logger.error('Email address is already in use');
@@ -31,7 +26,7 @@ export class AuthService {
         return response;
       }
 
-      const newUser = await this.userController.create(formattedValues);
+      const newUser = await userService.createUser(formattedValues);
       if (newUser) {
         logger.info('New user created ', newUser);
         response.error = false;
@@ -61,9 +56,10 @@ export class AuthService {
         authenticated: false,
       }
     };
+    const userService = new UserService;
 
     try {
-      const currentUser = await this.userController.getByEmail(email);
+      const currentUser = await userService.getUserByEmail(email);
       if (!currentUser) {
         response.error = true;
         response.message = 'Unable to find user';
@@ -112,7 +108,7 @@ export class AuthService {
     };
 
     // try {
-    //   const updatedUser = await this.userController.updatePassword(passwordData);
+    //   const updatedUser = await userService.updatePassword(passwordData);
     //   logger.info('Return from update function: ', updatedUser);
 
     //   if (updatedUser) {

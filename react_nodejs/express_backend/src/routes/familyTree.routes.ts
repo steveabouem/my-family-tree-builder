@@ -1,8 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
+import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import FamilyTreeController from "../controllers/familyTree/FamilyTreeController";
 import logger from "../utils/logger";
-import RequestHelper from "./RequestHelper";
 import FamilyTree from "../models/FamilyTree";
 import { APIGetFamilyTreeResponse } from "../controllers/familyTree/familyTree.definitions";
 
@@ -10,7 +9,7 @@ const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const ftAuthMiddleware = new FTAuthMiddleware();
+  const ftAuthMiddleware = new AuthMiddleware();
 
   ftAuthMiddleware.verifyIp(ip)
     .then((valid: boolean) => {
@@ -29,41 +28,41 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   next();
 })
 
-router.get('/index', (req: Request, res: Response) => {
-  const familyTreeController = new FamilyTreeController();
-  const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod<FamilyTree[]>(familyTreeController.getAll, 'Get trees index');
-});
+// router.get('/index', (req: Request, res: Response) => {
+//   const familyTreeController = new FamilyTreeController();
+//   const helper = new RequestHelper(req, res);
+//   helper.sendResponseFromControllerMethod<FamilyTree[]>(familyTreeController.getAll, 'Get trees index');
+// });
 
-router.get('/details', (req: Request<{}, {}, { id: string }, {}>, res: Response) => {
-  const familyTreeController = new FamilyTreeController();
-  const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod<FamilyTree | null>(familyTreeController.getOne, 'Get tree details');
-});
+// router.get('/details', (req: Request<{}, {}, { id: string }, {}>, res: Response) => {
+//   const familyTreeController = new FamilyTreeController();
+//   const helper = new RequestHelper(req, res);
+//   helper.sendResponseFromControllerMethod<FamilyTree | null>(familyTreeController.getOne, 'Get tree details');
+// });
 
-router.post('/create', (req: Request, res: Response) => {
-  const familyTreeController = new FamilyTreeController();
-  const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod<APIGetFamilyTreeResponse | null>(familyTreeController.create, 'Create family tree');
-});
+// router.post('/create', (req: Request, res: Response) => {
+//   const familyTreeController = new FamilyTreeController();
+//   const helper = new RequestHelper(req, res);
+//   helper.sendResponseFromControllerMethod<APIGetFamilyTreeResponse | null>(familyTreeController.create, 'Create family tree');
+// });
 
-router.post('/delete', (req: Request, res: Response) => {
-  const familyTreeController = new FamilyTreeController();
-  const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod(familyTreeController.delete, 'Delete tree');
-});
+// router.post('/delete', (req: Request, res: Response) => {
+//   const familyTreeController = new FamilyTreeController();
+//   const helper = new RequestHelper(req, res);
+//   helper.sendResponseFromControllerMethod(familyTreeController.delete, 'Delete tree');
+// });
 
-router.get('/members', (req: Request, res: Response) => {
-  const familyTreeController = new FamilyTreeController();
-  const helper = new RequestHelper(req, res);
-  helper.sendResponseFromControllerMethod(familyTreeController.getMembers, 'Get tree members');
-});
+// router.get('/members', (req: Request, res: Response) => {
+//   const familyTreeController = new FamilyTreeController();
+//   const helper = new RequestHelper(req, res);
+//   helper.sendResponseFromControllerMethod(familyTreeController.getMembers, 'Get tree members');
+// });
 
-router.put('/members', (req: Request, res: Response) => {
-  const familyTreeController = new FamilyTreeController();
-  const helper = new RequestHelper(req, res);
+// router.put('/members', (req: Request, res: Response) => {
+//   const familyTreeController = new FamilyTreeController();
+//   const helper = new RequestHelper(req, res);
 
-  helper.sendResponseFromControllerMethod(familyTreeController.update, 'Update tree records');
-});
+//   helper.sendResponseFromControllerMethod(familyTreeController.update, 'Update tree records');
+// });
 
 export default router;

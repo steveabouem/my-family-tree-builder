@@ -1,13 +1,13 @@
 import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
-import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
+import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import FamilyMemberController from "../controllers/familyMember/FamilyMemberController";
 
 const router = Router();
 
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const ftAuthMiddleware = new FTAuthMiddleware();
+  const ftAuthMiddleware = new AuthMiddleware();
   const maxAge = req?.session?.cookie?.expires?.getTime() || 0;
   const now = new Date().getTime();
   const canProceed = maxAge > now;

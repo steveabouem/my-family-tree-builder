@@ -1,15 +1,14 @@
 import { Router, Request, Response, NextFunction } from "express";
-import FTAuthMiddleware from "../middleware-classes/auth/auth.middleware";
+import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import cookieParser from "cookie-parser";
 import winston from "winston";
 import SessionController from "../controllers/session/SessionController";
-import RequestHelper from "./RequestHelper";
 
 const router = Router();
 router.use(cookieParser());
 router.use((req: Request, res: Response, next: NextFunction) => {
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const authMiddleware = new FTAuthMiddleware();
+  const authMiddleware = new AuthMiddleware();
 
   authMiddleware.verifyIp(ip)
     .then((valid: boolean) => {
@@ -29,18 +28,18 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// ! -TOFIX: req, res typing
-router.get('/', (req: Request, res: Response) => {
-  const helper = new RequestHelper(req, res);
-  const sessionController = new SessionController();
-  // helper.sendResponseFromControllerMethod(sessionController.getCurrent, 'Get Current Session');
-});
+// // ! -TOFIX: req, res typing
+// router.get('/', (req: Request, res: Response) => {
+//   const helper = new RequestHelper(req, res);
+//   const sessionController = new SessionController();
+//   // helper.sendResponseFromControllerMethod(sessionController.getCurrent, 'Get Current Session');
+// });
 
-router.post('/set-data', (req: Request, res: Response) => {
-  // ! -TOFIX: Kill session, send back the guest session default
-  // const ftSessionMiddleware = new FTSessionMiddleware();
-  // const sessionData = ftSessionMiddleware.createSession(req.body.data);
-  // res.json(sessionData);
-});
+// router.post('/set-data', (req: Request, res: Response) => {
+//   // ! -TOFIX: Kill session, send back the guest session default
+//   // const ftSessionMiddleware = new FTSessionMiddleware();
+//   // const sessionData = ftSessionMiddleware.createSession(req.body.data);
+//   // res.json(sessionData);
+// });
 
 export default router;

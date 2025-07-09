@@ -1,7 +1,5 @@
-// ! -TOFIX: types
 import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
-// ! -TOFIX: types
 dotenv.config();
 
 const { DB_USER, DB_PWD, DB_HOST, DB }: { [key: string]: string | undefined } = process.env;
@@ -18,7 +16,7 @@ sequelize.sync({alter: true}).then(() => {
 });
 
 // try {
-//     await sequelize.authenticate();
+//     sequelize.authenticate();
 //     console.log('Connection has been established successfully.');
 //   } catch (error) {
 //     console.error('Unable to connect to the database:', error);

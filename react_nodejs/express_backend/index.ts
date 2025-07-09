@@ -20,11 +20,11 @@ declare module "express-session" {
 const app: Express = express();
 const MySQLStore = require('express-mysql-session')(session);
 const options = {
-	host: process.env.DB_HOST,
-	port: process.env.DB_PORT,
-	user: process.env.DB_USER,
-	password: process.env.DB_PWD,
-	database: process.env.DB,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PWD,
+  database: process.env.DB,
 };
 const store = new MySQLStore(options);
 
@@ -72,8 +72,7 @@ app.use('/api/auth', authHandler);
 
 const port = 4000;
 try {
-
   app.listen(port, () => console.log(`Server running on port ${port}. .PLEASE CHECK TODOS/TOFIX`));
-} catch(e) {
+} catch (e) {
   console.log('Server error ', e);
 }
