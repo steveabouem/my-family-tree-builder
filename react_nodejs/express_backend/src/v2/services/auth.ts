@@ -4,7 +4,6 @@ import { APIRegistrationResponse, APILoginResponse, APILogoutResponse } from "..
 import { PasswordChangeData } from "../../services/auth/types";
 import { ServiceResponseWithPayload } from "../../services/service.definitions";
 import logger from "../../utils/logger";
-import userService from "./user";
 import { generateResponseData } from "./serviceHelpers";
 import { Op } from "sequelize";
 import User from "@models/User";
@@ -13,51 +12,51 @@ export const  register = async (userData: any): Promise<any> =>{
  return true
 };
 
-// const login = async ({ email, password }: { email: string, password: string }): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
-//   const payloadData = { authenticated: false, email: '', userId: 0 };
-//   const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData(payloadData);
+export const login = async ({ email, password }: { email: string, password: string }): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
+  const payloadData = { authenticated: false, email: '', userId: 0 };
+  const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData(payloadData);
 
-//   try {
-//     const currentUser = await User.findOne({ where: { email: { [Op.eq]: email } } })
+  try {
+    const currentUser = await User.findOne({ where: { email: { [Op.eq]: email } } })
 
-//     if (!currentUser) {
-//       response.error = true;
-//       response.message = 'Unable to find user';
-//       logger.error('! login ! User not found');
-//       return response;
-//     }
-//     const passwordIsValid = bcrypt.compareSync(password, currentUser.password);
-//     if (passwordIsValid) {
-//       response.error = false;
-//       response.payload = {
-//         userId: currentUser.id,
-//         authenticated: true,
-//         email: email,
-//         firstName: currentUser.first_name,
-//         lastName: currentUser.last_name,
-//       }
-//       response.code = 200;
-//     } else {
-//       response.error = true;
-//       logger.error('! login ! User authentication failed');
-//       response.message = 'Unable to authenticate user';
-//       response.code = 400;
-//     }
-//   } catch (e: unknown) {
-//     response.message = `Login failed - ${e}`;
-//     logger.error('! login !', e);
-//     response.code = 400;
-//   }
-//   return response;
-// };
+    if (!currentUser) {
+      response.error = true;
+      response.message = 'Unable to find user';
+      logger.error('! login ! User not found');
+      return response;
+    }
+    const passwordIsValid = bcrypt.compareSync(password, currentUser.password);
+    if (passwordIsValid) {
+      response.error = false;
+      response.payload = {
+        userId: currentUser.id,
+        authenticated: true,
+        email: email,
+        firstName: currentUser.first_name,
+        lastName: currentUser.last_name,
+      }
+      response.code = 200;
+    } else {
+      response.error = true;
+      logger.error('! login ! User authentication failed');
+      response.message = 'Unable to authenticate user';
+      response.code = 400;
+    }
+  } catch (e: unknown) {
+    response.message = `Login failed - ${e}`;
+    logger.error('! login !', e);
+    response.code = 400;
+  }
+  return response;
+};
 
-// const logout = async (): Promise<ServiceResponseWithPayload<APILogoutResponse>> => {
-//   const response: ServiceResponseWithPayload<APILogoutResponse> = generateResponseData({
-//     authenticated: false, email: ''
-//   });
+export const logout = async (): Promise<ServiceResponseWithPayload<APILogoutResponse>> => {
+  const response: ServiceResponseWithPayload<APILogoutResponse> = generateResponseData({
+    authenticated: false, email: ''
+  });
 
-//   return response;
-// };
+  return response;
+};
 
 // const changePassword = async (passwordData: PasswordChangeData): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
 //   const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData({ authenticated: false });

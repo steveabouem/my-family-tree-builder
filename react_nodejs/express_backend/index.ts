@@ -64,8 +64,8 @@ app.use((req, res, next) => {
   }
 });
 app.use('/api/users', userHandler);
-app.use('/api/sessions', sessionHandler);
-app.use('/api/auth', authHandler);
+// app.use('/api/sessions', sessionHandler);
+// app.use('/api/auth', authHandler);
 // app.use('/api/trees', familyTreeHandler);
 // app.use('/api/members', familyMemberHandler);
 /** END */

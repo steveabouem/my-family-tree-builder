@@ -3,7 +3,8 @@ import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import logger from "../utils/logger";
 import { APILoginResponse, APILogoutResponse, APIRegistrationResponse } from "../controllers/auth/auth.definitions";
 import { ServiceResponseWithPayload } from "../services/service.definitions";
-import { register } from "../v2/services/auth";
+import { register, login, logout } from "../v2/services/auth";
+import { getUserById } from "../v2/services/user";
 
 const router = Router();
 
@@ -41,30 +42,34 @@ router.post('/register', (req: Request, res: Response) => {
   }
 });
 
-// router.get('/:id', (req: Request<{ id: string }, {}, {}, {}>, res: Response) => {
-//   const id = parseInt(req.params.id);
-//   userService.getUserById(id)
-//     .then((data) => {
-//       res.status(data.code);
-//       res.json(data);
-//     });
-// });
+router.get('/:id', (req: Request<{ id: string }, {}, {}, {}>, res: Response) => {
+  const id = parseInt(req.params.id);
+  try {
+    getUserById(id)
+      .then((data) => {
+        res.status(data.code);
+        res.json(data);
+      });
+  } catch (e) {
+    res.json('fail');
+  }
+});
 
-// router.post('/login', (req: Request<{}, {}, { email: string, password: string }, {}>, res: Response) => {
-//   authService.login(req.body)
-//     .then((data) => {
-//       res.status(data.code);
-//       res.json(data);
-//     });
-// });
+router.post('/login', (req: Request<{}, {}, { email: string, password: string }, {}>, res: Response) => {
+  login(req.body)
+    .then((data) => {
+      res.status(data.code);
+      res.json(data);
+    });
+});
 
-// router.post('/logout', (req: Request<{}, {}, {}, {}>, res: Response) => {
-//   authService.logout()
-//     .then((data) => {
-//       res.status(data.code);
-//       res.json(data);
-//     });
-// });
+router.post('/logout', (req: Request<{}, {}, {}, {}>, res: Response) => {
+  logout()
+    .then((data) => {
+      res.status(data.code);
+      res.json(data);
+    });
+});
 
 // router.post('/password/change', (req: Request<{}, {}, PasswordChangeData, {}>, res: Response) => {
 //   authService.changePassword(req.body)

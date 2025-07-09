@@ -66,7 +66,7 @@ const getUserByEmail = async (email: string): Promise<ServiceResponseWithPayload
   }
 }
 
-const getUserById = async (id: number): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
+export const getUserById = async (id: number): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
   const response: ServiceResponseWithPayload<APIRegistrationResponse | null> = generateResponseData({ authenticated: false, email: '', userId: 0});
 
   try {
@@ -247,15 +247,4 @@ const getExtendedFamiliesDetails = async (id: number): Promise<any> => {
     logger.error('Failed to get extended families details:', e);
     return [];
   }
-}
-
-export default {
-  createUser,
-  getUserByEmail,
-  getUserById,
-  updateUser,
-  updatePassword,
-  deleteUser,
-  getRelatedFamilies,
-  getExtendedFamiliesDetails,
 };

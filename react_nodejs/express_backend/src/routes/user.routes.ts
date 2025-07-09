@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import winston from "winston";
 import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import logger from "../utils/logger";
-import userService from '../v2/services/user';
+import { getUserById } from "@v2/services/user";
 
 const router = Router();
 
@@ -30,7 +30,7 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 // router.get('/:id', (req: Request, res: Response) => {
 //   const id = parseInt(req.params.id);
-//   userService.getUserById(id)
+//   getUserById(id)
 //     .then((user: any) => {
 //       console.log('DONE');
 //       res.json(user);
