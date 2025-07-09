@@ -1,10 +1,10 @@
 import { Router, Request, Response, NextFunction } from "express";
 import AuthMiddleware from "../middleware-classes/auth/auth.middleware";
 import logger from "../utils/logger";
-import RequestHelper from "./RequestHelper";
-import AuthController from "../controllers/auth/AuthController";
 import { APIRegistrationResponse } from "../controllers/auth/auth.definitions";
 import { APIRequestPayload } from "../controllers/controllers.definitions";
+import { registerV2 } from "../v2/services/auth";
+import { ServiceResponseWithPayload } from "../services/service.definitions";
 
 const router = Router();
 
@@ -30,9 +30,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
 
 router.post('/register', (req: Request, res: Response) => {
   try {
-    const authController = new AuthController;
-    authController.register(req.body)
-    .then((data: any) => {
+    registerV2(req.body)
+    .then((data: ServiceResponseWithPayload<APIRegistrationResponse | null>) => {
         res.status(data.code);
         res.json(data)
       })
