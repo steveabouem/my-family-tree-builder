@@ -1,4 +1,4 @@
-import User from "models/User";
+import User from "../models/User";
 
 export const dateValid = (date: any) => {
     // @ts-ignore

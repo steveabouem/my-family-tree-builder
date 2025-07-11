@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes } from "sequelize";
-import Role from "models/Role";
-import logger from "utils/logger";
-import User from "models/User";
+import Role from "../models/Role";
+import logger from "../utils/logger";
+import User from "../models/User";
 import { APIUserDTO, ServiceResponseWithPayload, APIRegistrationResponse } from "./types";
-import { addSeasoning } from "utils/toolkit";
+import { addSeasoning } from "../utils/toolkit";
 import { generateResponseData } from "./serviceHelpers";
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {

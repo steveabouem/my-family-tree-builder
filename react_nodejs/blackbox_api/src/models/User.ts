@@ -1,7 +1,7 @@
 import {
   DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, ForeignKey,
 } from 'sequelize';
-import db from "db";
+import db from "../../db";
 
 
 // order of InferAttributes & InferCreationAttributes is important.
@@ -25,6 +25,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
   declare related_to: number[];
+  declare leadership: number[];
+  declare teams: number[];
 
   // getters that are not attributes should be tagged using NonAttribute
   // to remove them from the model's Attribute Typings.
@@ -146,6 +148,16 @@ User.init(
     },
     related_to: {
       type: DataTypes.JSON
+    },
+    leadership: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: []
+    },
+    teams: {
+      type: DataTypes.JSON,
+      allowNull: false,
+      defaultValue: []
     },
     role_id: {
       type: DataTypes.INTEGER,

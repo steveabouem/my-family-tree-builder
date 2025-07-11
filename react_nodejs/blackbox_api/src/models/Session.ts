@@ -2,7 +2,7 @@ import {
   DataTypes, Model, InferAttributes, InferCreationAttributes,
   CreationOptional, NonAttribute,
 } from 'sequelize';
-import db from "db";
+import db from "../../db";
 
 // order of InferAttributes & InferCreationAttributes is important.
 class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Session>> {

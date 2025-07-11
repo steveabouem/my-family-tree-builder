@@ -288,3 +288,82 @@ export interface LoginRequestPayload {
     email: string;
     password: string;
 }
+
+export interface CreateTreeRequestPayload {
+    data: APIFamilyTreeDAO;
+    userId: number
+}
+
+// Project and Team Types
+export interface Expense {
+    name: string;
+    description: string;
+    date: Date;
+    deadline: Date;
+}
+
+export interface ProjectData {
+    goal: string;
+    budget: number;
+    expenses: Expense[];
+    projectLead: number;
+    teams: number[];
+    status: number;
+}
+
+export interface TeamData {
+    name: string;
+    members: number[];
+    lead: number;
+    description: string;
+}
+
+export interface CreateProjectRequestPayload {
+    data: ProjectData;
+    userId: number;
+}
+
+export interface UpdateProjectRequestPayload {
+    projectId: number;
+    data: Partial<ProjectData>;
+    userId: number;
+}
+
+export interface AssignTeamToProjectRequestPayload {
+    projectId: number;
+    teamId: number;
+    userId: number;
+}
+
+export interface CreateTeamRequestPayload {
+    data: TeamData;
+    userId: number;
+}
+
+export interface UpdateTeamRequestPayload {
+    teamId: number;
+    data: Partial<TeamData>;
+    userId: number;
+}
+
+export interface APIProjectResponse {
+    id: number;
+    goal: string;
+    budget: number;
+    expenses: Expense[];
+    projectLead: number;
+    teams: number[];
+    status: number;
+    createdAt: Date;
+    updatedAt?: Date;
+}
+
+export interface APITeamResponse {
+    id: number;
+    name: string;
+    members: number[];
+    lead: number;
+    description: string;
+    createdAt: Date;
+    updatedAt?: Date;
+}

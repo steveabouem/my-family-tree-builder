@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
-import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload} from "services/types";
-import { changePassword, login, logout, register } from "services/auth";
-import { getUserById } from "services/user";
+import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload} from "../services/types";
+import { changePassword, login, logout, register } from "../services/auth";
+import { getUserById } from "../services/user";
 import { sendRouteHandlerResponse } from "./helpers";
 
 const router = Router();
