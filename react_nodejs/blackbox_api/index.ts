@@ -2,12 +2,12 @@ import express, { Express } from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import userHandler from '../functinal-backend/routes/user.routes';
-import authHandler from '../functinal-backend/routes/auth.routes';
-import familyTreeHandler from '../functinal-backend/routes/familyTree.routes';
-import familyMemberHandler from '../functinal-backend/routes/familyMembers.routes';
-import sessionHandler from '../functinal-backend/routes/session.routes';
-import { APISessionUser } from './src/definitions/controllers.definitions';
+import userHandler from './src/routes/user.routes';
+import authHandler from './src/routes/auth.routes';
+import familyTreeHandler from './src/routes/familyTree.routes';
+import familyMemberHandler from './src/routes/familyMembers.routes';
+import sessionHandler from './src/routes/session.routes';
+import { APISessionUser } from './src/services/types';
 
 declare module "express-session" {
   // see https://akoskm.com/how-to-use-express-session-with-custom-sessiondata-typescript
@@ -40,17 +40,17 @@ app.use(cors({
 ));
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
-  secret: `${process.env.JWT_KEY}`,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    sameSite: 'none',
-    secure: false, //TODO: change to true for PROD
-    maxAge: 300000,
-  },
-  store,
-}));
+// app.use(session({
+//   secret: `${process.env.JWT_KEY}`,
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: {
+//     sameSite: 'none',
+//     secure: false, //TODO: change to true for PROD
+//     maxAge: 300000,
+//   },
+//   store,
+// }));
 
 app.use((req, res, next) => {
   const publicUrls = ['/api/auth/login', '/api/auth/logout', '/api/auth/register'];
