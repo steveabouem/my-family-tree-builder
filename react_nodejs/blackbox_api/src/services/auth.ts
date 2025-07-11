@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
-import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, PasswordChangeData } from "./types";
+import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload } from "./types";
 import { ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import { Op } from "sequelize";
@@ -35,7 +35,7 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
   return userResponse;
 };
 
-export const login = async ({ email, password }: { email: string, password: string }): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
+export const login = async ({ email, password }: LoginRequestPayload): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
   const payloadData = { authenticated: false, email: '', userId: 0 };
   const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData(payloadData);
 
@@ -81,7 +81,7 @@ export const logout = async (): Promise<ServiceResponseWithPayload<APILogoutResp
   return response;
 };
 
-export const changePassword = async (passwordData: PasswordChangeData): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
+export const changePassword = async (passwordData: PasswordChangeRequestPayload): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
   const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData({ authenticated: false });
   try {
     // The v2 user service expects passwordData to have: email, password (current), newPassword, repeatNewPassword

@@ -1,6 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
-import winston from "winston";
 
 const router = Router();
 router.use(cookieParser());

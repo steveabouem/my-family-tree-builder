@@ -7,7 +7,7 @@ export interface APIRegistrationResponse {
     message?: string;
 }
 
-export interface APILoginResponse  {
+export interface APILoginResponse {
     authenticated: boolean;
     email?: string;
     firstName?: string;
@@ -15,7 +15,7 @@ export interface APILoginResponse  {
     userId?: number;
 }
 
-export interface APILogoutResponse  {
+export interface APILogoutResponse {
     authenticated: boolean;
     email: string;
     userId?: number;
@@ -41,13 +41,13 @@ export interface DAdminRegistrationFields { //registration form fields
 }
 
 export interface APIRequestPayload<P> extends APIEndpointResponse {
-  payload: P;
+    payload: P;
 }
 export interface APIEndpointResponse {
-  sessionId?: string;
-  error: boolean;
-  code: number;
-  message?: string;
+    sessionId?: string;
+    error: boolean;
+    code: number;
+    message?: string;
 }
 
 export type ServiceResponseWithPayload<G> = APIRequestPayload<G>;
@@ -141,7 +141,7 @@ export interface APIFamilyTreeDTO {
     active: number;
 }
 
-export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & {members?: APIFamilyMemberDAO[]};
+export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members?: APIFamilyMemberDAO[] };
 
 export type APIStepFormFieldDTO = {
     fieldName: string;
@@ -244,42 +244,47 @@ export interface APIFamilyTreeNodeDTO {
     }[];
 }
 
-export type APIFamilyMemberArrayKeys  = keyof Pick<APIFamilyMemberDAO, 'children' | 'parents' | 'siblings' | 'spouses'>;
+export type APIFamilyMemberArrayKeys = keyof Pick<APIFamilyMemberDAO, 'children' | 'parents' | 'siblings' | 'spouses'>;
 
 
 export interface APISessionUser {
-  userId: number;
-  authenticated: boolean;
-  ip?: string;
-  ipIsValid?: number;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  familyTree?: APIFamilyTreeDTO;
+    userId: number;
+    authenticated: boolean;
+    ip?: string;
+    ipIsValid?: number;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    familyTree?: APIFamilyTreeDTO;
 }
 
 export interface APISession {
-  type: string;
-  user: APISessionUser;
-  session: Session;
+    type: string;
+    user: APISessionUser;
+    session: Session;
 }
 
 export interface UserRegistrationData {
-  email: string;
-  password: string;
-  first_name: string;
-  last_name: string;
-  assigned_ips: string[];
-  created_at: any;
+    email: string;
+    password: string;
+    first_name: string;
+    last_name: string;
+    assigned_ips: string[];
+    created_at: any;
 }
 
-export interface UserLoginData {
-  email: string;
-  password: string;
+export interface LoginRequestPayload {
+    email: string;
+    password: string;
 }
 
-export interface PasswordChangeData {
-  email: string;
-  currentPassword: string;
-  newPassword: string;
-} 
+export interface PasswordChangeRequestPayload {
+    email: string;
+    currentPassword: string;
+    newPassword: string;
+}
+
+export interface LoginRequestPayload {
+    email: string;
+    password: string;
+}

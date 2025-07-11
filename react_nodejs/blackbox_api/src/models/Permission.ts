@@ -1,5 +1,5 @@
 import { CreationOptional, DataTypes, InferAttributes, Model, NonAttribute } from "sequelize";
-import db from "../../db";
+import db from "db";
 
 class Permission extends Model<InferAttributes<Permission>> {
   declare id: CreationOptional<number>;

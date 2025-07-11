@@ -1,7 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
-import logger from "../utils/logger";
-import FamilyTree from "../models/FamilyTree";
-import { APIGetFamilyTreeResponse } from "../services/types";
+import logger from "utils/logger";
+import FamilyTree from "models/FamilyTree";
+import { APIGetFamilyTreeResponse } from "services/types";
 
 const router = Router();
 

@@ -1,7 +1,7 @@
 import {
   DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, ForeignKey,
 } from 'sequelize';
-import db from "../../db";
+import db from "db";
 
 
 // order of InferAttributes & InferCreationAttributes is important.
