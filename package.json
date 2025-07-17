@@ -6,8 +6,10 @@
   "author": "steveabouem <celoswebs@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "api": "cd ~/perso/household/temp_api && yarn dev",
+    "api": "cd ~/perso/household/temp_api && yarn dev --trace-warnings",
     "client": "cd ~/perso/household/temp_client && yarn start",
-    "db": "cd ~/perso/household/temp_api && mysql -u root -p"
+    "db": "cd ~/perso/household/temp_api && mysql -u root -p",
+    "build_api": "cd ~/perso/household/temp_api && yarn build",
+    "sl": "cd ~/perso/household/temp_api/src && npx sequelize-cli -- command"
   }
 }

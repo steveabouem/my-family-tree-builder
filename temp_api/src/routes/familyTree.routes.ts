@@ -1,15 +1,14 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Router, Request, Response } from "express";
 import FamilyTree from "../models/FamilyTree";
-import { APIFamilyTreeDAO, APIGetFamilyTreeResponse, CreateTreeRequestPayload } from "../services/types";
+import { APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, CreateTreeRequestPayload } from "../services/types";
 import { sendRouteHandlerResponse } from "./helpers";
 import { createTree, deleteTree, getAllTrees, getTreeById } from "../services/familyTree";
 
 const router = Router();
 
 router.get('/index', (req: Request<{}, {}, {}, { member: string }>, res: Response) => {
-  sendRouteHandlerResponse<string, FamilyTree[] | null>(req.query.member, getAllTrees, res, 'Register');
+  sendRouteHandlerResponse<string, FamilyTree[] | null>(req.query.member, getAllTrees, res, 'Get all trees');
 });
-
 
 router.get('/details', (req: Request<{}, {}, {}, { id: string }>, res: Response) => {
   sendRouteHandlerResponse<string, FamilyTree | null>(req.query.id, getTreeById, res, 'Get tree details');

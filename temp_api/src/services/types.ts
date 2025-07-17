@@ -1,3 +1,4 @@
+import { InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import Session from "../models/Session";
 
 export interface APIRegistrationResponse {
@@ -367,3 +368,5 @@ export interface APITeamResponse {
     createdAt: Date;
     updatedAt?: Date;
 }
+
+export type ModelQueryParans<M> = Model<any, any>;

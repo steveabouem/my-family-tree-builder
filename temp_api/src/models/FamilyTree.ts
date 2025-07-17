@@ -16,7 +16,7 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   declare public: number;
   declare name: string;
   declare active: number;
-  declare members: any; // Store as JSON in DB, but expose as FamilyMember[]
+  declare members: string | FamilyMember[]; // Store as JSON in DB, but expose as FamilyMember[]
   declare created_by: number; //User
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
@@ -41,7 +41,7 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   get familyTreeCreated_by(): NonAttribute<number> { //User
     return this.created_by;
   }
-  get familyTreeMembers(): NonAttribute<FamilyMember[]> {
+  get familMembers(): NonAttribute<FamilyMember[]> {
     // Convert JSON data to FamilyMember instances
     if (!this.members) return [];
     
@@ -66,7 +66,7 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   }
 
   // Custom setter for members
-  set familyTreeMembers(members: FamilyMember[]) {
+  set familMembers(members: FamilyMember[]) {
     this.members = members.map(member => member.toJSON());
   }
 }

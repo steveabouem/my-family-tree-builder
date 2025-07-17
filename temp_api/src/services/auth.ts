@@ -4,8 +4,8 @@ import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequ
 import { ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import { Op } from "sequelize";
-import { createUser, getUserByEmail, updatePassword } from "./user";
-import { generateResponseData } from "./serviceHelpers";
+import { createUser, updatePassword } from "./user";
+import { extractDataValuesFrom, generateResponseData } from "./serviceHelpers";
 import User from "../models/User";
 
 export const register = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
@@ -17,10 +17,12 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
     payload: { authenticated: false, email: '', userId: 0, }
   };
 
-  const duplicate = await getUserByEmail(userData.email);
+  const duplicate = await extractDataValuesFrom(User, {where: {email: {[Op.eq]: userData.email}}});
+  logger.info({duplicate});
+
   if (duplicate) {
     response.error = true;
-    logger.error('Email address is already in use');
+    logger.error('Email address is already in use', {duplicate});
     response.code = 400;
     return response;
   }

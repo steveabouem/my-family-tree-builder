@@ -5,7 +5,8 @@ import logger from "../utils/logger";
 import User from "../models/User";
 import { APIUserDTO, ServiceResponseWithPayload, APIRegistrationResponse } from "./types";
 import { addSeasoning } from "../utils/toolkit";
-import { generateResponseData } from "./serviceHelpers";
+import { extractDataValuesFrom, generateResponseData } from "./serviceHelpers";
+import { Op } from "sequelize";
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
   const hashedPassword = bcrypt.hashSync(userData.password, addSeasoning());
@@ -27,7 +28,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
   };
 
   const fieldsValid = validateUserFields(formattedValues);
-  const duplicate = await User.findOne({ where: { email: userData.email } });
+  const duplicate = await extractDataValuesFrom(User, { where: { email: userData.email } });
 
   if (duplicate) {
     logger.error('! User.create ! User already exists');
@@ -49,19 +50,6 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
   }
 
   return response; //unchaged from init
-}
-
-export const getUserByEmail = async (email: string): Promise<ServiceResponseWithPayload<User | null>> => {
-  const response = generateResponseData<User | null>(null);
-
-  try {
-    const user = await User.findOne({ where: { email: email } });
-    response.payload = user;
-    return response;
-  } catch (e) {
-    logger.error('Failed to fetch user', e);
-    return response;
-  }
 }
 
 export const getUserById = async (id: number): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {

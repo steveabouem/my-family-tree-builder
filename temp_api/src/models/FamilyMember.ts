@@ -141,12 +141,5 @@ FamilyMember.init(
   }
 );
 
-// Define associations
-FamilyMember.belongsToMany(FamilyTree, {
-  through: 'FamilyTreeMembers',
-  foreignKey: 'family_member_id',
-  otherKey: 'family_tree_id',
-  as: 'FamilyTrees'
-});
 
 export default FamilyMember;

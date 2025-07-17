@@ -5,6 +5,7 @@ import { APIFamilyMemberDAO, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequ
 import logger from "../utils/logger";
 import User from "../models/User";
 import FamilyMember from "../models/FamilyMember";
+import { extractDataValuesFrom } from "./serviceHelpers";
 
 // function convertToFamilyMembers(membersData: unknown): FamilyMember[] {
 //   if (!membersData) return [];
@@ -165,29 +166,39 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Prom
   return membersWithCoords;
 };
 
+/**
+ * 
+ * @param createData : form values for each tree member.
+ *  used to create a record for each and to build the members array in the new tree instance
+ * @returns FamilyTree
+ */
 export const createTree = async (createData: CreateTreeRequestPayload): Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>> => {
   const { data, userId } = createData;
   let response: ServiceResponseWithPayload<APIGetFamilyTreeResponse | null> = { code: 500, error: true, payload: null };
 
   try {
-    const currentUser = await User.findByPk(userId);
-    if (currentUser?.dataValues) {
+    const currentUser = await extractDataValuesFrom(User, { id: userId });
+
+    if (currentUser) {
       const membersRecords = await generateTreeMembersRecords(data.members, userId)
         .catch((e: unknown) => {
           logger.error('Unable to bulk create members. Function call failed', e);
         });
+
       logger.info('membersRecords array', membersRecords);
+
       if (membersRecords) {
         const membersByNodeId =
           Object.values(membersRecords).reduce((nodeList: { [nodeId: string]: any }, curr: any) => {
             return ({ ...nodeList, [curr.node_id]: curr.dataValues });
           }, {});
         logger.info("Prepared object to create positions and edges", { membersByNodeId });
-        const withCoords = positionFamilyMembers(Object.values(membersByNodeId));
+        const withCoords = await positionFamilyMembers(Object.values(membersByNodeId));
         const newTree = await FamilyTree.create({
           active: 1,
           authorized_ips: '',
           created_by: userId,
+          // @ts-ignore
           members: withCoords,
           name: data?.treeName || 'temporary_tree_name',
           public: 0
@@ -197,6 +208,7 @@ export const createTree = async (createData: CreateTreeRequestPayload): Promise<
           });
         response.code = 200;
         response.error = false;
+        // @ts-ignore
         response.payload = { ...newTree?.dataValues, members: withCoords };
       } else {
         response.code = 400;
@@ -364,15 +376,16 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
   const anchor = members.find(m => !!m?.currentAnchor);
   try {
     if (anchor) {
-      const duplicate = await FamilyMember.findOne({
-        where: {
-          [Op.and]: [{ first_name: anchor.first_name }, { last_name: anchor.last_name }, { dob: anchor.dob }]
-        }
-      });
-      if (duplicate?.dataValues) {
+      const queryBindings = {
+        [Op.and]: [{ first_name: anchor.first_name }, { last_name: anchor.last_name }, { dob: anchor.dob }]
+      };
+      const duplicate = await extractDataValuesFrom(FamilyMember, queryBindings);
+
+      if (duplicate) {
         logger.error('Family member record appears to be a duplicate', { anchor, duplicate });
         return null;
       }
+
       return await getMembersFromCreateAction(anchor, userId);
     } else {
       logger.error('No record created, missing anchor node. Returning empty array');
@@ -401,7 +414,10 @@ export const getMembersFromCreateAction = async (data: APIFamilyMemberDAO, userI
   const siblings = data?.siblings || [];
   const spouses = data?.spouses || [];
   const parents = data?.parents || [];
+  const newMemberGroup: FamilyMember[] = [];
+
   logger.info('Received info to generate record ', data);
+  // TODO: these any are annoying. get rid of them
   data.age = today.diff(dayjs(data.dob), 'years');
   children?.forEach((c: any) => {
     c.age = today.diff(dayjs(c.dob), 'years');
@@ -421,11 +437,13 @@ export const getMembersFromCreateAction = async (data: APIFamilyMemberDAO, userI
   });
   const payload: any = [data, ...children, ...siblings, ...parents, ...spouses];
   logger.info("Resulting flat array for members: ", { payload });
-  const newMemberGroup: FamilyMember[] = [];
+
   for (const m of payload) {
-    const duplicateRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: m.node_id } } });
-    if (!duplicateRecord?.dataValues) {
-      const addedRecord = await FamilyMember.create({
+    const duplicateQBindings = { where: { node_id: { [Op.eq]: m.node_id } } };
+    const duplicateRecord = await extractDataValuesFrom(FamilyMember, duplicateQBindings);
+
+    if (!duplicateRecord) {
+      newMemberGroup.push({
         ...m,
         description: m?.description || '',
         user_id: m?.userId || 0,
@@ -434,23 +452,23 @@ export const getMembersFromCreateAction = async (data: APIFamilyMemberDAO, userI
         spouses: m.spouses,
         siblings: m.siblings,
         children: m.children,
-      })
-        .catch((e: unknown) => {
-          logger.error('Failed adding new record ', e);
-        });
-      if (addedRecord)
-        newMemberGroup.push(addedRecord);
+      });
     }
   };
-  if (!!newMemberGroup) {
+
+  if (newMemberGroup.length) {
+    await FamilyMember.bulkCreate(newMemberGroup);
+
     logger.info('All new members created: ', { newMemberGroup });
     const newMembersMap = newMemberGroup.reduce((map: { [nodeId: string]: FamilyMember }, currentMember: FamilyMember) => {
       return ({ ...map, [currentMember.id]: currentMember });
     }, {});
+
     return newMembersMap;
   } else {
     logger.error('Unable to bulk create members, no records created');
   }
+
   return null;
 };
 
