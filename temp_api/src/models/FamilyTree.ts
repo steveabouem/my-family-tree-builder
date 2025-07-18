@@ -16,7 +16,7 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   declare public: number;
   declare name: string;
   declare active: number;
-  declare members: string | FamilyMember[]; // Store as JSON in DB, but expose as FamilyMember[]
+  declare members: any; // Store as JSON in DB, but expose as FamilyMember[]
   declare created_by: number; //User
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;

@@ -185,11 +185,13 @@ export interface APIFamilyMemberDAO {
     name?: string;
     type?: string;
     position?: { x: number; y: number };
-    parents?: APIFamilyMemberDAO[];
-    children?: APIFamilyMemberDAO[];
-    siblings?: APIFamilyMemberDAO[];
-    spouses?: APIFamilyMemberDAO[];
+    connections?: {id: string; source: string; target: string}[],
+    parents?: string[];
+    children?: string[];
+    siblings?: string[];
+    spouses?: string[];
     tree_id?: number;
+    created_by?: number;
 }
 
 // DTOs

@@ -50,118 +50,113 @@ export const getAllTrees = async (userId?: string): Promise<ServiceResponseWithP
 };
 
 export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Promise<APIFamilyMemberDAO[]> => {
-  const membersWithCoords: any = [];
+  const membersWithCoords: APIFamilyMemberDAO[] = [];
+
   Object.values(members).forEach((currentMember: any, index: number) => {
     const position = { x: index * 125, y: 0 };
-    const children = currentMember?.children || '[]';
-    const siblings = currentMember?.siblings || '[]';
-    const spouses = currentMember?.spouses || '[]';
-    const parents = currentMember?.parents || '[]';
-    logger.info("Collected all anchor's relatives", { children, parents, spouses, siblings, currentMember });
-    if (Array.isArray(children)) {
-      children.forEach((child: any, childIndex: number) => {
-        if (!membersWithCoords.find((newNode: any) => newNode.node_id === child.node_id)) {
-          membersWithCoords.push({
-            ...child,
-            type: 'custom',
-            position: { x: position.x + (125 * (childIndex + 1)), y: position.y + 125 },
-            name: '',
-            data: {
-              ...child,
-              label: `${child.first_name} ${child.last_name}`,
-              connections: [...child?.connections || [], {
-                id: `${currentMember.node_id}-${child.node_id}`,
-                source: currentMember.node_id,
-                target: child.node_id
-              }]
-            }
-          });
-        } else {
-          logger.info('ignoring family member\'s current child as it is a dupe, ', { child });
-        }
-      });
-    }
-    if (Array.isArray(siblings)) {
-      siblings.forEach((sibling: any, siblingIndex: number) => {
-        if (!membersWithCoords.find((newNode: any) => newNode.node_id === sibling.node_id)) {
-          membersWithCoords.push({
-            ...sibling,
-            type: 'custom',
-            position: { x: position.x + (325 * (siblingIndex + 1)), y: position.y },
-            name: `${sibling.first_name} ${sibling.last_name}`,
-            data: {
-              ...sibling,
-              label: `${sibling.first_name} ${sibling.last_name}`,
-              connections: [...sibling?.connections || [], {
-                id: `${currentMember.node_id}-${sibling.node_id}`,
-                source: currentMember.node_id,
-                target: sibling.node_id
-              }]
-            }
-          });
-        } else {
-          logger.info('ignoring family member\'s current sibling as it is a dupe, ', { sibling });
-        }
-      });
-    }
-    if (Array.isArray(spouses)) {
-      spouses.forEach((spouse: any, spousIndex: number) => {
-        if (!membersWithCoords.find((newNode: any) => newNode.node_id === spouse.node_id)) {
-          membersWithCoords.push({
-            ...spouse,
-            type: 'custom',
-            position: { x: position.x + (325 * (spousIndex + 1)), y: position.y },
-            name: '',
-            data: {
-              ...spouse,
-              label: `${spouse.first_name} ${spouse.last_name}`,
-              connections: [...spouse?.connections || [], {
-                id: `${currentMember.node_id}-${spouse.node_id}`,
-                source: currentMember.node_id,
-                target: spouse.node_id
-              }]
-            }
-          });
-        } else {
-          logger.info('ignoring family member\'s current spouse as it is a dupe, ', { spouse });
-        }
-      });
-    }
-    if (Array.isArray(parents)) {
-      parents.forEach((parent: any, parentIndex: number) => {
-        if (!membersWithCoords.find((newNode: any) => newNode.node_id === parent.node_id)) {
-          const xOffset = parent.gender == 2 ? position.x + (225 * (parentIndex + 1)) : position.x - 125;
-          membersWithCoords.push({
-            ...parent,
-            type: 'custom',
-            position: { x: xOffset, y: position.y - 125 },
-            name: '',
-            data: {
-              ...parent,
-              label: `${parent.first_name} ${parent.last_name}`,
-              connections: [...parent?.connections || [], {
-                id: `${currentMember.node_id}-${parent.node_id}`,
-                source: currentMember.node_id,
-                target: parent.node_id
-              }]
-            }
-          });
-        } else {
-          logger.info('ignoring family member\'s current parent as it is a dupe, ', { parent });
-        }
-      });
-    }
-    if (!membersWithCoords.find((newNode: any) => newNode.node_id === currentMember.node_id)) {
+    const childrenNodeIds = currentMember?.children || [];
+    const siblingsNodeIds = currentMember?.siblings || [];
+    const spousesNodeIds = currentMember?.spouses || [];
+    const parentsNodeIds = currentMember?.parents || [];
+    logger.info("Collected all current member's relatives", { children: childrenNodeIds, parents: parentsNodeIds, spouses: spousesNodeIds, siblings: siblingsNodeIds, currentMember });
+
+    childrenNodeIds.forEach((nodeId: string, childIndex: number) => {
+      const incomingChildData = members.find((m: any) => m.node_id === nodeId);
+      const formattedChildData = membersWithCoords.find((newNode: any) => newNode.node_id === nodeId);
+
+      if (!formattedChildData && incomingChildData) {
+        membersWithCoords.push({
+          ...incomingChildData,
+          type: 'custom',
+          position: { x: position.x + (125 * (childIndex + 1)), y: position.y + 125 },
+          name: `${incomingChildData.first_name} ${incomingChildData.last_name}`,
+          connections: [{
+            id: `${currentMember.node_id}-${incomingChildData.node_id}`,
+            source: currentMember.node_id,
+            target: incomingChildData.node_id
+          }]
+        });
+      } else {
+        logger.info('ignoring current child as it is a dupe, ', { child: nodeId });
+      }
+    });
+
+
+    siblingsNodeIds.forEach((nodeId: string, siblingIndex: number) => {
+      const incomingSiblingData = members.find((m: any) => m.node_id === nodeId);
+      const formattedSiblingData = membersWithCoords.find((newNode: any) => newNode.node_id === nodeId);
+
+      if (!formattedSiblingData && incomingSiblingData) {
+        membersWithCoords.push({
+          ...incomingSiblingData,
+          type: 'custom',
+          position: { x: position.x + (125 * (siblingIndex + 1)), y: position.y },
+          name: `${incomingSiblingData.first_name} ${incomingSiblingData.last_name}`,
+          connections: [{
+            id: `${currentMember.node_id}-${incomingSiblingData.node_id}`,
+            source: currentMember.node_id,
+            target: incomingSiblingData.node_id
+          }]
+        });
+      } else {
+        logger.info('ignoring family member\'s current sibling as it is a dupe, ', { sibling: nodeId });
+      }
+    });
+
+    spousesNodeIds.forEach((nodeId: string, spouseIndex: number) => {
+      const incomingSpouseData = members.find((m: any) => m.node_id === nodeId);
+      const formattedSpouseData = membersWithCoords.find((newNode: any) => newNode.node_id === nodeId);
+
+      if (!formattedSpouseData && incomingSpouseData) {
+        membersWithCoords.push({
+          ...incomingSpouseData,
+          type: 'custom',
+          position: { x: position.x + (125 * (spouseIndex + 1)), y: position.y + 125 },
+          name: `${incomingSpouseData.first_name} ${incomingSpouseData.last_name}`,
+          connections: [{
+            id: `${currentMember.node_id}-${incomingSpouseData.node_id}`,
+            source: currentMember.node_id,
+            target: incomingSpouseData.node_id
+          }]
+        });
+      } else {
+        logger.info('ignoring family member\'s current spouse as it is a dupe, ', { spouse: nodeId });
+      }
+    });
+
+    parentsNodeIds.forEach((nodeId: string, parentIndex: number) => {
+      const incomingParentData = members.find((m: any) => m.node_id === nodeId);
+      const formattedParentData = membersWithCoords.find((newNode: any) => newNode.node_id === nodeId);
+
+      if (!formattedParentData && incomingParentData) {
+        membersWithCoords.push({
+          ...incomingParentData,
+          type: 'custom',
+          position: { x: position.x + (125 * (parentIndex + 1)), y: position.y + 125 },
+          name: `${incomingParentData.first_name} ${incomingParentData.last_name}`,
+          connections: [{
+            id: `${currentMember.node_id}-${incomingParentData.node_id}`,
+            source: currentMember.node_id,
+            target: incomingParentData.node_id
+          }]
+        });
+      } else {
+        logger.info('ignoring family member\'s current parent as it is a dupe, ', { parent: nodeId });
+      }
+    });
+
+    if (!membersWithCoords.find((newNode: any) => newNode.node_id === currentMember.node_id) && currentMember.currentAnchor) {
       membersWithCoords.push({
         ...currentMember,
         type: 'custom',
         position,
-        data: { label: `${currentMember.first_name} ${currentMember.last_name}`, ...currentMember }
+        name: `${currentMember.first_name} ${currentMember.last_name}`
       });
     } else {
-      logger.info('ignoring family member as it is a dupe, ', { node: currentMember });
+      logger.info('Current member is not the anchor, ', { node: currentMember });
     }
   });
+
   logger.info('newNodeState', membersWithCoords);
   return membersWithCoords;
 };
@@ -181,19 +176,11 @@ export const createTree = async (createData: CreateTreeRequestPayload): Promise<
 
     if (currentUser) {
       const membersRecords = await generateTreeMembersRecords(data.members, userId)
-        .catch((e: unknown) => {
-          logger.error('Unable to bulk create members. Function call failed', e);
-        });
-
       logger.info('membersRecords array', membersRecords);
 
       if (membersRecords) {
-        const membersByNodeId =
-          Object.values(membersRecords).reduce((nodeList: { [nodeId: string]: any }, curr: any) => {
-            return ({ ...nodeList, [curr.node_id]: curr.dataValues });
-          }, {});
-        logger.info("Prepared object to create positions and edges", { membersByNodeId });
-        const withCoords = await positionFamilyMembers(Object.values(membersByNodeId));
+        // @ts-ignore
+        const withCoords = await positionFamilyMembers(Object.values(membersRecords));
         const newTree = await FamilyTree.create({
           active: 1,
           authorized_ips: '',
@@ -211,19 +198,17 @@ export const createTree = async (createData: CreateTreeRequestPayload): Promise<
         // @ts-ignore
         response.payload = { ...newTree?.dataValues, members: withCoords };
       } else {
-        response.code = 400;
-        response.error = true;
         logger.error('Unable to create members: records array empty');
       }
     } else {
-      response.code = 400;
+      response.code = 500;
       response.message = 'Invalid entries';
       response.error = true;
       logger.error('User not found');
     }
   } catch (e: unknown) {
     logger.error('! FamilyTree.create !', e);
-    response.code = 400;
+    response.code = 500;
   }
   return response;
 };
@@ -373,81 +358,20 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
 // };
 
 const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], userId: number): Promise<{ [id: string]: APIFamilyMemberDAO } | null> => {
-  const anchor = members.find(m => !!m?.currentAnchor);
-  try {
-    if (anchor) {
-      const queryBindings = {
-        [Op.and]: [{ first_name: anchor.first_name }, { last_name: anchor.last_name }, { dob: anchor.dob }]
-      };
-      const duplicate = await extractDataValuesFrom(FamilyMember, queryBindings);
-
-      if (duplicate) {
-        logger.error('Family member record appears to be a duplicate', { anchor, duplicate });
-        return null;
-      }
-
-      return await getMembersFromCreateAction(anchor, userId);
-    } else {
-      logger.error('No record created, missing anchor node. Returning empty array');
-      return null;
-    }
-  } catch (e: unknown) {
-    logger.error('Unable to bulk create members ', e);
-    return null;
-  }
-};
-
-// async function updateRecordAndRelations(members: { [nodeId: string]: APIFamilyMemberDAO }, userId: number, treeId?: number): Promise<{ [key: string]: APIFamilyMemberDAO } | null> {
-//   const data = members?.anchor;
-//   if (data) {
-//     const payload = await getMembersFromUpdateAction(data, treeId || 0);
-//     return payload;
-//   } else {
-//     logger.error('No anchor provided for update ', members);
-//   }
-//   return null;
-// };
-
-export const getMembersFromCreateAction = async (data: APIFamilyMemberDAO, userId: number): Promise<{ [id: string]: APIFamilyMemberDAO } | null> => {
   const today = dayjs();
-  const children = data?.children || [];
-  const siblings = data?.siblings || [];
-  const spouses = data?.spouses || [];
-  const parents = data?.parents || [];
-  const newMemberGroup: FamilyMember[] = [];
+  const newMemberGroup: any = [];
+  const nodeIdList = members.map(m => m.node_id);
+  const duplicateRecords = await FamilyMember.findAll({ where: { node_id: { [Op.in]: nodeIdList } } });
+  logger.info('dupli ', { duplicateRecords, nodeIdList });
 
-  logger.info('Received info to generate record ', data);
-  // TODO: these any are annoying. get rid of them
-  data.age = today.diff(dayjs(data.dob), 'years');
-  children?.forEach((c: any) => {
-    c.age = today.diff(dayjs(c.dob), 'years');
-    c.parents = [...c?.parents || [], data];
-  });
-  siblings?.forEach((s: any) => {
-    s.siblings = [...s.siblings || [], data];
-    s.age = today.diff(dayjs(s.dob), 'years');
-  });
-  parents?.forEach((p: any) => {
-    p.age = today.diff(dayjs(p.dob), 'years');
-    p.children = [...p?.children || [], data];
-  });
-  spouses?.forEach((s: any) => {
-    s.age = today.diff(dayjs(s.dob), 'years');
-    s.spouses = [...s?.spouses || [], data];
-  });
-  const payload: any = [data, ...children, ...siblings, ...parents, ...spouses];
-  logger.info("Resulting flat array for members: ", { payload });
-
-  for (const m of payload) {
-    const duplicateQBindings = { where: { node_id: { [Op.eq]: m.node_id } } };
-    const duplicateRecord = await extractDataValuesFrom(FamilyMember, duplicateQBindings);
-
-    if (!duplicateRecord) {
+  for (const m of members) {
+    if (!duplicateRecords || !duplicateRecords?.find((r: any) => r.node_id === m.node_id)) {
       newMemberGroup.push({
         ...m,
+        age: today.diff(dayjs(m.dob), 'years'),
         description: m?.description || '',
-        user_id: m?.userId || 0,
-        created_by: 1,
+        user_id: null,
+        created_by: userId,
         parents: m.parents,
         spouses: m.spouses,
         siblings: m.siblings,
@@ -457,11 +381,11 @@ export const getMembersFromCreateAction = async (data: APIFamilyMemberDAO, userI
   };
 
   if (newMemberGroup.length) {
-    await FamilyMember.bulkCreate(newMemberGroup);
-
-    logger.info('All new members created: ', { newMemberGroup });
-    const newMembersMap = newMemberGroup.reduce((map: { [nodeId: string]: FamilyMember }, currentMember: FamilyMember) => {
-      return ({ ...map, [currentMember.id]: currentMember });
+    logger.info('PREPARE FOR CREATE ', newMemberGroup)
+    const newRecords = await FamilyMember.bulkCreate(newMemberGroup);
+    logger.info('All new members created: ', { newRecords });
+    const newMembersMap: any = newRecords.reduce((map: { [nodeId: string]: FamilyMember }, currentMember: any) => { //TODO: any
+      return ({ ...map, [currentMember.dataValues?.node_id || currentMember.dataValues.id]: currentMember.dataValues }); // TODO: node_id should be mandatory somehow
     }, {});
 
     return newMembersMap;
@@ -533,40 +457,6 @@ export const getMembersFromCreateAction = async (data: APIFamilyMemberDAO, userI
 //   return null;
 // };
 
-async function createRecords(members: { [stepName: string]: APIFamilyMemberDAO }, userId: number): Promise<{ [id: string]: APIFamilyMemberDAO } | null> {
-  const anchorKey = 'anchor';
-  const anchor = members?.[anchorKey];
-  try {
-    if (anchor) {
-      const duplicate = await FamilyMember.findOne({
-        where: {
-          [Op.and]: [{ first_name: anchor.first_name }, { last_name: anchor.last_name }, { dob: anchor.dob }]
-        }
-      });
-      if (duplicate?.dataValues) {
-        logger.error('Family member record appears to be a duplicate', { anchor, duplicate });
-        return null;
-      }
-      return await getMembersFromCreateAction(anchor, userId);
-    } else {
-      logger.error('No record created, missing anchor node. Returning empty array');
-      return null;
-    }
-  } catch (e: unknown) {
-    logger.error('Unable to bulk create members ', e);
-    return null;
-  }
-};
-
-async function getMemberByNodeId(nodeId: string): Promise<FamilyMember | null> {
-  try {
-    return await FamilyMember.findOne({ where: { node_id: { [Op.eq]: nodeId } } });
-  } catch (e: unknown) {
-    logger.error('Failed to get member by node id:', e);
-    return null;
-  }
-};
-
 // async function updateMember(id: number, updateData: any): Promise<FamilyMember | null> {
 //   try {
 //     const member = await FamilyMember.findByPk(id);
@@ -590,103 +480,3 @@ async function getMemberByNodeId(nodeId: string): Promise<FamilyMember | null> {
 //     return false;
 //   }
 // };
-
-const positionFamilyMembersFromMemberService = (members: APIFamilyMemberDAO[]): Promise<APIFamilyMemberDAO[]> => {
-  const membersWithCoords: any = [];
-  Object.values(members).forEach((currentMember: any, index: number) => {
-    const position = { x: index * 125, y: 0 };
-    const children = JSON.parse(currentMember?.children || '[]');
-    const siblings = JSON.parse(currentMember?.siblings || '[]');
-    const spouses = JSON.parse(currentMember?.spouses || '[]');
-    const parents = JSON.parse(currentMember?.parents || '[]');
-    logger.info("Collected all anchor's relatives", { children, parents, spouses, siblings, currentMember });
-    if (Array.isArray(children)) {
-      children.forEach((child: any, childIndex: number) => {
-        if (membersWithCoords.find((newNode: any) => newNode.node_id === child.node_id)) {
-          logger.info('ignoring family member\'s current child as it is a dupe, ', { child });
-        } else {
-          membersWithCoords.push({
-            ...child,
-            type: 'custom',
-            position: { x: position.x + (125 * (childIndex + 1)), y: position.y + 125 },
-            name: '',
-            data: {
-              ...child,
-              label: `${child.first_name} ${child.last_name}`,
-              connections: [...child?.connections || [], { id: `${currentMember.node_id}-${child.node_id}`, source: currentMember.node_id, target: child.node_id }]
-            }
-          });
-        }
-      });
-    }
-    if (Array.isArray(siblings)) {
-      siblings.forEach((sibling: any, siblingIndex: number) => {
-        if (membersWithCoords.find((newNode: any) => newNode.node_id === sibling.node_id)) {
-          logger.info('ignoring family member\'s current sibling as it is a dupe, ', { sibling });
-        } else {
-          membersWithCoords.push({
-            ...sibling,
-            type: 'custom',
-            position: { x: position.x + (325 * (siblingIndex + 1)), y: position.y },
-            name: `${sibling.first_name} ${sibling.last_name}`,
-            data: {
-              ...sibling, label: `${sibling.first_name} ${sibling.last_name}`,
-              connections: [...sibling?.connections || [], { id: `${currentMember.node_id}-${sibling.node_id}`, source: currentMember.node_id, target: sibling.node_id }]
-            }
-          });
-        }
-      });
-    }
-    if (Array.isArray(spouses)) {
-      spouses.forEach((spouse: any, spousIndex: number) => {
-        if (membersWithCoords.find((newNode: any) => newNode.node_id === spouse.node_id)) {
-          logger.info('ignoring family member\'s current spouse as it is a dupe, ', { spouse });
-        } else {
-          membersWithCoords.push({
-            ...spouse,
-            type: 'custom',
-            position: { x: position.x + (325 * (spousIndex + 1)), y: position.y },
-            name: '',
-            data: {
-              ...spouse,
-              label: `${spouse.first_name} ${spouse.last_name}`,
-              connections: [...spouse?.connections || [], { id: `${currentMember.node_id}-${spouse.node_id}`, source: currentMember.node_id, target: spouse.node_id }]
-            }
-          });
-        }
-      });
-    }
-    if (Array.isArray(parents)) {
-      parents.forEach((parent: any, parentIndex: number) => {
-        if (membersWithCoords.find((newNode: any) => newNode.node_id === parent.node_id)) {
-          logger.info('ignoring family member\'s current spouse as it is a dupe, ', { parent });
-        } else {
-          const xOffset = parent.gender == 2 ? position.x + (225 * (parentIndex + 1)) : position.x - 125;
-          membersWithCoords.push({
-            ...parent,
-            type: 'custom',
-            position: { x: xOffset, y: position.y - 125 },
-            name: '',
-            data: {
-              ...parent,
-              label: `${parent.first_name} ${parent.last_name}`,
-              connections: [...parent?.connections || [], { id: `${currentMember.node_id}-${parent.node_id}`, source: currentMember.node_id, target: parent.node_id }]
-            }
-          });
-        }
-      });
-    }
-    if (membersWithCoords.find((newNode: any) => newNode.node_id === currentMember.node_id)) {
-      logger.info('ignoring family member as it is a dupe, ', { node: currentMember });
-    } else {
-      membersWithCoords.push({
-        ...currentMember,
-        type: 'custom',
-        position,
-        data: { label: `${currentMember.first_name} ${currentMember.last_name}`, ...currentMember }
-      });
-    }
-  });
-  logger.info('newNodeState', membersWithCoords);
-  return membersWithCoords;
-};

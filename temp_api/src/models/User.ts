@@ -24,7 +24,6 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare password: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
-  declare related_to: number[];
   declare leadership: number[];
   declare teams: number[];
 
@@ -88,9 +87,6 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
     return this.role_id;
   }
 
-  get UserRelatedTo(): NonAttribute<number[]> {
-    return this.related_to;
-  }
 }
 
 User.init(
@@ -145,9 +141,6 @@ User.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    related_to: {
-      type: DataTypes.JSON
     },
     leadership: {
       type: DataTypes.JSON,

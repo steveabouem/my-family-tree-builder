@@ -22,10 +22,10 @@ module.exports = {
       occupation: { type: Sequelize.STRING, allowNull: false },
       age: { type: Sequelize.INTEGER, allowNull: false },
       description: { type: Sequelize.STRING },
-      parents: { type: Sequelize.JSON }, // FamilyMember[]
-      siblings: { type: Sequelize.JSON }, // FamilyMember[]
-      children: { type: Sequelize.JSON },// FamilyMember[]
-      spouses: { type: Sequelize.JSON },// FamilyMember[]
+      parents: { type: Sequelize.JSON }, // node_id[]
+      siblings: { type: Sequelize.JSON }, // node_id[]
+      children: { type: Sequelize.JSON },// node_id[]
+      spouses: { type: Sequelize.JSON },// node_id[]
       profile_url: { type: Sequelize.STRING },
       created_by: { type: Sequelize.INTEGER }, //user
       updated_by: { type: Sequelize.INTEGER }, //user

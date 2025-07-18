@@ -2,7 +2,6 @@ import {
   DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute
 } from 'sequelize';
 import db from "../../db";
-import FamilyTree from "./FamilyTree";
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAttributes<FamilyMember>> {
@@ -11,31 +10,29 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
    * */
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
-  declare id: CreationOptional<number>;
-  declare node_id?: string;
-  declare user_id?: number;
   declare age: number | null;
-  declare dob: string;
-  declare tree_ids: string | null;
-  declare dod: string | null;
+  declare children: string[]; // node_id[]
+  declare created_at: CreationOptional<Date>;
+  declare created_by: number; //User
   declare description: string;
+  declare dob: string;
+  declare dod: string | null;
+  declare email: string;
   declare first_name: string;
   declare gender: number; //1:M, 2:F
-  declare parents: string | null;
-  declare siblings: string | null;
-  declare spouses: string | null;
-  declare children: string | null;
-  declare email: string;
+  declare id: CreationOptional<number>;
   declare last_name: string;
   declare marital_status: string;
+  declare node_id?: string;
   declare occupation?: string;
+  declare parents:string[]; // node_id[]
   declare profile_url?: string;
-  declare created_by: number; //User
-  declare created_at: CreationOptional<Date>;
+  declare siblings: string[]; // node_id[]
+  declare spouses: string[]; // node_id[]
+  declare tree_ids: string | null;
   declare updated_at: CreationOptional<Date>;
+  declare user_id: number | null;
 
-  // Associations
-  declare FamilyTrees?: NonAttribute<FamilyTree[]>;
 
   /**
    *  Attributes Getters/Setters
@@ -48,7 +45,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   get FamilyMemberNodeId(): NonAttribute<string | undefined> {
     return this.node_id;
   }
-  get FamilyMemberUserId(): NonAttribute<number | undefined> {
+  get FamilyMemberUserId(): NonAttribute<number | null> {
     return this.user_id;
   }
   get familyMemberAge(): NonAttribute<number | null> {
@@ -72,7 +69,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   get familymemberGender(): NonAttribute<number> {
     return this.gender;
   }
-  get familyMemberParents(): NonAttribute<string | null> {
+  get familyMemberParents(): NonAttribute<string[] | null> {
     return this.parents;
   };
   get familyMemberEmail(): NonAttribute<string> {
@@ -108,7 +105,7 @@ FamilyMember.init(
     node_id: { type: DataTypes.STRING },
     tree_ids: { type: DataTypes.JSON },
     // allowNull defaults to true
-    user_id: { type: DataTypes.INTEGER, allowNull: false },
+    user_id: { type: DataTypes.INTEGER},
     age: { type: DataTypes.INTEGER, allowNull: false },
     occupation: { type: DataTypes.STRING, allowNull: false },
     dob: { type: DataTypes.STRING, allowNull: false },
