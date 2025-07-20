@@ -18,7 +18,6 @@ export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> 
  * @returns 
  */
 export async function extractDataValuesFrom(entity: any, bindings: any): Promise<any> {
-  logger.info('Bindings received ', bindings)
   const record = await entity.findOne(bindings);
   if (record?.dataValues) {
     return record.dataValues;

@@ -125,11 +125,13 @@ export interface APIFamilyTreeDAO {
     //! TODO: keep an eye here, it was previously an object keyed with the noe id for the front. the conversion functions will be used for that if necessary
     members: APIFamilyMemberDAO[];
     userId: number;
+    anchor: string;
     active?: boolean;
     treeName?: string;
     treeId?: number;
 }
 
+export type CreateTreeAPIResponse = Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>>
 //DTOs
 export interface APIFamilyTreeDTO {
     public: number;
@@ -180,8 +182,6 @@ export interface APIFamilyMemberDAO {
     profile_url?: string;
     userId?: number;
     // ReactFlow related attributes
-    currentAnchor?: boolean; //TODO: used for conversion functions
-    nodeId?: string;
     name?: string;
     type?: string;
     position?: { x: number; y: number };

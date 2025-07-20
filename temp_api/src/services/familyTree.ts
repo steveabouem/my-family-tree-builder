@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import FamilyTree from "../models/FamilyTree";
-import { APIFamilyMemberDAO, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, CreateTreeRequestPayload, ServiceResponseWithPayload } from "./types";
+import { APIFamilyMemberDAO, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, CreateTreeAPIResponse, CreateTreeRequestPayload, ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import User from "../models/User";
 import FamilyMember from "../models/FamilyMember";
@@ -21,26 +21,21 @@ import { extractDataValuesFrom } from "./serviceHelpers";
 //   return members.map(member => member.toJSON());
 // };
 
-export const getAllTrees = async (userId?: string): Promise<ServiceResponseWithPayload<FamilyTree[]>> => {
+export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPayload<FamilyTree[]>> => {
   let response: APIRequestPayload<FamilyTree[]> = { code: 500, error: true, payload: [] };
   let treeList: FamilyTree[] = [];
+
   try {
-    if (userId) {
-      treeList = await FamilyTree.findAll({
-        where: {
-          members: {
-            [Op.like]: `%"user_id":${userId}%`
-          }
-        } as any
-      });
-      response.code = 200;
-      response.error = false;
-      response.message = 'Fetched tree successfully.'
-    } else {
-      response.message = 'Fetched tree error.'
-      logger.error('Unable to fetch trees. No user Id');
-      response.code = 400;
-    }
+    treeList = await FamilyTree.findAll({
+      where: {
+        members: {
+          [Op.like]: `%"user_id":${userId}%`
+        }
+      } as any
+    });
+    response.code = 200;
+    response.error = false;
+    response.message = 'Fetched tree successfully.'
   } catch (e: unknown) {
     response.code = 500;
     logger.error('Unable to fetch trees ', e);
@@ -49,16 +44,17 @@ export const getAllTrees = async (userId?: string): Promise<ServiceResponseWithP
   return response;
 };
 
-export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Promise<APIFamilyMemberDAO[]> => {
+export const positionFamilyMembers = async (members: APIFamilyMemberDAO[], anchorNodeId: string): Promise<APIFamilyMemberDAO[]> => {
   const membersWithCoords: APIFamilyMemberDAO[] = [];
+  const anchor = members.find(m => m.node_id === anchorNodeId);
 
-  Object.values(members).forEach((currentMember: any, index: number) => {
-    const position = { x: index * 125, y: 0 };
-    const childrenNodeIds = currentMember?.children || [];
-    const siblingsNodeIds = currentMember?.siblings || [];
-    const spousesNodeIds = currentMember?.spouses || [];
-    const parentsNodeIds = currentMember?.parents || [];
-    logger.info("Collected all current member's relatives", { children: childrenNodeIds, parents: parentsNodeIds, spouses: spousesNodeIds, siblings: siblingsNodeIds, currentMember });
+  if (anchor) {
+    const position = { x: 0, y: 0 };
+    // positoin every one of the anchor's relatives
+    const childrenNodeIds = anchor?.children || [];
+    const siblingsNodeIds = anchor?.siblings || [];
+    const spousesNodeIds = anchor?.spouses || [];
+    const parentsNodeIds = anchor?.parents || [];
 
     childrenNodeIds.forEach((nodeId: string, childIndex: number) => {
       const incomingChildData = members.find((m: any) => m.node_id === nodeId);
@@ -71,8 +67,8 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Prom
           position: { x: position.x + (125 * (childIndex + 1)), y: position.y + 125 },
           name: `${incomingChildData.first_name} ${incomingChildData.last_name}`,
           connections: [{
-            id: `${currentMember.node_id}-${incomingChildData.node_id}`,
-            source: currentMember.node_id,
+            id: `${anchor.node_id}-${incomingChildData.node_id}`,
+            source: anchor.node_id,
             target: incomingChildData.node_id
           }]
         });
@@ -80,7 +76,6 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Prom
         logger.info('ignoring current child as it is a dupe, ', { child: nodeId });
       }
     });
-
 
     siblingsNodeIds.forEach((nodeId: string, siblingIndex: number) => {
       const incomingSiblingData = members.find((m: any) => m.node_id === nodeId);
@@ -93,8 +88,8 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Prom
           position: { x: position.x + (125 * (siblingIndex + 1)), y: position.y },
           name: `${incomingSiblingData.first_name} ${incomingSiblingData.last_name}`,
           connections: [{
-            id: `${currentMember.node_id}-${incomingSiblingData.node_id}`,
-            source: currentMember.node_id,
+            id: `${anchor.node_id}-${incomingSiblingData.node_id}`,
+            source: anchor.node_id,
             target: incomingSiblingData.node_id
           }]
         });
@@ -111,11 +106,11 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Prom
         membersWithCoords.push({
           ...incomingSpouseData,
           type: 'custom',
-          position: { x: position.x + (125 * (spouseIndex + 1)), y: position.y + 125 },
+          position: { x: position.x + (125 * (spouseIndex + 1)), y: position.y },
           name: `${incomingSpouseData.first_name} ${incomingSpouseData.last_name}`,
           connections: [{
-            id: `${currentMember.node_id}-${incomingSpouseData.node_id}`,
-            source: currentMember.node_id,
+            id: `${anchor.node_id}-${incomingSpouseData.node_id}`,
+            source: anchor.node_id,
             target: incomingSpouseData.node_id
           }]
         });
@@ -135,30 +130,30 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Prom
           position: { x: position.x + (125 * (parentIndex + 1)), y: position.y + 125 },
           name: `${incomingParentData.first_name} ${incomingParentData.last_name}`,
           connections: [{
-            id: `${currentMember.node_id}-${incomingParentData.node_id}`,
-            source: currentMember.node_id,
+            id: `${anchor.node_id}-${incomingParentData.node_id}`,
+            source: anchor.node_id,
             target: incomingParentData.node_id
           }]
         });
       } else {
         logger.info('ignoring family member\'s current parent as it is a dupe, ', { parent: nodeId });
       }
+
+    });
+    // once thats done, position the current member themselves (check for whether they're the center of the graph)
+    membersWithCoords.push({
+      ...anchor,
+      type: 'custom',
+      position,
+      name: `${anchor.first_name} ${anchor.last_name}`
     });
 
-    if (!membersWithCoords.find((newNode: any) => newNode.node_id === currentMember.node_id) && currentMember.currentAnchor) {
-      membersWithCoords.push({
-        ...currentMember,
-        type: 'custom',
-        position,
-        name: `${currentMember.first_name} ${currentMember.last_name}`
-      });
-    } else {
-      logger.info('Current member is not the anchor, ', { node: currentMember });
-    }
-  });
-
-  logger.info('newNodeState', membersWithCoords);
-  return membersWithCoords;
+    logger.info('newNodeState', membersWithCoords);
+    return membersWithCoords;
+  } else {
+    logger.error('No anchor provided. ', members);
+    return [];
+  }
 };
 
 /**
@@ -167,7 +162,7 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[]): Prom
  *  used to create a record for each and to build the members array in the new tree instance
  * @returns FamilyTree
  */
-export const createTree = async (createData: CreateTreeRequestPayload): Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>> => {
+export const createTree = async (createData: CreateTreeRequestPayload): CreateTreeAPIResponse => {
   const { data, userId } = createData;
   let response: ServiceResponseWithPayload<APIGetFamilyTreeResponse | null> = { code: 500, error: true, payload: null };
 
@@ -179,13 +174,11 @@ export const createTree = async (createData: CreateTreeRequestPayload): Promise<
       logger.info('membersRecords array', membersRecords);
 
       if (membersRecords) {
-        // @ts-ignore
-        const withCoords = await positionFamilyMembers(Object.values(membersRecords));
+        const withCoords = await positionFamilyMembers(Object.values(membersRecords), data.anchor);
         const newTree = await FamilyTree.create({
           active: 1,
           authorized_ips: '',
           created_by: userId,
-          // @ts-ignore
           members: withCoords,
           name: data?.treeName || 'temporary_tree_name',
           public: 0
@@ -195,7 +188,6 @@ export const createTree = async (createData: CreateTreeRequestPayload): Promise<
           });
         response.code = 200;
         response.error = false;
-        // @ts-ignore
         response.payload = { ...newTree?.dataValues, members: withCoords };
       } else {
         logger.error('Unable to create members: records array empty');
@@ -239,6 +231,7 @@ export const getTreeById = async (id: string): Promise<ServiceResponseWithPayloa
 // async function updateTree(updateData: any): Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>> {
 //   let response: ServiceResponseWithPayload<APIGetFamilyTreeResponse | null> = { code: 500, error: true, payload: null };
 //   const { members, userId, treeId } = updateData;
+
 //   try {
 //     const tree = await FamilyTree.findByPk(treeId);
 //     if (!tree) {
@@ -258,6 +251,7 @@ export const getTreeById = async (id: string): Promise<ServiceResponseWithPayloa
 //   } catch (e: unknown) {
 //     logger.error('Unable to update tree ', e);
 //   }
+
 //   return response;
 // };
 
@@ -365,6 +359,7 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
   logger.info('dupli ', { duplicateRecords, nodeIdList });
 
   for (const m of members) {
+    logger.info('member in list ', m)
     if (!duplicateRecords || !duplicateRecords?.find((r: any) => r.node_id === m.node_id)) {
       newMemberGroup.push({
         ...m,
@@ -381,7 +376,6 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
   };
 
   if (newMemberGroup.length) {
-    logger.info('PREPARE FOR CREATE ', newMemberGroup)
     const newRecords = await FamilyMember.bulkCreate(newMemberGroup);
     logger.info('All new members created: ', { newRecords });
     const newMembersMap: any = newRecords.reduce((map: { [nodeId: string]: FamilyMember }, currentMember: any) => { //TODO: any
