@@ -1,25 +1,11 @@
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import FamilyTree from "../models/FamilyTree";
-import { APIFamilyMemberDAO, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, CreateTreeAPIResponse, CreateTreeRequestPayload, ServiceResponseWithPayload } from "./types";
+import { APIFamilyMemberDAO, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, CreateTreeAPIResponse, ManageTreeRequestPayload, ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import User from "../models/User";
 import FamilyMember from "../models/FamilyMember";
-import { extractDataValuesFrom } from "./serviceHelpers";
-
-// function convertToFamilyMembers(membersData: unknown): FamilyMember[] {
-//   if (!membersData) return [];
-//   const data = typeof membersData === 'string' ? JSON.parse(membersData) : membersData;
-//   return data.map((memberData: any) => {
-//     const member = new FamilyMember();
-//     Object.assign(member, memberData);
-//     return member;
-//   });
-// }
-
-// function convertToJSON(members: FamilyMember[]): any {
-//   return members.map(member => member.toJSON());
-// };
+import { extractDataValuesFrom, getByKey } from "./serviceHelpers";
 
 export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPayload<FamilyTree[]>> => {
   let response: APIRequestPayload<FamilyTree[]> = { code: 500, error: true, payload: [] };
@@ -50,7 +36,7 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[], ancho
 
   if (anchor) {
     const position = { x: 0, y: 0 };
-    // positoin every one of the anchor's relatives
+    // position every one of the anchor's relatives
     const childrenNodeIds = anchor?.children || [];
     const siblingsNodeIds = anchor?.siblings || [];
     const spousesNodeIds = anchor?.spouses || [];
@@ -162,7 +148,7 @@ export const positionFamilyMembers = async (members: APIFamilyMemberDAO[], ancho
  *  used to create a record for each and to build the members array in the new tree instance
  * @returns FamilyTree
  */
-export const createTree = async (createData: CreateTreeRequestPayload): CreateTreeAPIResponse => {
+export const createTree = async (createData: ManageTreeRequestPayload): CreateTreeAPIResponse => {
   const { data, userId } = createData;
   let response: ServiceResponseWithPayload<APIGetFamilyTreeResponse | null> = { code: 500, error: true, payload: null };
 
@@ -228,32 +214,110 @@ export const getTreeById = async (id: string): Promise<ServiceResponseWithPayloa
   }
 };
 
-// async function updateTree(updateData: any): Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>> {
-//   let response: ServiceResponseWithPayload<APIGetFamilyTreeResponse | null> = { code: 500, error: true, payload: null };
-//   const { members, userId, treeId } = updateData;
+/**
+ * 
+ * @param updateData: updated list of existing family members (and new ones if any). Deletions will be handled seoaratekt
+ * @returns FamilyTree
+ */
+export const updateTree = async (updateData: ManageTreeRequestPayload): CreateTreeAPIResponse => {
+  let response: ServiceResponseWithPayload<APIGetFamilyTreeResponse | null> = { code: 500, error: true, payload: null };
+  const { userId, data } = updateData;
 
-//   try {
-//     const tree = await FamilyTree.findByPk(treeId);
-//     if (!tree) {
-//       logger.error('Invalid treeId ', treeId);
-//       response.code = 400;
-//     } else {
-//       const membersRecords = await updateRecordAndRelations(members, userId, treeId);
-//       const withCoords = positionFamilyMembers(Object.values(membersRecords || {}));
-//       await tree.update({
-//         ...updateData,
-//         members: JSON.stringify(withCoords)
-//       });
-//       response.payload = tree;
-//       response.error = false;
-//       response.code = 200;
-//     }
-//   } catch (e: unknown) {
-//     logger.error('Unable to update tree ', e);
-//   }
+  try {
+    const tree = await getByKey(FamilyTree, 'id', data?.treeId || 0);
 
-//   return response;
-// };
+    if (!tree) {
+      logger.error('Invalid entries ', data);
+    } else {
+      const updatedMembersRecords = await updateTreeMembers(tree, userId, data);
+      const withCoords = positionFamilyMembers(Object.values(updatedMembersRecords || {}), data.anchor);
+
+      await tree.update({
+        ...updateData,
+        members: JSON.stringify(withCoords)
+      });
+      response.payload = tree;
+      response.error = false;
+      response.code = 200;
+    }
+  } catch (e: unknown) {
+    logger.error('Unable to update tree ', e);
+  }
+
+  return response;
+};
+
+/**
+ * 
+ * @param tree : includes list of members as currently stored in db
+ * @param userId 
+ * @param updateData: member and tree updates
+ */
+// TODO: there are more validations to be done here
+const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: APIFamilyTreeDAO): Promise<{ [id: string]: APIFamilyMemberDAO } | null> => {
+  const allNodeIds = updateData.members.map(m => m.node_id);
+  const existingMembersNodeIds = tree.members.map((m: FamilyMember) => m.node_id);
+  const newRecords: any = []; //TODO: fix bulkcreate ops typing
+  const updatedRecords: any[] = [];
+  const mappedMembers: any = {};
+  let newMembersRecords: any[] = [];
+  const newMembers = updateData.members.filter(m => !existingMembersNodeIds.includes(m.node_id));
+  logger.info('info on nodes ', { allNodeIds, existingMembersNodeIds, newMemberG0roup: newMembers });
+
+  if (newMembers.length) {
+    logger.info('Tree update includes new members', newMembers);
+    const today = dayjs();
+
+    for (const m of newMembers) {
+      // there shouldnt be any duplicates here
+      logger.info('Current tree member ', m, tree)
+      newRecords.push({
+        ...m,
+        age: today.diff(dayjs(m.dob), 'years'),
+        description: m?.description || '',
+        created_by: userId,
+        parents: m.parents,
+        spouses: m.spouses,
+        siblings: m.siblings,
+        children: m.children,
+      });
+    };
+  }
+
+  if (newRecords.length) {
+    // create records for any family member that doesnt already have one. 
+    // No need to update the existing relatives, since node_id remains the same
+    newMembersRecords = await FamilyMember.bulkCreate(newRecords);
+    // (...)
+  }
+
+  //add the newly created records to the mapped records object
+  newMembersRecords.forEach((r: APIFamilyMemberDAO) => {
+    logger.info('Newly created record to add ', r);
+    updatedRecords.push(r);
+  });
+
+  await Promise.all(updateData.members.map(async (m) => {
+    const memberRecord = await FamilyMember.findOne({where: {node_id:{[Op.eq]: m.node_id}}});
+
+    if (memberRecord?.dataValues) {
+      const recordWithUpdates = await memberRecord.update({
+        ...memberRecord,
+        ...m, // incoming values
+        age: memberRecord.age // form comes in with null for age. avoid replacing it
+      });
+      logger.info('Updated. Return value is ', recordWithUpdates);
+      updatedRecords.push(recordWithUpdates.dataValues);
+    } else { 
+      logger.error('Invalid record provided ', m);
+    }
+  }));
+
+  logger.info('Records After all updates', updatedRecords);
+  const result =  updatedRecords.reduce((map: {[nodeId: string]: APIFamilyMemberDAO}, curr: any) => ({...map, [curr.node_id]: curr}), {});
+  
+  return result;
+};
 
 export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPayload<null>> => {
   let response: ServiceResponseWithPayload<null> = { code: 500, error: true, payload: null };
@@ -275,20 +339,6 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
 
   return response;
 };
-
-// async function addMembersToTree(treeId: number, newMembers: number[], userId: number): Promise<any> {
-//   try {
-//     const tree = await FamilyTree.findByPk(treeId);
-//     if (!tree) return null;
-//     const currentMembers = JSON.parse(tree.members || '[]');
-//     const updatedMembers = [...currentMembers, ...newMembers];
-//     await tree.update({ members: JSON.stringify(updatedMembers) });
-//     return tree;
-//   } catch (e: unknown) {
-//     logger.error('Failed to add members to tree ', e);
-//     return null;
-//   }
-// }
 
 // async function removeMembersFromTree(treeId: number, membersToRemove: number[]): Promise<boolean> {
 //   try {
@@ -315,19 +365,6 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
 //   }
 // }
 
-// async function updateTreeMembers(treeId: number, members: FamilyMember[]): Promise<FamilyTree | null> {
-//   try {
-//     const tree = await FamilyTree.findByPk(treeId);
-//     if (!tree) return null;
-//     const membersJSON = convertToJSON(members);
-//     await tree.update({ members: membersJSON });
-//     return tree;
-//   } catch (e: unknown) {
-//     logger.error('Failed to update tree members ', e);
-//     return null;
-//   }
-// }
-
 // async function canUserViewTree(treeId: number, userId: number): Promise<boolean> {
 //   try {
 //     const tree = await FamilyTree.findByPk(treeId);
@@ -340,7 +377,7 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
 //   }
 // }
 
-// async function canUserUpdateTree(treeId: number, userId: number): Promise<boolean> {
+// export const function = async  canUserUpdateTree(treeId: number, userId: number): Promise<boolean> {
 //   try {
 //     const tree = await FamilyTree.findByPk(treeId);
 //     if (!tree) return false;
@@ -404,7 +441,7 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
 //     logger.info('Found matching family member: ', matchingRecord.dataValues);
 //     for (const { relation, inverseRelation } of kinshipMapping) {
 //       const nodeIdsForKinshipType = (data?.[relation] || []).map((c: APIFamilyMemberDAO) => c.node_id) || [];
-//       if ( data?.[relation]?.length) {
+//       if (data?.[relation]?.length) {
 //         const existingRecords = await FamilyMember.findAll({ where: { node_id: { [Op.in]: nodeIdsForKinshipType } } });
 //         const existingRecordsData = existingRecords.map((r: any) => r.dataValues);
 //         logger.info('List of existing records ', existingRecordsData);

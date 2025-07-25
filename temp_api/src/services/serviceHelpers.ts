@@ -1,6 +1,7 @@
 import { InferAttributes, Model } from "sequelize";
 import { ModelQueryParans, ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
+import { Op } from "sequelize";
 
 export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> => {
   return {
@@ -19,6 +20,15 @@ export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> 
  */
 export async function extractDataValuesFrom(entity: any, bindings: any): Promise<any> {
   const record = await entity.findOne(bindings);
+  if (record?.dataValues) {
+    return record.dataValues;
+  }
+
+  return null;
+}
+
+export async function getByKey(entity: any, key: string, value: any): Promise<any> {
+  const record = await entity.findOne({ where: { [key]: { [Op.eq]: value } } });
   if (record?.dataValues) {
     return record.dataValues;
   }

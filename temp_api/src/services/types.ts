@@ -1,5 +1,6 @@
 import { InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import Session from "../models/Session";
+import FamilyTree from "../models/FamilyTree";
 
 export interface APIRegistrationResponse {
     authenticated: boolean;
@@ -131,7 +132,10 @@ export interface APIFamilyTreeDAO {
     treeId?: number;
 }
 
-export type CreateTreeAPIResponse = Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>>
+// Responses
+export type CreateTreeAPIResponse = Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>>;
+export type GetTreeAPIResponse = Promise<ServiceResponseWithPayload<FamilyTree | null>>;
+
 //DTOs
 export interface APIFamilyTreeDTO {
     public: number;
@@ -292,7 +296,7 @@ export interface LoginRequestPayload {
     password: string;
 }
 
-export interface CreateTreeRequestPayload {
+export interface ManageTreeRequestPayload {
     data: APIFamilyTreeDAO;
     userId: number
 }

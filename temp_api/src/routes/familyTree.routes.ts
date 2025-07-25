@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
 import FamilyTree from "../models/FamilyTree";
-import { APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, CreateTreeRequestPayload } from "../services/types";
+import { APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, ManageTreeRequestPayload } from "../services/types";
 import { sendRouteHandlerResponse } from "./helpers";
-import { createTree, deleteTree, getAllTrees, getTreeById } from "../services/familyTree";
+import { createTree, deleteTree, getAllTrees, getTreeById, updateTree } from "../services/familyTree";
 
 const router = Router();
 
@@ -14,8 +14,8 @@ router.get('/details', (req: Request<{}, {}, {}, { id: string }>, res: Response)
   sendRouteHandlerResponse<string, FamilyTree | null>(req.query.id, getTreeById, res, 'Get tree details');
 });
 
-router.post('/create', (req: Request<{}, {}, CreateTreeRequestPayload, {}>, res: Response) => {
-  sendRouteHandlerResponse<CreateTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, createTree, res, 'Create family tree');
+router.post('/create', (req: Request<{}, {}, ManageTreeRequestPayload, {}>, res: Response) => {
+  sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, createTree, res, 'Create family tree');
 });
 
 router.post('/delete', (req: Request<{ id: string }, {}, {}, {}>, res: Response) => {
@@ -29,11 +29,8 @@ router.post('/delete', (req: Request<{ id: string }, {}, {}, {}>, res: Response)
 //   helper.sendResponseFromControllerMethod(familyTreeController.getMembers, 'Get tree members');
 // });
 
-// router.put('/members', (req: Request, res: Response) => {
-//   const familyTreeController = new FamilyTreeController();
-//   const helper = new RequestHelper(req, res);
-
-//   helper.sendResponseFromControllerMethod(familyTreeController.update, 'Update tree records');
-// });
+router.put('/members', (req: Request<{}, {}, ManageTreeRequestPayload, {}>, res: Response) => {
+  sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, updateTree, res, 'Create family tree');
+});
 
 export default router;
