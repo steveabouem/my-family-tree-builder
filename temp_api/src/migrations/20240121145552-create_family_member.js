@@ -9,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      node_id: { type: Sequelize.STRING },
+      node_id: { type: Sequelize.STRING, allowNull: false },
       tree_ids: { type: Sequelize.STRING },
       first_name: { type: Sequelize.STRING, allowNull: false },
       last_name: { type: Sequelize.STRING, allowNull: false },
@@ -26,6 +26,8 @@ module.exports = {
       siblings: { type: Sequelize.JSON }, // node_id[]
       children: { type: Sequelize.JSON },// node_id[]
       spouses: { type: Sequelize.JSON },// node_id[]
+      position: { type: Sequelize.JSON },// {x: number, y: number}
+      connections: { type: Sequelize.JSON },// {id: string; source: string; target: string}[]
       profile_url: { type: Sequelize.STRING },
       created_by: { type: Sequelize.INTEGER }, //user
       updated_by: { type: Sequelize.INTEGER }, //user

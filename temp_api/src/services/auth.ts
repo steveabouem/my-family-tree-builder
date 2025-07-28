@@ -5,7 +5,7 @@ import { ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import { Op } from "sequelize";
 import { createUser, updatePassword } from "./user";
-import { extractDataValuesFrom, generateResponseData } from "./serviceHelpers";
+import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
 import User from "../models/User";
 
 export const register = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
@@ -17,7 +17,7 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
     payload: { authenticated: false, email: '', userId: 0, }
   };
 
-  const duplicate = await extractDataValuesFrom(User, {where: {email: {[Op.eq]: userData.email}}});
+  const duplicate = await extractSingleDataValuesFrom(User, {where: {email: {[Op.eq]: userData.email}}});
   logger.info({duplicate});
 
   if (duplicate) {

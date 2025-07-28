@@ -11,14 +11,14 @@ export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> 
   };
 };
 
-// TODO: need to refactor this as described
+// TODO: THIS FILE IS POLLUTED BY ANYs
 /**
  * extract the dataValues property of any Sequelize Model that a service function would need
  * @param bindings 
  * @param entity 
  * @returns 
  */
-export async function extractDataValuesFrom(entity: any, bindings: any): Promise<any> {
+export async function extractSingleDataValuesFrom(entity: any, bindings: any): Promise<any> {
   const record = await entity.findOne(bindings);
   if (record?.dataValues) {
     return record.dataValues;
@@ -27,10 +27,11 @@ export async function extractDataValuesFrom(entity: any, bindings: any): Promise
   return null;
 }
 
-export async function getByKey(entity: any, key: string, value: any): Promise<any> {
-  const record = await entity.findOne({ where: { [key]: { [Op.eq]: value } } });
-  if (record?.dataValues) {
-    return record.dataValues;
+export async function extractGroupDataValuesFrom(entity: any, bindings: any): Promise<any> {
+  const records = await entity.findAll(bindings);
+
+  if (records?.length) {
+    return records.map((r: any) => r.dataValues)
   }
 
   return null;

@@ -1,6 +1,7 @@
 import { InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import Session from "../models/Session";
 import FamilyTree from "../models/FamilyTree";
+import FamilyMember from "../models/FamilyMember";
 
 export interface APIRegistrationResponse {
     authenticated: boolean;
@@ -122,6 +123,8 @@ export interface APIUserDTO {
 }
 
 // // DAOs
+export type APIFamilyMemberRecord = Omit<InferAttributes<FamilyMember>, 'created_at' | 'updated_at'>;
+
 export interface APIFamilyTreeDAO {
     //! TODO: keep an eye here, it was previously an object keyed with the noe id for the front. the conversion functions will be used for that if necessary
     members: APIFamilyMemberDAO[];
@@ -148,7 +151,7 @@ export interface APIFamilyTreeDTO {
     active: number;
 }
 
-export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members?: APIFamilyMemberDAO[] };
+export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members: APIFamilyMemberRecord[] };
 
 export type APIStepFormFieldDTO = {
     fieldName: string;
@@ -189,7 +192,7 @@ export interface APIFamilyMemberDAO {
     name?: string;
     type?: string;
     position?: { x: number; y: number };
-    connections?: {id: string; source: string; target: string}[],
+    connections?: { id: string; source: string; target: string }[],
     parents?: string[];
     children?: string[];
     siblings?: string[];
@@ -376,3 +379,14 @@ export interface APITeamResponse {
 }
 
 export type ModelQueryParans<M> = Model<any, any>;
+
+export enum KinshipEnum {
+    'sibling' = 'sibling',
+    'parent' = 'parent',
+    'spouse' = 'spouse',
+    'child' = 'child'
+}
+
+export interface MappedFamilyMembers {
+    [id: string]: FamilyMember
+} 

@@ -11,7 +11,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare age: number | null;
-  declare children: string[]; // node_id[]
+  declare children: string; // node_id[]
   declare created_at: CreationOptional<Date>;
   declare created_by: number; //User
   declare description: string;
@@ -23,76 +23,17 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare id: CreationOptional<number>;
   declare last_name: string;
   declare marital_status: string;
-  declare node_id?: string;
+  declare node_id: string;
   declare occupation?: string;
-  declare parents:string[]; // node_id[]
+  declare parents:string; // node_id[]
   declare profile_url?: string;
-  declare siblings: string[]; // node_id[]
-  declare spouses: string[]; // node_id[]
+  declare siblings: string; // node_id[]
+  declare spouses: string; // node_id[]
+  declare position?: string; //{x: number; y: number};
+  declare connections?: string; // {id: string; source: string; target: string}[];
   declare tree_ids: string | null;
   declare updated_at: CreationOptional<Date>;
   declare user_id: number | null;
-
-
-  /**
-   *  Attributes Getters/Setters
-   * */
-  // getters that are not attributes should be tagged using NonAttribute
-  // to remove them from the model's Attribute Typings.
-  get FamilyMemberId(): NonAttribute<number> {
-    return this.id;
-  }
-  get FamilyMemberNodeId(): NonAttribute<string | undefined> {
-    return this.node_id;
-  }
-  get FamilyMemberUserId(): NonAttribute<number | null> {
-    return this.user_id;
-  }
-  get familyMemberAge(): NonAttribute<number | null> {
-    return this.age;
-  };
-  get familyMemberDOB(): NonAttribute<string> {
-    return this.dob;
-  };
-  get familyMemberDOD(): NonAttribute<string | null> {
-    return this.dod;
-  };
-  get familyMemberDescription(): NonAttribute<string> {
-    return this.description;
-  };
-  get familyMemberFirstName(): NonAttribute<string> {
-    return this.first_name;
-  };
-  get familyMemberLastName(): NonAttribute<string> {
-    return this.last_name;
-  }
-  get familymemberGender(): NonAttribute<number> {
-    return this.gender;
-  }
-  get familyMemberParents(): NonAttribute<string[] | null> {
-    return this.parents;
-  };
-  get familyMemberEmail(): NonAttribute<string> {
-    return this.email;
-  };
-  get familyMemberMaritalStatus(): NonAttribute<string> {
-    return this.marital_status;
-  };
-  get familyMemberOccupation(): NonAttribute<string | undefined> {
-    return this.occupation;
-  };
-  get familyMemberProfileUrl(): NonAttribute<string | undefined> {
-    return this.profile_url;
-  };
-  get familyMemberCreatedBy(): NonAttribute<number> {
-    return this.created_by;
-  };
-  get familyMemberCreatedAt(): NonAttribute<Date> {
-    return this.created_at;
-  }
-  get familyMemberUpdatedAt(): NonAttribute<Date> {
-    return this.updated_at;
-  }
 }
 
 FamilyMember.init(
@@ -102,7 +43,7 @@ FamilyMember.init(
       autoIncrement: true,
       primaryKey: true
     },
-    node_id: { type: DataTypes.STRING },
+    node_id: { type: DataTypes.STRING, allowNull: false },
     tree_ids: { type: DataTypes.JSON },
     // allowNull defaults to true
     user_id: { type: DataTypes.INTEGER},
@@ -117,6 +58,8 @@ FamilyMember.init(
     marital_status: { type: DataTypes.STRING, allowNull: false },
     parents: { type: DataTypes.JSON },
     spouses: { type: DataTypes.JSON },
+    position: { type: DataTypes.JSON },
+    connections: { type: DataTypes.JSON },
     profile_url: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING },
     children: { type: DataTypes.JSON },

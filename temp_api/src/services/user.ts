@@ -5,7 +5,7 @@ import logger from "../utils/logger";
 import User from "../models/User";
 import { APIUserDTO, ServiceResponseWithPayload, APIRegistrationResponse } from "./types";
 import { addSeasoning } from "../utils/toolkit";
-import { extractDataValuesFrom, generateResponseData } from "./serviceHelpers";
+import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
 import { Op } from "sequelize";
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
@@ -28,7 +28,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
   };
 
   const fieldsValid = validateUserFields(formattedValues);
-  const duplicate = await extractDataValuesFrom(User, { where: { email: userData.email } });
+  const duplicate = await extractSingleDataValuesFrom(User, { where: { email: userData.email } });
 
   if (duplicate) {
     logger.error('! User.create ! User already exists');

@@ -20,7 +20,7 @@ module.exports = {
         allowNull: false
       },
       members: {
-        type: Sequelize.JSON
+        type: Sequelize.JSON // node_id[]
       },
       active: {
         type: Sequelize.INTEGER,
