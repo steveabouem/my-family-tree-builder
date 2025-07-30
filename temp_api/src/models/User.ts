@@ -1,6 +1,5 @@
 import {
-  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, ForeignKey,
-} from 'sequelize';
+  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional} from 'sequelize';
 import db from "../../db";
 
 
@@ -26,67 +25,6 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare updatedAt: CreationOptional<Date>;
   declare leadership: number[];
   declare teams: number[];
-
-  // getters that are not attributes should be tagged using NonAttribute
-  // to remove them from the model's Attribute Typings.
-  get userId(): NonAttribute<number> {
-    return this.id;
-  }
-
-  get userAge(): NonAttribute<number | null> {
-    return this.age;
-  }
-  get userDOB(): NonAttribute<string> {
-    return this.dob;
-  }
-  get userParent_1(): NonAttribute<number | null> {
-    return this.role_id;
-  }
-
-  get userEmail(): NonAttribute<string> {
-    return this.email;
-  }
-
-  get userAssigned_ip(): NonAttribute<string[]> {
-    return this.assigned_ips;
-  }
-
-  get userDescription(): NonAttribute<string> {
-    return this.description;
-  }
-
-  get userFirst_name(): NonAttribute<string> {
-    return this.first_name;
-  }
-
-  get userGender(): NonAttribute<number> {
-    return this.gender;
-  }
-
-  get userHas_ipa(): NonAttribute<number> {
-    return this.has_ipa;
-  }
-
-  get userLastName(): NonAttribute<string> {
-    return this.last_name;
-  }
-
-  get UserOccupation(): NonAttribute<string> {
-    return this.occupation;
-  }
-
-  get UserProfileURL(): NonAttribute<string> {
-    return this.profile_url;
-  }
-
-  get UserPassword(): NonAttribute<string> {
-    return this.password;
-  }
-
-  get UserRole(): NonAttribute<number> {
-    return this.role_id;
-  }
-
 }
 
 User.init(

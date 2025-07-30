@@ -1,37 +1,49 @@
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import FamilyTree from "../models/FamilyTree";
-import { APIFamilyMemberDAO, APIFamilyMemberRecord, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, CreateTreeAPIResponse, KinshipEnum, ManageTreeRequestPayload, MappedFamilyMembers, ServiceResponseWithPayload } from "./types";
+import { APIFamilyMemberDAO, APIFamilyMemberRecord, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, ManageTreeAPIResponse, KinshipEnum, ManageTreeRequestPayload, MappedFamilyMembers, ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import User from "../models/User";
 import FamilyMember from "../models/FamilyMember";
 import { extractGroupDataValuesFrom, extractSingleDataValuesFrom } from "./serviceHelpers";
 
+//#region getAllTrees
 export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPayload<FamilyTree[]>> => {
+  const id = Number(userId);
   let response: APIRequestPayload<FamilyTree[]> = { code: 500, error: true, payload: [] };
   let treeList: FamilyTree[] = [];
 
   try {
-    treeList = await FamilyTree.findAll({
-      where: {
-        members: {
-          [Op.like]: `%"user_id":${userId}%`
+    const userRecord: User | null = await User.findByPk(id);
+    logger.info('Curr user ', { userRecord: userRecord?.email });
+
+    if (userRecord) {
+      treeList = await FamilyTree.findAll({
+        where: {
+          emails: {
+            [Op.like]: `%${userRecord.email}%`
+          }
         }
-      } as any
-    });
-    response.code = 200;
-    response.error = false;
-    response.message = 'Fetched tree successfully.'
+      });
+      logger.info('Trees ', { treeList });
+      response.payload = treeList;
+      response.code = 200;
+      response.error = false;
+      response.message = 'Fetched tree successfully.'
+    }
   } catch (e: unknown) {
     response.code = 500;
     logger.error('Unable to fetch trees ', e);
   }
   response.payload = treeList;
+
   return response;
 };
+//#endregion
 
+//#region positionFamilyMembers
 /**
- * ? Receives FamilyMember[], update the position properties and return the list of records post update
+ * ? Receives FamilyMember[], update the position properties and return the list of RAW (dataValues) records post update
  * @param members 
  * @param anchorNodeId 
  * @returns APIFamilyMemberRecord[]
@@ -64,7 +76,7 @@ export const positionFamilyMembers = async (members: FamilyMember[], anchorNodeI
       // type: 'custom',
       position: JSON.stringify(position),
       //! connections
-      
+
       // name: `${anchor.first_name} ${anchor.last_name}`
     });
 
@@ -76,14 +88,21 @@ export const positionFamilyMembers = async (members: FamilyMember[], anchorNodeI
 
   return [];
 };
+//#endregion
 
+//#region createTree
 /**
- * 
  * ? used to create a record for each and to build the members array in the new tree instance
+ * ? the returned payload only holds the member's node ids for simplicity
  * @param createData : form values for each tree member.
  * @returns FamilyTree
  */
-export const createTree = async (createData: ManageTreeRequestPayload): CreateTreeAPIResponse => {
+export const createTree = async (createData: ManageTreeRequestPayload): ManageTreeAPIResponse => {
+  // TODO: there is no check for existing members with same name and dob (or other prop). Duplicates are possible as it stands
+  // !one way could be to encode every node_id with the treeID, so that any family member I cant think of a check that involves anything else than the family tree name.
+  // ! last names can be very common, there could be two Abanda families for which the dad's first name is the same.
+  // ! I could check query the db for members with same name and dob, and block if more than 1/2 has the exact same last name/dob. But it feels risky
+  // ! a reasonable approach top of mind would be finding any trees where current user's user_id exist, and either limit to 1 tree per user id, or check number of duplicates in the list of memebers? 
   const { data, userId } = createData;
   let response: ServiceResponseWithPayload<APIGetFamilyTreeResponse | null> = { code: 500, error: true, payload: null };
 
@@ -96,12 +115,14 @@ export const createTree = async (createData: ManageTreeRequestPayload): CreateTr
       if (membersRecords) {
         const withCoords = await positionFamilyMembers(Object.values(membersRecords), data.anchor);
         logger.info('Members After positionning', { withCoords });
-        const nodeIdList = JSON.stringify(Object.keys(withCoords));
+        const nodeIdList = withCoords.map((curr: APIFamilyMemberRecord) => curr.node_id);
+        const emailList = withCoords.map((curr: APIFamilyMemberRecord) => curr.email);
         const newTree = await FamilyTree.create({
           active: 1,
           authorized_ips: '',
           created_by: userId,
-          members: nodeIdList,
+          members: JSON.stringify(nodeIdList),
+          emails: JSON.stringify(emailList),
           name: data?.treeName || '',
           public: 0
         })
@@ -110,6 +131,7 @@ export const createTree = async (createData: ManageTreeRequestPayload): CreateTr
           });
         response.code = 200;
         response.error = false;
+        // members key will have the list of memebers, even if the db only has the list of node_ids
         response.payload = { ...newTree?.dataValues, members: withCoords };
       } else {
         logger.error('Unable to create members: records array empty');
@@ -126,7 +148,9 @@ export const createTree = async (createData: ManageTreeRequestPayload): CreateTr
   }
   return response;
 };
+//#endregion
 
+//#region getTreeById
 export const getTreeById = async (id: string): Promise<ServiceResponseWithPayload<FamilyTree | null>> => {
   let response: ServiceResponseWithPayload<FamilyTree | null> = { code: 500, error: true, payload: null };
   try {
@@ -149,31 +173,40 @@ export const getTreeById = async (id: string): Promise<ServiceResponseWithPayloa
     return response;
   }
 };
+//#endregion
 
+//#region updateTree
 /**
- * @param updateData: updated list of existing family members (and new ones if any). Deletions will be handled separately
- * @returns CreateTreeAPIResponse
+ * ? Receives info on an existing Tree (list of members to update and requesting user),
+ * ? updates the selected members' positions, connections and potentially properties. Returns the updated tree info
+ * @param updateData: list of existing/new family members. List is not automacially exhaustive, since update will typically be based on either a single member, or a list of new ones.
+ * Deletions will be handled separately
+ * @returns FamilyTree
  */
-export const updateTree = async (updateData: ManageTreeRequestPayload): CreateTreeAPIResponse => {
+export const updateTree = async (updateData: ManageTreeRequestPayload): ManageTreeAPIResponse => {
   let response: ServiceResponseWithPayload<any | null> = { code: 500, error: true, payload: null };
   const { userId, data } = updateData;
 
   try {
-    const tree = await FamilyTree.findByPk(data?.treeId || 0);;
+    const tree = await FamilyTree.findByPk(data?.treeId || 0);
 
     if (!tree?.dataValues?.id) {
       logger.error('Invalid entries ', data);
     } else {
       const updatedMembersRecords = await updateTreeMembers(tree, userId, data);
-      // use data from the members post update (important properties may have changed. i.e name or kinship)
-      const membersRecordsFromUpdate = await extractGroupDataValuesFrom(FamilyMember, { where: { node_id: { [Op.in]: Object.keys(updatedMembersRecords || []) } } });
-      const withCoords = await positionFamilyMembers(Object.values(membersRecordsFromUpdate || {}), data.anchor);
+      // use data from the members post update: important properties may have changed. i.e name or kinship
+      const membersRecordsFromUpdate = await FamilyMember.findAll({ where: { node_id: { [Op.in]: Object.keys(updatedMembersRecords || []) } } });
+      const withCoords = await positionFamilyMembers(membersRecordsFromUpdate, data.anchor);
+      const nodeIdList = withCoords.map((curr: APIFamilyMemberRecord) => curr.node_id);
+      const emailList = withCoords.map((curr: APIFamilyMemberRecord) => curr.email);
       logger.info('withcoords', withCoords)
-      await tree.update({
+      const updatedTree = await tree.update({
         ...updateData,
-        members: JSON.stringify(withCoords)
+        members: JSON.stringify(nodeIdList),
+        emails: JSON.stringify(emailList),
       });
-      response.payload = tree;
+
+      response.payload = { ...updatedTree.dataValues, members: withCoords };
       response.error = false;
       response.code = 200;
     }
@@ -183,6 +216,7 @@ export const updateTree = async (updateData: ManageTreeRequestPayload): CreateTr
 
   return response;
 };
+//#endregion
 
 /**
  * 
@@ -190,20 +224,20 @@ export const updateTree = async (updateData: ManageTreeRequestPayload): CreateTr
  * @param userId 
  * @param updateData: member and tree updates
  */
+//#region updateTreeMembers
 // TODO: there are more validations to be done here
 const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: APIFamilyTreeDAO): Promise<{ [id: string]: FamilyMember } | null> => {
-  logger.info('Args to members process ', { tree, userId, updateData })
-  const allNodeIds = updateData.members.map(m => m.node_id);
-  const existingMembersNodeIds = tree.members;
+  const existingMembersNodeIds = JSON.parse(tree.members);
+  logger.info('This should be an array of node_id', { existingMembersNodeIds, members: updateData.members });
   const newRecords: any = []; //TODO: fix bulkcreate ops typing
   const updatedRecords: any[] = [];
-  const mappedMembers: any = {};
+  const newMembers = updateData.members.filter((m: APIFamilyMemberDAO) => !existingMembersNodeIds.includes(m.node_id));
   let newMembersRecords: any[] = [];
-  const newMembers = updateData.members.filter(m => !existingMembersNodeIds.includes(m.node_id));
+  logger.info('This should not contain anything else than brand new memebers', { newMembersRecords });
 
   if (newMembers.length) {
-    logger.info('Tree update includes new members', newMembers);
     const today = dayjs();
+    logger.info('Tree update includes new members', newMembers);
 
     for (const m of newMembers) {
       // there shouldnt be any duplicates here
@@ -231,26 +265,33 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: A
   //add the newly created records to the mapped records object
   newMembersRecords.forEach((r: APIFamilyMemberDAO) => {
     logger.info('Newly created record to add ', r);
-    updatedRecords.push(r);
+    updatedRecords.push({ ...r });
   });
 
   await Promise.all(updateData.members.map(async (m) => {
+    // todo: its better to do the findall then loop the result of that. 1 query instead of potential dozen
     const memberRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: m.node_id } } });
 
-    if (memberRecord?.dataValues) {
+    if (memberRecord?.dataValues) {// TODO: what if any of htese arrays exist and are just being expanded rather than replaced? Front must handle that?
+      const newChildren = m?.children?.length ? JSON.stringify(m?.children) : memberRecord.dataValues?.children;
+      const newParents = m?.parents?.length ? JSON.stringify(m?.parents) : memberRecord.dataValues?.parents;
+      const newSiblings = m?.siblings?.length ? JSON.stringify(m?.siblings) : memberRecord.dataValues?.siblings;
+      const newSpouses = m?.spouses?.length ? JSON.stringify(m?.spouses) : memberRecord.dataValues?.spouses;
+      const newPosition = m?.position?.x ? JSON.stringify(m.position) : memberRecord.dataValues?.position;
+      const newConnections = m?.connections?.length ? JSON.stringify(m.connections) : memberRecord.dataValues?.connections;
       const recordWithUpdates = await memberRecord.update({
         ...memberRecord.dataValues,
         ...m,
-        position: '', //! to fix next
-        connections: '',
-        children: JSON.stringify(m?.children || '[]'),
-        parents: JSON.stringify(m?.parents || '[]'),
-        siblings: JSON.stringify(m?.siblings || '[]'),
-        spouses: JSON.stringify(m?.spouses || '[]'),
+        position: newPosition,
+        connections: newConnections,
+        children: newChildren,
+        parents: newParents,
+        siblings: newSiblings,
+        spouses: newSpouses,
         age: memberRecord.age // form comes in with null for age. avoid replacing it
       });
       logger.info('Updated. Return value is ', recordWithUpdates);
-      updatedRecords.push(recordWithUpdates.dataValues);
+      updatedRecords.push({ ...recordWithUpdates.dataValues });
     } else {
       logger.error('Invalid record provided ', m);
     }
@@ -261,52 +302,25 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: A
 
   return result;//includes both new and existing records
 };
+//#endregion
 
+//#region deleteTree
 export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPayload<null>> => {
   let response: ServiceResponseWithPayload<null> = { code: 500, error: true, payload: null };
+  const tree = await FamilyTree.findByPk(treeId);
 
-  try {
-    const tree = await FamilyTree.findByPk(treeId);
-
-    if (!tree) {
-      logger.error('Tree does not exist. Cannot delete', { treeId });
-    } else {
-      await tree.destroy();
-      response = {
-        ...response, code: 200, error: false
-      };
-    }
-  } catch (e: unknown) {
-    logger.error('Failed to delete tree ', e);
+  if (!tree) {
+    logger.error('Tree does not exist. Cannot delete', { treeId });
+  } else {
+    await tree.destroy();
+    response = {
+      ...response, code: 200, error: false
+    };
   }
 
   return response;
 };
-
-// async function removeMembersFromTree(treeId: number, membersToRemove: number[]): Promise<boolean> {
-//   try {
-//     const tree = await FamilyTree.findByPk(treeId);
-//     if (!tree) return false;
-//     const currentMembers = JSON.parse(tree.members || '[]');
-//     const remainingMembers = currentMembers.filter((member: number) => !membersToRemove.includes(member));
-//     await tree.update({ members: JSON.stringify(remainingMembers) });
-//     return true;
-//   } catch (e: unknown) {
-//     logger.error('Failed to remove members from tree ', e);
-//     return false;
-//   }
-// }
-
-// async function getTreeMembers(treeId: number): Promise<FamilyMember[]> {
-//   try {
-//     const tree = await FamilyTree.findByPk(treeId);
-//     if (!tree) return [];
-//     return convertToFamilyMembers(tree?.members);
-//   } catch (e: unknown) {
-//     logger.error('! FamilyTree.getmembers !', e);
-//     return [];
-//   }
-// }
+//#endregion
 
 // async function canUserViewTree(treeId: number, userId: number): Promise<boolean> {
 //   try {
@@ -331,9 +345,10 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
 //   }
 // };
 
+//#region generateTreeMembersRecords
 /**
- * Goes through all the family members submintted, creates records for each
- * is ignored if any of those memeber already has a record since this is part of the initial create action
+ * ? Goes through all the family members submintted, creates records for each
+ * ? is ignored if any of those memeber already has a record since this is part of the initial create action
  * @param members 
  * @param userId 
  */
@@ -376,92 +391,9 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
 
   return null;
 };
+//#endregion
 
-// async function getMembersFromUpdateAction(data: APIFamilyMemberDAO, treeId: number): Promise<{ [id: string]: APIFamilyMemberDAO } | null> {
-//   const matchingRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: data.node_id } } });
-//   const matchingTree = await FamilyTree.findByPk(treeId);
-//   const kinshipMapping: { relation: APIFamilyMemberArrayKeys, inverseRelation: APIFamilyMemberArrayKeys, }[] = [
-//     { relation: 'children', inverseRelation: 'parents' }, { relation: 'siblings', inverseRelation: 'siblings' },
-//     { relation: 'parents', inverseRelation: 'children' }, { relation: 'spouses', inverseRelation: 'spouses' }
-//   ];
-//   let updatedRecord: FamilyMember | void;
-//   if (matchingRecord?.dataValues && matchingTree?.dataValues) {
-//     let unsavedfamilyMembers: any = [];
-//     let payload: any = {};
-//     logger.info('Found matching family member: ', matchingRecord.dataValues);
-//     for (const { relation, inverseRelation } of kinshipMapping) {
-//       const nodeIdsForKinshipType = (data?.[relation] || []).map((c: APIFamilyMemberDAO) => c.node_id) || [];
-//       if (data?.[relation]?.length) {
-//         const existingRecords = await FamilyMember.findAll({ where: { node_id: { [Op.in]: nodeIdsForKinshipType } } });
-//         const existingRecordsData = existingRecords.map((r: any) => r.dataValues);
-//         logger.info('List of existing records ', existingRecordsData);
-//         const nodeIdsForExistingRecords = existingRecordsData?.map((r: FamilyMember) => {
-//           return r.node_id
-//         });
-//         const unsavedRecords = data?.[relation]?.filter((member: APIFamilyMemberDAO) => !nodeIdsForExistingRecords?.includes(member.node_id)) || [];
-//         unsavedfamilyMembers = [...unsavedfamilyMembers, ...unsavedRecords];
-//         logger.info('List of records to be added after check: ', { unsavedRecords, existingRecordsData });
-//         await Promise.all(
-//           unsavedRecords.map(async (c: APIFamilyMemberDAO) => {
-//             const savedRecord = await getMembersFromCreateAction({ ...c, [inverseRelation]: [data] }, data?.userId || 0);
-//             logger.info("saved record looks like this ", savedRecord);
-//             payload = { ...payload, ...savedRecord };
-//           })
-//         );
-//         updatedRecord = await matchingRecord.update({
-//           [relation]: JSON.stringify([...unsavedRecords, ...existingRecordsData || []])
-//         });
-//         logger.info('Resulting list of new records: ', { unsavedRecords, updatedRecord });
-//         if (updatedRecord?.id) {
-//           const treeMembers = JSON.parse(matchingTree.dataValues.members);
-//           logger.info('Members in related tree before update ', treeMembers);
-//           const indexOfUpdatedRecord = treeMembers.findIndex((member: any) => {
-//             member.id == updatedRecord?.id || 0;
-//           });
-//           if (indexOfUpdatedRecord) {
-//             treeMembers.splice(indexOfUpdatedRecord, 1, updatedRecord);
-//             logger.info('Found the member in a given tree and updated the members array with the new info: ', treeMembers);
-//             await matchingTree.update({ members: JSON.stringify(treeMembers) })
-//             treeMembers.forEach((member: any) => {
-//               logger.info('Does this have the actual record data? ', { member });
-//               payload[member.id] = member
-//             })
-//           }
-//         }
-//       }
-//     }
-//     logger.info('Final payload ', { ...payload });
-//     return payload;
-//   } else {
-//     logger.error('No record matches the member to update ', data);
-//   }
-//   return null;
-// };
-
-// async function updateMember(id: number, updateData: any): Promise<FamilyMember | null> {
-//   try {
-//     const member = await FamilyMember.findByPk(id);
-//     if (!member) return null;
-//     await member.update(updateData);
-//     return member;
-//   } catch (e: unknown) {
-//     logger.error('Failed to update member:', e);
-//     return null;
-//   }
-// };
-
-// async function deleteMember(id: number): Promise<boolean> {
-//   try {
-//     const member = await FamilyMember.findByPk(id);
-//     if (!member) return false;
-//     await member.destroy();
-//     return true;
-//   } catch (e: unknown) {
-//     logger.error('Failed to delete member:', e);
-//     return false;
-//   }
-// };
-
+//#region bulkUpdateRecordsPosition
 /**
  * @param nodeIds 
  * @param membersList 
@@ -516,3 +448,4 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[], membersList: FamilyM
   logger.info('Result after all positions updates', result);
   return result;
 };
+//#endregion

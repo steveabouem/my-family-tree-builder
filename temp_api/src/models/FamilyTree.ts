@@ -17,54 +17,10 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   declare name: string;
   declare active: number;
   declare members: string; // Store as JSON in DB, but expose as string[], list of node_ids
+  declare emails: string; // email[]
   declare created_by: number; //User
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
-
-  /**
-   * Attributes Getters/Setters
-   * */
-  // getters that are not attributes should be tagged using NonAttribute
-  // to remove them from the model's Attribute Typings.
-  get FamilytreeId(): NonAttribute<number> {
-    return this.id;
-  }
-  get familyTreeAuthorized_ips(): NonAttribute<string> {
-    return this.authorized_ips;
-  };
-  get familyTreePublic(): NonAttribute<number> {
-    return this.public;
-  };
-  get familyTreeName(): NonAttribute<string> {
-    return this.name;
-  };
-  get familyTreeCreated_by(): NonAttribute<number> { //User
-    return this.created_by;
-  }
-  get familyMembers(): NonAttribute<FamilyMember[]> {
-    // Convert JSON data to array of strings
-    if (!this.members) return [];
-    
-    const membersData = typeof this.members === 'string' 
-      ? JSON.parse(this.members) 
-      : this.members;
-    
-    return membersData;
-  }
-  get familytreeActive(): NonAttribute<number> {
-    return this.active;
-  }
-  get familyTreeCreatedAt(): NonAttribute<Date> {
-    return this.created_at;
-  }
-  get familyTreeUpdatedAt(): NonAttribute<Date> {
-    return this.updated_at;
-  }
-
-  // Custom setter for members
-  set familyMembers(members: FamilyMember[]) {
-    this.members = JSON.stringify(members.map(member => member.node_id));
-  }
 }
 
 FamilyTree.init(
@@ -90,6 +46,10 @@ FamilyTree.init(
     },
     name: {
       type: DataTypes.STRING,
+      allowNull: false
+    },
+    emails: {
+      type: DataTypes.JSON,
       allowNull: false
     },
     public: {

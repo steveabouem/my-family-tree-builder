@@ -23,11 +23,10 @@ router.post('/delete', (req: Request<{ id: string }, {}, {}, {}>, res: Response)
   sendRouteHandlerResponse<number, null>(treeId, deleteTree, res, 'Delete tree');
 });
 
-// router.get('/members', (req: Request, res: Response) => {
-//   const familyTreeController = new FamilyTreeController();
-//   const helper = new RequestHelper(req, res);
-//   helper.sendResponseFromControllerMethod(familyTreeController.getMembers, 'Get tree members');
-// });
+router.get('/members', (req: Request, res: Response) => {
+  const treeId = parseInt(req.params.id);
+  sendRouteHandlerResponse<number, null>(treeId, deleteTree, res, 'Delete tree');
+});
 
 router.put('/members', (req: Request<{}, {}, ManageTreeRequestPayload, {}>, res: Response) => {
   sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, updateTree, res, 'Create family tree');

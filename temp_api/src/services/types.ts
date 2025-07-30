@@ -1,4 +1,4 @@
-import { InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import { InferAttributes, Model } from "sequelize";
 import Session from "../models/Session";
 import FamilyTree from "../models/FamilyTree";
 import FamilyMember from "../models/FamilyMember";
@@ -136,7 +136,7 @@ export interface APIFamilyTreeDAO {
 }
 
 // Responses
-export type CreateTreeAPIResponse = Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>>;
+export type ManageTreeAPIResponse = Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>>;
 export type GetTreeAPIResponse = Promise<ServiceResponseWithPayload<FamilyTree | null>>;
 
 //DTOs
