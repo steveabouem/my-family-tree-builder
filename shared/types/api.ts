@@ -1,7 +1,199 @@
-import { InferAttributes, Model } from "sequelize";
-import Session from "../models/Session";
-import FamilyTree from "../models/FamilyTree";
-import FamilyMember from "../models/FamilyMember";
+export interface APIEndpointResponse {
+    sessionId?: string;
+    error: boolean;
+    code: number;
+    message?: string;
+}
+
+export interface APIRequestPayload<P> extends APIEndpointResponse {
+    payload: P;
+}
+
+export type ServiceResponseWithPayload<G> = APIRequestPayload<G>;
+
+// LOGIN
+export interface LoginRequestPayload {
+    email: string;
+    password: string;
+}
+export interface APILoginResponse {
+    authenticated: boolean;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    userId?: number;
+}
+
+// Shared Family Tree Types
+export interface FamilyMember {
+  id?: number;
+  node_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  dob: string;
+  dod?: string;
+  age?: number;
+  gender: number; // 1: Male, 2: Female
+  marital_status: string;
+  occupation: string;
+  description?: string;
+  profile_url?: string;
+  parents: string[]; // node_ids
+  children: string[]; // node_ids
+  siblings: string[]; // node_ids
+  spouses: string[]; // node_ids
+  position?: { x: number; y: number };
+  connections?: Array<{
+    id: string;
+    source: string;
+    target: string;
+  }>;
+  created_by?: number;
+  user_id?: number;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface FamilyTree {
+  id?: number;
+  name: string;
+  members: string[]; // node_ids
+  emails: string[]; // member emails
+  public: boolean;
+  active: boolean;
+  authorized_ips: string;
+  created_by: number;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface FamilyTreeCreateRequest {
+  treeName: string;
+  members: FamilyMember[];
+  anchor: string; // node_id of anchor member
+  userId: number;
+}
+
+export interface FamilyTreeUpdateRequest {
+  treeId: number;
+  treeName?: string;
+  members: FamilyMember[];
+  anchor: string;
+  userId: number;
+}
+
+// Shared User Types
+export interface User {
+  id?: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  password?: string;
+  dob: string;
+  age?: number;
+  gender: number; // 1: Male, 2: Female
+  occupation: string;
+  marital_status: string;
+  description?: string;
+  profile_url?: string;
+  assigned_ips: string[];
+  role_id: number;
+  has_ipa?: number;
+  leadership: number[];
+  teams: number[];
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface UserSession {
+  userId: number;
+  authenticated: boolean;
+  email: string;
+  firstName: string;
+  lastName: string;
+  sessionId?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegistrationRequest {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  dob: string;
+  gender: number;
+  occupation: string;
+  marital_status: string;
+  description?: string;
+  assigned_ips?: string[];
+}
+
+export interface PasswordChangeRequest {
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+} 
+
+// Shared User Types
+export interface User {
+  id?: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  password?: string;
+  dob: string;
+  age?: number;
+  gender: number; // 1: Male, 2: Female
+  occupation: string;
+  marital_status: string;
+  description?: string;
+  profile_url?: string;
+  assigned_ips: string[];
+  role_id: number;
+  has_ipa?: number;
+  leadership: number[];
+  teams: number[];
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface UserSession {
+  userId: number;
+  authenticated: boolean;
+  email: string;
+  firstName: string;
+  lastName: string;
+  sessionId?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegistrationRequest {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  dob: string;
+  gender: number;
+  occupation: string;
+  marital_status: string;
+  description?: string;
+  assigned_ips?: string[];
+}
+
+export interface PasswordChangeRequest {
+  email: string;
+  currentPassword: string;
+  newPassword: string;
+} 
 
 export interface APIRegistrationResponse {
     authenticated: boolean;
@@ -53,13 +245,10 @@ export interface APIEndpointResponse {
     message?: string;
 }
 
-export type ServiceResponseWithPayload<G> = APIRequestPayload<G>;
-/** TRACKER */
 export interface APITrackerRegistrationFields { //registration form fields
 
 }
 
-/** FT */
 export interface APIFTRegistrationFields { //registration form fields
     firstName: string;
     lastName: string;
@@ -123,7 +312,7 @@ export interface APIUserDTO {
 }
 
 // // DAOs
-export type APIFamilyMemberRecord = Omit<InferAttributes<FamilyMember>, 'created_at' | 'updated_at'>;
+export type APIFamilyMemberRecord = FamilyMember;
 
 export interface APIFamilyTreeDAO {
     //! TODO: keep an eye here, it was previously an object keyed with the noe id for the front. the conversion functions will be used for that if necessary
@@ -271,7 +460,7 @@ export interface APISessionUser {
 export interface APISession {
     type: string;
     user: APISessionUser;
-    session: Session;
+    session: any;
 }
 
 export interface UserRegistrationData {
@@ -376,15 +565,6 @@ export interface APITeamResponse {
     description: string;
     createdAt: Date;
     updatedAt?: Date;
-}
-
-export type ModelQueryParans<M> = Model<any, any>;
-
-export enum KinshipEnum {
-    'sibling' = 'sibling',
-    'parent' = 'parent',
-    'spouse' = 'spouse',
-    'child' = 'child'
 }
 
 export interface MappedFamilyMembers {

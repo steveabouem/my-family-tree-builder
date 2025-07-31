@@ -1,23 +1,19 @@
 import { DUserRelatedFamily } from "@services/api.definitions";
-import BaseService from "../base/base.service";
+import axios from "axios";
+import { baseUrl } from "..";
 
-class UserService extends BaseService {
-  async getRelatedFamilies(id?: string): Promise<DUserRelatedFamily[]> {
-    if (!id) {
-      // ! -TOFIX: Logging
-      return [];
-    }
-
-    const results = await this.request.get(this.APIBaseUrl + `${id}/families`)
+export const getRelatedFamilies = async (id?: string): Promise<DUserRelatedFamily[]> => {
+  if (!id) {
+    // ! -TOFIX: Logging
     return [];
   }
 
-  // ! -TOFIX: no any
-  getExtendedFamilies = async (id: number): Promise<any> => {
-    // get all families of the same level in the tree (families grouped by parents and children' spouses' parents) for a given user
-    const results = this.request.get(`${this.APIBaseUrl}/${this.APIPath}/${id}/extended`);
-    return results;
-  }
+  const results = await axios.get(baseUrl + `${id}/families`)
+  return [];
 }
 
-export default UserService;
+export const getExtendedFamilies = async (id: number): Promise<any> => {
+  // get all families of the same level in the tree (families grouped by parents and children' spouses' parents) for a given user
+  const results = axios.get(`${baseUrl}/users/${id}/extended`);
+  return results;
+}

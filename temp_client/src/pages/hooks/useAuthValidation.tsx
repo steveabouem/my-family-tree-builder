@@ -2,7 +2,7 @@ import FamilyTreeContext from "contexts/creators/familyTree";
 import React from "react";
 import { useNavigate } from "react-router";
 import {useLocation} from "react-router"
-import SessionService from "services/session/session.service";
+import {getCurrent} from "services/session/session.service";
 import PageUrlsEnum from "utils/urls";
 
 const useSessionValidation = (): void => {
@@ -11,17 +11,15 @@ const useSessionValidation = (): void => {
   const {updateUser} = React.useContext(FamilyTreeContext);
   
   React.useEffect(() => {
-    const sessionService = new SessionService();
     if (location.pathname === '/') {
       return;
     }
 
     if (localStorage.length) {
-      const currentSession = JSON.parse(localStorage.getItem('FT') || '');
+      const currentSession = JSON.parse(localStorage.getItem('FT') || '{}');
       if (currentSession?.sessionId) {
-        sessionService.getCurrent(currentSession.sessionId)
+        getCurrent(currentSession.sessionId)
           .then(({data} ) => {
-            //TODO: "there's got to be a better way!"
             if (data.error) {
               navigate(PageUrlsEnum.auth);
             } else {

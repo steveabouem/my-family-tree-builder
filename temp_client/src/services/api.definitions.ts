@@ -1,5 +1,5 @@
 import { NodeTypes } from "@xyflow/react";
-import { HttpStatusCode } from "axios";
+
 /*
 * Holds declarations for all the API types, notably DTOs/DAOS
 */

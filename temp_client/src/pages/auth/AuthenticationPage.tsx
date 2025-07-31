@@ -9,12 +9,12 @@ import { Box, Button, FormControl } from "@mui/material";
 import PageUrlsEnum from "utils/urls";
 import GenderDropdown from "components/common/dropdowns/gender/GenderDropdown";
 import { DFormField } from "components/common/definitions";
-import { service } from "services/index";
 import Page from "components/common/Page";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import { maritalStatusOptions, parentOptions } from "components/common/dropdowns/definitions";
 import { DUserDTO } from "@services/api.definitions";
+import { submitLoginForm, submitRegistrationForm } from "@services/auth/auth.service";
 
 const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [attempts, setAttempts] = React.useState<number>(0);
@@ -118,9 +118,8 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
 
   const processLogin = async (values: Partial<DUserDTO>) => {
     toggleLoading(true);
-    const authService = new service.auth('auth');
     const envToken: string | undefined = process.env.REACT_APP_JWT_TOKEN;
-    const { data } = await authService.submitLoginForm({ ...values, sessionToken: envToken as string })
+    const { data } = await submitLoginForm({ ...values, sessionToken: envToken as string })
       .catch((e: unknown) => {
         console.log('Error loging in', e);
         // @ts-ignore
@@ -154,8 +153,7 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
 
   const processRegister = async (values: Partial<DUserDTO>) => {
     toggleLoading(true);
-    const authService = new service.auth('auth');
-    const registeredUser = await authService.submitRegistrationForm(values)
+    const registeredUser = await submitRegistrationForm(values)
       .catch((e: unknown) => {
         // ! -TOFIX: LOGGING AND PROPER HANDLING IN FRONT
         console.log('Error registering', e);

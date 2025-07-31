@@ -1,22 +1,15 @@
-import BaseService from "../base/base.service";
+import axios from "axios";
+import { baseUrl } from "..";
 
-class SessionService extends BaseService {
-  constructor() {
-    super('sessions');
-  }
+export const getCurrent = async (id: number) => {
+  const result = await axios.get(`${baseUrl}/sessions?id=${id}`);
 
-  // ! -TOFIX: ensure previous session is closed, so that this actually returns only the latest, non expired session
-  public async getCurrent (id: number) {
-    const result = await this.request.get(`${this.APIBaseUrl}/${this.APIPath}?id=${id}`);
-
-    return result;
-  }
-
-  public async update (user: any) {
-    const result = await this.request.post(`${this.APIBaseUrl}/${this.APIPath}/set-data`, { data: user });
-
-    return result;
-  }
+  return result;
 }
 
-export default SessionService;
+export const update = async (user: any) => {
+  const result = await axios.post(`${baseUrl}/sessions/set-data`, { data: user });
+
+  return result;
+}
+

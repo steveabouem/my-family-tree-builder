@@ -1,13 +1,13 @@
 import AuthService from "./auth/auth.service";
 import FamilyTreeService from "./familyTree/familyTree.service";
-import UserService from "./user/user.service";
-import SessionService from "./session/session.service";
+import * as user from "./user/user.service";
+import * as session from "./session/session.service";
 
 const service = {
   auth: AuthService,
   familyTree: FamilyTreeService,
-  user: UserService,
-  session: SessionService,
+  user,
+  session,
 };
 
  const endpoints = {
@@ -17,5 +17,7 @@ const service = {
   users: {index: '/users/index', getById: '/users?id=:id', new: '/users/new'},
   sessions: {get: '/?id=:id', update: '/update'}
 };
+
+export const baseUrl = process.env['API_BASE_URL'];
 export {service};
 export {endpoints}

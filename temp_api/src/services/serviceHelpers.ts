@@ -1,7 +1,4 @@
-import { InferAttributes, Model } from "sequelize";
-import { ModelQueryParans, ServiceResponseWithPayload } from "./types";
-import logger from "../utils/logger";
-import { Op } from "sequelize";
+import { ServiceResponseWithPayload } from "@shared/types";
 
 export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> => {
   return {

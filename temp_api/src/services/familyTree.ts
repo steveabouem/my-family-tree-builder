@@ -1,11 +1,12 @@
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import FamilyTree from "../models/FamilyTree";
-import { APIFamilyMemberDAO, APIFamilyMemberRecord, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, ManageTreeAPIResponse, KinshipEnum, ManageTreeRequestPayload, MappedFamilyMembers, ServiceResponseWithPayload } from "./types";
+import { APIFamilyMemberDAO, APIFamilyMemberRecord, APIFamilyTreeDAO, APIGetFamilyTreeResponse, ManageTreeAPIResponse, KinshipEnum, ManageTreeRequestPayload, MappedFamilyMembers, ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import User from "../models/User";
 import FamilyMember from "../models/FamilyMember";
-import { extractGroupDataValuesFrom, extractSingleDataValuesFrom } from "./serviceHelpers";
+import { extractSingleDataValuesFrom } from "./serviceHelpers";
+import {APIRequestPayload} from '@shared/types/api.types'
 
 //#region getAllTrees
 export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPayload<FamilyTree[]>> => {
