@@ -1,8 +1,8 @@
 import axios from "axios";
 import { baseUrl } from "..";
-import {APILoginResponse, APIRequestPayload, LoginRequestPayload} from '@shared/types/api'
 import { DUserDTO } from "../api.definitions";
-import { DChangePasswordValues } from "@pages/user/definitions";
+import { DChangePasswordValues } from "pages/user/definitions";
+import { APILoginResponse, APIRequestPayload, LoginRequestPayload } from "../../../../shared";
 
   export const submitLoginForm = async (values: Partial<DUserDTO>): Promise<APIRequestPayload<APILoginResponse>> => {
     const currentUser = await axios.post<LoginRequestPayload, APIRequestPayload<APILoginResponse>>(`${baseUrl}/auth/login`, values);

@@ -1,7 +1,7 @@
+import React from "react";
 import { Trans } from "@lingui/macro";
 import {  FormControl, TextField } from "@mui/material";
 import {  FormikContextType, useFormikContext } from "formik";
-import React from "react";
 import { CustomFieldProps } from "../forms.types";
 
 const CustomField = (props: CustomFieldProps) => {

@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { Trans } from "@lingui/macro";
+import React, { useEffect } from "react";
 import { Box, Grid2 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import { Formik } from "formik";
 import Page from "components/common/Page";
 import { useZDispatch, useZSelector } from "app/hooks";
@@ -9,14 +8,13 @@ import { DFamilyTreeState } from "app/slices/definitions";
 import { populateTreeAction } from "app/slices/trees";
 import { formatTreeMemberDAOList } from "../create/genealogy/utils";
 import TreeLayout from 'pages/tree/layout/TreeLayout';
-import FamilyTreeService from "services/familyTree/familyTree.service";
 import PageUrlsEnum from "utils/urls";
+import { getTreeById } from "services/familyTree";
 
 const ViewFamilyTreeChartPage = () => {
   const dispatch = useZDispatch();
   const { list, currentFamilyTree } = useZSelector<DFamilyTreeState>(state => state.tree);
   const { id } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     // handle reload or  params fetch
@@ -29,10 +27,8 @@ const ViewFamilyTreeChartPage = () => {
       currTree = membersList?.reduce((mappedNodeIds: any, member: any) => ({ ...mappedNodeIds, [member.node_id]: member }), {});
       dispatch(populateTreeAction(currTree));
     } else {
-      const familyTreeService = new FamilyTreeService();
-
       if (id) {
-        familyTreeService.getOne(id)
+        getTreeById(id)
           .then((res) => {
             currTree = formatTreeMemberDAOList(JSON.parse(res?.data?.payload?.members || '{}'));
             dispatch(populateTreeAction(currTree));

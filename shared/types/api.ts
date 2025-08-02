@@ -26,188 +26,167 @@ export interface APILoginResponse {
 
 // Shared Family Tree Types
 export interface FamilyMember {
-  id?: number;
-  node_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  dob: string;
-  dod?: string;
-  age?: number;
-  gender: number; // 1: Male, 2: Female
-  marital_status: string;
-  occupation: string;
-  description?: string;
-  profile_url?: string;
-  parents: string[]; // node_ids
-  children: string[]; // node_ids
-  siblings: string[]; // node_ids
-  spouses: string[]; // node_ids
-  position?: { x: number; y: number };
-  connections?: Array<{
-    id: string;
-    source: string;
-    target: string;
-  }>;
-  created_by?: number;
-  user_id?: number;
-  created_at?: Date;
-  updated_at?: Date;
+    id?: number;
+    node_id: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    dob: string;
+    dod?: string;
+    age?: number;
+    gender: number; // 1: Male, 2: Female
+    marital_status: string;
+    occupation: string;
+    description?: string;
+    profile_url?: string;
+    parents: string[]; // node_ids
+    children: string[]; // node_ids
+    siblings: string[]; // node_ids
+    spouses: string[]; // node_ids
+    position?: { x: number; y: number };
+    connections?: Array<{
+        id: string;
+        source: string;
+        target: string;
+    }>;
+    created_by?: number;
+    user_id?: number;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface FamilyTree {
-  id?: number;
-  name: string;
-  members: string[]; // node_ids
-  emails: string[]; // member emails
-  public: boolean;
-  active: boolean;
-  authorized_ips: string;
-  created_by: number;
-  created_at?: Date;
-  updated_at?: Date;
+    id?: number;
+    name: string;
+    members: string[]; // node_ids
+    emails: string[]; // member emails
+    public: boolean;
+    active: boolean;
+    authorized_ips: string;
+    created_by: number;
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface FamilyTreeCreateRequest {
-  treeName: string;
-  members: FamilyMember[];
-  anchor: string; // node_id of anchor member
-  userId: number;
+    treeName: string;
+    members: FamilyMember[];
+    anchor: string; // node_id of anchor member
+    userId: number;
 }
 
 export interface FamilyTreeUpdateRequest {
-  treeId: number;
-  treeName?: string;
-  members: FamilyMember[];
-  anchor: string;
-  userId: number;
+    treeId: number;
+    treeName?: string;
+    members: FamilyMember[];
+    anchor: string;
+    userId: number;
 }
 
 // Shared User Types
 export interface User {
-  id?: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  password?: string;
-  dob: string;
-  age?: number;
-  gender: number; // 1: Male, 2: Female
-  occupation: string;
-  marital_status: string;
-  description?: string;
-  profile_url?: string;
-  assigned_ips: string[];
-  role_id: number;
-  has_ipa?: number;
-  leadership: number[];
-  teams: number[];
-  created_at?: Date;
-  updated_at?: Date;
+    id?: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password?: string;
+    dob: string;
+    age?: number;
+    gender: number; // 1: Male, 2: Female
+    occupation: string;
+    marital_status: string;
+    description?: string;
+    profile_url?: string;
+    assigned_ips: string[];
+    role_id: number;
+    has_ipa?: number;
+    leadership: number[];
+    teams: number[];
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface UserSession {
-  userId: number;
-  authenticated: boolean;
-  email: string;
-  firstName: string;
-  lastName: string;
-  sessionId?: string;
+    userId: number;
+    authenticated: boolean;
+    email: string;
+    firstName: string;
+    lastName: string;
+    sessionId?: string;
 }
 
 export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegistrationRequest {
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  dob: string;
-  gender: number;
-  occupation: string;
-  marital_status: string;
-  description?: string;
-  assigned_ips?: string[];
+    email: string;
+    password: string;
 }
 
 export interface PasswordChangeRequest {
-  email: string;
-  currentPassword: string;
-  newPassword: string;
-} 
+    email: string;
+    currentPassword: string;
+    newPassword: string;
+}
 
 // Shared User Types
 export interface User {
-  id?: number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  password?: string;
-  dob: string;
-  age?: number;
-  gender: number; // 1: Male, 2: Female
-  occupation: string;
-  marital_status: string;
-  description?: string;
-  profile_url?: string;
-  assigned_ips: string[];
-  role_id: number;
-  has_ipa?: number;
-  leadership: number[];
-  teams: number[];
-  created_at?: Date;
-  updated_at?: Date;
+    id?: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password?: string;
+    dob: string;
+    age?: number;
+    gender: number; // 1: Male, 2: Female
+    occupation: string;
+    marital_status: string;
+    description?: string;
+    profile_url?: string;
+    assigned_ips: string[];
+    role_id: number;
+    has_ipa?: number;
+    leadership: number[];
+    teams: number[];
+    created_at?: Date;
+    updated_at?: Date;
 }
 
 export interface UserSession {
-  userId: number;
-  authenticated: boolean;
-  email: string;
-  firstName: string;
-  lastName: string;
-  sessionId?: string;
+    userId: number;
+    authenticated: boolean;
+    email: string;
+    firstName: string;
+    lastName: string;
+    sessionId?: string;
 }
 
 export interface LoginRequest {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 }
 
-export interface RegistrationRequest {
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  dob: string;
-  gender: number;
-  occupation: string;
-  marital_status: string;
-  description?: string;
-  assigned_ips?: string[];
+export interface RegistrationRequestPayload {
+    first_name: string,
+    last_name: string,
+    age: number,
+    occupation: string,
+    marital_status: string,
+    password: string,
+    email: string,
+    gender: 0 | 1,
+    profile_url: string,
+    description: string,
 }
 
 export interface PasswordChangeRequest {
-  email: string;
-  currentPassword: string;
-  newPassword: string;
-} 
+    email: string;
+    currentPassword: string;
+    newPassword: string;
+}
 
 export interface APIRegistrationResponse {
     authenticated: boolean;
     email: string;
     userId?: number;
     message?: string;
-}
-
-export interface APILoginResponse {
-    authenticated: boolean;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    userId?: number;
 }
 
 export interface APILogoutResponse {
@@ -235,9 +214,6 @@ export interface DAdminRegistrationFields { //registration form fields
 
 }
 
-export interface APIRequestPayload<P> extends APIEndpointResponse {
-    payload: P;
-}
 export interface APIEndpointResponse {
     sessionId?: string;
     error: boolean;
@@ -472,20 +448,11 @@ export interface UserRegistrationData {
     created_at: any;
 }
 
-export interface LoginRequestPayload {
-    email: string;
-    password: string;
-}
 
 export interface PasswordChangeRequestPayload {
     email: string;
     currentPassword: string;
     newPassword: string;
-}
-
-export interface LoginRequestPayload {
-    email: string;
-    password: string;
 }
 
 export interface ManageTreeRequestPayload {
@@ -569,4 +536,12 @@ export interface APITeamResponse {
 
 export interface MappedFamilyMembers {
     [id: string]: FamilyMember
-} 
+}
+
+export interface ChangePasswordRequestPayload {
+  email: string;
+  password: string;
+  newPassword: string;
+  repeatNewPassword: string;
+  id: number;
+};

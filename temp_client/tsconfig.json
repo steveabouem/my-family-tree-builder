@@ -1,35 +1,41 @@
 {
   "compilerOptions": {
-    "jsx": "react",
-    /* Visit https://aka.ms/tsconfig to read more about this file */
-    "target": "es2016",
-    "lib": ["es6", "dom"], /* Specify a set of bundled library declaration files that describe the target runtime environment. */
-    /* Modules */
-    "module": "commonjs", /* Specify what module code is generated. */
-    "baseUrl": "./src", /* Specify the base directory to resolve non-relative module names. */
+    "jsx": "react-jsx",
+    "target": "es6",
+    "lib": [
+      "es2016",
+      "dom"
+    ],
+    "module": "es6",
     "moduleResolution": "node",
+    // "typeRoots": ["./*", "./src/*", "../*"],
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"],
-      "@assets/*": ["./assets/*"],
-      "@components/*": ["./components/*"],
-      "@context/*": ["./context/*"],
-      "@contexts/*": ["./contexts/*"],
-      "@locales/*": ["./locales/*"],
-      "@pages/*": ["./pages/*"],
-      "@services/*": ["./services/*"],
-      "@utils/*": ["./utils/*"],
-      "@app/*": ["./app/*"],
-      "@shared/*": ["../../shared/*"],
-    }, /* Specify a set of entries that re-map imports to additional lookup locations. */
-    "allowArbitraryExtensions": true, /* Enable importing files with any extension, provided a declaration file is present. */
-    "allowSyntheticDefaultImports": true, /* Allow 'import x from y' when a module doesn't have a default export. */
-    "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true, /* Ensure that casing is correct in imports. */
-    /* Type Checking */
-    "strict": true, /* Enable all strict type-checking options. */
-    "noImplicitAny": true, /* Enable error reporting for expressions and declarations with an implied 'any' type. */
-    "strictNullChecks": true, /* When type checking, take into account 'null' and 'undefined'. */
-    "noImplicitThis": true, /* Enable error reporting when 'this' is given the type 'any'. */
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
-  }
+      "assets/*": ["./assets/*"],
+      "components/*": ["./components/*"],
+      "context/*": ["./context/*"],
+      "contexts/*": ["./contexts/*"],
+      "locales/*": ["./locales/*"],
+      "pages/*": ["./pages/*"],
+      "services/*": ["./services/*"],
+      "utils/*": ["./utils/*"],
+      "app/*": ["./app/*"],
+      "shared/*": ["../shared/*"]
+    },
+    "allowArbitraryExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src", 
+    "shared",
+    "../shared/*",
+    "./*"
+  ]
 }

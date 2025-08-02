@@ -1,9 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useFormikContext } from "formik";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import { Trans } from "@lingui/macro";
 import { DBaseDropDownProps, DDropdownOption } from "./definitions";
-import('./styles.scss');
 
 const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, sx, displayVal }: DBaseDropDownProps): JSX.Element => {
   const { setFieldValue, setFieldTouched, values } = useFormikContext();

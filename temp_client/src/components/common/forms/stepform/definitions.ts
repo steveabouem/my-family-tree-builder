@@ -1,5 +1,3 @@
-import { DFormField } from "@components/common/definitions";
-
 export interface DStepForm<V> {
   sx?: {[key: string]: string | number};
   handleSave: () => void;

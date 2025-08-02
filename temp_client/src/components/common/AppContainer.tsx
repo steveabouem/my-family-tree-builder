@@ -19,7 +19,7 @@ import FamilyTreeDashboard from "pages/tree/dashboard";
 import ViewFamilyTreeChartPage from "pages/tree";
 import AuthenticationPage from "pages/auth";
 import CreateFamilyTreePage from "pages/tree/create";
-import { DUserDTO } from "@services/api.definitions";
+import { DUserDTO } from "services/api.definitions";
 
 const AppContainer = (): JSX.Element => {
   const [currentUser, setCurrentUser] = useState<DeepPartial<DUserDTO>>({});

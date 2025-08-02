@@ -1,4 +1,4 @@
-import { DUserDTO } from "@services/api.definitions";
+import { DUserDTO } from "services/api.definitions";
 
 export interface DFamilyTree {
   id: number;

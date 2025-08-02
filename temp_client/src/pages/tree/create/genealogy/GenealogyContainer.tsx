@@ -5,7 +5,6 @@ import { Formik } from 'formik';
 import { AxiosResponse } from 'axios';
 import GenealogyForm from './GenealogyForm';
 import TreePlayground from './GenealogyNarrator';
-import FamilyTreeService from 'services/familyTree/familyTree.service';
 import { DApiResponse, DFamilyMemberDTO, DFamilyTreeDAO, DFamilyTreeRecord } from 'services/api.definitions';
 import FamilyTreeContext from 'contexts/creators/familyTree';
 import { DFamilyTreeState, DStepFormState, stepFormModes } from 'app/slices/definitions';
@@ -14,6 +13,7 @@ import { DFamilyTreeDTO } from './definitions';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import GlobalContext from 'contexts/creators/global';
 import { formatTreeMemberDAOList } from 'pages/tree/create/genealogy/utils';
+import { addMembers, createFamilyTree } from 'services/familyTree';
 
 const GenealogyContainer: React.FC = () => {
   const [treeCopy, setTreeCopy] = useState({});
@@ -106,15 +106,14 @@ const GenealogyContainer: React.FC = () => {
   }
   
   function handleSubmit(v: any) {
-    const familyTreeService = new FamilyTreeService();
     const formattedValues: DFamilyTreeDAO = formatOutgoingValues(v);
 
     try {
       if (mode === stepFormModes.edit) {
-        familyTreeService.addMembers({ ...formattedValues, treeId }).then((response: AxiosResponse<DApiResponse<{
+        addMembers({ ...formattedValues, treeId }).then((response: AxiosResponse<DApiResponse<{
           payload: DFamilyTreeRecord;
         }>, any>) => {
-          if (response.data.code == 200) {
+          if (response.data.code === 200) {
             const updatedListOfMembers = JSON.parse(response.data.payload.members);
             const formattedMemberRecords = formatTreeMemberDAOList(updatedListOfMembers);
             updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_success_modal</Trans></Typography>, type: 'success' });
@@ -124,8 +123,8 @@ const GenealogyContainer: React.FC = () => {
           }
         });
       } else {
-        familyTreeService.create(formattedValues).then((response: AxiosResponse<DApiResponse<DFamilyTreeDTO>>) => {
-          if (response.data.code == 200) {
+        createFamilyTree(formattedValues).then((response: AxiosResponse<DApiResponse<DFamilyTreeDTO>>) => {
+          if (response.data.code === 200) {
             const formattedMemberRecords: any = formatTreeMemberDAOList(response.data.members);
             updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
             dispatch(populateTreeAction(formattedMemberRecords));

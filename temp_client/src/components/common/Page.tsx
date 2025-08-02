@@ -6,10 +6,7 @@ import useSessionValidation from "../../pages/hooks/useAuthValidation";
 import BaseModal from "./alerts/BaseModal";
 import GlobalContext from "contexts/creators/global/global.context";
 import { BackIcon } from "utils/assets/icons";
-import theme from "@utils/material";
-import { Background } from "@xyflow/react";
 import { Link } from "react-router-dom";
-import('./styles.scss');
 
 const Page = ({ title, subtitle, children, loading, bg, prevUrl }: DPageProps): JSX.Element => {
   useSessionValidation();

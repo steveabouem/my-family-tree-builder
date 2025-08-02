@@ -1,4 +1,4 @@
-import { ThemeSeasons } from "@app/slices/definitions";
+import { ThemeSeasons } from "app/slices/definitions";
 
 export type seasonalCssVariable =
   "cancel" |

@@ -12,10 +12,12 @@ import PageUrlsEnum from "utils/urls";
 import { service } from "services/index";
 import Page from "components/common/Page";
 import NotFound from "pages/404NotFound";
-import { useZDispatch, useZSelector } from "app/hooks";
 import { DFamilyTreeState } from "app/slices/definitions";
 import { EyeIcon, GroupIcon } from "utils/assets/icons";
 import { saveTreesListAction } from "app/slices/trees";
+import { submitPasswordChangeForm } from "services/auth/auth.service";
+import { getAllForUser } from "services/familyTree";
+import { useZDispatch, useZSelector } from "app/hooks";
 
 
 const UserProfilePage = (): JSX.Element => {
@@ -27,12 +29,11 @@ const UserProfilePage = (): JSX.Element => {
   const navigate = useNavigate();
   const theme = useTheme();
   const getfamilyTrees = useCallback(async (): Promise<any> => {
-    const familyTreeService = new service.familyTree();
     const userId = currentUser?.userId;
 
     if (userId && userId === Number(id)) {
-      const families = await familyTreeService.getAllForUser(userId)
-        .catch(e => {
+      const families = await getAllForUser(userId)
+        .catch((e: unknown) => {
           console.log('Get FAMILIES: ', e);
         });
 
@@ -65,8 +66,7 @@ const UserProfilePage = (): JSX.Element => {
 
   function handlePasswordChange(values: DChangePasswordValues) {
     toggleLoading(true);
-    const authService = new service.auth('auth');
-    authService.submitPasswordChangeForm(values)
+    submitPasswordChangeForm(values)
       .then((updatedUser) => {
         toggleLoading(false);
         updateModal({

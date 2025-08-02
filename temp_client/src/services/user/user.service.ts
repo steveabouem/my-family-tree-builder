@@ -1,4 +1,4 @@
-import { DUserRelatedFamily } from "@services/api.definitions";
+import { DUserRelatedFamily } from "services/api.definitions";
 import axios from "axios";
 import { baseUrl } from "..";
 

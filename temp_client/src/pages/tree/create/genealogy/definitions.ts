@@ -1,4 +1,4 @@
-import { DFormField } from "@components/common/definitions";
+import { DFormField } from "components/common/definitions";
 
 export type DKinsCount = {
   [kinshipEnum.siblings]: { display: boolean; total: number };

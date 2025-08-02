@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { DStepDetails, DStepFormState, stepFormModes } from "../../definitions";
-import FamilyTreeService from "services/familyTree/familyTree.service";
 
 /*
 * State
@@ -77,11 +76,9 @@ const removeFieldsByStepName = (state: DStepFormState, action: PayloadAction<str
 };
 const getCurrentFields = (state: DStepFormState) => {
   state.updating = true;
-  state.currentFormStepDetails = state.currentFormStepDetails;
   state.updating = false;
 };
 const fetchFields = (state: DStepFormState, action: PayloadAction<number>) => {
-  const familyTreeService = new FamilyTreeService();
   state.updating = true;
 
   state.updating = false;

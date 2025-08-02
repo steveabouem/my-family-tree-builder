@@ -2,16 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material';
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
-import baseEn from "./locales/en/main.js";
-import baseFr from "./locales/fr/main.js";
+import baseEn from "locales/en/main.js";
+import baseFr from "locales/fr/main.js";
 import GlobalContextProvider from './contexts/providers/global/GlobalContextProvider';
 import FamilyTreeContextProvider from './contexts/providers/familyTree/FamilyTreeContextProvider';
 import theme from './utils/material/theme';
 import { store } from 'app/store';
-import AppContainer from './components/common/AppContainer';
+import AppContainer from 'components/common/AppContainer';
 import ThemeGenerator from 'components/common/ThemeGenerator';
 
 i18n.load({

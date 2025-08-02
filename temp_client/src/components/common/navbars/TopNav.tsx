@@ -6,9 +6,9 @@ import { RiUser5Fill } from "react-icons/ri";
 import { Avatar, Box, Button, Typography, useTheme } from "@mui/material";
 import logo from "utils/assets/images/logo.jpg";
 import FamilyTreeContext from "contexts/creators/familyTree";
-import { service } from "services";
 import PageUrlsEnum from "utils/urls";
 import ThemeSelector from "../ThemeSelector";
+import { logout } from "services/auth/auth.service";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = useState(false);
@@ -18,8 +18,7 @@ const TopNav = () => {
   const theme = useTheme();
 
   const processLogout = () => {
-    const authService = new service.auth('auth');
-    authService.logout()
+    logout()
       .then(() => {
         if (updateUser) {
           updateUser({});

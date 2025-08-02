@@ -5,7 +5,6 @@ import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/mate
 import { Trans, t } from "@lingui/macro";
 import { DBaseFormProps, DFormField } from "../definitions";
 import CustomField from "./customField/CustomField";
-import('./styles.scss');
 
 const FormFieldsGenerator = ({
   fields, handleSubmit, withPaper = true, name = 'form',

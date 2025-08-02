@@ -1,11 +1,11 @@
-import AuthService from "./auth/auth.service";
-import FamilyTreeService from "./familyTree/familyTree.service";
 import * as user from "./user/user.service";
+import * as auth from "./auth/auth.service";
+import * as familyTree from "./familyTree";
 import * as session from "./session/session.service";
 
-const service = {
-  auth: AuthService,
-  familyTree: FamilyTreeService,
+export const service = {
+  auth,
+  familyTree,
   user,
   session,
 };
@@ -19,5 +19,4 @@ const service = {
 };
 
 export const baseUrl = process.env['API_BASE_URL'];
-export {service};
 export {endpoints}

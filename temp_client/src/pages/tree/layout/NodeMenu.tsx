@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material'
 import { Trans } from '@lingui/macro';
 import GlobalContext from 'contexts/creators/global';
-import { DReactFlowNode } from '@services/api.definitions';
+import { DReactFlowNode } from 'services/api.definitions';
 import { NodeMenuActions } from '../definitions';
 
 const NodeMenu = ({ data }: { data: Pick<DReactFlowNode, 'data'> }) => {

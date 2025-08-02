@@ -1,5 +1,5 @@
-import { DFormField } from "@components/common/definitions";
-import { DFamilyTreeDTO } from "@services/api.definitions";
+import { DFormField } from "components/common/definitions";
+import { DFamilyTreeDTO } from "services/api.definitions";
 import { ReactNode } from "react";
 
 // theme

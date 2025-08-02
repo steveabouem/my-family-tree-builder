@@ -12,12 +12,12 @@ import { Trans } from '@lingui/macro';
 import { useTheme } from '@mui/material';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
-import { DFamilyTreeDTO } from '@services/api.definitions';
+import { DFamilyTreeDTO } from 'services/api.definitions';
 import { DReactFlowEdge, DReactFlowNode, NodeMenuActions } from '../definitions';
 import { useZDispatch } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
-import { setStepsCountAction, updateGlobalValuesAction, changeModeAction, changeformStepAction } from 'app/slices/forms/stepForm';
+import { setStepsCountAction, changeModeAction, changeformStepAction } from 'app/slices/forms/stepForm';
 import { stepFormModes } from 'app/slices/definitions';
 
 const nodeTypes = {
@@ -36,6 +36,7 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   useEffect(() => {
     if (Object.keys(tree)?.length)
       generateNodesAndEdges();
+    // eslint-disable-next-line
   }, [tree]);
 
   function populateFormWithNodeValues(node: DReactFlowNode) {
