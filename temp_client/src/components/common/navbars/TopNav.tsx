@@ -8,7 +8,7 @@ import logo from "utils/assets/images/logo.jpg";
 import FamilyTreeContext from "contexts/creators/familyTree";
 import PageUrlsEnum from "utils/urls";
 import ThemeSelector from "../ThemeSelector";
-import { logout } from "services/auth/auth.service";
+import { logout } from "services/auth";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = useState(false);

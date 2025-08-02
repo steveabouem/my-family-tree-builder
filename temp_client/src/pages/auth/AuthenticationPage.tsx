@@ -6,7 +6,7 @@ import GlobalContext from "../../contexts/creators/global";
 import { t, Trans } from "@lingui/macro";
 import { DFormField } from "../../components/common/definitions";
 import { LoginRequestPayload, RegistrationRequestPayload } from "../../../../shared/types";
-import { submitLoginForm, submitRegistrationForm } from "../../services/auth/auth.service";
+import { submitLoginForm, submitRegistrationForm } from "../../services/auth";
 import PageUrlsEnum from "utils/urls/";
 import Page from "../../components/common/Page";
 import { Box, Button, FormControl } from "@mui/material";

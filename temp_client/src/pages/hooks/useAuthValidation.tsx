@@ -2,7 +2,7 @@ import FamilyTreeContext from "contexts/creators/familyTree";
 import React from "react";
 import { useNavigate } from "react-router";
 import {useLocation} from "react-router"
-import {getCurrent} from "services/session/session.service";
+import {getCurrent} from "services/session";
 import PageUrlsEnum from "utils/urls";
 
 const useSessionValidation = (): void => {

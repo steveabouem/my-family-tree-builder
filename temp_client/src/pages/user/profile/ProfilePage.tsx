@@ -15,7 +15,7 @@ import NotFound from "pages/404NotFound";
 import { DFamilyTreeState } from "app/slices/definitions";
 import { EyeIcon, GroupIcon } from "utils/assets/icons";
 import { saveTreesListAction } from "app/slices/trees";
-import { submitPasswordChangeForm } from "services/auth/auth.service";
+import { submitPasswordChangeForm } from "services/auth";
 import { getAllForUser } from "services/familyTree";
 import { useZDispatch, useZSelector } from "app/hooks";
 

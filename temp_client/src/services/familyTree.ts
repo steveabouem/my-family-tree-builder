@@ -1,7 +1,7 @@
 import { DFormField } from "components/common/definitions";
 import { DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "services/api.definitions";
 import axios, { AxiosResponse } from "axios";
-import { baseUrl } from "..";
+import { baseUrl } from ".";
 
 export const getAllForUser = async (userId: number) => {
   const results = axios.get(`${baseUrl}/trees/index?member=${userId}`);

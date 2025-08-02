@@ -1,6 +1,6 @@
 import { DUserRelatedFamily } from "services/api.definitions";
 import axios from "axios";
-import { baseUrl } from "..";
+import { baseUrl } from ".";
 
 export const getRelatedFamilies = async (id?: string): Promise<DUserRelatedFamily[]> => {
   if (!id) {

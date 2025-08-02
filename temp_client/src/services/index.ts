@@ -1,7 +1,7 @@
-import * as user from "./user/user.service";
-import * as auth from "./auth/auth.service";
+import * as user from "./user";
+import * as auth from "./auth";
 import * as familyTree from "./familyTree";
-import * as session from "./session/session.service";
+import * as session from "./session";
 
 export const service = {
   auth,

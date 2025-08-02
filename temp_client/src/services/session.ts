@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl } from "..";
+import { baseUrl } from ".";
 
 export const getCurrent = async (id: number) => {
   const result = await axios.get(`${baseUrl}/sessions?id=${id}`);
