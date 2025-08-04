@@ -1,12 +1,9 @@
 {
   "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig to read more about this file */
-    /* Projects */
-    "target": "es2016", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */                   /* Control what method is used to detect module-format JS files. */
-    /* Modules */
-    "module": "commonjs", /* Specify what module code is generated. */
-    "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
-    "baseUrl": ".",                                  /* Specify the base directory to resolve non-relative module names. */
+    "target": "es2016",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "baseUrl": ".",            
     "paths": {
       "@/*": ["src/*"],
       "@models/*": ["./models/*"],
@@ -16,13 +13,12 @@
       "@config/*": ["./config/*"],
       "@migrations/*": ["./migrations/*"],
       "@seeders/*": ["./seeders/*"],
-      "@shared/*": ["../shared/*"],
+      // "@shared/*": ["../shared/*"], monorepo setup needs work (and vite)
     },
-    "outDir": "./dist", /* Specify an output folder for all emitted files. */
+    "outDir": "./dist",
     "esModuleInterop": true, 
     "forceConsistentCasingInFileNames": true,
-    /* Type Checking */
-    "strict": true, /* Enable all strict type-checking options. */
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    "strict": true,
+    "skipLibCheck": true
   }
 }

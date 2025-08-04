@@ -7,9 +7,9 @@ import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';
 import familyMemberHandler from './src/routes/familyMembers.routes';
 import sessionHandler from './src/routes/session.routes';
-import projectHandler from './src/routes/project.routes';
-import teamHandler from './src/routes/team.routes';
-import { APISessionUser } from './src/services/types';
+// import projectHandler from './src/routes/project.routes';
+// import teamHandler from './src/routes/team.routes';
+import { APISessionUser } from '@shared/types';
 
 declare module "express-session" {
   // see https://akoskm.com/how-to-use-express-session-with-custom-sessiondata-typescript
@@ -68,10 +68,7 @@ app.use((req, res, next) => {
 app.use('/api/users', userHandler);
 // app.use('/api/sessions', sessionHandler);
 app.use('/api/auth', authHandler);
-// app.use('/api/projects', projectHandler);
-// app.use('/api/teams', teamHandler);
 app.use('/api/trees', familyTreeHandler);
-// app.use('/api/members', familyMemberHandler);
 /** END */
 
 const port = 4000;

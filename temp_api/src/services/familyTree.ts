@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 import { Op } from "sequelize";
 import FamilyTree from "../models/FamilyTree";
-import { APIFamilyMemberDAO, APIFamilyMemberRecord, APIFamilyTreeDAO, APIGetFamilyTreeResponse, ManageTreeAPIResponse, KinshipEnum, ManageTreeRequestPayload, MappedFamilyMembers, ServiceResponseWithPayload } from "./types";
+import { APIFamilyMemberDAO, APIFamilyMemberRecord, APIFamilyTreeDAO, APIGetFamilyTreeResponse, APIRequestPayload, ManageTreeAPIResponse, ManageTreeRequestPayload, MappedFamilyMembers, ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import User from "../models/User";
 import FamilyMember from "../models/FamilyMember";
 import { extractSingleDataValuesFrom } from "./serviceHelpers";
-import {APIRequestPayload} from '@shared/types/api.types'
+import { KinshipEnum } from "./types";
 
 //#region getAllTrees
 export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPayload<FamilyTree[]>> => {
@@ -67,14 +67,19 @@ export const positionFamilyMembers = async (members: FamilyMember[], anchorNodeI
     const spousesList = await bulkUpdateRecordsPosition(spousesNodeIds, members, position, KinshipEnum.spouse, anchorNodeId);
 
     // add them all to the list of members
+    // @ts-ignore
     membersWithCoords.push(...childrenList);
+    // @ts-ignore
     membersWithCoords.push(...siblingsList);
+    // @ts-ignore
     membersWithCoords.push(...parentsList);
+    // @ts-ignore
     membersWithCoords.push(...spousesList);
     // once thats done, position the current member themselves
     membersWithCoords.push({
       ...anchor.dataValues,
       // type: 'custom',
+      // @ts-ignore
       position: JSON.stringify(position),
       //! connections
 
@@ -384,7 +389,7 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
     const newMembersMap: MappedFamilyMembers = newRecords.reduce((map: { [nodeId: string]: FamilyMember }, currentMember: any) => { //TODO: any
       return ({ ...map, [currentMember.dataValues.node_id]: currentMember });
     }, {});
-
+// @ts-ignore
     return newMembersMap;
   } else {
     logger.error('Unable to bulk create members, no records created');

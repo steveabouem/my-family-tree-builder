@@ -6,7 +6,6 @@ import User from "../models/User";
 import { APIUserDTO, ServiceResponseWithPayload, APIRegistrationResponse } from "./types";
 import { addSeasoning } from "../utils/toolkit";
 import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
-import { Op } from "sequelize";
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
   const hashedPassword = bcrypt.hashSync(userData.password, addSeasoning());

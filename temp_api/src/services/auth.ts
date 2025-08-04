@@ -5,7 +5,7 @@ import { Op } from "sequelize";
 import { createUser, updatePassword } from "./user";
 import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
 import User from "../models/User";
-import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload, ServiceResponseWithPayload } from "@shared/types";
+import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload, ServiceResponseWithPayload } from "./types";
 
 //#region register
 export const register = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {

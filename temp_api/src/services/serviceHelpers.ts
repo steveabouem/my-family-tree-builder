@@ -1,4 +1,4 @@
-import { ServiceResponseWithPayload } from "@shared/types";
+import { ServiceResponseWithPayload } from "./types";
 
 export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> => {
   return {

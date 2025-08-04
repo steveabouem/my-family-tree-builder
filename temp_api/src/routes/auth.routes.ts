@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { changePassword, login, logout, register } from "../services/auth";
 import { getUserById } from "../services/user";
 import { sendRouteHandlerResponse } from "./helpers";
-import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload } from "@shared/types"
+import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload } from "../services/types"
 
 const router = Router();
 
