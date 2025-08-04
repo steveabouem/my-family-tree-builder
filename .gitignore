@@ -5,3 +5,4 @@ node_modules
 # Text editor
 .history
 .vscode
+temp_client/.env

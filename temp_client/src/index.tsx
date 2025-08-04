@@ -8,34 +8,37 @@ import baseEn from "locales/en/main.js";
 import baseFr from "locales/fr/main.js";
 import GlobalContextProvider from './contexts/providers/global/GlobalContextProvider';
 import FamilyTreeContextProvider from './contexts/providers/familyTree/FamilyTreeContextProvider';
-import theme from './utils/material/theme';
 import { store } from 'app/store';
 import AppContainer from 'components/common/AppContainer';
 import ThemeGenerator from 'components/common/ThemeGenerator';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 i18n.load({
   en: baseEn.messages,
   fr: baseFr.messages,
 });
 i18n.activate("fr", "en");
-
+const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById('root') as Element);
+
 root.render(
-  <Provider store={store}>
-    <ThemeGenerator>
-      <GlobalContextProvider>
-        <FamilyTreeContextProvider>
-          <I18nProvider i18n={i18n}>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/*" element={<AppContainer />} />
-              </Routes>
-            </BrowserRouter>
-          </I18nProvider>
-        </FamilyTreeContextProvider>
-      </GlobalContextProvider>
-    </ThemeGenerator>
-  </Provider>
+  <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
+      <ThemeGenerator>
+        <GlobalContextProvider>
+          <FamilyTreeContextProvider>
+            <I18nProvider i18n={i18n}>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/*" element={<AppContainer />} />
+                </Routes>
+              </BrowserRouter>
+            </I18nProvider>
+          </FamilyTreeContextProvider>
+        </GlobalContextProvider>
+      </ThemeGenerator>
+    </Provider>
+  </QueryClientProvider>
 );
 
 

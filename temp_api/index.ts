@@ -5,11 +5,10 @@ import cors from 'cors';
 import userHandler from './src/routes/user.routes';
 import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';
-import familyMemberHandler from './src/routes/familyMembers.routes';
 import sessionHandler from './src/routes/session.routes';
 // import projectHandler from './src/routes/project.routes';
 // import teamHandler from './src/routes/team.routes';
-import { APISessionUser } from '@shared/types';
+import { APISessionUser } from './src/services/types';
 
 declare module "express-session" {
   // see https://akoskm.com/how-to-use-express-session-with-custom-sessiondata-typescript
@@ -42,7 +41,7 @@ app.use(cors({
 ));
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(session({
+// app.use(session({use 
 //   secret: `${process.env.JWT_KEY}`,
 //   resave: false,
 //   saveUninitialized: false,

@@ -1,26 +1,28 @@
 import React from "react";
-import { DAuthProps } from "./definitions";
-import FamilyTreeContext from "../../contexts/creators/familyTree";
 import { useNavigate } from "react-router";
-import GlobalContext from "../../contexts/creators/global";
 import { t, Trans } from "@lingui/macro";
+import { DAuthProps } from "./definitions";
+import { Formik } from "formik";
+import { Box, Button, FormControl } from "@mui/material";
+import GlobalContext from "../../contexts/creators/global";
 import { DFormField } from "../../components/common/definitions";
-import { LoginRequestPayload, RegistrationRequestPayload } from "../../../../shared/types";
-import { submitLoginForm, submitRegistrationForm } from "../../services/auth";
+import { APILoginResponse, APIRequestPayload, LoginRequestPayload, RegistrationRequestPayload } from "../../services/api.definitions";
+import { useLogin, useRegister } from "../../services/v2/authV2";
 import PageUrlsEnum from "utils/urls/";
 import Page from "../../components/common/Page";
-import { Box, Button, FormControl } from "@mui/material";
-import { Formik } from "formik";
 import FormFieldsGenerator from "../../components/common/forms/FormFieldsGenerator";
 import GenderDropdown from "../../components/common/dropdowns/gender/GenderDropdown";
 import BaseDropDown from "../../components/common/dropdowns/BaseDropdown";
 import { maritalStatusOptions } from "../../components/common/dropdowns/definitions";
+import { updateUserAction } from "app/slices/user";
 
 const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [attempts, setAttempts] = React.useState<number>(0);
-  const { updateUser } = React.useContext(FamilyTreeContext);
   const navigate = useNavigate();
   const { updateModal, toggleLoading, modal, loading } = React.useContext(GlobalContext);
+  const loginMutation = useLogin();
+  const registerMutation = useRegister();
+
   const mStatus = t({
     id: "marital.status",
     message: `Marital Status`,
@@ -116,20 +118,27 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   };
 
   const processLogin = async (values: LoginRequestPayload) => {
-    toggleLoading(true);
+    loginMutation.mutate(values, {
+      onSuccess: (response: APIRequestPayload<APILoginResponse>) => {
+        const { payload, error } = response;
 
-    try {
-      const response = await submitLoginForm(values);
-      const { payload, error } = response;
-
-      if (payload.authenticated && !error) {
-        localStorage.setItem('FT', JSON.stringify(payload));
-        if (updateUser) {
-          updateUser(payload);
+        if (payload.authenticated && !error) {
+          localStorage.setItem('FT', JSON.stringify(payload));
+          updateUserAction(payload);
           changeMode(undefined);
           navigate(PageUrlsEnum.user.replace(':id', `${payload.userId}`));
+        } else {
+          setAttempts((prev) => prev + 1);
+          updateModal({
+            ...modal,
+            hidden: false,
+            title: <Trans>login_failure</Trans>,
+            content: <Trans>login_failure_msg {attempts}</Trans>,
+          });
         }
-      } else {
+      },
+      onError: (error) => {
+        console.error('Error logging in', error);
         setAttempts((prev) => prev + 1);
         updateModal({
           ...modal,
@@ -138,55 +147,49 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
           content: <Trans>login_failure_msg {attempts}</Trans>,
         });
       }
-    } catch (e: unknown) {
-      console.error('Error logging in', e);
-      updateModal({
-        ...modal,
-        hidden: false,
-        title: <Trans>login_failure</Trans>,
-        content: <Trans>login_failure_msg {attempts}</Trans>,
-      });
-    }
-
-    toggleLoading(false);
+    });
   }
 
   const processRegister = async (values: RegistrationRequestPayload) => {
-    toggleLoading(true);
+    registerMutation.mutate(values, {
+      onSuccess: (response) => {
+        const {payload, error} = response;
+        if (payload.authenticated) {
+          localStorage.setItem('FT', JSON.stringify(payload));
+          changeMode(undefined);
 
-    try {
-      const response = await submitRegistrationForm(values);
-      const {payload, error} = response;
-      if (payload.authenticated) {
-        localStorage.setItem('FT', JSON.stringify(payload));
-        changeMode(undefined);
-
-        if (updateUser && payload?.userId) {
-          updateUser(payload);
-          navigate(PageUrlsEnum.user.replace(':id', `${payload.userId}`));
+          if (payload?.userId) {
+            updateUserAction(payload);
+            navigate(PageUrlsEnum.user.replace(':id', `${payload.userId}`));
+          }
+        } else {
+          updateModal({
+            ...modal,
+            hidden: false,
+            title: <Trans>login_failure</Trans>,
+            content: <Trans>login_failure_msg {attempts}</Trans>,
+          });
+          console.log('Registration failure');
         }
-      } else {
+      },
+      onError: (error) => {
+        console.error('Registration failed:', error);
         updateModal({
           ...modal,
           hidden: false,
           title: <Trans>login_failure</Trans>,
           content: <Trans>login_failure_msg {attempts}</Trans>,
         });
-        console.log('Registration failure');
       }
-    } catch (e: unknown) {
-      // TODO: LOGGING
-    }
-
-    toggleLoading(false);
+    });
   }
 
   return (
-    <Page
-      title={<Trans>auth_page_title</Trans>}
-      subtitle={<Trans>auth_page_subtitle</Trans>}
-      loading={loading}
-    >
+          <Page
+        title={<Trans>auth_page_title</Trans>}
+        subtitle={<Trans>auth_page_subtitle</Trans>}
+        loading={loading || loginMutation.isPending || registerMutation.isPending}
+      >
       <Box>
         {mode === 'register' ? (
           <Button variant="text" color="secondary" onClick={() => changeMode('login')}>Login</Button>
@@ -200,9 +203,16 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
           onSubmit={(values: LoginRequestPayload | RegistrationRequestPayload) => proceedToFormSubmission(values)}
         >
           {({ submitForm, errors, setFieldValue, values }) => mode === 'login' ?
-            <FormFieldsGenerator size="med" fields={loginFormFields} handleSubmit={() => { }} />
+            <FormFieldsGenerator 
+              size="med" 
+              fields={loginFormFields} 
+              handleSubmit={() => { }}
+              locked={loginMutation.isPending}
+            />
             :
-            <FormFieldsGenerator size="med"
+            <FormFieldsGenerator 
+              size="med"
+              locked={registerMutation.isPending}
               fields={[
                 ...registrationFormFields,
                 {

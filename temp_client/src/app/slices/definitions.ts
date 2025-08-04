@@ -1,5 +1,5 @@
 import { DFormField } from "components/common/definitions";
-import { DFamilyTreeDTO } from "services/api.definitions";
+import { DFamilyTreeDTO, DUserSession, User } from "services/api.definitions";
 import { ReactNode } from "react";
 
 // theme
@@ -44,4 +44,10 @@ export interface DFamilyTreeState {
   currentFamilyTree?: DFamilyTreeDTO;
   name?: string;
   list: any[];
+}
+
+// user
+export interface DUserState {
+  updating: boolean;
+  currentUser?: Partial<User>;
 }

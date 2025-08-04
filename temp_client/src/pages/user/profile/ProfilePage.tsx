@@ -2,17 +2,15 @@ import { Trans } from "@lingui/macro";
 import React, { useCallback, useContext, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Box, Typography, Paper, Button, useTheme } from "@mui/material";
+import { MdOutlineAddBox } from "react-icons/md";
 import img1 from "utils/assets/images/kids under tree locked.jpg"
 import GlobalContext from "contexts/creators/global/global.context";
-import FamilyTreeContext from "contexts/creators/familyTree/familyTree.context";
 import { DChangePasswordValues } from "../definitions";
 import UserCredentials from "./UserCredentials";
-import { MdOutlineAddBox } from "react-icons/md";
 import PageUrlsEnum from "utils/urls";
-import { service } from "services/index";
 import Page from "components/common/Page";
 import NotFound from "pages/404NotFound";
-import { DFamilyTreeState } from "app/slices/definitions";
+import { DFamilyTreeState, DUserState } from "app/slices/definitions";
 import { EyeIcon, GroupIcon } from "utils/assets/icons";
 import { saveTreesListAction } from "app/slices/trees";
 import { submitPasswordChangeForm } from "services/auth";
@@ -23,13 +21,13 @@ import { useZDispatch, useZSelector } from "app/hooks";
 const UserProfilePage = (): JSX.Element => {
   const dispatch = useZDispatch();
   const { list } = useZSelector<DFamilyTreeState>(state => state.tree);
-  const { currentUser } = useContext(FamilyTreeContext);
+  const { currentUser } = useZSelector<DUserState>(state => state.user);
   const { toggleLoading, updateModal } = useContext(GlobalContext);
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
   const getfamilyTrees = useCallback(async (): Promise<any> => {
-    const userId = currentUser?.userId;
+    const userId = currentUser?.id;
 
     if (userId && userId === Number(id)) {
       const families = await getAllForUser(userId)
@@ -44,7 +42,7 @@ const UserProfilePage = (): JSX.Element => {
   }, [currentUser, id]);
 
   useEffect(() => {
-    if (currentUser?.userId) {
+    if (currentUser?.id) {
       getfamilyTrees()
         .then(({ data }) => {
           if (!data.error) {
@@ -91,7 +89,7 @@ const UserProfilePage = (): JSX.Element => {
   }
 
   return currentUser ? (
-    <Page subtitle={<Trans>profile_page_subtitle</Trans>} title={<Trans>profile_page_title {currentUser?.firstName || ''}</Trans>} bg={img1}>
+    <Page subtitle={<Trans>profile_page_subtitle</Trans>} title={<Trans>profile_page_title {currentUser?.first_name || ''}</Trans>} bg={img1}>
       <Box display="flex" justifyContent="space-between">
         <UserCredentials handleSubmit={handlePasswordChange} />
         <Paper style={{ display: 'flex', flexDirection: 'column', flex: '0 1 47%', padding: '1rem .5rem' }}>

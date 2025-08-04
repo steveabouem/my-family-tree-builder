@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Grid2, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
@@ -6,8 +6,7 @@ import { AxiosResponse } from 'axios';
 import GenealogyForm from './GenealogyForm';
 import TreePlayground from './GenealogyNarrator';
 import { DApiResponse, DFamilyMemberDTO, DFamilyTreeDAO, DFamilyTreeRecord } from 'services/api.definitions';
-import FamilyTreeContext from 'contexts/creators/familyTree';
-import { DFamilyTreeState, DStepFormState, stepFormModes } from 'app/slices/definitions';
+import { DFamilyTreeState, DStepFormState, DUserState, stepFormModes } from 'app/slices/definitions';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import { DFamilyTreeDTO } from './definitions';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
@@ -19,8 +18,8 @@ const GenealogyContainer: React.FC = () => {
   const [treeCopy, setTreeCopy] = useState({});
   const { stepTree = {}, mode } = useZSelector<DStepFormState>(state => state.stepForm);
   const { treeId } = useZSelector<DFamilyTreeState>(state => state.tree);
+  const {currentUser} = useZSelector<DUserState>(state => state.user);
   const dispatch = useZDispatch();
-  const { currentUser } = useContext(FamilyTreeContext);
   const { updateModal } = React.useContext(GlobalContext);
 
   /*
@@ -81,7 +80,7 @@ const GenealogyContainer: React.FC = () => {
 
       return acc;
     }, {});
-    return { members: mappedMembers, userId: currentUser?.userId || 0, treeName: '' };
+    return { members: mappedMembers, userId: currentUser?.id || 0, treeName: '' };
   }
   function cleanUpValuesPrefixes(indicator: string, valuesObject: any): DFamilyMemberDTO {
     const formatted: DFamilyMemberDTO = {

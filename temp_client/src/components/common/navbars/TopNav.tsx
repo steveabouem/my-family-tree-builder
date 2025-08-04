@@ -1,29 +1,29 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Trans } from "@lingui/macro";
 import { LiaUserSecretSolid } from "react-icons/lia";
 import { RiUser5Fill } from "react-icons/ri";
 import { Avatar, Box, Button, Typography, useTheme } from "@mui/material";
 import logo from "utils/assets/images/logo.jpg";
-import FamilyTreeContext from "contexts/creators/familyTree";
 import PageUrlsEnum from "utils/urls";
 import ThemeSelector from "../ThemeSelector";
 import { logout } from "services/auth";
+import { useZSelector } from "app/hooks";
+import { DUserState } from "app/slices/definitions";
+import { updateUserAction } from "app/slices/user";
 
 const TopNav = () => {
   const [menuOpened, setMenuOpened] = useState(false);
-  const { currentUser, updateUser } = useContext(FamilyTreeContext);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const theme = useTheme();
+  const {currentUser} = useZSelector<DUserState>(state => state.user);
 
   const processLogout = () => {
     logout()
       .then(() => {
-        if (updateUser) {
-          updateUser({});
+          updateUserAction({});
           navigate(PageUrlsEnum.home);
-        }
       })
       .catch((e: unknown) => {
         console.log('ERRR login out: ', e);
@@ -54,10 +54,10 @@ const TopNav = () => {
           </Link>
           
         </Box>
-        {currentUser?.userId ? (
+        {currentUser?.id ? (
           <>
             <Box>
-              <Link to={PageUrlsEnum.user.replace(':id', `${currentUser.userId}`)} style={{color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
+              <Link to={PageUrlsEnum.user.replace(':id', `${currentUser.id}`)} style={{color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
                 <Typography variant="button">
                   <Trans>Profile</Trans>
                 </Typography>
@@ -80,12 +80,12 @@ const TopNav = () => {
         </Box>
       </Box>
       <Box className="avatar-container" onClick={() => setMenuOpened(!menuOpened)} gap={2} display="flex" justifyContent="flex-between" alignItems="center">
-        {currentUser?.firstName ? (
+        {currentUser?.first_name ? (
           <>
-            <RiUser5Fill />   {currentUser.firstName}
+            <RiUser5Fill />   {currentUser.first_name}
           </>
         ) : <LiaUserSecretSolid />}
-        {menuOpened && currentUser?.firstName && <Button variant="contained" color="success" onClick={processLogout} ><Trans>logout</Trans></Button>}
+        {menuOpened && currentUser?.first_name && <Button variant="contained" color="success" onClick={processLogout} ><Trans>logout</Trans></Button>}
       </Box>
       <ThemeSelector />
     </Box>

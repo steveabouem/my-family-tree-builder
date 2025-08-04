@@ -20,7 +20,7 @@
       "services/*": ["./services/*"],
       "utils/*": ["./utils/*"],
       "app/*": ["./app/*"],
-      "shared/*": ["../shared/*"]
+      // "shared/*": ["../shared/*"] // forget it for now. monorepo setup will be improved later
     },
     "allowArbitraryExtensions": true,
     "allowSyntheticDefaultImports": true,
@@ -36,6 +36,6 @@
     "src", 
     "shared",
     "../shared/*",
-    "./*"
+    "react-app-env.d.ts"
   ]
 }

@@ -1,26 +1,26 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Trans } from "@lingui/macro";
 import { FaRegEdit } from "react-icons/fa";
 import { MdCancelPresentation } from "react-icons/md";
 import { DChangePasswordValues } from "../definitions";
-import FamilyTreeContext from "contexts/creators/familyTree";
 import { DFormField } from "components/common/definitions";
 import { Formik } from "formik";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
 import Spinner from "components/common/progressIndicators/Spinner";
 import { Box, Button, Paper, Typography } from "@mui/material";
+import { useZSelector } from "app/hooks";
+import { DUserState } from "app/slices/definitions";
 
 const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: DChangePasswordValues) => void }) => {
   const [passwordFormMode, setPasswordFormMode] = useState<'write' | 'read'>('read');
-  const { currentUser } = useContext(FamilyTreeContext);
-
+  const {currentUser} = useZSelector<DUserState>(state => state.user);
   const changePasswordInitialValues = useMemo((): DChangePasswordValues => ({
     email: currentUser?.email || '',
     password: '',
     newPassword: '',
     repeatNewPassword: '',
-    id: currentUser?.userId || 0
-  }), [currentUser?.email, currentUser?.userId]);
+    id: currentUser?.id || 0
+  }), [currentUser?.email, currentUser?.id]);
   const changePasswordFields: DFormField[] = [
     { fieldName: 'email', label: <Trans>email_form_label</Trans>, type: 'email' },
     { fieldName: 'password', label: <Trans>password_form_label</Trans>, type: 'password' },

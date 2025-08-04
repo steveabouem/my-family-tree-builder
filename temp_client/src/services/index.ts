@@ -18,5 +18,6 @@ export const service = {
   sessions: {get: '/?id=:id', update: '/update'}
 };
 
-export const baseUrl = process.env['API_BASE_URL'];
+export const baseUrl = process.env.REACT_APP_BASE_URL_DEV;
+console.log('BROJ', {baseUrl})
 export {endpoints}

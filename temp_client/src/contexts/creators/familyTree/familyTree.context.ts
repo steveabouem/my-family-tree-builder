@@ -7,7 +7,6 @@ export interface DContextMutator<GEntity> {
 }
 
 const FamilyTreeContext = createContext<DFTContext>({
-  currentUser: {},
   currentFamilyTree: {},
   familyTrees: [],
   updateUser: undefined,
