@@ -41,8 +41,8 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
 
   function populateFormWithNodeValues(node: DReactFlowNode) {
     setValues({
-      anchor_first_name: node?.first_name || '',
-      anchor_last_name: node?.last_name || '',
+      anchor_firstName: node?.firstName || '',
+      anchor_lastName: node?.lastName || '',
       anchor_occupation: node?.occupation || '',
       anchor_dob: node?.dob || '',
       anchor_dod: node?.dod || '',
@@ -60,7 +60,7 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
         cancel: true,
         confirm: true
       },
-      title: <Trans>choose_node_action_title {node.first_name}</Trans>,
+      title: <Trans>choose_node_action_title {node.firstName}</Trans>,
       onConfirm: (transferData: string) => {
         switch (transferData) {
           case NodeMenuActions.edit:

@@ -1,10 +1,11 @@
-  namespace NodeJS {
-    interface ProcessEnv {
-      //types of envs
-      NODE_ENV: 'development' | 'production' | 'test';
-      PUBLIC_URL: string;
-      API_BASE_URL: string;
-    }
+namespace NodeJS {
+  interface ProcessEnv {
+    //types of envs
+    NODE_ENV: 'development' | 'production' | 'test';
+    PUBLIC_URL: string;
+    API_BASE_URL: string;
+    LOCALE_STORAGE_NAME: string;
   }
+}
 
-export {}
+export { }

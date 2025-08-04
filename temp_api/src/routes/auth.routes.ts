@@ -7,6 +7,7 @@ import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequ
 const router = Router();
 
 router.post('/register', (req: Request, res: Response) => {
+  console.log('###############SESSIONS!', req.session)
   sendRouteHandlerResponse<any, APIRegistrationResponse | null>(req.body, register, res, 'Register');
 });
 
@@ -16,7 +17,7 @@ router.get('/:id', (req: Request<{ id: string }, {}, {}, {}>, res: Response) => 
 });
 
 router.post('/login', (req: Request<{}, {}, LoginRequestPayload, {}>, res: Response) => {
-  sendRouteHandlerResponse<LoginRequestPayload, APILoginResponse>(req.body, login, res, 'Login');
+  sendRouteHandlerResponse<LoginRequestPayload, APILoginResponse>(req.body, login, res, 'Login', req);
 });
 
 router.post('/logout', (req: Request<{}, {}, {}, {}>, res: Response) => {

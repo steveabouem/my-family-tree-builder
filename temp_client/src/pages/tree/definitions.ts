@@ -11,8 +11,8 @@ export interface DFamilyTree {
 }
 export interface DTreeManagerFields {
   relation: keyof typeof relationType | '';
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   id?: number; // FTTreeNode
   siblings?: string[];
   user_id?: number;
@@ -25,8 +25,8 @@ export interface DTreeManagerProps {
 }
 
 export interface DSibling {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   age: string;
   occupation: string;
   partner?: string; // User
@@ -60,8 +60,8 @@ export interface DTreeNode {
   id: string;
   hasSubTree?: boolean;
   gender: 'male' | 'female';
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   age: number;
   description?: string;
   marital_status?: string;
@@ -82,9 +82,9 @@ export interface DNodeInfo {
   dod?: string;
   node_id: string;
   email: string;
-  first_name: string;
+  firstName: string;
   gender: number;
-  last_name: string;
+  lastName: string;
   marital_status: string;
   occupation: string;
   parents: string;

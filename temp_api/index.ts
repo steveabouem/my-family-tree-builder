@@ -9,29 +9,45 @@ import sessionHandler from './src/routes/session.routes';
 // import projectHandler from './src/routes/project.routes';
 // import teamHandler from './src/routes/team.routes';
 import { APISessionUser } from './src/services/types';
+import { isUserAuthenticated } from './src/routes/helpers';
+import logger from '@/utils/logger';
 
 declare module "express-session" {
   // see https://akoskm.com/how-to-use-express-session-with-custom-sessiondata-typescript
-  interface SessionData {
-    details: Partial<APISessionUser>,
-    sessionId: string
+  interface SessionData extends Session {
+    details: any, // TODO: reinstate line below
+    // details: Partial<APISessionUser>,
+    sessionId: string,
   }
 }
 
 const app: Express = express();
 const MySQLStore = require('express-mysql-session')(session);
+
 const options = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USER,
   password: process.env.DB_PWD,
   database: process.env.DB,
+  checkExpirationInterval: 30000,
+  schema: {
+		tableName: 'Sessions',
+		columnNames: {
+			  session_id: 'sid',
+        expires: 'expires',
+        data: 'data'
+		}
+	}
 };
-const store = new MySQLStore(options);
 
+const sessionStore = new MySQLStore(options);
+sessionStore.onReady().catch((error: any) => {
+  console.log('##################FAILED', error);
+});
 /**
  MIDDLEWARES
- **/
+**/
 app.use(cors({
   credentials: true,
   optionsSuccessStatus: 200,
@@ -41,27 +57,34 @@ app.use(cors({
 ));
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(session({use 
-//   secret: `${process.env.JWT_KEY}`,
-//   resave: false,
-//   saveUninitialized: false,
-//   cookie: {
-//     sameSite: 'none',
-//     secure: false, //TODO: change to true for PROD
-//     maxAge: 300000,
-//   },
-//   store,
-// }));
+const sessionConfig = {
+  secret: `${process.env.JWT_KEY}`,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    sameSite: 'none' as const,
+    secure: false, //TODO: change to true for PROD
+    maxAge: 300000,
+  },
+  store: sessionStore,
+} as any;
+
+app.use(session(sessionConfig) as any);
 
 app.use((req, res, next) => {
   const publicUrls = ['/api/auth/login', '/api/auth/logout', '/api/auth/register'];
-  const userAuthenticated = true;
-  // const userAuthenticated = req.session.details?.authenticated || false;
+  const userAuthenticated = isUserAuthenticated(req);
+
   if (userAuthenticated || publicUrls.includes(req.originalUrl)) {
     next();
   } else {
     res.status(403);
-    res.json('Unauthenticated');
+    res.json({
+      error: true,
+      code: 403,
+      message: 'Unauthenticated',
+      payload: null
+    });
   }
 });
 app.use('/api/users', userHandler);

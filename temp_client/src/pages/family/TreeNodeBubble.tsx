@@ -23,7 +23,7 @@ function TreeNodeBubble({ node }: DTreeNodeBubbleProps) {
       <Box
         className="inner"
       >
-        <Box className={'id'}>{node.first_name}</Box>
+        <Box className={'id'}>{node.firstName}</Box>
       </Box>
     </Box>
   );

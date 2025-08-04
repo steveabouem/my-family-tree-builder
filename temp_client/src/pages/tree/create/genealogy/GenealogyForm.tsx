@@ -101,9 +101,9 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
       const fields = [
         {
           fieldName:
-            `${nameOfStep}_first_name`, label: <Trans>first_name</Trans>, value: values?.[`${nameOfStep}_first_name`] || ''
+            `${nameOfStep}_firstName`, label: <Trans>firstName</Trans>, value: values?.[`${nameOfStep}_firstName`] || ''
         },
-        { fieldName: `${nameOfStep}_last_name`, label: <Trans>last_name</Trans>, value: values?.[`${nameOfStep}_last_name`] || '' },
+        { fieldName: `${nameOfStep}_lastName`, label: <Trans>lastName</Trans>, value: values?.[`${nameOfStep}_lastName`] || '' },
         {
           fieldName: `${nameOfStep}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
             <BaseDropDown

@@ -19,5 +19,4 @@ export const service = {
 };
 
 export const baseUrl = process.env.REACT_APP_BASE_URL_DEV;
-console.log('BROJ', {baseUrl})
 export {endpoints}

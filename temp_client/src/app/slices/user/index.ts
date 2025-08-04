@@ -1,10 +1,11 @@
 import { DUserState } from "../definitions";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DUserSession } from "services/api.definitions";
+import { User } from "services/api.definitions";
 
 /*
 * State
 */
+const previousUser = localStorage.getItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`)
 const initialState: DUserState = {
   updating: false,
   currentUser: undefined,
@@ -13,14 +14,16 @@ const initialState: DUserState = {
 /*
 * mutators
 */
-const manageUSer = (state: DUserState, action: PayloadAction<Partial<DUserSession>>) => {
+const manageUser = (state: DUserState, action: PayloadAction<Partial<User>>) => {
+  console.log('store fn ', action);
+  
   state.updating = true;
   state.currentUser = { ...state.currentUser, ...action.payload };
   state.updating = false;
   return state;
 };
 
-const setUser = (state: DUserState, action: PayloadAction<DUserSession>) => {
+const setUser = (state: DUserState, action: PayloadAction<User>) => {
   state.updating = true;
   state.currentUser = action.payload;
   state.updating = false;
@@ -31,11 +34,6 @@ const clearUser = (state: DUserState) => {
   state.updating = true;
   state.currentUser = undefined;
   state.updating = false;
-  return state;
-};
-
-const toggleUserLoading = (state: DUserState, action: PayloadAction<boolean>) => {
-  state.updating = action.payload;
   return state;
 };
 
@@ -50,13 +48,12 @@ const resetUser = (state: DUserState) => {
 * Slice (reducer)
 */
 export const userSlice = createSlice({
-  name: 'USER',
   initialState,
+  name: 'USER',
   reducers: {
-    updateUserAction: manageUSer,
+    updateUserAction: manageUser,
     setUserAction: setUser,
     clearUserAction: clearUser,
-    toggleUserLoadingAction: toggleUserLoading,
     resetUserAction: resetUser
   }
 });
@@ -65,8 +62,8 @@ export const {
   updateUserAction,
   setUserAction,
   clearUserAction,
-  toggleUserLoadingAction,
   resetUserAction
 } = userSlice.actions;
 
 export default userSlice.reducer;
+

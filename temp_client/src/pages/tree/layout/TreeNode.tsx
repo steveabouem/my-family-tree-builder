@@ -43,7 +43,7 @@ export default memo(({ data }: any) => {
       <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
         {
           !!data?.profile_url?.length ? <img src={data.profile_url} /> :
-            <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
+            <Initials firstName={data.firstName} lastName={data.lastName} bg={getInitialsBG()} />
         }
         {/* <Handle
         type="source"
@@ -65,7 +65,7 @@ export default memo(({ data }: any) => {
       {showDetails ? (
         <Box display="flex" flexDirection="column" width="100%" overflow="hidden scroll" position="relative">
           <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant='body1'>{data.first_name} {data.last_name}</Typography>
+            <Typography variant='body1'>{data.firstName} {data.lastName}</Typography>
             <Typography variant='body2'>
               {data.age} <Trans>years_old</Trans>
             </Typography>

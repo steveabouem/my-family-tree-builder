@@ -8,7 +8,7 @@ import logo from "utils/assets/images/logo.jpg";
 import PageUrlsEnum from "utils/urls";
 import ThemeSelector from "../ThemeSelector";
 import { logout } from "services/auth";
-import { useZSelector } from "app/hooks";
+import { useZDispatch, useZSelector } from "app/hooks";
 import { DUserState } from "app/slices/definitions";
 import { updateUserAction } from "app/slices/user";
 
@@ -17,13 +17,15 @@ const TopNav = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const theme = useTheme();
-  const {currentUser} = useZSelector<DUserState>(state => state.user);
+  const { currentUser } = useZSelector<DUserState>(state => state.user);
+  const dispatch = useZDispatch();
+
 
   const processLogout = () => {
     logout()
       .then(() => {
-          updateUserAction({});
-          navigate(PageUrlsEnum.home);
+        dispatch(updateUserAction({}));
+        navigate(PageUrlsEnum.home);
       })
       .catch((e: unknown) => {
         console.log('ERRR login out: ', e);
@@ -49,20 +51,19 @@ const TopNav = () => {
       </Box>
       <Box display="flex" justifyContent="end" gap={2}>
         <Box>
-           <Link to={PageUrlsEnum.home} style={{color: theme.palette.secondary.dark,  textDecoration: isCurrentLocation() ? 'underline' : 'none' }} >
+          <Link to={PageUrlsEnum.home} style={{ color: theme.palette.secondary.dark, textDecoration: isCurrentLocation() ? 'underline' : 'none' }} >
             <Typography variant="button" ><Trans>Home</Trans></Typography>
           </Link>
-          
         </Box>
-        {currentUser?.id ? (
+        {currentUser?.userId ? (
           <>
             <Box>
-              <Link to={PageUrlsEnum.user.replace(':id', `${currentUser.id}`)} style={{color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
+              <Link to={PageUrlsEnum.user.replace(':id', `${currentUser.userId}`)} style={{ color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
                 <Typography variant="button">
                   <Trans>Profile</Trans>
                 </Typography>
               </Link>
-              
+
             </Box>
             <Box>
               <Link to={PageUrlsEnum.trees
@@ -74,18 +75,18 @@ const TopNav = () => {
           </>
         ) : null}
         <Box>
-          <Link to="/connect" style={{color: theme.palette.secondary.dark,  textDecoration: isCurrentLocation("connect") ? 'underline' : 'none' }}>
+          <Link to="/connect" style={{ color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("connect") ? 'underline' : 'none' }}>
             <Typography variant="button" ><Trans>Connect</Trans></Typography>
           </Link>
         </Box>
       </Box>
       <Box className="avatar-container" onClick={() => setMenuOpened(!menuOpened)} gap={2} display="flex" justifyContent="flex-between" alignItems="center">
-        {currentUser?.first_name ? (
+        {currentUser?.firstName ? (
           <>
-            <RiUser5Fill />   {currentUser.first_name}
+            <RiUser5Fill />   {currentUser.firstName}
           </>
         ) : <LiaUserSecretSolid />}
-        {menuOpened && currentUser?.first_name && <Button variant="contained" color="success" onClick={processLogout} ><Trans>logout</Trans></Button>}
+        {menuOpened && currentUser?.firstName && <Button variant="contained" color="success" onClick={processLogout} ><Trans>logout</Trans></Button>}
       </Box>
       <ThemeSelector />
     </Box>

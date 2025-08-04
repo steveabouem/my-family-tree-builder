@@ -15,6 +15,7 @@ import GenderDropdown from "../../components/common/dropdowns/gender/GenderDropd
 import BaseDropDown from "../../components/common/dropdowns/BaseDropdown";
 import { maritalStatusOptions } from "../../components/common/dropdowns/definitions";
 import { updateUserAction } from "app/slices/user";
+import { useZDispatch } from "app/hooks";
 
 const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const [attempts, setAttempts] = React.useState<number>(0);
@@ -22,6 +23,8 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const { updateModal, toggleLoading, modal, loading } = React.useContext(GlobalContext);
   const loginMutation = useLogin();
   const registerMutation = useRegister();
+  const dispatch = useZDispatch();
+
 
   const mStatus = t({
     id: "marital.status",
@@ -46,12 +49,12 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
 
   const registrationFormFields: DFormField[] = [
     {
-      fieldName: 'first_name',
+      fieldName: 'firstName',
       label: 'First Name',
       required: true
     },
     {
-      fieldName: 'last_name',
+      fieldName: 'lastName',
       label: 'Last Name',
       required: true
     },
@@ -85,8 +88,8 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   ];
 
   const registerInitialValues: RegistrationRequestPayload = {
-    first_name: '',
-    last_name: '',
+    firstName: '',
+    lastName: '',
     age: 1,
     occupation: '',
     marital_status: '',
@@ -123,8 +126,8 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
         const { payload, error } = response;
 
         if (payload.authenticated && !error) {
-          localStorage.setItem('FT', JSON.stringify(payload));
-          updateUserAction(payload);
+          localStorage.setItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`, JSON.stringify(payload));
+          dispatch(updateUserAction(payload));
           changeMode(undefined);
           navigate(PageUrlsEnum.user.replace(':id', `${payload.userId}`));
         } else {
@@ -153,9 +156,9 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   const processRegister = async (values: RegistrationRequestPayload) => {
     registerMutation.mutate(values, {
       onSuccess: (response) => {
-        const {payload, error} = response;
+        const { payload } = response;
         if (payload.authenticated) {
-          localStorage.setItem('FT', JSON.stringify(payload));
+          localStorage.setItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`, JSON.stringify(payload));
           changeMode(undefined);
 
           if (payload?.userId) {
@@ -185,11 +188,11 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
   }
 
   return (
-          <Page
-        title={<Trans>auth_page_title</Trans>}
-        subtitle={<Trans>auth_page_subtitle</Trans>}
-        loading={loading || loginMutation.isPending || registerMutation.isPending}
-      >
+    <Page
+      title={<Trans>auth_page_title</Trans>}
+      subtitle={<Trans>auth_page_subtitle</Trans>}
+      loading={loading || loginMutation.isPending || registerMutation.isPending}
+    >
       <Box>
         {mode === 'register' ? (
           <Button variant="text" color="secondary" onClick={() => changeMode('login')}>Login</Button>
@@ -203,14 +206,14 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
           onSubmit={(values: LoginRequestPayload | RegistrationRequestPayload) => proceedToFormSubmission(values)}
         >
           {({ submitForm, errors, setFieldValue, values }) => mode === 'login' ?
-            <FormFieldsGenerator 
-              size="med" 
-              fields={loginFormFields} 
+            <FormFieldsGenerator
+              size="med"
+              fields={loginFormFields}
               handleSubmit={() => { }}
               locked={loginMutation.isPending}
             />
             :
-            <FormFieldsGenerator 
+            <FormFieldsGenerator
               size="med"
               locked={registerMutation.isPending}
               fields={[

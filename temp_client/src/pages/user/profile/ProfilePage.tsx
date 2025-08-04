@@ -27,7 +27,7 @@ const UserProfilePage = (): JSX.Element => {
   const navigate = useNavigate();
   const theme = useTheme();
   const getfamilyTrees = useCallback(async (): Promise<any> => {
-    const userId = currentUser?.id;
+    const userId = currentUser?.userId;
 
     if (userId && userId === Number(id)) {
       const families = await getAllForUser(userId)
@@ -89,7 +89,7 @@ const UserProfilePage = (): JSX.Element => {
   }
 
   return currentUser ? (
-    <Page subtitle={<Trans>profile_page_subtitle</Trans>} title={<Trans>profile_page_title {currentUser?.first_name || ''}</Trans>} bg={img1}>
+    <Page subtitle={<Trans>profile_page_subtitle</Trans>} title={<Trans>profile_page_title {currentUser?.firstName || ''}</Trans>} bg={img1}>
       <Box display="flex" justifyContent="space-between">
         <UserCredentials handleSubmit={handlePasswordChange} />
         <Paper style={{ display: 'flex', flexDirection: 'column', flex: '0 1 47%', padding: '1rem .5rem' }}>

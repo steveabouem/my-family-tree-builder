@@ -3,11 +3,15 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Sessions', {
-      sid: {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
+      },
+       sid: {
+        allowNull: false,
+        type: Sequelize.STRING
       },
       userId: {
         type: Sequelize.INTEGER

@@ -30,8 +30,8 @@ export interface APILoginResponse {
 export interface FamilyMember {
     id?: number;
     node_id: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     dob: string;
     dod?: string;
@@ -88,8 +88,8 @@ export interface FamilyTreeUpdateRequest {
 // Shared User Types
 export interface User {
     id?: number;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password?: string;
     dob: string;
@@ -128,11 +128,10 @@ export interface PasswordChangeRequest {
     newPassword: string;
 }
 
-// Shared User Types
 export interface User {
-    id?: number;
-    first_name: string;
-    last_name: string;
+    userId?: number
+    firstName: string;
+    lastName: string;
     email: string;
     password?: string;
     dob: string;
@@ -166,8 +165,8 @@ export interface LoginRequest {
 }
 
 export interface RegistrationRequestPayload {
-    first_name: string,
-    last_name: string,
+    firstName: string,
+    lastName: string,
     age: number,
     occupation: string,
     marital_status: string,
@@ -236,8 +235,8 @@ export interface APIAdminRegistrationFields { //registration form fields
 }
 
 export interface APIUserSimplifiedDTO {
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     email: string;
     password: string;
     tasks: string;
@@ -247,8 +246,8 @@ export interface APIUserSimplifiedDTO {
 }
 
 export interface APIUserDTO {
-    first_name: string,
-    last_name: string,
+    firstName: string,
+    lastName: string,
     dob: string,
     occupation: string,
     id: number;
@@ -327,9 +326,9 @@ export interface APIFamilyMemberDAO {
     dob: string;
     node_id: string;
     email: string;
-    first_name: string;
+    firstName: string;
     gender: number; //1 || 2
-    last_name: string;
+    lastName: string;
     marital_status: string;
     occupation: string;
     dod?: string;
@@ -357,10 +356,10 @@ export interface APIFamilyMemberDTO {
     created_by: number;
     description: string;
     email: string;
-    first_name: string;
+    firstName: string;
     gender: number; //1 || 2
     id: number;
-    last_name: string;
+    lastName: string;
     marital_status: string;
     occupation: string;
     parent_1: number;
@@ -374,8 +373,8 @@ export interface APIFamilyMemberDTO {
 
 export interface APIFamilyTreeNodeDTO {
     age: number;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     marital_status: string;
     description?: string;
     email?: string;
@@ -426,8 +425,8 @@ export interface APISession {
 export interface UserRegistrationData {
     email: string;
     password: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     assigned_ips: string[];
     created_at: any;
 }
@@ -548,8 +547,8 @@ export interface DUserRelatedFamily {
 // #region auth
 export interface DUserDTO {
     userId?: number;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
     age: number;
     occupation: string;
     partner?: number;
@@ -612,9 +611,9 @@ export interface DFamilyMemberDTO {
     // Zogh attributes
     dob: string;
     email: string;
-    first_name: string;
+    firstName: string;
     gender: number; //1 || 2
-    last_name: string;
+    lastName: string;
     marital_status: string;
     occupation: string;
     dod?: string;
@@ -642,9 +641,9 @@ export interface DReactFlowNode {
     description: string;
     dob: string;
     email: string;
-    first_name: string;
+    firstName: string;
     gender: number;
-    last_name: string;
+    lastName: string;
     marital_status: string;
     node_id: string;
     occupation: string;

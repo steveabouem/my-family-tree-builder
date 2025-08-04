@@ -1,5 +1,5 @@
-import FamilyTreeContext from "contexts/creators/familyTree";
 import React from "react";
+import FamilyTreeContext from "contexts/creators/familyTree";
 import { useNavigate } from "react-router";
 import {useLocation} from "react-router"
 import {getCurrent} from "services/session";
@@ -16,7 +16,7 @@ const useSessionValidation = (): void => {
     }
 
     if (localStorage.length) {
-      const currentSession = JSON.parse(localStorage.getItem('FT') || '{}');
+      const currentSession = JSON.parse(localStorage.getItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`) || '{}');
       if (currentSession?.sessionId) {
         getCurrent(currentSession.sessionId)
           .then(({data} ) => {
