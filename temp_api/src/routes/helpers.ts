@@ -3,8 +3,7 @@ import logger from "../utils/logger";
 import { ServiceResponseWithPayload } from "../services/types";
 import { APISessionUser } from "../services/types";
 
-const SESSION_INIT_ACTIONS = ['login', 'register'];
-const SESSION_UPDATE_ACTIONS = ['updateProfile', 'changePassword'];
+const SESSION_UPDATE_ACTIONS = ['updateProfile', 'changePassword', 'login', 'register'];
 
 export const sendRouteHandlerResponse = <RequestPayload, ResponseType>(
   requestPayload: RequestPayload,
@@ -17,19 +16,20 @@ export const sendRouteHandlerResponse = <RequestPayload, ResponseType>(
 
   action(requestPayload)
     .then((data: ServiceResponseWithPayload<ResponseType>) => {
+      const returnData = {...data};
       logger.info('Call successful', { actionName, data });
       
       if (request && data.payload) {
-        const shouldInitSession = SESSION_INIT_ACTIONS.includes(actionName);
-        const shouldUpdateSession = SESSION_UPDATE_ACTIONS.includes(actionName);
+        const shouldUpdateSession = SESSION_UPDATE_ACTIONS.includes(actionName.toLowerCase());
         
-        if (shouldInitSession || shouldUpdateSession) {
-          manageSessionData(request, data.payload, shouldInitSession, actionName);
+        if (shouldUpdateSession) {
+          const sessionId = generateSessionId(request, data.payload, actionName);
+          returnData.sessionId = sessionId;
         }
       }
       
       response.status(data.code);
-      response.json(data);
+      response.json(returnData);
     })
     .catch((e: unknown) => {
       logger.error(`${actionName}: failed operation`, e);
@@ -50,59 +50,36 @@ export const sendRouteHandlerResponse = <RequestPayload, ResponseType>(
  * @param shouldInit - Whether to initialize a new session
  * @param actionName - Name of the action being performed
  */
-const manageSessionData = (
+const generateSessionId = (
   req: Request, 
   details: any, 
-  shouldInit: boolean, 
   actionName: string
-): void => {
+): string | undefined => {
   try {
     if (!req.session) {
       logger.warn('No session available for session management', { actionName });
-      return;
+      return undefined;
     }
 
-    logger.info('Managing session data', { 
-      actionName, 
-      shouldInit, 
-      hasExistingSession: !!req.session.details 
-    });
-
-    if (shouldInit) {
-      logger.info('Crating session')
-      req.session.regenerate((err) => {
-        if (err) {
-          logger.error('Failed to regenerate session', { actionName, error: err });
-          return;
-        }
-        
-        req.session.details = details;
-        req.session.sessionId = req.sessionID;
-        
-        logger.info('Session initialized successfully', { 
-          actionName, 
-          sessionId: req.sessionID 
-        });
-      });
-    } else {
-      logger.info('Updating session')
-      req.session.details = details;
-      req.session.sessionId = req.sessionID;
+    req.session.details = details;
+    req.session.sessionId = req.sessionID;
+    req.session.save((err) => {
+      if (err) {
+        logger.error('Failed to save session', { actionName, error: err });
+        return;
+      }
       
-      req.session.save((err) => {
-        if (err) {
-          logger.error('Failed to save session', { actionName, error: err });
-          return;
-        }
-        
-        logger.info('Session updated successfully', { 
-          actionName, 
-          sessionId: req.sessionID 
-        });
+      logger.info('Session updated successfully', { 
+        actionName, 
+        sessionId: req.sessionID 
       });
-    }
+    });
+    
+    return req.session?.sessionId || '';
+
   } catch (error) {
     logger.error('Session management failed', { actionName, error });
+    return undefined;
   }
 };
 

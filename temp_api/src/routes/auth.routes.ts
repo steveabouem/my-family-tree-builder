@@ -7,13 +7,12 @@ import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequ
 const router = Router();
 
 router.post('/register', (req: Request, res: Response) => {
-  console.log('###############SESSIONS!', req.session)
-  sendRouteHandlerResponse<any, APIRegistrationResponse | null>(req.body, register, res, 'Register');
+  sendRouteHandlerResponse<any, APIRegistrationResponse | null>(req.body, register, res, 'Register', req);
 });
 
 router.get('/:id', (req: Request<{ id: string }, {}, {}, {}>, res: Response) => {
   const id = parseInt(req.params.id);
-  sendRouteHandlerResponse<number, APIRegistrationResponse | null>(id, getUserById, res, 'Register');
+  sendRouteHandlerResponse<number, APIRegistrationResponse | null>(id, getUserById, res, 'Get user');
 });
 
 router.post('/login', (req: Request<{}, {}, LoginRequestPayload, {}>, res: Response) => {

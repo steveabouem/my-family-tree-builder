@@ -4,8 +4,7 @@ import { DChangePasswordValues } from "../../pages/user/definitions";
 import { APILoginResponse, APIRequestPayload, LoginRequestPayload } from "../../../../shared";
 import { baseUrl } from "../index";
 
-const handleLogin = async (values: Partial<DUserDTO>): Promise<APIRequestPayload<APILoginResponse>> => {
-  console.log({ baseUrl });
+const handleLogin = async (values: LoginRequestPayload): Promise<APIRequestPayload<APILoginResponse>> => {
   const response = await fetch(`${baseUrl}/auth/login`, {
     method: 'POST',
     headers: {
@@ -21,7 +20,7 @@ const handleLogin = async (values: Partial<DUserDTO>): Promise<APIRequestPayload
   return response.json();
 };
 
-const registerAPI = async (values: Partial<DUserDTO>): Promise<any> => {
+const handleRegister = async (values: Partial<DUserDTO>): Promise<any> => {
   const response = await fetch(`${baseUrl}/auth/register`, {
     method: 'POST',
     headers: {
@@ -37,7 +36,7 @@ const registerAPI = async (values: Partial<DUserDTO>): Promise<any> => {
   return response.json();
 };
 
-const changePasswordAPI = async (values: DChangePasswordValues): Promise<any> => {
+const handlePasswordChange = async (values: DChangePasswordValues): Promise<any> => {
   const response = await fetch(`${baseUrl}/auth/password/change`, {
     method: 'POST',
     headers: {
@@ -53,7 +52,7 @@ const changePasswordAPI = async (values: DChangePasswordValues): Promise<any> =>
   return response.json();
 };
 
-const logoutAPI = async (): Promise<void> => {
+const handleLogout = async (): Promise<void> => {
   const response = await fetch(`${baseUrl}/auth/logout`, {
     method: 'POST',
     headers: {
@@ -93,7 +92,7 @@ export const useRegister = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: registerAPI,
+    mutationFn: handleRegister,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       queryClient.invalidateQueries({ queryKey: ['session'] });
@@ -112,7 +111,7 @@ export const useChangePassword = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: changePasswordAPI,
+    mutationFn: handlePasswordChange,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       queryClient.invalidateQueries({ queryKey: ['session'] });
@@ -127,10 +126,9 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: logoutAPI,
+    mutationFn: handleLogout,
     onSuccess: () => {
       queryClient.clear();
-      
       queryClient.removeQueries({ queryKey: ['user'] });
       queryClient.removeQueries({ queryKey: ['session'] });
     },
@@ -146,8 +144,8 @@ export const validateRegistrationFields = (values: DUserDTO): boolean => {
 };
 
 export {
-  handleLogin as loginAPI,
-  registerAPI,
-  changePasswordAPI,
-  logoutAPI
+  handleLogin,
+  handleRegister,
+  handlePasswordChange,
+  handleLogout
 };

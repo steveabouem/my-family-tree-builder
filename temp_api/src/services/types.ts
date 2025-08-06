@@ -182,9 +182,14 @@ export interface PasswordChangeRequest {
     newPassword: string;
 }
 
+export interface APIGetSessionResponse {
+    active: boolean;
+}
+
 export interface APIRegistrationResponse {
     authenticated: boolean;
     email: string;
+    sessionId: string | null;
     userId?: number;
     message?: string;
 }
@@ -539,62 +544,62 @@ export interface MappedFamilyMembers {
 }
 
 export interface ChangePasswordRequestPayload {
-  email: string;
-  password: string;
-  newPassword: string;
-  repeatNewPassword: string;
-  id: number;
+    email: string;
+    password: string;
+    newPassword: string;
+    repeatNewPassword: string;
+    id: number;
 };// Common utility types and enums
 export enum Gender {
-  Male = 1,
-  Female = 2
+    Male = 1,
+    Female = 2
 }
 
 export enum MaritalStatus {
-  Single = 'single',
-  Married = 'married',
-  Divorced = 'divorced',
-  Widowed = 'widowed',
-  Separated = 'separated'
+    Single = 'single',
+    Married = 'married',
+    Divorced = 'divorced',
+    Widowed = 'widowed',
+    Separated = 'separated'
 }
 
 export interface ApiResponse<T = any> {
-  error: boolean;
-  code: number;
-  message?: string;
-  payload: T;
-  sessionId?: string;
+    error: boolean;
+    code: number;
+    message?: string;
+    payload: T;
+    sessionId?: string;
 }
 
 export interface PaginationParams {
-  page?: number;
-  limit?: number;
-  offset?: number;
+    page?: number;
+    limit?: number;
+    offset?: number;
 }
 
 export interface PaginatedResponse<T> extends ApiResponse<T[]> {
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+    pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
 }
 
 export interface ValidationError {
-  field: string;
-  message: string;
-  value?: any;
+    field: string;
+    message: string;
+    value?: any;
 }
 
 export interface ValidationResult {
-  isValid: boolean;
-  errors: ValidationError[];
+    isValid: boolean;
+    errors: ValidationError[];
 }
 
 export enum KinshipEnum {
-  'sibling' = 'sibling',
-  'parent' = 'parent',
-  'spouse' = 'spouse',
-  'child' = 'child'
+    'sibling' = 'sibling',
+    'parent' = 'parent',
+    'spouse' = 'spouse',
+    'child' = 'child'
 } 

@@ -6,14 +6,9 @@ import userHandler from './src/routes/user.routes';
 import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';
 import sessionHandler from './src/routes/session.routes';
-// import projectHandler from './src/routes/project.routes';
-// import teamHandler from './src/routes/team.routes';
-import { APISessionUser } from './src/services/types';
 import { isUserAuthenticated } from './src/routes/helpers';
-import logger from '@/utils/logger';
 
 declare module "express-session" {
-  // see https://akoskm.com/how-to-use-express-session-with-custom-sessiondata-typescript
   interface SessionData extends Session {
     details: any, // TODO: reinstate line below
     // details: Partial<APISessionUser>,
@@ -31,19 +26,32 @@ const options = {
   password: process.env.DB_PWD,
   database: process.env.DB,
   checkExpirationInterval: 30000,
+  // Convert timestamps to MySQL datetime format
+  clearExpired: true,
+  // Ensure proper datetime format for MySQL
+  createDatabaseTable: false,
+  // Schema matches the migration
   schema: {
-		tableName: 'Sessions',
-		columnNames: {
-			  session_id: 'sid',
-        expires: 'expires',
-        data: 'data'
-		}
-	}
+    tableName: 'Sessions',
+    columnNames: {
+      session_id: 'sid',
+      data: 'data'
+    }
+  }
 };
 
 const sessionStore = new MySQLStore(options);
-sessionStore.onReady().catch((error: any) => {
-  console.log('##################FAILED', error);
+
+// Handle session store initialization
+sessionStore.onReady().then(() => {
+  console.log('Session store initialized successfully');
+}).catch((error: any) => {
+  console.error('Session store initialization failed:', error);
+});
+
+// Handle session store errors
+sessionStore.on('error', (error: any) => {
+  console.error('Session store error:', error);
 });
 /**
  MIDDLEWARES
@@ -61,12 +69,15 @@ const sessionConfig = {
   secret: `${process.env.JWT_KEY}`,
   resave: false,
   saveUninitialized: true,
+  createDatabaseTable: false,
   cookie: {
     sameSite: 'none' as const,
     secure: false, //TODO: change to true for PROD
-    maxAge: 300000,
+    maxAge: 24000 * 60 * 60,
   },
   store: sessionStore,
+  name: 'sessionId',
+  rolling: true,
 } as any;
 
 app.use(session(sessionConfig) as any);
@@ -74,26 +85,27 @@ app.use(session(sessionConfig) as any);
 app.use((req, res, next) => {
   const publicUrls = ['/api/auth/login', '/api/auth/logout', '/api/auth/register'];
   const userAuthenticated = isUserAuthenticated(req);
-
-  if (userAuthenticated || publicUrls.includes(req.originalUrl)) {
-    next();
-  } else {
-    res.status(403);
-    res.json({
-      error: true,
-      code: 403,
-      message: 'Unauthenticated',
-      payload: null
-    });
-  }
+  
+  // if (userAuthenticated || publicUrls.includes(req.originalUrl)) {
+  //   next();
+  // } else {
+  //   res.status(403);
+  //   res.json({
+  //     error: true,
+  //     code: 403,
+  //     message: 'Unauthenticated',
+  //     payload: null
+  //   });
+  // }
+  next();
 });
 app.use('/api/users', userHandler);
-// app.use('/api/sessions', sessionHandler);
+app.use('/api/sessions', sessionHandler);
 app.use('/api/auth', authHandler);
 app.use('/api/trees', familyTreeHandler);
 /** END */
 
-const port = 4000;
+const port = process.env.PORT_DEV;
 try {
   app.listen(port, () => console.log(`Server running on port ${port}. .PLEASE CHECK TODOS/TOFIX`));
 } catch (e) {

@@ -1,20 +1,20 @@
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
+import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload } from "./types";
+import { ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import { Op } from "sequelize";
 import { createUser, updatePassword } from "./user";
 import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
 import User from "../models/User";
-import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload, ServiceResponseWithPayload } from "./types";
 
-//#region register
 export const register = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
   const ip = userData.ip;
   const formattedValues = { ...userData, assigned_ips: [ip], created_at: dayjs() };
   let response: ServiceResponseWithPayload<APIRegistrationResponse | null> = {
     error: true,
     code: 500,
-    payload: { authenticated: false, email: '', userId: 0, }
+    payload: { authenticated: false, email: '', userId: 0, sessionId: null}
   };
 
   const duplicate = await extractSingleDataValuesFrom(User, {where: {email: {[Op.eq]: userData.email}}});
@@ -36,23 +36,20 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
 
   return userResponse;
 };
-//#endregion
 
-//#region login
 export const login = async ({ email, password }: LoginRequestPayload): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
   const payloadData = { authenticated: false, email: '', userId: 0 };
   const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData(payloadData);
 
   try {
     const currentUser = await User.findOne({ where: { email: { [Op.eq]: email } } })
+
     if (!currentUser) {
-      logger.info('Logging in user ', {currentUser})
       response.error = true;
       response.message = 'Unable to find user';
       logger.error('! login ! User not found');
       return response;
     }
-
     const passwordIsValid = bcrypt.compareSync(password, currentUser.password);
     if (passwordIsValid) {
       response.error = false;
@@ -77,9 +74,7 @@ export const login = async ({ email, password }: LoginRequestPayload): Promise<S
   }
   return response;
 };
-//#endregion
 
-//#region logout
 export const logout = async (): Promise<ServiceResponseWithPayload<APILogoutResponse>> => {
   const response: ServiceResponseWithPayload<APILogoutResponse> = generateResponseData({
     authenticated: false, email: ''
@@ -87,9 +82,7 @@ export const logout = async (): Promise<ServiceResponseWithPayload<APILogoutResp
 
   return response;
 };
-//#endregion
 
-//#region changePassword
 export const changePassword = async (passwordData: PasswordChangeRequestPayload): Promise<ServiceResponseWithPayload<APILoginResponse>> => {
   const response: ServiceResponseWithPayload<APILoginResponse> = generateResponseData({ authenticated: false });
   try {
@@ -135,4 +128,3 @@ export const changePassword = async (passwordData: PasswordChangeRequestPayload)
   }
   return response;
 };
-//#endregion

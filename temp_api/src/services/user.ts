@@ -11,6 +11,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
   const hashedPassword = bcrypt.hashSync(userData.password, addSeasoning());
   const defaultUserRole = await Role.findOne({ where: { name: 'user' } });
   const payloadData = { authenticated: false, email: '', userId: 0 };
+  // @ts-ignore
   const response: ServiceResponseWithPayload<APIRegistrationResponse | null> = generateResponseData(payloadData);
 
   if (!defaultUserRole) {
@@ -40,7 +41,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
       await newUser.save();
       response.code = 200;
       response.error = false;
-      response.payload = { authenticated: true, userId: newUser.id, email: newUser.email };
+      response.payload = { authenticated: true, userId: newUser.id, email: newUser.email,sessionId: null };
 
       return response;
     } else {
@@ -52,7 +53,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
 }
 
 export const getUserById = async (id: number): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
-  const response: ServiceResponseWithPayload<APIRegistrationResponse | null> = generateResponseData({ authenticated: false, email: '', userId: 0});
+  const response: ServiceResponseWithPayload<APIRegistrationResponse | null> = generateResponseData({ authenticated: false, email: '', userId: 0, sessionId: null});
 
   try {
     const user = await User.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
@@ -61,7 +62,8 @@ export const getUserById = async (id: number): Promise<ServiceResponseWithPayloa
       response.payload = {
         authenticated: true,
         email: user?.email,
-        userId: user.id
+        userId: user.id,
+        sessionId: ''
       }
     }
   
