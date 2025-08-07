@@ -80,7 +80,8 @@ const GenealogyContainer: React.FC = () => {
 
       return acc;
     }, {});
-    return { members: mappedMembers, userId: currentUser?.id || 0, treeName: '' };
+    // @ts-ignore
+    return { data: {anchor: v.anchorNode, members: Object.values(mappedMembers), userId: currentUser?.id || 0, treeName: '' }};
   }
   function cleanUpValuesPrefixes(indicator: string, valuesObject: any): DFamilyMemberDTO {
     const formatted: DFamilyMemberDTO = {
@@ -88,9 +89,10 @@ const GenealogyContainer: React.FC = () => {
       dod: valuesObject?.[`${indicator}_dod`] || '',
       node_id: valuesObject?.[`${indicator}_node_id`] || '',
       email: valuesObject?.[`${indicator}_email`] || '',
-      firstName: valuesObject?.[`${indicator}_firstName`] || '',
+      // @ts-ignore
+      first_name: valuesObject?.[`${indicator}_firstName`] || '',
       gender: valuesObject?.[`${indicator}_gender`] || '',
-      lastName: valuesObject?.[`${indicator}_lastName`] || '',
+      last_name: valuesObject?.[`${indicator}_lastName`] || '',
       marital_status: valuesObject?.[`${indicator}_marital_status`] || '',
       occupation: valuesObject?.[`${indicator}_occupation`] || '',
       parents: valuesObject?.[`${indicator}_parents`] || '',

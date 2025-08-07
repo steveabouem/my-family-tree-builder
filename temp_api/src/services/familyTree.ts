@@ -52,15 +52,15 @@ export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPa
 export const positionFamilyMembers = async (members: FamilyMember[], anchorNodeId: string): Promise<APIFamilyMemberRecord[]> => {
   const membersWithCoords: APIFamilyMemberRecord[] = [];
   const anchor = members.find(m => m.dataValues.node_id === anchorNodeId);
-
+logger.info('FOUND ANCHOR ', {anchor})
   // go through all the anchor and its relative, and update the positions based on the anchor's position. make sure to use existing position if already available
   if (anchor) {
     // position every one of the anchor's relatives
     const position = JSON.parse(anchor?.dataValues?.position || '{ "x": 0, "y": 0 }');
-    const childrenNodeIds: string[] = JSON.parse(anchor?.dataValues?.children || '[]');
-    const siblingsNodeIds: string[] = JSON.parse(anchor?.dataValues?.siblings || '[]');
-    const spousesNodeIds: string[] = JSON.parse(anchor?.dataValues?.spouses || '[]');
-    const parentsNodeIds: string[] = JSON.parse(anchor?.dataValues?.parents || '[]');
+    const childrenNodeIds: string[] = JSON.parse(anchor?.dataValues?.children?.length ? anchor?.dataValues?.children : '[]');
+    const siblingsNodeIds: string[] = JSON.parse(anchor?.dataValues?.siblings?.length ? anchor?.dataValues?.siblings : '[]');
+    const spousesNodeIds: string[] = JSON.parse(anchor?.dataValues?.spouses?.length ? anchor?.dataValues?.spouses : '[]');
+    const parentsNodeIds: string[] = JSON.parse(anchor?.dataValues?.parents?.length ? anchor?.dataValues?.parents : '[]');
     const childrenList = await bulkUpdateRecordsPosition(childrenNodeIds, members, position, KinshipEnum.child, anchorNodeId);
     const siblingsList = await bulkUpdateRecordsPosition(siblingsNodeIds, members, position, KinshipEnum.sibling, anchorNodeId);
     const parentsList = await bulkUpdateRecordsPosition(parentsNodeIds, members, position, KinshipEnum.parent, anchorNodeId);
@@ -117,7 +117,7 @@ export const createTree = async (createData: ManageTreeRequestPayload): ManageTr
 
     if (currentUser) {
       const membersRecords = await generateTreeMembersRecords(data.members, userId);
-
+      logger.info('RETURNED MEMBER RECORDS', { membersRecords });
       if (membersRecords) {
         const withCoords = await positionFamilyMembers(Object.values(membersRecords), data.anchor);
         logger.info('Members After positionning', { withCoords });
@@ -353,7 +353,7 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
 
 //#region generateTreeMembersRecords
 /**
- * ? Goes through all the family members submintted, creates records for each
+ * ? Goes through all the family members submitted, creates records for each
  * ? is ignored if any of those memeber already has a record since this is part of the initial create action
  * @param members 
  * @param userId 
@@ -362,7 +362,7 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
   const today = dayjs();
   const newMemberGroup: any[] = [];
   const nodeIdList = members.map(m => m.node_id);
-  //! using the native query rather than the helper function, I need the ability to update later on 
+  //? using the native query rather than the helper function, I need the ability to update later on 
   const duplicateRecords = await FamilyMember.findAll({ where: { node_id: { [Op.in]: nodeIdList } } });
   logger.info('dupli ', { duplicateRecords, nodeIdList });
 
@@ -389,7 +389,7 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
     const newMembersMap: MappedFamilyMembers = newRecords.reduce((map: { [nodeId: string]: FamilyMember }, currentMember: any) => { //TODO: any
       return ({ ...map, [currentMember.dataValues.node_id]: currentMember });
     }, {});
-// @ts-ignore
+    // @ts-ignore
     return newMembersMap;
   } else {
     logger.error('Unable to bulk create members, no records created');
@@ -407,50 +407,55 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
  * @param relation 
  * @param anchor 
  */
-const bulkUpdateRecordsPosition = async (nodeIds: string[], membersList: FamilyMember[], initialPosition: { x: number, y: number }, relation: KinshipEnum, anchor: string): Promise<FamilyMember[]> => {
+const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: FamilyMember[], initialPosition: { x: number, y: number }, relation: KinshipEnum, anchor: string): Promise<FamilyMember[]> => {
   const result: FamilyMember[] = [];
 
-  await Promise.all(nodeIds.map(async (nodeId: string, nodeIndex: number) => {
-    logger.info('Processing member inside the promise all bulk update: ', { nodeIds, membersList, nodeId });
-    const existingRecordForRelative = membersList.find((m: FamilyMember) => m.dataValues.node_id === nodeId);
-    // const formattedDataForRelative = membersWithCoords.find((newNode: any) => newNode.node_id === nodeId);
-    let offset = { x: 0, y: 0 };
+  if (Array.isArray(nodeIds)) {
+    await Promise.all(nodeIds.map(async (nodeId: string, nodeIndex: number) => {
+      logger.info('Processing member inside the promise all bulk update: ', { nodeIds, membersList, nodeId });
+      const existingRecordForRelative = membersList.find((m: FamilyMember) => m.dataValues.node_id === nodeId);
+      // const formattedDataForRelative = membersWithCoords.find((newNode: any) => newNode.node_id === nodeId);
+      let offset = { x: 0, y: 0 };
+  
+      // calculate the offset in the graphic tree based on kinship
+      switch (relation) {
+        case KinshipEnum.child:
+          offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y + 125 }
+          break;
+        case KinshipEnum.sibling:
+          offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y }
+          break;
+        case KinshipEnum.spouse:
+          offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y };
+          break;
+        case KinshipEnum.parent:
+          offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y + 125 };
+          break;
+      }
+  
+      logger.info('Offset based on current relation ', offset);
+      // update record of current relative with the offset
+      if (existingRecordForRelative) { //previous version would check if duplicate in an array. see memberwithcoords in commented code
+        const relativeUpdated = await existingRecordForRelative.update({
+          position: JSON.stringify(offset),
+          connections: JSON.stringify([{
+            id: `${anchor}-${existingRecordForRelative.node_id}`,
+            source: anchor,
+            target: existingRecordForRelative.node_id
+          }])
+        });
+        result.push(relativeUpdated);
+      } else {
+        logger.info('ignoring current child as it is a dupe, ', { relative: nodeId });
+      }
+  
+      // add the anchor and apply the initial position (it may be an existing prop, need to check if equal then update only if !=)
+      result.push()
+    }));
+  } else {
+    logger.info('NODE IDS ARE NOT OF TYPE ARRAY ', { nodeIds, membersList });
+  }
 
-    // calculate the offset in the graphic tree based on kinship
-    switch (relation) {
-      case KinshipEnum.child:
-        offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y + 125 }
-        break;
-      case KinshipEnum.sibling:
-        offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y }
-        break;
-      case KinshipEnum.spouse:
-        offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y };
-        break;
-      case KinshipEnum.parent:
-        offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y + 125 };
-        break;
-    }
-
-    logger.info('Offset based on current relation ', offset);
-    // update record of current relative with the offset
-    if (existingRecordForRelative) { //previous version would check if duplicate in an array. see memberwithcoords in commented code
-      const relativeUpdated = await existingRecordForRelative.update({
-        position: JSON.stringify(offset),
-        connections: JSON.stringify([{
-          id: `${anchor}-${existingRecordForRelative.node_id}`,
-          source: anchor,
-          target: existingRecordForRelative.node_id
-        }])
-      });
-      result.push(relativeUpdated);
-    } else {
-      logger.info('ignoring current child as it is a dupe, ', { relative: nodeId });
-    }
-
-    // add the anchor and apply the initial position (it may be an existing prop, need to check if equal then update only if !=)
-    result.push()
-  }));
   logger.info('Result after all positions updates', result);
   return result;
 };

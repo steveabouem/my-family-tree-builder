@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { Box, Button, Paper, Typography } from "@mui/material";
 import { useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
@@ -131,7 +131,13 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
       /*
       * Add nodeId to formik values for post request payload
       */
-      setFieldValue(`${nameOfStep}_node_id`, v4());
+     const newNodeId = v4();
+
+      setFieldValue(`${nameOfStep}_node_id`, newNodeId);
+
+      if (nameOfStep === 'anchor') {
+        setFieldValue('anchorNode', newNodeId )
+      }
       dispatch(loadStepFormFieldsAction({ name: nameOfStep, fields, title: <Trans>info_on_node {nameOfStep}</Trans> }));
     }
   }
