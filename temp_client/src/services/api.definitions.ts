@@ -416,11 +416,7 @@ export interface APISessionUser {
     familyTree?: APIFamilyTreeDTO;
 }
 
-export interface APISession {
-    type: string;
-    user: APISessionUser;
-    session: any;
-}
+
 
 export interface UserRegistrationData {
     email: string;

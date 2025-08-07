@@ -31,7 +31,7 @@ const options = {
   schema: {
     tableName: 'Sessions',
     columnNames: {
-      session_id: 'sid',
+      session_id: 'id',
       expires: 'stale_time',
       data: 'data'
     }
@@ -53,7 +53,6 @@ app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
 const sessionConfig = {
   secret: `${process.env.JWT_KEY}`,
-  resave: false,
   saveUninitialized: true,
   cookie: {
     sameSite: false,
@@ -69,20 +68,22 @@ app.use((req, res, next) => {
   const publicUrls = ['/api/auth/login', '/api/auth/logout', '/api/auth/register'];
   const userAuthenticated = isUserAuthenticated(req);
   
-  if (userAuthenticated || publicUrls.includes(req.originalUrl)) {
-    next();
-  } else {
-    res.status(403);
-    res.json({ 
-      error: true, 
-      code: 403, 
-      message: 'Unauthenticated',
-      payload: null 
-    });
-  }
+  // if (userAuthenticated || publicUrls.includes(req.originalUrl)) {
+  //   next();
+  // } else {
+  //   res.status(403);
+  //   res.json({ 
+  //     error: true, 
+  //     code: 403, 
+  //     message: 'Unauthenticated',
+  //     payload: null 
+  //   });
+  // }
+
+  next();
 });
 app.use('/api/users', userHandler);
-// app.use('/api/sessions', sessionHandler);
+app.use('/api/sessions', sessionHandler);
 app.use('/api/auth', authHandler);
 app.use('/api/trees', familyTreeHandler);
 /** END */

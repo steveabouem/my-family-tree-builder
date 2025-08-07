@@ -184,6 +184,7 @@ export interface PasswordChangeRequest {
 
 export interface APIGetSessionResponse {
     active: boolean;
+    user: UserSession | null;
 }
 
 export interface APIRegistrationResponse {
@@ -438,11 +439,6 @@ export interface APISessionUser {
     familyTree?: APIFamilyTreeDTO;
 }
 
-export interface APISession {
-    type: string;
-    user: APISessionUser;
-    session: any;
-}
 
 export interface UserRegistrationData {
     email: string;

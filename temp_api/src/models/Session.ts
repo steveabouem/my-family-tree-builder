@@ -6,8 +6,7 @@ import db from "../../db";
 
 // order of InferAttributes & InferCreationAttributes is important.
 class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Session>> {
-  declare id: CreationOptional<number>;
-  declare sid: string;
+  declare id: CreationOptional<string>;
   declare data: number;
   declare stale_time: number | null;
   declare createdAt: CreationOptional<Date>;
@@ -17,13 +16,9 @@ class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Se
 Session.init(
   {
     id: {
-      type: DataTypes.INTEGER(),
+      type: DataTypes.STRING(),
       autoIncrement: true,
       primaryKey: true
-    },
-    sid: {
-      type: DataTypes.STRING(),
-      allowNull: false
     },
     stale_time: { type: DataTypes.BIGINT, allowNull: false },
     data: { type: DataTypes.JSON },

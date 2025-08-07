@@ -6,13 +6,13 @@ const { DataTypes } = require('sequelize');
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Sessions', {
-      sid: {
+      id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.STRING(255)
       },
       data: {
-        type: Sequelize.TEXT 
+        type: Sequelize.TEXT
       },
       stale_time: {
         type: DataTypes.BIGINT,

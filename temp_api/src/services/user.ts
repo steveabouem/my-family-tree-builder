@@ -37,8 +37,8 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
 
   if (fieldsValid) {
     const newUser = await User.create(formattedValues);
+    
     if (newUser) {
-      await newUser.save();
       response.code = 200;
       response.error = false;
       response.payload = { authenticated: true, userId: newUser.id, email: newUser.email,sessionId: null };

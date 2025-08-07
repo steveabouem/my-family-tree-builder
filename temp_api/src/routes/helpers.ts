@@ -71,7 +71,8 @@ const generateSessionId = (
       
       logger.info('Session updated successfully', { 
         actionName, 
-        sessionId: req.sessionID 
+        sessionId: req.sessionID ,
+        session: req.session
       });
     });
     

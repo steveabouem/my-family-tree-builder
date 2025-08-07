@@ -23,8 +23,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare password: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
-  declare leadership: number[];
-  declare teams: number[];
+  // declare leadership: number[];
+  // declare teams: number[];
 }
 
 User.init(
@@ -79,16 +79,6 @@ User.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    leadership: {
-      type: DataTypes.JSON,
-      allowNull: false,
-      defaultValue: []
-    },
-    teams: {
-      type: DataTypes.JSON,
-      allowNull: false,
-      defaultValue: []
     },
     role_id: {
       type: DataTypes.INTEGER,

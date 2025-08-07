@@ -20,7 +20,10 @@ router.post('/login', (req: Request<{}, {}, LoginRequestPayload, {}>, res: Respo
 });
 
 router.post('/logout', (req: Request<{}, {}, {}, {}>, res: Response) => {
-  sendRouteHandlerResponse<void, APILogoutResponse>(undefined, logout, res, 'Login');
+  req.session.destroy((e: unknown) => {
+    res.status(500);
+    res.send('Bye!');
+  });
 });
 
 router.post('/password/change', (req: Request<{}, {}, PasswordChangeRequestPayload, {}>, res: Response) => {
