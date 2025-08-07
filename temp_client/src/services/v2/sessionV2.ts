@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { baseUrl } from "../index";
 
-// API functions using fetch instead of axios
-const getCurrentSessionAPI = async (id: number) => {
-  const response = await fetch(`${baseUrl}/sessions?id=${id}`);
+// Fetching functions
+const getCurrentSession = async (sid: string | null) => {
+  const response = await fetch(`${baseUrl}/sessions?id=${sid}`);
   
   if (!response.ok) {
     throw new Error(`Failed to get current session: ${response.statusText}`);
@@ -12,7 +12,7 @@ const getCurrentSessionAPI = async (id: number) => {
   return response.json();
 };
 
-const updateSessionAPI = async (user: any) => {
+const updateSession = async (user: any) => {
   const response = await fetch(`${baseUrl}/sessions/set-data`, {
     method: 'POST',
     headers: {
@@ -29,11 +29,11 @@ const updateSessionAPI = async (user: any) => {
 };
 
 // React Query hooks
-export const useGetCurrentSession = (id: number, enabled: boolean = true) => {
+export const useGetCurrentSession = (id: string)  => {
+
   return useQuery({
-    queryKey: ['session', 'current', id],
-    queryFn: () => getCurrentSessionAPI(id),
-    enabled: enabled && !!id,
+    queryKey: ['sessions', id],
+    queryFn: () => getCurrentSession(id),
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };
@@ -42,7 +42,7 @@ export const useUpdateSession = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: updateSessionAPI,
+    mutationFn: updateSession,
     onSuccess: (data, variables) => {
       // Invalidate and refetch session data
       queryClient.invalidateQueries({ queryKey: ['session'] });
@@ -54,8 +54,7 @@ export const useUpdateSession = () => {
   });
 };
 
-// Export the API functions for direct use if needed
 export {
-  getCurrentSessionAPI,
-  updateSessionAPI
+  getCurrentSession,
+  updateSession,
 }; 

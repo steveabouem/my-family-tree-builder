@@ -1,4 +1,4 @@
-import { DUserState } from "../definitions";
+import { DUserState, LoggedInUser } from "../definitions";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "services/api.definitions";
 
@@ -14,16 +14,14 @@ const initialState: DUserState = {
 /*
 * mutators
 */
-const manageUser = (state: DUserState, action: PayloadAction<Partial<User>>) => {
-  console.log('store fn ', action);
-  
+const manageUser = (state: DUserState, action: PayloadAction<LoggedInUser>) => {
   state.updating = true;
   state.currentUser = { ...state.currentUser, ...action.payload };
   state.updating = false;
   return state;
 };
 
-const setUser = (state: DUserState, action: PayloadAction<User>) => {
+const setUser = (state: DUserState, action: PayloadAction<LoggedInUser>) => {
   state.updating = true;
   state.currentUser = action.payload;
   state.updating = false;

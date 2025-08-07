@@ -24,7 +24,8 @@ export const sendRouteHandlerResponse = <RequestPayload, ResponseType>(
         
         if (shouldUpdateSession) {
           const sessionId = generateSessionId(request, data.payload, actionName);
-          returnData.sessionId = sessionId;
+          // @ts-ignore TODO: update this
+          returnData.payload.sessionId = sessionId;
         }
       }
       

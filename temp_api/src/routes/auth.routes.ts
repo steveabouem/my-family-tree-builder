@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
-import { changePassword, login, logout, register } from "../services/auth";
+import { changePassword, login, register } from "../services/auth";
 import { getUserById } from "../services/user";
 import { sendRouteHandlerResponse } from "./helpers";
-import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload } from "../services/types"
+import { APILoginResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload } from "../services/types"
 
 const router = Router();
 
@@ -20,10 +20,15 @@ router.post('/login', (req: Request<{}, {}, LoginRequestPayload, {}>, res: Respo
 });
 
 router.post('/logout', (req: Request<{}, {}, {}, {}>, res: Response) => {
-  req.session.destroy((e: unknown) => {
+  try {
+    req.session.destroy((e: unknown) => {
+      res.status(200);
+      res.json('Bye!');
+    });
+  } catch(e: unknown) {
     res.status(500);
-    res.send('Bye!');
-  });
+    res.json('failed');
+  }
 });
 
 router.post('/password/change', (req: Request<{}, {}, PasswordChangeRequestPayload, {}>, res: Response) => {

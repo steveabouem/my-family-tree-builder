@@ -1,43 +1,33 @@
-import React from "react";
-import FamilyTreeContext from "contexts/creators/familyTree";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import {useLocation} from "react-router"
-import {getCurrent} from "services/session";
 import PageUrlsEnum from "utils/urls";
+import { useGetCurrentSession } from "services/v2";
+import { useZDispatch, useZSelector} from "app/hooks";
+import { updateUserAction } from "app/slices/user";
+import { DUserState } from "app/slices/definitions";
 
 const useSessionValidation = (): void => {
+  // const [evaluating, setEvaluating] = useState(true);
+  const dispatch = useZDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
-  const {updateUser} = React.useContext(FamilyTreeContext);
+  const {currentUser} = useZSelector<DUserState>(state => state.user)
+  const sessionData = localStorage?.getItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`);
+  const storedSession = JSON.parse(sessionData || '{}');
+  const {data, error} = useGetCurrentSession(storedSession.sessionId || 'x');
   
-  React.useEffect(() => {
-    if (location.pathname === '/') {
-      return;
-    }
-
-    if (localStorage.length) {
-      const currentSession = JSON.parse(localStorage.getItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`) || '{}');
-      if (currentSession?.sessionId) {
-        getCurrent(currentSession.sessionId)
-          .then(({data} ) => {
-            if (data.error) {
-              navigate(PageUrlsEnum.auth);
-            } else {
-              if (data?.data?.payload) {// ! <= this is hilarious. fix it.
-                const currentUser = JSON.parse(data.data.payload);
-                if (updateUser)
-                updateUser(currentUser);
-              }
-            }
-          })
-          .catch((e: unknown) => {
-            console.log('Error getting user: ', e);
-          });
-      }
+  useEffect(() => {
+    if (data?.payload?.active) {
+      dispatch(updateUserAction(data.payload.user));
     } else {
-      navigate(PageUrlsEnum.auth);
+      
     }
-  }, []);
+  }, [data]);
+
+  useEffect(() => {
+    if (!currentUser?.authenticated) {
+      navigate(PageUrlsEnum.home);
+    }
+  }, [currentUser])
 }
 
 export default useSessionValidation;

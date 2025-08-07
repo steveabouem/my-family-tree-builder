@@ -6,7 +6,6 @@ import userHandler from './src/routes/user.routes';
 import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';
 import sessionHandler from './src/routes/session.routes';
-import { APISessionUser } from './src/services/types';
 import { isUserAuthenticated } from './src/routes/helpers';
 
 declare module "express-session" {

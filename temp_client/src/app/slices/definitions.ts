@@ -49,5 +49,7 @@ export interface DFamilyTreeState {
 // user
 export interface DUserState {
   updating: boolean;
-  currentUser?: Partial<User>;
+  currentUser?: LoggedInUser;
 }
+
+export type LoggedInUser = Partial<User> & {authenticated?: boolean};
