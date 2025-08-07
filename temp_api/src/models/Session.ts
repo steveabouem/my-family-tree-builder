@@ -8,9 +8,8 @@ import db from "../../db";
 class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Session>> {
   declare id: CreationOptional<number>;
   declare sid: string;
-  declare userId: number;
-  declare time: number;
   declare data: number;
+  declare stale_time: number | null;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
 }
@@ -26,8 +25,7 @@ Session.init(
       type: DataTypes.STRING(),
       allowNull: false
     },
-    userId: { type: DataTypes.INTEGER },
-    time: { type: DataTypes.DATE },
+    stale_time: { type: DataTypes.BIGINT, allowNull: false },
     data: { type: DataTypes.JSON },
     createdAt: {
       type: DataTypes.DATE,
