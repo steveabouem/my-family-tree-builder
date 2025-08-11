@@ -9,12 +9,15 @@ import { populateTreeAction } from "app/slices/trees";
 import { formatTreeMemberDAOList } from "../create/genealogy/utils";
 import TreeLayout from 'pages/tree/layout/TreeLayout';
 import PageUrlsEnum from "utils/urls";
-import { getTreeById } from "services/familyTree";
+import { useGetTreeById } from "services/v2/familyTreeV2";
 
 const ViewFamilyTreeChartPage = () => {
   const dispatch = useZDispatch();
   const { list, currentFamilyTree } = useZSelector<DFamilyTreeState>(state => state.tree);
   const { id } = useParams();
+
+  // React Query hook for getting tree by ID
+  const { data: treeData, isLoading, error } = useGetTreeById(id || '', !!id && !currentFamilyTree);
 
   useEffect(() => {
     // handle reload or  params fetch
@@ -26,20 +29,24 @@ const ViewFamilyTreeChartPage = () => {
 
       currTree = membersList?.reduce((mappedNodeIds: any, member: any) => ({ ...mappedNodeIds, [member.node_id]: member }), {});
       dispatch(populateTreeAction(currTree));
-    } else {
-      if (id) {
-        getTreeById(id)
-          .then((res) => {
-            currTree = formatTreeMemberDAOList(JSON.parse(res?.data?.payload?.members || '{}'));
-            dispatch(populateTreeAction(currTree));
-
-          });
-      }
     }
   }, [list]);
 
+  // Handle tree data from React Query
+  useEffect(() => {
+    if (treeData?.payload?.members) {
+      const currTree = formatTreeMemberDAOList(JSON.parse(treeData.payload.members));
+      dispatch(populateTreeAction(currTree));
+    }
+  }, [treeData, dispatch]);
+
+
+  if (error) {
+    // return <div>Error loading tree: {error.message}</div>;
+  }
+
   return (
-    <Page subtitle="" title={`${currentFamilyTree?.name || ''}`} prevUrl={PageUrlsEnum.trees}>
+    <Page subtitle="" title={`${currentFamilyTree?.name || ''}`} prevUrl={PageUrlsEnum.trees} loading={isLoading}>
       <Box height="80vh" width="100%" position="absolute">
         <Grid2 container spacing={2} height="100%">
           <Grid2 size={4}>

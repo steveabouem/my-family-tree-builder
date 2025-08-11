@@ -86,11 +86,8 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
       .find(((key: string, index: number) => index === stepNumber));
     const nameOfStep = matchingStepNameInTree || "anchor";
     const fieldsInTree = stepTree?.[nameOfStep];
-    console.log('generate fields ', {nameOfStep, stepNumber, stepTree, treeCopy});
 
     if (fieldsInTree?.length) {
-      console.log({ fieldsInTree });
-
       dispatch(loadStepFormFieldsAction({ name: nameOfStep, fields: stepTree?.[nameOfStep] || [], title: <Trans>info_on_node {nameOfStep}</Trans> }));
       return;
     }

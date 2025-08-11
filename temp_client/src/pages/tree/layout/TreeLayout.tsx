@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect} from 'react';
+import React, { memo, useContext, useEffect } from 'react';
 import {
   Background,
   ReactFlow,
@@ -21,7 +21,7 @@ import { setStepsCountAction, changeModeAction, changeformStepAction } from 'app
 import { stepFormModes } from 'app/slices/definitions';
 
 const nodeTypes = {
-  custom: CustomNode,
+  blackbox: CustomNode,
 };
 const treeBgUrl = 'https://images.pexels.com/photos/22821246/pexels-photo-22821246/free-photo-of-plants-leaves-in-black-and-white.jpeg';
 
@@ -134,8 +134,8 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   return (
     <ReactFlow
       nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes}
-      onNodeClick={showEditModal} onNodesChange={moveNode} fitView={true}
-    onEdgesChange={generateEdge}
+      onNodeClick={showEditModal} onNodesChange={moveNode} fitView
+      onEdgesChange={generateEdge}
     >
       <Background style={{
         backgroundSize: '100% 100%',

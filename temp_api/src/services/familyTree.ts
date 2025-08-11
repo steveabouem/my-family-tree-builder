@@ -55,6 +55,7 @@ export const positionFamilyMembers = async (members: FamilyMember[], anchorNodeI
 logger.info('FOUND ANCHOR ', {anchor})
   // go through all the anchor and its relative, and update the positions based on the anchor's position. make sure to use existing position if already available
   if (anchor) {
+    logger.info('Anchor data is ', {anchor})
     // position every one of the anchor's relatives
     const position = JSON.parse(anchor?.dataValues?.position || '{ "x": 0, "y": 0 }');
     const childrenNodeIds: string[] = JSON.parse(anchor?.dataValues?.children?.length ? anchor?.dataValues?.children : '[]');
@@ -359,6 +360,7 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
  * @param userId 
  */
 const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], userId: number): Promise<{ [id: string]: FamilyMember } | null> => {
+  logger.info("START GENERATION ", members)
   const today = dayjs();
   const newMemberGroup: any[] = [];
   const nodeIdList = members.map(m => m.node_id);

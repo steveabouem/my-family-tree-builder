@@ -2,17 +2,16 @@ import React, { useState } from 'react';
 import { Box, Grid2, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
-import { AxiosResponse } from 'axios';
 import GenealogyForm from './GenealogyForm';
 import TreePlayground from './GenealogyNarrator';
-import { DApiResponse, DFamilyMemberDTO, DFamilyTreeDAO, DFamilyTreeRecord } from 'services/api.definitions';
+import {  DFamilyMemberDTO, DFamilyTreeDAO } from 'services/api.definitions';
 import { DFamilyTreeState, DStepFormState, DUserState, stepFormModes } from 'app/slices/definitions';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import { DFamilyTreeDTO } from './definitions';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import GlobalContext from 'contexts/creators/global';
 import { formatTreeMemberDAOList } from 'pages/tree/create/genealogy/utils';
-import { addMembers, createFamilyTree } from 'services/familyTree';
+import { useCreateFamilyTree, useAddMembers } from 'services/v2/familyTreeV2';
 
 const GenealogyContainer: React.FC = () => {
   const [treeCopy, setTreeCopy] = useState({});
@@ -21,6 +20,10 @@ const GenealogyContainer: React.FC = () => {
   const {currentUser} = useZSelector<DUserState>(state => state.user);
   const dispatch = useZDispatch();
   const { updateModal } = React.useContext(GlobalContext);
+
+  // React Query mutations
+  const createFamilyTreeMutation = useCreateFamilyTree();
+  const addMembersMutation = useAddMembers();
 
   /*
   * At every step, the fiel names will be prefixed by the type of kin (fatherm, mother, children etc..)
@@ -111,29 +114,48 @@ const GenealogyContainer: React.FC = () => {
 
     try {
       if (mode === stepFormModes.edit) {
-        addMembers({ ...formattedValues, treeId }).then((response: AxiosResponse<DApiResponse<{
-          payload: DFamilyTreeRecord;
-        }>, any>) => {
-          if (response.data.code === 200) {
-            const updatedListOfMembers = JSON.parse(response.data.payload.members);
-            const formattedMemberRecords = formatTreeMemberDAOList(updatedListOfMembers);
-            updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_success_modal</Trans></Typography>, type: 'success' });
-            dispatch(populateTreeAction(formattedMemberRecords));
-          } else {
-            updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_failed_modal</Trans></Typography>, type: 'error' });
+        addMembersMutation.mutate(
+          { ...formattedValues, treeId },
+          {
+            onSuccess: (response) => {
+              if (response.code === 200) {
+                const updatedListOfMembers = JSON.parse(response.payload.members);
+                const formattedMemberRecords = formatTreeMemberDAOList(updatedListOfMembers);
+                updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_success_modal</Trans></Typography>, type: 'success' });
+                dispatch(populateTreeAction(formattedMemberRecords));
+              } else {
+                updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_failed_modal</Trans></Typography>, type: 'error' });
+              }
+            },
+            onError: (error) => {
+              console.error('Failed to add members:', error);
+              updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_failed_modal</Trans></Typography>, type: 'error' });
+            }
           }
-        });
+        );
       } else {
-        createFamilyTree(formattedValues).then((response: AxiosResponse<DApiResponse<DFamilyTreeDTO>>) => {
-          if (response.data.code === 200) {
-            const formattedMemberRecords: any = formatTreeMemberDAOList(response.data.members);
-            updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
-            dispatch(populateTreeAction(formattedMemberRecords));
-            dispatch(saveTreeIdAction(response.data.id));
-          } else {
-            updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_failed_modal</Trans></Typography>, type: 'error' });
+        createFamilyTreeMutation.mutate(
+          formattedValues,
+          {
+            onSuccess: (response) => {
+              console.log('RES FROM CREATE TREE ', {response});
+              
+              if (response.code === 200) {
+                const membersMap = (response.payload.members);
+                const formattedMemberRecords: any = formatTreeMemberDAOList(membersMap);
+                updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
+                dispatch(populateTreeAction(formattedMemberRecords));
+                dispatch(saveTreeIdAction(response.payload.id));
+              } else {
+                updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_failed_modal</Trans></Typography>, type: 'error' });
+              }
+            },
+            onError: (error) => {
+              console.error('Failed to create tree:', error);
+              updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_failed_modal</Trans></Typography>, type: 'error' });
+            }
           }
-        });
+        );
       }
     } catch (e: unknown) {
       console.log('Failed to create tree', e);

@@ -14,7 +14,7 @@ import { DFamilyTreeState, DUserState } from "app/slices/definitions";
 import { EyeIcon, GroupIcon } from "utils/assets/icons";
 import { saveTreesListAction } from "app/slices/trees";
 import { submitPasswordChangeForm } from "services/auth";
-import { getAllForUser } from "services/familyTree";
+import { useGetAllForUser } from "services/v2/familyTreeV2";
 import { useZDispatch, useZSelector } from "app/hooks";
 
 
@@ -26,41 +26,37 @@ const UserProfilePage = (): JSX.Element => {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
-  const getfamilyTrees = useCallback(async (): Promise<any> => {
-    const userId = currentUser?.userId;
 
-    if (userId && userId === Number(id)) {
-      const families = await getAllForUser(userId)
-        .catch((e: unknown) => {
-          console.log('Get FAMILIES: ', e);
-        });
-
-      return families;
-    } else {
-      navigate(PageUrlsEnum.auth);
-    }
-  }, [currentUser, id]);
+  // React Query hook for getting family trees
+  const { data: familyTreesData, isLoading, error } = useGetAllForUser(
+    currentUser?.userId || 0,
+    !!currentUser?.userId && currentUser?.userId === Number(id)
+  );
 
   useEffect(() => {
-    if (currentUser?.id) {
-      getfamilyTrees()
-        .then(({ data }) => {
-          if (!data.error) {
-            dispatch(saveTreesListAction(data))
-            toggleLoading(false);
-          }
-        })
-        .catch((e: unknown) => {
-          updateModal({
-            hidden: false,
-            buttons: { confirm: true, cancel: false },
-            content: <Trans>error_modal_message</Trans>,
-            title: <Trans>error_modal_title</Trans>,
-          });
-          toggleLoading(false);
-        });
+    if (currentUser?.userId && currentUser?.userId !== Number(id)) {
+      navigate(PageUrlsEnum.auth);
     }
-  }, [currentUser]);
+  }, [currentUser, id, navigate]);
+
+  useEffect(() => {
+    if (familyTreesData && !familyTreesData.error) {
+      dispatch(saveTreesListAction(familyTreesData));
+      toggleLoading(false);
+    }
+  }, [familyTreesData, dispatch, toggleLoading]);
+
+  useEffect(() => {
+    if (error) {
+      updateModal({
+        hidden: false,
+        buttons: { confirm: true, cancel: false },
+        content: <Trans>error_modal_message</Trans>,
+        title: <Trans>error_modal_title</Trans>,
+      });
+      toggleLoading(false);
+    }
+  }, [error, updateModal, toggleLoading]);
 
   function handlePasswordChange(values: DChangePasswordValues) {
     toggleLoading(true);
@@ -86,6 +82,10 @@ const UserProfilePage = (): JSX.Element => {
           title: <Trans>operation_failure_title</Trans>,
         });
       });
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return currentUser ? (

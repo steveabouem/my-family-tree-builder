@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
 import PageUrlsEnum from "utils/urls";
 import { useGetCurrentSession } from "services/v2";
@@ -25,7 +25,7 @@ const useSessionValidation = (): void => {
 
   useEffect(() => {
     if (!currentUser?.authenticated) {
-      navigate(PageUrlsEnum.home);
+      // navigate(PageUrlsEnum.auth);
     }
   }, [currentUser])
 }

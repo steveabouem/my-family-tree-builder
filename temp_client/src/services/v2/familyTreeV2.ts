@@ -1,10 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DFormField } from "../../components/common/definitions";
-import { DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "../api.definitions";
+import { APICreateFamilyResponse, DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "../api.definitions";
 import { baseUrl } from "../index";
 
-// API functions using fetch instead of axios
-const getAllForUserAPI = async (userId: number) => {
+const getAllForUser = async (userId: number) => {
   const response = await fetch(`${baseUrl}/trees/index?member=${userId}`);
   
   if (!response.ok) {
@@ -14,7 +13,7 @@ const getAllForUserAPI = async (userId: number) => {
   return response.json();
 };
 
-const getTreeByIdAPI = async (treeId: string) => {
+const getTreeById = async (treeId: string) => {
   const response = await fetch(`${baseUrl}/trees/details?id=${treeId}`);
   
   if (!response.ok) {
@@ -24,7 +23,7 @@ const getTreeByIdAPI = async (treeId: string) => {
   return response.json();
 };
 
-const createFamilyTreeAPI = async (values: DFamilyTreeDAO) => {
+const createFamilyTree = async (values: DFamilyTreeDAO): Promise<APICreateFamilyResponse> => {
   const response = await fetch(`${baseUrl}/trees/create`, {
     method: 'POST',
     headers: {
@@ -40,7 +39,7 @@ const createFamilyTreeAPI = async (values: DFamilyTreeDAO) => {
   return response.json();
 };
 
-const getMembersAPI = async (treeId: number) => {
+const getMembers = async (treeId: number) => {
   const response = await fetch(`${baseUrl}/trees/members?id=${treeId}`);
   
   if (!response.ok) {
@@ -50,7 +49,7 @@ const getMembersAPI = async (treeId: number) => {
   return response.json();
 };
 
-const addMembersAPI = async (treeData: DFamilyTreeDAO): Promise<DApiResponse<{ payload: DFamilyTreeRecord }>> => {
+const addMembers = async (treeData: DFamilyTreeDAO): Promise<DApiResponse<{ payload: DFamilyTreeRecord }>> => {
   const response = await fetch(`${baseUrl}/trees/members`, {
     method: 'PUT',
     headers: {
@@ -66,7 +65,7 @@ const addMembersAPI = async (treeData: DFamilyTreeDAO): Promise<DApiResponse<{ p
   return response.json();
 };
 
-const getGenealogyFormFieldsForStepAPI = async (step: number): Promise<DFormField[]> => {
+const getGenealogyFormFieldsForStep = async (step: number): Promise<DFormField[]> => {
   const response = await fetch(`${baseUrl}/trees/narration-fields?step=${step}`);
   
   if (!response.ok) {
@@ -80,7 +79,7 @@ const getGenealogyFormFieldsForStepAPI = async (step: number): Promise<DFormFiel
 export const useGetAllForUser = (userId: number, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['familyTrees', 'user', userId],
-    queryFn: () => getAllForUserAPI(userId),
+    queryFn: () => getAllForUser(userId),
     enabled: enabled && !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -89,7 +88,7 @@ export const useGetAllForUser = (userId: number, enabled: boolean = true) => {
 export const useGetTreeById = (treeId: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['familyTree', 'details', treeId],
-    queryFn: () => getTreeByIdAPI(treeId),
+    queryFn: () => getTreeById(treeId),
     enabled: enabled && !!treeId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -99,7 +98,7 @@ export const useCreateFamilyTree = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: createFamilyTreeAPI,
+    mutationFn: createFamilyTree,
     onSuccess: (data, variables) => {
       // Invalidate and refetch family trees for the user
       queryClient.invalidateQueries({ queryKey: ['familyTrees', 'user', variables.userId] });
@@ -114,7 +113,7 @@ export const useCreateFamilyTree = () => {
 export const useGetMembers = (treeId: number, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['familyTree', 'members', treeId],
-    queryFn: () => getMembersAPI(treeId),
+    queryFn: () => getMembers(treeId),
     enabled: enabled && !!treeId,
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
@@ -124,7 +123,7 @@ export const useAddMembers = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: addMembersAPI,
+    mutationFn: addMembers,
     onSuccess: (data, variables) => {
       // Invalidate and refetch members for the tree
       queryClient.invalidateQueries({ queryKey: ['familyTree', 'members', variables.treeId] });
@@ -139,7 +138,7 @@ export const useAddMembers = () => {
 export const useGetGenealogyFormFieldsForStep = (step: number, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['genealogyFormFields', 'step', step],
-    queryFn: () => getGenealogyFormFieldsForStepAPI(step),
+    queryFn: () => getGenealogyFormFieldsForStep(step),
     enabled: enabled && !!step,
     staleTime: 10 * 60 * 1000, // 10 minutes - form fields don't change often
   });
@@ -147,10 +146,10 @@ export const useGetGenealogyFormFieldsForStep = (step: number, enabled: boolean 
 
 // Export the API functions for direct use if needed
 export {
-  getAllForUserAPI,
-  getTreeByIdAPI,
-  createFamilyTreeAPI,
-  getMembersAPI,
-  addMembersAPI,
-  getGenealogyFormFieldsForStepAPI
+  getAllForUser,
+  getTreeById,
+  createFamilyTree,
+  getMembers,
+  addMembers,
+  getGenealogyFormFieldsForStep
 }; 

@@ -24,7 +24,8 @@ export const sendRouteHandlerResponse = <RequestPayload, ResponseType>(
         
         if (shouldUpdateSession) {
           const sessionId = generateSessionId(request, data.payload, actionName);
-          // @ts-ignore TODO: update this
+          // @ts-ignore 
+          // //TODO: update this AND encrypt/hash emails before sending to local storage
           returnData.payload.sessionId = sessionId;
         }
       }

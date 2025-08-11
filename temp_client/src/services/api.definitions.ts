@@ -41,11 +41,12 @@ export interface FamilyMember {
     occupation: string;
     description?: string;
     profile_url?: string;
-    parents: string[]; // node_ids
-    children: string[]; // node_ids
-    siblings: string[]; // node_ids
-    spouses: string[]; // node_ids
-    position?: { x: number; y: number };
+    parents: any; //TODO: either JSON string or array
+    children: any; //TODO: either JSON string or array
+    siblings: any; //TODO: either JSON string or array
+    spouses: any; //TODO: either JSON string or array
+    position?: any;
+    // position?: { x: number; y: number };
     connections?: Array<{
         id: string;
         source: string;
@@ -517,6 +518,18 @@ export interface MappedFamilyMembers {
     [id: string]: FamilyMember
 }
 
+export interface APICreateFamilyResponse extends APIEndpointResponse {
+    payload: {
+        created_at: string;
+        id: number;
+        active: number;
+        authorized_ips: string;
+        members: FamilyMember[];
+        emails: string; //emails[]
+        name: string;
+        public: number; //1|0
+    }
+}
 export interface ChangePasswordRequestPayload {
     email: string;
     password: string;
