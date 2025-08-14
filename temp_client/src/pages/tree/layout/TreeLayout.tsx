@@ -34,6 +34,8 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   const theme = useTheme();
 
   useEffect(() => {
+    console.error('TREE CHANGED ', tree);
+
     if (Object.keys(tree)?.length)
       generateNodesAndEdges();
     // eslint-disable-next-line
@@ -81,12 +83,17 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
       content: <NodeMenu data={node} />,
     });
   }
-  // TODO: this is not being managed properly. Edges are not showing
+  // TODO: this is not being managed properly. Edges are not showing. Looks like connection is not parsed or present
   function generateNodesAndEdges() {
     const incomingNodes: any = Object.values(tree);
+    console.log('INCOMING NODES VAL ', incomingNodes);
+    
     const incomingEdges = incomingNodes.reduce((listOfEdges: any, node: any) => {
-      if (node?.data?.connections?.length) {
-        return [...listOfEdges.flat(), node.data?.connections?.flat() || []];
+      const nodeConnections = JSON.parse(node?.data?.connections || '[]');
+      console.log({nodeConnections});
+      
+      if (nodeConnections?.length) {
+        return [...listOfEdges.flat(), nodeConnections.flat() || []];
       } else {
         return listOfEdges.flat();
       }

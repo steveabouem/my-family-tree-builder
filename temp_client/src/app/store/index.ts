@@ -3,7 +3,7 @@ import stepFormReducer from "../slices/forms/stepForm";
 import familyTreeReducer from "../slices/trees";
 import themeReducer from "../slices/theme";
 import userReducer from "../slices/user";
-
+// TODO: refactor is needed to address non serializable paths (properties) in the slices: see https://redux.js.org/style-guide/#do-not-put-non-serializable-values-in-state-or-actions
 export const store = configureStore({
   reducer: {
     stepForm: stepFormReducer,

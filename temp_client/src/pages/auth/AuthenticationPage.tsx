@@ -172,7 +172,7 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
             title: <Trans>login_failure</Trans>,
             content: <Trans>login_failure_msg {attempts}</Trans>,
           });
-          console.log('Registration failure');
+          console.error('Registration failure');
         }
       },
       onError: (error) => {

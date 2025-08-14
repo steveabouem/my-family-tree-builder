@@ -16,8 +16,6 @@ export default memo(({ data }: any) => {
     return !data.dod?.length ? theme.palette.info.main : '#737373';
   }
   function renderNodeIcon() {
-    console.log('OVERKIILLL ', data);
-
     const isAdult = data.age > 15;
     const isBaby = data.age <= 3;
     const isInfant = data.age > 3 && data.age <= 15;

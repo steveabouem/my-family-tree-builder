@@ -15,7 +15,7 @@ const initialState: DFamilyTreeState = {
 */
 const updateTree = (state: DFamilyTreeState, action: PayloadAction<any>) => {
   state.updating = true;
-  state.currentFamilyTree = {...action.payload, };
+  state.currentFamilyTree = {...action.payload };
   state.updating = false;
   return state;
 };

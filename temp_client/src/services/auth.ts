@@ -5,8 +5,6 @@ import { APILoginResponse, APIRequestPayload, LoginRequestPayload } from "../../
 import { baseUrl } from "./index";
 
 export const submitLoginForm = async (values: Partial<DUserDTO>): Promise<APIRequestPayload<APILoginResponse>> => {
-  console.log({ baseUrl });
-
   const currentUser = await axios.post<LoginRequestPayload, APIRequestPayload<APILoginResponse>>(`${baseUrl}/auth/login`, values);
   return currentUser;
 };

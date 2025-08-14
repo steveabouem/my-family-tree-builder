@@ -4,10 +4,9 @@ import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
 import GenealogyForm from './GenealogyForm';
 import TreePlayground from './GenealogyNarrator';
-import {  DFamilyMemberDTO, DFamilyTreeDAO } from 'services/api.definitions';
+import { DFamilyMemberDTO, DFamilyTreeDAO } from 'services/api.definitions';
 import { DFamilyTreeState, DStepFormState, DUserState, stepFormModes } from 'app/slices/definitions';
 import { useZDispatch, useZSelector } from 'app/hooks';
-import { DFamilyTreeDTO } from './definitions';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import GlobalContext from 'contexts/creators/global';
 import { formatTreeMemberDAOList } from 'pages/tree/create/genealogy/utils';
@@ -17,7 +16,7 @@ const GenealogyContainer: React.FC = () => {
   const [treeCopy, setTreeCopy] = useState({});
   const { stepTree = {}, mode } = useZSelector<DStepFormState>(state => state.stepForm);
   const { treeId } = useZSelector<DFamilyTreeState>(state => state.tree);
-  const {currentUser} = useZSelector<DUserState>(state => state.user);
+  const { currentUser } = useZSelector<DUserState>(state => state.user);
   const dispatch = useZDispatch();
   const { updateModal } = React.useContext(GlobalContext);
 
@@ -36,7 +35,7 @@ const GenealogyContainer: React.FC = () => {
   function formatOutgoingValues(v: any): DFamilyTreeDAO {
     const mappedMembers = Object.keys(stepTree).reduce((acc: any, curr: string) => {
       const formatted: DFamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
-      // TODO: back currently has a new currentAnchor prop to determine who among the members submitted should be the anchor
+      console.log('OUTGOING V ', v);
       if (!formatted?.node_id) {
         // TODO: this is to do a quick fix for key duplication when switching steps right after changing to edit mode and selecting a next of kin
         // the useEffect in the form attempts to generate the keys for the new kin, and somewhre along the way  we end up with brother and brother-[stepNumber], where brother has no values
@@ -44,13 +43,14 @@ const GenealogyContainer: React.FC = () => {
       }
 
       const prefix = curr.split('-')[0];
+
       if (prefix === 'son' || prefix === 'daughter') {
         acc = {
           ...acc,
           // add current child to anchor's children
           anchor: {
             ...acc?.anchor || {},
-            children: [...acc?.anchor?.children || [], formatted]
+            children: [...acc?.anchor?.children || [], formatted.node_id]
           },
         };
       } else if (prefix === 'brother' || prefix === 'sister') {
@@ -58,7 +58,7 @@ const GenealogyContainer: React.FC = () => {
           ...acc,
           anchor: {
             ...acc?.anchor || {},
-            siblings: [...acc?.anchor?.siblings || [], formatted]
+            siblings: [...acc?.anchor?.siblings || [], formatted.node_id]
           }
         };
       } else if (prefix === 'mother' || prefix === 'father') {
@@ -66,7 +66,7 @@ const GenealogyContainer: React.FC = () => {
           ...acc,
           anchor: {
             ...acc?.anchor || {},
-            parents: [...acc?.anchor?.parents || [], formatted]
+            parents: [...acc?.anchor?.parents || [], formatted.node_id]
           }
         };
       } else if (prefix === 'husband' || prefix === 'wife') {
@@ -74,19 +74,20 @@ const GenealogyContainer: React.FC = () => {
           ...acc,
           anchor: {
             ...acc?.anchor || {},
-            spouses: [...acc?.anchor?.spouses || [], formatted]
+            spouses: [...acc?.anchor?.spouses || [], formatted.node_id]
           }
         };
-      } else {
-        acc = { ...acc, [prefix]: formatted };
       }
+      acc = { ...acc, [prefix]: formatted };
 
       return acc;
     }, {});
     // @ts-ignore
-    return { data: {anchor: v.anchorNode, members: Object.values(mappedMembers), userId: currentUser?.id || 0, treeName: '' }};
+    return { data: { anchor: v.anchorNode, members: Object.values(mappedMembers), userId: currentUser?.id || 0, treeName: v?.treeName || '' } };
   }
   function cleanUpValuesPrefixes(indicator: string, valuesObject: any): DFamilyMemberDTO {
+    console.log('CLEANUP PREFIX ISOLATED ', indicator, valuesObject);
+
     const formatted: DFamilyMemberDTO = {
       dob: valuesObject?.[`${indicator}_dob`] || '',
       dod: valuesObject?.[`${indicator}_dod`] || '',
@@ -108,14 +109,14 @@ const GenealogyContainer: React.FC = () => {
 
     return formatted;
   }
-  
   function handleSubmit(v: any) {
     const formattedValues: DFamilyTreeDAO = formatOutgoingValues(v);
+    const userId = currentUser?.userId || 0;
 
     try {
       if (mode === stepFormModes.edit) {
         addMembersMutation.mutate(
-          { ...formattedValues, treeId },
+          { ...formattedValues, treeId, userId },
           {
             onSuccess: (response) => {
               if (response.code === 200) {
@@ -138,8 +139,6 @@ const GenealogyContainer: React.FC = () => {
           formattedValues,
           {
             onSuccess: (response) => {
-              console.log('RES FROM CREATE TREE ', {response});
-              
               if (response.code === 200) {
                 const membersMap = (response.payload.members);
                 const formattedMemberRecords: any = formatTreeMemberDAOList(membersMap);

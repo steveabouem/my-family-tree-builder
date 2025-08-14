@@ -158,7 +158,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
     <Paper sx={{ flexDirection: "column" }}>
       <Typography variant="body2"><Trans>family_tree_building_explanation</Trans></Typography>
       <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
-        <FieldAndLabel direction="row" fieldName="name" label={<Trans>name_your_tree</Trans>} sx={{ justifyContent: 'start', flex: '1 1 auto' }} fieldStyles={{ marginLeft: 'auto', width: '40%' }} />
+        <FieldAndLabel direction="row" fieldName="treeName" label={<Trans>name_your_tree</Trans>} sx={{ justifyContent: 'start', flex: '1 1 auto' }} fieldStyles={{ marginLeft: 'auto', width: '40%' }} />
         <Button variant="contained" color="secondary" ><Trans>confirm</Trans></Button>
       </Box>
       <Box display="flex" justifyContent="start" alignItems="center" gap={2}>

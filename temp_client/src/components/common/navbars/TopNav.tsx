@@ -28,7 +28,7 @@ const TopNav = () => {
         navigate(PageUrlsEnum.home);
       })
       .catch((e: unknown) => {
-        console.log('ERRR login out: ', e);
+        console.error('ERRR login out: ', e);
         // ! -TOFIX: handle error
       });
   }

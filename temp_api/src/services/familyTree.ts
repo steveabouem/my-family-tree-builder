@@ -21,10 +21,15 @@ export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPa
     if (userRecord) {
       treeList = await FamilyTree.findAll({
         where: {
-          emails: {
-            [Op.like]: `%${userRecord.email}%`
+          [Op.or]: {
+            emails: {
+              [Op.like]: `%${userRecord.email}%`
+            },
+            created_by: {
+              [Op.eq]: id
+            }
           }
-        }
+        },
       });
       logger.info('Trees ', { treeList });
       response.payload = treeList;
@@ -52,10 +57,10 @@ export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPa
 export const positionFamilyMembers = async (members: FamilyMember[], anchorNodeId: string): Promise<APIFamilyMemberRecord[]> => {
   const membersWithCoords: APIFamilyMemberRecord[] = [];
   const anchor = members.find(m => m.dataValues.node_id === anchorNodeId);
-logger.info('FOUND ANCHOR ', {anchor})
+  logger.info('FOUND ANCHOR ', { anchor })
   // go through all the anchor and its relative, and update the positions based on the anchor's position. make sure to use existing position if already available
   if (anchor) {
-    logger.info('Anchor data is ', {anchor})
+    logger.info('Anchor data is ', { anchor })
     // position every one of the anchor's relatives
     const position = JSON.parse(anchor?.dataValues?.position || '{ "x": 0, "y": 0 }');
     const childrenNodeIds: string[] = JSON.parse(anchor?.dataValues?.children?.length ? anchor?.dataValues?.children : '[]');
@@ -106,10 +111,10 @@ logger.info('FOUND ANCHOR ', {anchor})
  */
 export const createTree = async (createData: ManageTreeRequestPayload): ManageTreeAPIResponse => {
   // TODO: there is no check for existing members with same name and dob (or other prop). Duplicates are possible as it stands
-  // !one way could be to encode every node_id with the treeID, so that any family member I cant think of a check that involves anything else than the family tree name.
+  // !one way could be to encode every node_id with the treeID,  I cant think of a check that involves anything else than the family tree name/id
   // ! last names can be very common, there could be two Abanda families for which the dad's first name is the same.
   // ! I could check query the db for members with same name and dob, and block if more than 1/2 has the exact same last name/dob. But it feels risky
-  // ! a reasonable approach top of mind would be finding any trees where current user's user_id exist, and either limit to 1 tree per user id, or check number of duplicates in the list of memebers? 
+  // ! a reasonable approach top of mind would be finding any trees where current user's user_id exist, and either limit to 1 tree per user id, or check number of duplicates in the list of members? 
   const { data, userId } = createData;
   let response: ServiceResponseWithPayload<APIGetFamilyTreeResponse | null> = { code: 500, error: true, payload: null };
 
@@ -366,12 +371,14 @@ const generateTreeMembersRecords = async (members: APIFamilyMemberDAO[] = [], us
   const nodeIdList = members.map(m => m.node_id);
   //? using the native query rather than the helper function, I need the ability to update later on 
   const duplicateRecords = await FamilyMember.findAll({ where: { node_id: { [Op.in]: nodeIdList } } });
-  logger.info('dupli ', { duplicateRecords, nodeIdList });
+  logger.info('Checking for duplicate family member before creating tree ', { duplicateRecords, nodeIdList });
 
   for (const m of members) {
-    const matchInDulicateRecords = duplicateRecords?.find((r: any) => r.dataValues.node_id === m.node_id);
+    const currentMemberIsDuplicate = !!duplicateRecords?.find((r: FamilyMember) => r.dataValues.node_id === m.node_id);
     logger.info('member in list ', m);
-    if (!matchInDulicateRecords) {
+    if (currentMemberIsDuplicate) {
+      continue;
+    } else {
       newMemberGroup.push({
         ...m,
         age: today.diff(dayjs(m.dob), 'years'),
@@ -418,7 +425,7 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
       const existingRecordForRelative = membersList.find((m: FamilyMember) => m.dataValues.node_id === nodeId);
       // const formattedDataForRelative = membersWithCoords.find((newNode: any) => newNode.node_id === nodeId);
       let offset = { x: 0, y: 0 };
-  
+
       // calculate the offset in the graphic tree based on kinship
       switch (relation) {
         case KinshipEnum.child:
@@ -434,7 +441,7 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
           offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y + 125 };
           break;
       }
-  
+
       logger.info('Offset based on current relation ', offset);
       // update record of current relative with the offset
       if (existingRecordForRelative) { //previous version would check if duplicate in an array. see memberwithcoords in commented code
@@ -450,7 +457,7 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
       } else {
         logger.info('ignoring current child as it is a dupe, ', { relative: nodeId });
       }
-  
+
       // add the anchor and apply the initial position (it may be an existing prop, need to check if equal then update only if !=)
       result.push()
     }));
