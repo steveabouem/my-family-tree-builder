@@ -423,13 +423,12 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
     await Promise.all(nodeIds.map(async (nodeId: string, nodeIndex: number) => {
       logger.info('Processing member inside the promise all bulk update: ', { nodeIds, membersList, nodeId });
       const existingRecordForRelative = membersList.find((m: FamilyMember) => m.dataValues.node_id === nodeId);
-      // const formattedDataForRelative = membersWithCoords.find((newNode: any) => newNode.node_id === nodeId);
       let offset = { x: 0, y: 0 };
 
       // calculate the offset in the graphic tree based on kinship
       switch (relation) {
         case KinshipEnum.child:
-          offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y + 125 }
+          offset = { x: initialPosition.x + (125 * nodeIndex), y: initialPosition.y + 125 }
           break;
         case KinshipEnum.sibling:
           offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y }
@@ -438,11 +437,11 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
           offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y };
           break;
         case KinshipEnum.parent:
-          offset = { x: initialPosition.x + (125 * (nodeIndex + 1)), y: initialPosition.y + 125 };
+          offset = { x: initialPosition.x + (125 * nodeIndex), y: initialPosition.y - 125 };
           break;
       }
 
-      logger.info('Offset based on current relation ', offset);
+      logger.info('Offset based on current relation ', {offset, relation});
       // update record of current relative with the offset
       if (existingRecordForRelative) { //previous version would check if duplicate in an array. see memberwithcoords in commented code
         const relativeUpdated = await existingRecordForRelative.update({
