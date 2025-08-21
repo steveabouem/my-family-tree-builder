@@ -43,8 +43,10 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
 
   function populateFormWithNodeValues(node: DReactFlowNode) {
     setValues({
-      anchor_firstName: node?.firstName || '',
-      anchor_lastName: node?.lastName || '',
+      // @ts-ignore: TODO FIX
+      anchor_firstName: node?.firstName || node?.first_name || '',
+      // @ts-ignore: TODO FIX
+      anchor_lastName: node?.lastName ||node?.last_name || '',
       anchor_occupation: node?.occupation || '',
       anchor_dob: node?.dob || '',
       anchor_dod: node?.dod || '',
@@ -56,13 +58,15 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
     });
   }
   function showEditModal(event: any, node: any) {
+    console.log({node});
+    
     updateModal({
       hidden: false,
       buttons: {
         cancel: true,
         confirm: true
       },
-      title: <Trans>choose_node_action_title {node.firstName}</Trans>,
+      title: <Trans>choose_node_action_title {node.first_name}</Trans>,
       onConfirm: (transferData: string) => {
         switch (transferData) {
           case NodeMenuActions.edit:

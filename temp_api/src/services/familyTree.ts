@@ -31,6 +31,12 @@ export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPa
           }
         },
       });
+      await Promise.all(treeList.map(async (t: FamilyTree) => {
+        const memberRecords = await FamilyMember.findAll({where: {node_id: {[Op.in]: JSON.parse(t.members)} }});
+        // TODO: the type of the response will account for this array being string or records
+        // @ts-ignore
+        t.members = memberRecords
+      }));
       logger.info('Trees ', { treeList });
       response.payload = treeList;
       response.code = 200;
@@ -191,7 +197,8 @@ export const getTreeById = async (id: string): Promise<ServiceResponseWithPayloa
 /**
  * ? Receives info on an existing Tree (list of members to update and requesting user),
  * ? updates the selected members' positions, connections and potentially properties. Returns the updated tree info
- * @param updateData: list of existing/new family members. List is not automacially exhaustive, since update will typically be based on either a single member, or a list of new ones.
+ * @param updateData: list of existing/new family members. List is not automacially exhaustive,
+ * since update will typically be based on either a single member, or a list of new ones.
  * Deletions will be handled separately
  * @returns FamilyTree
  */
@@ -207,6 +214,10 @@ export const updateTree = async (updateData: ManageTreeRequestPayload): ManageTr
     } else {
       const updatedMembersRecords = await updateTreeMembers(tree, userId, data);
       // use data from the members post update: important properties may have changed. i.e name or kinship
+      // TODO: the front seems to not make a two way update of the kinship arrays: 
+      // if I add a sibling sometimes it adds it to the payload, but doesn tupdate its own kinship array. Some other times
+      // some other timeStamp, when I add a new membersRecordsFromUpdate, only the old ones are sent? not sure I saw this right
+      // to the form, only the  existing member's kinship array will be updated. this might be the reaons why update tree doesnt work
       const membersRecordsFromUpdate = await FamilyMember.findAll({ where: { node_id: { [Op.in]: Object.keys(updatedMembersRecords || []) } } });
       const withCoords = await positionFamilyMembers(membersRecordsFromUpdate, data.anchor);
       const nodeIdList = withCoords.map((curr: APIFamilyMemberRecord) => curr.node_id);
@@ -245,7 +256,7 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: A
   const updatedRecords: any[] = [];
   const newMembers = updateData.members.filter((m: APIFamilyMemberDAO) => !existingMembersNodeIds.includes(m.node_id));
   let newMembersRecords: any[] = [];
-  logger.info('This should not contain anything else than brand new memebers', { newMembersRecords });
+  logger.info('This should not contain anything else than brand new members', { newMembers });
 
   if (newMembers.length) {
     const today = dayjs();
@@ -269,7 +280,6 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: A
 
   if (newRecords.length) {
     // create records for any family member that doesnt already have one. 
-    // No need to update the existing relatives, since node_id remains the same
     newMembersRecords = await FamilyMember.bulkCreate(newRecords);
     // (...)
   }
@@ -284,7 +294,7 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: A
     // todo: its better to do the findall then loop the result of that. 1 query instead of potential dozen
     const memberRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: m.node_id } } });
 
-    if (memberRecord?.dataValues) {// TODO: what if any of htese arrays exist and are just being expanded rather than replaced? Front must handle that?
+    if (memberRecord?.dataValues) {// TODO: what if any of htese arrays exist and are just being expanded rather than replaced? Front must handle that? No
       const newChildren = m?.children?.length ? JSON.stringify(m?.children) : memberRecord.dataValues?.children;
       const newParents = m?.parents?.length ? JSON.stringify(m?.parents) : memberRecord.dataValues?.parents;
       const newSiblings = m?.siblings?.length ? JSON.stringify(m?.siblings) : memberRecord.dataValues?.siblings;

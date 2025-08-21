@@ -1,9 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DFormField } from "../../components/common/definitions";
-import { APICreateFamilyResponse, DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "../api.definitions";
+import { APICreateFamilyResponse, APIGetAllTreesResponse, DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "../api.definitions";
 import { baseUrl } from "../index";
 
-const getAllForUser = async (userId: number) => {
+//#region API Functions
+const getAllTreesForUser = async (userId?: number): Promise<APIGetAllTreesResponse> => {
+  if (!userId) {
+    throw new Error('Invalid parameter');
+  }
+
   const response = await fetch(`${baseUrl}/trees/index?member=${userId}`);
   
   if (!response.ok) {
@@ -74,12 +79,13 @@ const getGenealogyFormFieldsForStep = async (step: number): Promise<DFormField[]
   
   return response.json();
 };
+//#endregion
 
-// React Query hooks
-export const useGetAllForUser = (userId: number, enabled: boolean = true) => {
+//#region React Query Hooks
+export const useGetAllForUser = (userId?: number, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['familyTrees', 'user', userId],
-    queryFn: () => getAllForUser(userId),
+    queryFn: () => getAllTreesForUser(userId),
     enabled: enabled && !!userId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -143,13 +149,16 @@ export const useGetGenealogyFormFieldsForStep = (step: number, enabled: boolean 
     staleTime: 10 * 60 * 1000, // 10 minutes - form fields don't change often
   });
 };
+//#endregion
 
+//#region Exports
 // Export the API functions for direct use if needed
 export {
-  getAllForUser,
+  getAllTreesForUser as getAllForUser,
   getTreeById,
   createFamilyTree,
   getMembers,
   addMembers,
   getGenealogyFormFieldsForStep
-}; 
+};
+//#endregion 

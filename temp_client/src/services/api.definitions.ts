@@ -62,6 +62,7 @@ export interface FamilyTree {
     id?: number;
     name: string;
     members: string[]; // node_ids
+    memberRecords?: FamilyMember[]; // node_ids
     emails: string[]; // member emails
     public: boolean;
     active: boolean;
@@ -301,6 +302,7 @@ export interface APIFamilyTreeDTO {
 }
 
 export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members: APIFamilyMemberRecord[] };
+export type APIGetAllTreesResponse = APIRequestPayload<FamilyTree[]>;
 
 export type APIStepFormFieldDTO = {
     fieldName: string;

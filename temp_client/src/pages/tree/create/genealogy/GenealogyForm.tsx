@@ -132,7 +132,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
 
       setFieldValue(`${nameOfStep}_node_id`, newNodeId);
 
-      if (nameOfStep === 'anchor') {
+      if (nameOfStep === 'anchor' || currentFormStep === 1 && !values?.anchorNode) {
         setFieldValue('anchorNode', newNodeId )
       }
       dispatch(loadStepFormFieldsAction({ name: nameOfStep, fields, title: <Trans>info_on_node {nameOfStep}</Trans> }));

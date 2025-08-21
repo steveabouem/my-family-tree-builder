@@ -29,7 +29,7 @@ router.get('/members', (req: Request, res: Response) => {
 });
 
 router.put('/members', (req: Request<{}, {}, ManageTreeRequestPayload, {}>, res: Response) => {
-  sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, updateTree, res, 'Create family tree');
+  sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, updateTree, res, 'Update family tree');
 });
 
 export default router;

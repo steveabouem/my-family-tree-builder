@@ -83,7 +83,7 @@ const GenealogyContainer: React.FC = () => {
       return acc;
     }, {});
     // @ts-ignore
-    return { data: { anchor: v.anchorNode, members: Object.values(mappedMembers), userId: currentUser?.id || 0, treeName: v?.treeName || '' } };
+    return { data: { anchor: v.anchorNode, members: Object.values(mappedMembers), userId: currentUser?.id || 0, treeName: v?.treeName || '', treeId } };
   }
   function cleanUpValuesPrefixes(indicator: string, valuesObject: any): DFamilyMemberDTO {
     console.log('CLEANUP PREFIX ISOLATED ', indicator, valuesObject);
@@ -119,6 +119,8 @@ const GenealogyContainer: React.FC = () => {
           { ...formattedValues, treeId, userId },
           {
             onSuccess: (response) => {
+              console.log({response});// YOU're VERY CLOSE. THE UPDATE DOESN CONSISTANTLY HAPPEN ON THE BACL, but IT DID
+              
               if (response.code === 200) {
                 const updatedListOfMembers = JSON.parse(response.payload.members);
                 const formattedMemberRecords = formatTreeMemberDAOList(updatedListOfMembers);
