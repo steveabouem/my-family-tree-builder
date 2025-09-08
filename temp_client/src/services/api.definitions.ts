@@ -26,7 +26,24 @@ export interface APILoginResponse {
     userId?: number;
 }
 
-// Shared Family Tree Types
+
+export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members: APIFamilyMemberRecord[] };
+export type APIGetAllTreesResponse = APIRequestPayload<FamilyTree[]>;
+
+export interface FamilyTreeCreateRequest {
+    treeName: string;
+    members: FamilyMember[];
+    anchor: string; // node_id of anchor member
+    userId: number;
+}
+
+export interface FamilyTreeUpdateRequest {
+    treeId: number;
+    treeName?: string;
+    members: FamilyMember[];
+    anchor: string;
+    userId: number;
+}
 export interface FamilyMember {
     id?: number;
     node_id: string;
@@ -72,22 +89,6 @@ export interface FamilyTree {
     updated_at?: Date;
 }
 
-export interface FamilyTreeCreateRequest {
-    treeName: string;
-    members: FamilyMember[];
-    anchor: string; // node_id of anchor member
-    userId: number;
-}
-
-export interface FamilyTreeUpdateRequest {
-    treeId: number;
-    treeName?: string;
-    members: FamilyMember[];
-    anchor: string;
-    userId: number;
-}
-
-// Shared User Types
 export interface User {
     id?: number;
     firstName: string;
@@ -108,6 +109,17 @@ export interface User {
     teams: number[];
     created_at?: Date;
     updated_at?: Date;
+}
+
+export interface APIUserSimplifiedDTO {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    tasks: string;
+    roles: string;
+    authorizedIps: string;
+    ip_authority: number;
 }
 
 export interface UserSession {
@@ -211,69 +223,16 @@ export interface APIRegistrationFields { //registration form fields
     profileUrl?: string;
 }
 
-export interface APIFTRegistrationFields { //registration form fields
-    firstName: string;
-    lastName: string;
-    age?: number;
-    occupation?: string;
-    partner?: string;
-    maritalStatus?: string;
-    isParent: number; //1/0
-    description: string;
-    gender: string;
-    profileUrl?: string;
-}
-
 export interface APIFTLoginFields { //registration form fields
     email: string;
     password: string;
 }
 
 
-/** ADMIN */
-
 export interface APIAdminRegistrationFields { //registration form fields
 
 }
 
-export interface APIUserSimplifiedDTO {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    tasks: string;
-    roles: string;
-    authorizedIps: string;
-    ip_authority: number;
-}
-
-export interface APIUserDTO {
-    firstName: string,
-    lastName: string,
-    dob: string,
-    occupation: string,
-    id: number;
-    marital_status: string,
-    password: string,
-    email: string,
-    is_parent: number,
-    parent_1: number | null,
-    parent_2: number | null,
-    role_id: number,
-    gender: number, // 1: M, 2:F
-    assigned_ips: string[],
-    profile_url: string,
-    description: string,
-    imm_family: number,
-    has_ipa?: number,
-    partner?: number,
-    // ! -TOFIX: replace with association
-    realated_to: number[],
-    created_at: Date,
-    updated_at?: Date,
-}
-
-// // DAOs
 export type APIFamilyMemberRecord = FamilyMember;
 
 export interface APIFamilyTreeDAO {
@@ -289,7 +248,6 @@ export interface APIFamilyTreeDAO {
 export type ManageTreeAPIResponse = Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>>;
 export type GetTreeAPIResponse = Promise<ServiceResponseWithPayload<FamilyTree | null>>;
 
-//DTOs
 export interface APIFamilyTreeDTO {
     public: number;
     name: string;
@@ -301,15 +259,11 @@ export interface APIFamilyTreeDTO {
     active: number;
 }
 
-export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members: APIFamilyMemberRecord[] };
-export type APIGetAllTreesResponse = APIRequestPayload<FamilyTree[]>;
-
 export type APIStepFormFieldDTO = {
     fieldName: string;
     index: number;
     label: string;
 };
-
 export interface APIReactFlowNode {
     id: string;
     name: string;
@@ -550,12 +504,10 @@ interface DApiResponseRoot {
     message?: string;
 }
 export type DApiResponse<B> = DApiResponseRoot & B;
-// #region user
 export interface DUserRelatedFamily {
     id: number;
     name: string;
 }
-// #region auth
 export interface DUserDTO {
     userId?: number;
     firstName: string;
@@ -585,7 +537,6 @@ export interface DUserSession {
     firstName: string;
     lastName: string;
 }
-// # region family-tree
 export interface DFamilyTreeDAO {
     members: DFamilyMemberDTO[];
     userId: number;

@@ -4,6 +4,7 @@ import { APICreateFamilyResponse, APIGetAllTreesResponse, DApiResponse, DFamilyT
 import { baseUrl } from "../index";
 
 //#region API Functions
+// #region getAllTreesForUser
 const getAllTreesForUser = async (userId?: number): Promise<APIGetAllTreesResponse> => {
   if (!userId) {
     throw new Error('Invalid parameter');
@@ -17,7 +18,7 @@ const getAllTreesForUser = async (userId?: number): Promise<APIGetAllTreesRespon
   
   return response.json();
 };
-
+// #endregion
 const getTreeById = async (treeId: string) => {
   const response = await fetch(`${baseUrl}/trees/details?id=${treeId}`);
   

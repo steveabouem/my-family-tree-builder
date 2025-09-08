@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express";
+
 import logger from "../utils/logger";
 import { getUserById } from "../services/user";
 import { ServiceResponseWithPayload, APIRegistrationResponse } from "../services/types";

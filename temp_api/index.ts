@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+
 import userHandler from './src/routes/user.routes';
 import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';

@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express";
+
 import { changePassword, login, register } from "../services/auth";
 import { getUserById } from "../services/user";
 import { sendRouteHandlerResponse } from "./helpers";

@@ -1,13 +1,15 @@
 import React, { useMemo, useState } from "react";
+
 import { Trans } from "@lingui/macro";
 import { FaRegEdit } from "react-icons/fa";
 import { MdCancelPresentation } from "react-icons/md";
+import { Formik } from "formik";
+import { Box, Button, Paper, Typography } from "@mui/material";
+
 import { DChangePasswordValues } from "../definitions";
 import { DFormField } from "components/common/definitions";
-import { Formik } from "formik";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
 import Spinner from "components/common/progressIndicators/Spinner";
-import { Box, Button, Paper, Typography } from "@mui/material";
 import { useZSelector } from "app/hooks";
 import { DUserState } from "app/slices/definitions";
 
@@ -43,7 +45,7 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: DChangePassw
       <Typography variant="h4"><Trans>profile_management_label</Trans></Typography>
       {currentUser?.email?.length ? (
         <>
-          <Box display="flex" justifyContent="flex-end" width="100%" alignItems="center">
+          <Box sx={editButtonContainerStyle}>
             <Button variant="outlined" color="secondary" sx={{ display: 'flex', gap: "1rem" }} onClick={() => toggleMode()}>
               {
                 passwordFormMode === 'read' ? (
@@ -69,5 +71,12 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: DChangePassw
     </Paper>
   )
 }
+
+const editButtonContainerStyle = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  width: '100%',
+  alignItems: 'center',
+};
 
 export default UserCredentials;

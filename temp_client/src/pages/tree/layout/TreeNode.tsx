@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import Initials from 'components/common/Initials';
@@ -35,12 +35,15 @@ export default memo(({ data }: any) => {
 
   return (
     <Box
-      width={showDetails ? '250px' : '70px'} height={showDetails ? '120px' : '40px'} padding={1}
+      sx={{
+        width: showDetails ? '250px' : '70px',
+        height: showDetails ? '120px' : '40px',
+        bgcolor: getNodeBG(),
+        ...mainContainerStyles
+      }}
       onMouseEnter={() => { setShowDetails(true) }} onMouseLeave={() => { setShowDetails(false) }}
-      display="flex" border=".6px solid #8e6c75" borderRadius={2} flexDirection="column"
-      gap={1} justifyContent="start" alignItems="center" bgcolor={getNodeBG()}
     >
-      <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
+      <Box sx={headerContainerStyle}>
         {
           !!data.profile_url?.length ? <img src={data.profile_url} /> :
             <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
@@ -52,7 +55,7 @@ export default memo(({ data }: any) => {
           style={{ background: '#555' }}
           isConnectable={true}
         /> */}
-        <Box display="flex" gap={1} alignItems="center">
+        <Box sx={iconContainerStyle}>
           {renderNodeIcon()}
           {/* <Button size='small' sx={{ minWidth: '15px' }} >
             <SettingsIcon color="#5d576b" size={15} />
@@ -62,8 +65,8 @@ export default memo(({ data }: any) => {
           </Button> */}
         </Box>
       </Box>
-      <Box display="flex" flexDirection="column" width="100%" overflow="hidden scroll" position="relative">
-        <Box display="flex" justifyContent="space-between" alignItems="center">
+      <Box sx={contentContainerStyle}>
+        <Box sx={nameAgeContainerStyle}>
           <Typography variant='body1'>{data.first_name} {data.last_name}</Typography>
           <Typography variant='body2'>
             {data.age} <Trans>years_old</Trans>
@@ -83,3 +86,41 @@ export default memo(({ data }: any) => {
     </Box>
   );
 });
+
+const mainContainerStyles = {
+  padding: 1,
+  display: 'flex',
+  border: '.6px solid #8e6c75',
+  borderRadius: 2,
+  flexDirection: 'column',
+  gap: 1,
+  justifyContent: 'start',
+  alignItems: 'center',
+};
+
+const headerContainerStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  width: '100%',
+};
+
+const iconContainerStyle = {
+  display: 'flex',
+  gap: 1,
+  alignItems: 'center',
+};
+
+const contentContainerStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  overflow: 'hidden scroll',
+  position: 'relative',
+};
+
+const nameAgeContainerStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+};

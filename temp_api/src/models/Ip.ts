@@ -1,6 +1,7 @@
 import {
     Association, DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute,
 } from 'sequelize';
+
 import db from "../../db";
 import User from './User';
 

@@ -11,6 +11,7 @@ import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import GlobalContext from 'contexts/creators/global';
 import { formatTreeMemberDAOList } from 'pages/tree/create/genealogy/utils';
 import { useCreateFamilyTree, useAddMembers } from 'services/v2/familyTreeV2';
+import { DFamilyTreeFormData } from './definitions';
 
 const GenealogyContainer: React.FC = () => {
   const [treeCopy, setTreeCopy] = useState({});
@@ -19,20 +20,16 @@ const GenealogyContainer: React.FC = () => {
   const { currentUser } = useZSelector<DUserState>(state => state.user);
   const dispatch = useZDispatch();
   const { updateModal } = React.useContext(GlobalContext);
-
-  // React Query mutations
   const createFamilyTreeMutation = useCreateFamilyTree();
   const addMembersMutation = useAddMembers();
 
   /*
-  * At every step, the fiel names will be prefixed by the type of kin (fatherm, mother, children etc..)
+  * At every step, the field names will be prefixed by the type of kin (fatherm, mother, children etc..)
   * We need to remove that prefix to match the DAO expected by the API
-  * We will use the first part of the field name to determine if the field is a child or not
-  * If it is a child, we will add it to the children object
-  * each child step will follow the structure children-[x], where x is the step number
+  * We will use the first part of the field name to determine the type of kinship to build an array for
   * the API will handle creatig a family member from each of these steps
   */
-  function formatOutgoingValues(v: any): DFamilyTreeDAO {
+  function formatOutgoingValues(v: DFamilyTreeFormData): DFamilyTreeDAO {
     const mappedMembers = Object.keys(stepTree).reduce((acc: any, curr: string) => {
       const formatted: DFamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
       console.log('OUTGOING V ', v);
@@ -85,7 +82,7 @@ const GenealogyContainer: React.FC = () => {
     // @ts-ignore
     return { data: { anchor: v.anchorNode, members: Object.values(mappedMembers), userId: currentUser?.id || 0, treeName: v?.treeName || '', treeId } };
   }
-  function cleanUpValuesPrefixes(indicator: string, valuesObject: any): DFamilyMemberDTO {
+  function cleanUpValuesPrefixes(indicator: string, valuesObject: DFamilyTreeFormData): DFamilyMemberDTO {
     console.log('CLEANUP PREFIX ISOLATED ', indicator, valuesObject);
 
     const formatted: DFamilyMemberDTO = {
@@ -119,7 +116,7 @@ const GenealogyContainer: React.FC = () => {
           { ...formattedValues, treeId, userId },
           {
             onSuccess: (response) => {
-              console.log({response});// YOU're VERY CLOSE. THE UPDATE DOESN CONSISTANTLY HAPPEN ON THE BACL, but IT DID
+              console.log({response});
               
               if (response.code === 200) {
                 const updatedListOfMembers = JSON.parse(response.payload.members);
@@ -164,11 +161,11 @@ const GenealogyContainer: React.FC = () => {
   }
 
   return (
-    <Box width="100%" display="flex" flexDirection="column" gap={2}>
+    <Box sx={mainContainerStyle}>
       <Typography variant='body1'><Trans>graph_mode_tree_intro</Trans></Typography>
       <Formik initialValues={{}} onSubmit={handleSubmit}>
         {(props) => (
-          <Grid2 container spacing={2} display="flex" justifyContent="space-between">
+          <Grid2 container spacing={2} sx={gridContainerStyle}>
             <Grid2 size={6} >
               <GenealogyForm treeCopy={treeCopy} setTreeCopy={setTreeCopy} />
             </Grid2>
@@ -180,6 +177,18 @@ const GenealogyContainer: React.FC = () => {
       </Formik>
     </Box>
   );
+};
+
+const mainContainerStyle = {
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 2,
+};
+
+const gridContainerStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
 };
 
 export default GenealogyContainer;

@@ -200,7 +200,7 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
           <Button variant="text" color="primary" onClick={() => changeMode('register')}>Register</Button>
         )}
       </Box>
-      <Box display="flex" width="50%" margin="auto">
+      <Box sx={formContainerStyle}>
         <Formik
           initialValues={mode === 'login' ? loginInitialValues : registerInitialValues}
           onSubmit={(values: LoginRequestPayload | RegistrationRequestPayload) => proceedToFormSubmission(values)}
@@ -256,5 +256,11 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
     </Page>
   );
 }
+
+const formContainerStyle = {
+  display: 'flex',
+  width: '50%',
+  margin: 'auto',
+};
 
 export default AuthenticationPage;

@@ -6,13 +6,15 @@ import { v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { clearFieldsByStepName, loadStepFormFieldsAction, populateStepAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
-import {resetAction} from "app/slices/trees";
+import { resetAction } from "app/slices/trees";
 import { DStepFormState, stepFormModes } from "app/slices/definitions";
 import FieldAndLabel from "components/common/forms/fieldAndlabel";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import { genderOptions, maritalStatusOptions, relationOptions } from "components/common/dropdowns/definitions";
 import GlobalContext from "contexts/creators/global";
 import { NodeMenuActions } from "pages/tree/definitions";
+import { DFormField } from "components/common/definitions";
+import { DFamilyTreeFormData } from "./definitions";
 
 /*
 * This implementation of the <StepForm /> follows the following logic:
@@ -28,8 +30,8 @@ import { NodeMenuActions } from "pages/tree/definitions";
 // @ts-ignore
 const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
   const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<DStepFormState>(state => state.stepForm);
-  const { values, setFieldValue, setValues } = useFormikContext<any>();
-  const { modal} = useContext(GlobalContext);
+  const { values, setFieldValue, setValues } = useFormikContext<DFamilyTreeFormData>();
+  const { modal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
   const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
 
@@ -47,13 +49,13 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
   useEffect(() => {
     if (modal?.transferData === NodeMenuActions.edit) {
       setValues({});
-      dispatch(updateGlobalValuesAction({values: {}}));
+      dispatch(updateGlobalValuesAction({ values: {} }));
     }
   }, [modal?.transferData])
 
   function resetAll() {
     setValues({});
-    dispatch(updateGlobalValuesAction({values: {}}));
+    dispatch(updateGlobalValuesAction({ values: {} }));
     dispatch(resetAction());
   }
   /*
@@ -82,7 +84,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
     * It should work as long as you make sure to update is when you go in edit mode (press confirm in the modal)
     */
     //  @ts-ignore
-    const matchingStepNameInTree =  isEditMode ? treeCopy[stepNumber] : Object.keys(stepTree || {})
+    const matchingStepNameInTree = isEditMode ? treeCopy[stepNumber] : Object.keys(stepTree || {})
       .find(((key: string, index: number) => index === stepNumber));
     const nameOfStep = matchingStepNameInTree || "anchor";
     const fieldsInTree = stepTree?.[nameOfStep];
@@ -95,7 +97,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
     if (reset) {
       dispatch(clearFieldsByStepName(nameOfStep));
     } else {
-      const fields = [
+      const fields: DFormField[] = [
         {
           fieldName:
             `${nameOfStep}_firstName`, label: <Trans>firstName</Trans>, value: values?.[`${nameOfStep}_firstName`] || ''
@@ -128,12 +130,12 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
       /*
       * Add nodeId to formik values for post request payload
       */
-     const newNodeId = v4();
+      const newNodeId = v4();
 
       setFieldValue(`${nameOfStep}_node_id`, newNodeId);
 
       if (nameOfStep === 'anchor' || currentFormStep === 1 && !values?.anchorNode) {
-        setFieldValue('anchorNode', newNodeId )
+        setFieldValue('anchorNode', newNodeId)
       }
       dispatch(loadStepFormFieldsAction({ name: nameOfStep, fields, title: <Trans>info_on_node {nameOfStep}</Trans> }));
     }
@@ -148,20 +150,20 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
     */
     dispatch(setStepsCountAction(totalSteps + 1));
     dispatch(populateStepAction({ name: `${values.next_of_kin}-${totalSteps}`, fields: [], step: totalSteps + 1 }));
-    if (isEditMode) 
-    //   this does allow to get the new node name for the next stepFormModes, but upon sumbission,
-    //  there are a lot of empty objects that seem to be replacing previously generated kinships. Investigate the formattingOutgoingValues. The issue might be there
+    if (isEditMode)
+      //   this does allow to get the new node name for the next stepFormModes, but upon sumbission,
+      //  there are a lot of empty objects that seem to be replacing previously generated kinships. Investigate the formattingOutgoingValues. The issue might be there
       setTreeCopy({ ...treeCopy, [`${totalSteps}`]: values.next_of_kin });
   }
 
   return (
     <Paper sx={{ flexDirection: "column" }}>
       <Typography variant="body2"><Trans>family_tree_building_explanation</Trans></Typography>
-      <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
+      <Box sx={treeNameContainerStyle}>
         <FieldAndLabel direction="row" fieldName="treeName" label={<Trans>name_your_tree</Trans>} sx={{ justifyContent: 'start', flex: '1 1 auto' }} fieldStyles={{ marginLeft: 'auto', width: '40%' }} />
         <Button variant="contained" color="secondary" ><Trans>confirm</Trans></Button>
       </Box>
-      <Box display="flex" justifyContent="start" alignItems="center" gap={2}>
+      <Box sx={nextOfKinContainerStyle}>
         <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
         <BaseDropDown name="next_of_kin" options={relationOptions} sx={{ width: '40%', marginLeft: 'auto' }} />
         <Button variant="contained" color="secondary" onClick={addRelative}><Trans>confirm</Trans></Button>
@@ -169,6 +171,20 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
       <StepForm handleSave={saveProgress} />
     </Paper>
   );
+};
+
+const treeNameContainerStyle = {
+  display: 'flex',
+  justifyContent: 'start',
+  alignItems: 'center',
+  gap: 2,
+};
+
+const nextOfKinContainerStyle = {
+  display: 'flex',
+  justifyContent: 'start',
+  alignItems: 'center',
+  gap: 2,
 };
 
 export default GenealogyForm;

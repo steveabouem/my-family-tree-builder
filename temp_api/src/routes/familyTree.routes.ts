@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
+
 import FamilyTree from "../models/FamilyTree";
-import { APIFamilyTreeDAO, APIGetFamilyTreeResponse, ManageTreeRequestPayload } from "../services/types";
+import { FamilyTreeFormData, APIGetFamilyTreeResponse, ManageTreeRequestPayload } from "../services/types";
 import { sendRouteHandlerResponse } from "./helpers";
 import { createTree, deleteTree, getAllTrees, getTreeById, updateTree } from "../services/familyTree";
 

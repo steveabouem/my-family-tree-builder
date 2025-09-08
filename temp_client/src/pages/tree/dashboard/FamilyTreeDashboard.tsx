@@ -7,7 +7,7 @@ import PageUrlsEnum from "utils/urls";
 import { useGetAllForUser } from "services/v2";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { DUserState } from "app/slices/definitions";
-import { FamilyTree } from "services/api.definitions";
+import { DFamilyTreeDTO, FamilyTree } from "services/api.definitions";
 import dayjs from "dayjs";
 import { EyeIcon } from "utils/assets/icons";
 import { populateTreeAction, saveTreeIdAction } from "app/slices/trees";
@@ -20,7 +20,29 @@ const FamilyTreeDashboard = () => {
   const theme = useTheme();
 
   const selectTree = (t: FamilyTree) => {
-    dispatch(populateTreeAction(t));
+    console.log({t});
+    // @ts-ignore
+    const formattedTree:DFamilyTreeDTO = {members: JSON.parse(t.members).reduce((acc, curr) => ({
+      ...acc,
+       data: {
+          ...curr,
+          type: 'blackbox',
+          position: JSON.parse(curr?.position || '{"x": 0, "y": 0}'),
+          connections: JSON.parse(curr?.connections || '[]'),
+          id: curr.node_id,
+          // children: JSON.parse(curr?.children || '[]'),
+          // siblings: siblingsIds,
+          // spouses: spousesIds,
+        },
+        ...curr,
+          type: 'blackbox',
+          position: JSON.parse(curr?.position || '{"x": 0, "y": 0}'),
+          connections: JSON.parse(curr?.connections || '[]'),
+          id: curr.node_id,
+          // children: JSON.parse(curr?.children || '[]'),
+    }))};
+    
+    dispatch(populateTreeAction(formattedTree));
     dispatch(saveTreeIdAction(t?.id || 0));
 
     navigate(PageUrlsEnum.newTree);
@@ -34,9 +56,9 @@ const FamilyTreeDashboard = () => {
       </Box>
       <Box>
         <Trans>tree_dashboard_lists_title</Trans>
-        <Box display="flex" justifyContent="start" flexWrap="wrap" alignContent="space-between">
+        <Box sx={treeDashboardContainerStyles}>
           {data?.payload?.map((t: FamilyTree, index: number) => (
-            <Paper sx={{margin: '1rem'}} key={t.id || index}>
+            <Paper sx={{ margin: '1rem', ...treeHolderStyle }} key={t.id || index}>
               <Box key={t.id} display="flex" flexDirection="column" gap={2}>
                 <Box display="flex" gap={2} alignItems="center">
                   <Typography><Trans>name</Trans>: {t?.name || ''}</Typography>
@@ -54,7 +76,7 @@ const FamilyTreeDashboard = () => {
                   </Typography>
                 </Box>
                 <Box display="flex" gap={2} alignItems="center">
-                  <Button color="warning" variant="outlined" onClick={() => {selectTree(t)}}><Trans>edit</Trans><EyeIcon /></Button>
+                  <Button color="warning" variant="outlined" onClick={() => { selectTree(t) }}><Trans>edit</Trans><EyeIcon /></Button>
                 </Box>
               </Box>
             </Paper>
@@ -63,6 +85,20 @@ const FamilyTreeDashboard = () => {
       </Box>
     </Page>
   );
+};
+
+const treeDashboardContainerStyles = {
+  display: "flex",
+  justifyContent: "start",
+  flexWrap: "wrap",
+  alignContent: "space-between"
+};
+
+const treeHolderStyle = {
+  background: ' rgba(243, 245, 247, 0.21)',
+  boxShadow: ' 0 4px 30px rgba(0, 0, 0, 0.1)',
+  backdropFilter: ' blur(12.9px)',
+  WebkitBackdropFilter: ' blur(12.9px)',
 };
 
 export default FamilyTreeDashboard;

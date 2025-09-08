@@ -1,9 +1,10 @@
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
+import { Op } from "sequelize";
+
 import { APILoginResponse, APILogoutResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload } from "./types";
 import { ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
-import { Op } from "sequelize";
 import { createUser, updatePassword } from "./user";
 import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
 import User from "../models/User";

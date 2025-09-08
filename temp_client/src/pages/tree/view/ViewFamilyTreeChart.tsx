@@ -47,7 +47,7 @@ const ViewFamilyTreeChartPage = () => {
 
   return (
     <Page subtitle="" title={`${currentFamilyTree?.name || ''}`} prevUrl={PageUrlsEnum.trees} loading={isLoading}>
-      <Box height="80vh" width="100%" position="absolute">
+      <Box sx={mainContainerStyle}>
         <Grid2 container spacing={2} height="100%">
           <Grid2 size={4}>
             Details/description/actions
@@ -62,6 +62,12 @@ const ViewFamilyTreeChartPage = () => {
     </Page>
   );
 }
+
+const mainContainerStyle = {
+  height: '80vh',
+  width: '100%',
+  position: 'absolute',
+};
 
 export default ViewFamilyTreeChartPage;
 

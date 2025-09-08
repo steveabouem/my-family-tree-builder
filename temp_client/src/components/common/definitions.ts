@@ -1,12 +1,6 @@
 import React, { ReactElement, ReactNode } from "react";
 
 /* +++++=> NAVIGATION <= +++++ */
-// export interface DTopNavProps {
-//   links?: DNavigationLink[];
-//   position: string;
-//   handleChangeTheme?: (theme: themeEnum) => void;
-// }
-
 export interface DNavigationLink {
   link: string  | ReactNode;
   path: string  | ReactNode;

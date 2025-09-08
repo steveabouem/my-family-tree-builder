@@ -11,7 +11,7 @@ function TreeNodeBubble({ node }: DTreeNodeBubbleProps) {
   const [displayMiniForm, setDisplayMiniForm] = React.useState<boolean>(false);
 
   return (
-    <Box className={'root'} style={{
+    <Box className={'root'} sx={{
       width: 170,
       height: 180,
       transform: `translate(${node.left * (170 / 2)}px, ${node.top * (180 / 2)}px)`,

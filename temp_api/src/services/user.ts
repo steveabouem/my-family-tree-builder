@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes } from "sequelize";
+
 import Role from "../models/Role";
 import logger from "../utils/logger";
 import User from "../models/User";

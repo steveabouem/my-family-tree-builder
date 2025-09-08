@@ -15,7 +15,7 @@ const NodeMenu = ({ data }: { data: Pick<DReactFlowNode, 'data'> }) => {
   }
 
   return (
-    <Box display="flex" flexDirection="column" alignItems="start" gap={2}>
+    <Box sx={menuContainerStyle}>
       <FormControl>
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
@@ -44,6 +44,13 @@ const NodeMenu = ({ data }: { data: Pick<DReactFlowNode, 'data'> }) => {
       </FormControl>
     </Box>
   );
+};
+
+const menuContainerStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'start',
+  gap: 2,
 };
 
 export default NodeMenu;

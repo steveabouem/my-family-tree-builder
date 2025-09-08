@@ -1,9 +1,10 @@
-import { Trans } from "@lingui/macro";
 import React, { useCallback, useContext, useEffect } from "react";
+
+import { Trans } from "@lingui/macro";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Box, Typography, Paper, Button, useTheme } from "@mui/material";
 import { MdOutlineAddBox } from "react-icons/md";
-import img1 from "utils/assets/images/kids under tree locked.jpg"
+
 import GlobalContext from "contexts/creators/global/global.context";
 import { DChangePasswordValues } from "../definitions";
 import UserCredentials from "./UserCredentials";
@@ -90,7 +91,7 @@ const UserProfilePage = (): JSX.Element => {
 
   return currentUser ? (
     <Page subtitle={<Trans>profile_page_subtitle</Trans>} title={<Trans>profile_page_title {currentUser?.firstName || ''}</Trans>} bg={img1}>
-      <Box display="flex" justifyContent="space-between">
+      <Box sx={mainContainerStyle}>
         <UserCredentials handleSubmit={handlePasswordChange} />
         <Paper style={{ display: 'flex', flexDirection: 'column', flex: '0 1 47%', padding: '1rem .5rem' }}>
           <Typography variant="h4"><Trans>tree_management_label</Trans></Typography>
@@ -102,7 +103,7 @@ const UserProfilePage = (): JSX.Element => {
                 </Typography>
                 {
                   list?.map((tree: any, index: number) => (
-                    <Box display="flex" justifyContent="start" gap={2} key={`tree-preview-${index}`}>
+                    <Box sx={treePreviewStyle} key={`tree-preview-${index}`}>
                       <Box flex={1}>
                         {tree?.name}
                       </Box>
@@ -118,7 +119,7 @@ const UserProfilePage = (): JSX.Element => {
               </>
             )
               : (
-                <Box display="flex" justifyContent="flex-end" width="100%" alignItems="center">
+                <Box sx={createTreeButtonStyle}>
                   <Button variant="outlined" color="secondary" sx={{ display: 'flex', gap: "1rem" }}>
                     <MdOutlineAddBox size={20} />
                     <Link style={{ textDecoration: "none" }} to={PageUrlsEnum.trees}>
@@ -134,5 +135,23 @@ const UserProfilePage = (): JSX.Element => {
     <NotFound title={<Trans>profile_not_found</Trans>} /> // this probably wont be necesarry given redirect
   );
 }
+
+const mainContainerStyle = {
+  display: 'flex',
+  justifyContent: 'space-between',
+};
+
+const treePreviewStyle = {
+  display: 'flex',
+  justifyContent: 'start',
+  gap: 2,
+};
+
+const createTreeButtonStyle = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  width: '100%',
+  alignItems: 'center',
+};
 
 export default UserProfilePage;

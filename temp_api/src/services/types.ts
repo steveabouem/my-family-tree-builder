@@ -1,3 +1,15 @@
+import FamilyMember from "@/models/FamilyMember";
+import FamilyTree from "@/models/FamilyTree";
+import { InferAttributes } from "sequelize";
+
+// #region CORE API TYPES
+export interface ApiResponse<T = any> {
+    error: boolean;
+    code: number;
+    message?: string;
+    payload: T;
+    sessionId?: string;
+}
 export interface APIEndpointResponse {
     sessionId?: string;
     error: boolean;
@@ -11,7 +23,7 @@ export interface APIRequestPayload<P> extends APIEndpointResponse {
 
 export type ServiceResponseWithPayload<G> = APIRequestPayload<G>;
 
-// LOGIN
+// #region AUTHENTICATION & USER MANAGEMENT TYPES
 export interface LoginRequestPayload {
     email: string;
     password: string;
@@ -24,144 +36,6 @@ export interface APILoginResponse {
     userId?: number;
 }
 
-// Shared Family Tree Types
-export interface FamilyMember {
-    id?: number;
-    node_id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    dob: string;
-    dod?: string;
-    age?: number;
-    gender: number; // 1: Male, 2: Female
-    marital_status: string;
-    occupation: string;
-    description?: string;
-    profile_url?: string;
-    parents: string[]; // node_ids
-    children: string[]; // node_ids
-    siblings: string[]; // node_ids
-    spouses: string[]; // node_ids
-    position?: { x: number; y: number };
-    connections?: Array<{
-        id: string;
-        source: string;
-        target: string;
-    }>;
-    created_by?: number;
-    user_id?: number;
-    created_at?: Date;
-    updated_at?: Date;
-}
-
-export interface FamilyTree {
-    id?: number;
-    name: string;
-    members: string[]; // node_ids
-    emails: string[]; // member emails
-    public: boolean;
-    active: boolean;
-    authorized_ips: string;
-    created_by: number;
-    created_at?: Date;
-    updated_at?: Date;
-}
-
-export interface FamilyTreeCreateRequest {
-    treeName: string;
-    members: FamilyMember[];
-    anchor: string; // node_id of anchor member
-    userId: number;
-}
-
-export interface FamilyTreeUpdateRequest {
-    treeId: number;
-    treeName?: string;
-    members: FamilyMember[];
-    anchor: string;
-    userId: number;
-}
-
-// Shared User Types
-export interface User {
-    id?: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    password?: string;
-    dob: string;
-    age?: number;
-    gender: number; // 1: Male, 2: Female
-    occupation: string;
-    marital_status: string;
-    description?: string;
-    profile_url?: string;
-    assigned_ips: string[];
-    role_id: number;
-    has_ipa?: number;
-    leadership: number[];
-    teams: number[];
-    created_at?: Date;
-    updated_at?: Date;
-}
-
-export interface UserSession {
-    userId: number;
-    authenticated: boolean;
-    email: string;
-    firstName: string;
-    lastName: string;
-    sessionId?: string;
-}
-
-export interface LoginRequest {
-    email: string;
-    password: string;
-}
-
-export interface PasswordChangeRequest {
-    email: string;
-    currentPassword: string;
-    newPassword: string;
-}
-
-// Shared User Types
-export interface User {
-    id?: number;
-    first_name: string;
-    last_name: string;
-    email: string;
-    password?: string;
-    dob: string;
-    age?: number;
-    gender: number; // 1: Male, 2: Female
-    occupation: string;
-    marital_status: string;
-    description?: string;
-    profile_url?: string;
-    assigned_ips: string[];
-    role_id: number;
-    has_ipa?: number;
-    leadership: number[];
-    teams: number[];
-    created_at?: Date;
-    updated_at?: Date;
-}
-
-export interface UserSession {
-    userId: number;
-    authenticated: boolean;
-    email: string;
-    firstName: string;
-    lastName: string;
-    sessionId?: string;
-}
-
-export interface LoginRequest {
-    email: string;
-    password: string;
-}
 
 export interface RegistrationRequestPayload {
     first_name: string,
@@ -176,17 +50,6 @@ export interface RegistrationRequestPayload {
     description: string,
 }
 
-export interface PasswordChangeRequest {
-    email: string;
-    currentPassword: string;
-    newPassword: string;
-}
-
-export interface APIGetSessionResponse {
-    active: boolean;
-    user: UserSession | null;
-}
-
 export interface APIRegistrationResponse {
     authenticated: boolean;
     email: string;
@@ -194,6 +57,12 @@ export interface APIRegistrationResponse {
     userId?: number;
     message?: string;
 }
+
+export interface APIGetSessionResponse {
+    active: boolean;
+    user: UserSession | null;
+}
+
 
 export interface APILogoutResponse {
     authenticated: boolean;
@@ -213,36 +82,128 @@ export interface APIRegistrationFields { //registration form fields
     gender: string;
     profileUrl?: string;
 }
+//#endregion
+// #region FAMILY TREE TYPES
+export interface ManageTreeRequestPayload {
+    data: FamilyTreeFormData;
+    userId: number
+}
+
+
+export interface MappedFamilyMembers {
+    [id: string]: FamilyMemberData
+}
+
+export type APIFamilyMemberArrayKeys = keyof Pick<FamilyMemberData, 'children' | 'parents' | 'siblings' | 'spouses'>;
+
+export interface FamilyTreeCreateRequest {
+    treeName: string;
+    members: FamilyMemberData[];
+    anchor: string; // node_id of anchor member
+    userId: number;
+}
+
+export interface FamilyTreeUpdateRequest extends FamilyTreeCreateRequest {
+    treeId: number;
+}
+
+export type ManageTreeAPIResponse = Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>>;
+export type GetTreeAPIResponse = Promise<ServiceResponseWithPayload<FamilyTree | null>>;
+
+export interface FamilyTreeFormData {
+    members: FamilyMemberData[];
+    userId: number;
+    anchor: string;
+    active?: boolean;
+    treeName?: string;
+    treeId?: number;
+}
+
+export interface APIFamilyTreeDTO {
+    public: number;
+    name: string;
+    authorized_ips: string;
+    id: number;
+    created_at: Date;
+    created_by: number;
+    updated_at: Date;
+    active: number;
+}
+
+export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members: FamilyMemberData[] };
+
+export type APIStepFormFieldDTO = {
+    fieldName: string;
+    index: number;
+    label: string;
+};
+
+export interface APIReactFlowNode {
+    id: string;
+    name: string;
+    children?: FamilyMemberData[];
+    siblings?: FamilyMemberData[];
+    spouses?: FamilyMemberData[];
+    type?: any;
+}
+
+
+export type FamilyMemberData = Omit<InferAttributes<FamilyMember>,
+    'parents' |
+    'children' |
+    'siblings' |
+    'spouses' |
+    'position' |
+    'connections'
+> & {
+    parents: string[]; // node_ids
+    children: string[]; // node_ids
+    siblings: string[]; // node_ids
+    spouses: string[]; // node_ids
+    position?: { x: number; y: number };
+    tree_idd?: number;
+    created_by?: number;
+    type?: string;
+    connections?: {
+        id: string;
+        source: string;
+        target: string;
+    }[];
+}
+
+export interface User {
+    id?: number;
+    first_name: string;
+    last_name: string;
+    email: string;
+    password?: string;
+    dob: string;
+    age?: number;
+    gender: number; // 1: Male, 2: Female
+    occupation: string;
+    marital_status: string;
+    description?: string;
+    profile_url?: string;
+    assigned_ips: string[];
+    role_id: number;
+    has_ipa?: number;
+    leadership: number[];
+    teams: number[];
+    created_at?: Date;
+    updated_at?: Date;
+}
+
+export interface UserSession {
+    userId: number;
+    authenticated: boolean;
+    email: string;
+    firstName: string;
+    lastName: string;
+    sessionId?: string;
+}
 
 /** ADMIN */
 
-export interface DAdminRegistrationFields { //registration form fields
-
-}
-
-export interface APIEndpointResponse {
-    sessionId?: string;
-    error: boolean;
-    code: number;
-    message?: string;
-}
-
-export interface APITrackerRegistrationFields { //registration form fields
-
-}
-
-export interface APIFTRegistrationFields { //registration form fields
-    firstName: string;
-    lastName: string;
-    age?: number;
-    occupation?: string;
-    partner?: string;
-    maritalStatus?: string;
-    isParent: number; //1/0
-    description: string;
-    gender: string;
-    profileUrl?: string;
-}
 
 export interface APIFTLoginFields { //registration form fields
     email: string;
@@ -250,11 +211,6 @@ export interface APIFTLoginFields { //registration form fields
 }
 
 
-/** ADMIN */
-
-export interface APIAdminRegistrationFields { //registration form fields
-
-}
 
 export interface APIUserSimplifiedDTO {
     first_name: string;
@@ -293,141 +249,6 @@ export interface APIUserDTO {
     updated_at?: Date,
 }
 
-// // DAOs
-export type APIFamilyMemberRecord = FamilyMember;
-
-export interface APIFamilyTreeDAO {
-    //! TODO: keep an eye here, it was previously an object keyed with the noe id for the front. the conversion functions will be used for that if necessary
-    members: APIFamilyMemberDAO[];
-    userId: number;
-    anchor: string;
-    active?: boolean;
-    treeName?: string;
-    treeId?: number;
-}
-
-// Responses
-export type ManageTreeAPIResponse = Promise<ServiceResponseWithPayload<APIGetFamilyTreeResponse | null>>;
-export type GetTreeAPIResponse = Promise<ServiceResponseWithPayload<FamilyTree | null>>;
-
-//DTOs
-export interface APIFamilyTreeDTO {
-    public: number;
-    name: string;
-    authorized_ips: string;
-    id: number;
-    created_at: Date;
-    created_by: number;
-    updated_at: Date;
-    active: number;
-}
-
-export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members: APIFamilyMemberRecord[] };
-
-export type APIStepFormFieldDTO = {
-    fieldName: string;
-    index: number;
-    label: string;
-};
-
-export interface APIReactFlowNode {
-    id: string;
-    name: string;
-    children?: APIFamilyMemberDAO[];
-    siblings?: APIFamilyMemberDAO[];
-    spouses?: APIFamilyMemberDAO[];
-    type?: any;
-}
-
-// /*
-// * DAOs are typycally sent from front, and  expect the matching DTO in response
-// */
-
-// DAOs
-export interface APIFamilyMemberDAO {
-    // Default attributes
-    dob: string;
-    node_id: string;
-    email: string;
-    first_name: string;
-    gender: number; //1 || 2
-    last_name: string;
-    marital_status: string;
-    occupation: string;
-    dod?: string;
-    age?: number;
-    description?: string;
-    profile_url?: string;
-    userId?: number;
-    // ReactFlow related attributes
-    name?: string;
-    type?: string;
-    position?: { x: number; y: number };
-    connections?: { id: string; source: string; target: string }[],
-    parents?: string[];
-    children?: string[];
-    siblings?: string[];
-    spouses?: string[];
-    tree_id?: number;
-    created_by?: number;
-}
-
-// DTOs
-export interface APIFamilyMemberDTO {
-    age: number;
-    created_at: Date;
-    created_by: number;
-    description: string;
-    email: string;
-    first_name: string;
-    gender: number; //1 || 2
-    id: number;
-    last_name: string;
-    marital_status: string;
-    occupation: string;
-    parent_1: number;
-    parent_2: number;
-    partner: number;
-    profile_url: string;
-    tree_id: number;
-    updated_at: Date;
-    dod?: string;
-}
-
-export interface APIFamilyTreeNodeDTO {
-    age: number;
-    first_name: string;
-    last_name: string;
-    marital_status: string;
-    description?: string;
-    email?: string;
-    occupation?: string;
-    profile_url?: string;
-
-    // RFT OBJECT
-    id: string;
-    gender: "male" | "female";
-    parents: {
-        id: string,
-        type: "blood"
-    }[];
-    siblings?: {
-        id: string,
-        type: "blood"
-    }[];
-    spouses?: {
-        id: string,
-        type: "married" | "separated"
-    }[];
-    children?: {
-        id: string,
-        type: "blood"
-    }[];
-}
-
-export type APIFamilyMemberArrayKeys = keyof Pick<APIFamilyMemberDAO, 'children' | 'parents' | 'siblings' | 'spouses'>;
-
-
 export interface APISessionUser {
     userId: number;
     authenticated: boolean;
@@ -456,12 +277,7 @@ export interface PasswordChangeRequestPayload {
     newPassword: string;
 }
 
-export interface ManageTreeRequestPayload {
-    data: APIFamilyTreeDAO;
-    userId: number
-}
-
-// Project and Team Types
+// #region PROJECT & TEAM TYPES
 export interface Expense {
     name: string;
     description: string;
@@ -535,38 +351,15 @@ export interface APITeamResponse {
     updatedAt?: Date;
 }
 
-export interface MappedFamilyMembers {
-    [id: string]: FamilyMember
-}
-
 export interface ChangePasswordRequestPayload {
     email: string;
     password: string;
     newPassword: string;
     repeatNewPassword: string;
     id: number;
-};// Common utility types and enums
-export enum Gender {
-    Male = 1,
-    Female = 2
-}
+};
 
-export enum MaritalStatus {
-    Single = 'single',
-    Married = 'married',
-    Divorced = 'divorced',
-    Widowed = 'widowed',
-    Separated = 'separated'
-}
-
-export interface ApiResponse<T = any> {
-    error: boolean;
-    code: number;
-    message?: string;
-    payload: T;
-    sessionId?: string;
-}
-
+// #region COMMON UTILITY TYPES & ENUMS
 export interface PaginationParams {
     page?: number;
     limit?: number;
@@ -591,6 +384,19 @@ export interface ValidationError {
 export interface ValidationResult {
     isValid: boolean;
     errors: ValidationError[];
+}
+
+export enum Gender {
+    Male = 1,
+    Female = 2
+}
+
+export enum MaritalStatus {
+    Single = 'single',
+    Married = 'married',
+    Divorced = 'divorced',
+    Widowed = 'widowed',
+    Separated = 'separated'
 }
 
 export enum KinshipEnum {
