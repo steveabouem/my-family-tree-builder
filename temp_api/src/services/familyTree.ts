@@ -72,7 +72,7 @@ export const positionFamilyMembers = async (members: FamilyMemberData[], anchorN
   if (anchor) {
     logger.info('Anchor data is ', { anchor })
     // position every one of the anchor's relatives
-    const position = anchor?.position || {x: 0, y: 0};
+    const position = { x: anchor?.position?.x ||  0, y: anchor?.position?.y ||  0 };
     const childrenNodeIds: string[] = anchor?.children || [];
     const siblingsNodeIds: string[] = anchor?.siblings || [];
     const spousesNodeIds: string[] = anchor?.spouses || [];
@@ -429,7 +429,7 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
 
   if (Array.isArray(nodeIds)) {
     await Promise.all(nodeIds.map(async (nodeId: string, nodeIndex: number) => {
-      logger.info('Processing member inside the promise all bulk update: ', { nodeIds, membersList, nodeId });
+      logger.info('Processing member inside the promise all bulk update: ', { nodeIds, membersList, nodeId, nodeIndex, relation });
       const existingRecordForRelative = membersList.find((m: FamilyMemberData) => m.node_id === nodeId);
       let offset = { x: 0, y: 0 };
 
@@ -460,10 +460,10 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
             target: existingRecordForRelative.node_id
           }])
         }, { where: { node_id: { [Op.eq]: existingRecordForRelative.node_id } } });
-        
+
         if (relativeUpdated?.[0] && relativeUpdated?.[0] === 1) {
           // if update was successful, add the offset to the raw, formatted object and add to list for return
-          result.push({...existingRecordForRelative, position: offset});
+          result.push({ ...existingRecordForRelative, position: offset });
         }
       } else {
         logger.info('ignoring current child as it is a dupe, ', { relative: nodeId });
