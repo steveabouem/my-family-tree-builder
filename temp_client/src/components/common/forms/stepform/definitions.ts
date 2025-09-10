@@ -1,4 +1,4 @@
-export interface DStepForm<V> {
+export interface StepForm<V> {
   sx?: {[key: string]: string | number};
   handleSave: () => void;
   handleNext?: (step: number) => void;

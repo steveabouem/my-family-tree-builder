@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { DFTContext } from "./familyTreeContext.types";
 
-export interface DContextMutator<GEntity> {
+export interface ContextMutator<GEntity> {
   entity: string;
   action: (values?: Partial<GEntity>) => void;
 }

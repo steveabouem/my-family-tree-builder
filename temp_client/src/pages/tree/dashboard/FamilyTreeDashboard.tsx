@@ -6,14 +6,14 @@ import Page from "components/common/Page";
 import PageUrlsEnum from "utils/urls";
 import { useGetAllForUser } from "services/v2";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { DUserState } from "app/slices/definitions";
+import { UserState } from "app/slices/definitions";
 import { DFamilyTreeDTO, FamilyTree } from "services/api.definitions";
 import dayjs from "dayjs";
 import { EyeIcon } from "utils/assets/icons";
 import { populateTreeAction, saveTreeIdAction } from "app/slices/trees";
 
 const FamilyTreeDashboard = () => {
-  const { currentUser } = useZSelector<DUserState>(state => state.user);
+  const { currentUser } = useZSelector<UserState>(state => state.user);
   const { data, isFetching, isLoading } = useGetAllForUser(currentUser?.userId);
   const dispatch = useZDispatch();
   const navigate = useNavigate();

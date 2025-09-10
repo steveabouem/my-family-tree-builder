@@ -13,7 +13,7 @@ import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import { genderOptions, maritalStatusOptions, relationOptions } from "components/common/dropdowns/definitions";
 import GlobalContext from "contexts/creators/global";
 import { NodeMenuActions } from "pages/tree/definitions";
-import { DFormField } from "components/common/definitions";
+import { FormField } from "components/common/definitions";
 import { DFamilyTreeFormData } from "./definitions";
 
 /*
@@ -97,7 +97,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
     if (reset) {
       dispatch(clearFieldsByStepName(nameOfStep));
     } else {
-      const fields: DFormField[] = [
+      const fields: FormField[] = [
         {
           fieldName:
             `${nameOfStep}_firstName`, label: <Trans>firstName</Trans>, value: values?.[`${nameOfStep}_firstName`] || ''

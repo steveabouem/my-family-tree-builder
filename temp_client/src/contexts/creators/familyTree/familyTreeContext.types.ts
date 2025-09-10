@@ -1,7 +1,7 @@
 import { DUserSession } from "services/api.definitions";
 import { DFamilyTree } from "pages/tree/definitions";
 
-export interface DFTContext {
+export interface FTContext {
   currentFamilyTree: Partial<DFamilyTree>;
   familyTrees: Partial<DFamilyTree>[];
   updateUser?: (values?: Partial<DUserSession>) => void;

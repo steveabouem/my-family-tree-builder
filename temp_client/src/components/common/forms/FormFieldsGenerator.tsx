@@ -3,7 +3,7 @@ import { Field, FieldArray, useFormikContext } from "formik";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
 import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/material";
 import { Trans, t } from "@lingui/macro";
-import { DBaseFormProps, DFormField } from "../definitions";
+import { DBaseFormProps, FormField } from "../definitions";
 import CustomField from "./customField/CustomField";
 
 const FormFieldsGenerator = ({
@@ -15,7 +15,7 @@ const FormFieldsGenerator = ({
   return (
     <Paper elevation={withPaper ? 1 : 0} sx={{ width: '100%', padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem" }}>
       {title ? <Typography variant="h4">{title}</Typography> : null}
-      {fields.map((field: DFormField, i: number) => (
+      {fields.map((field: FormField, i: number) => (
         <Box display="flex" flexDirection="column" gap={2} key={`${name}-fields-wrapper-${i}`}>
           <Typography variant="subtitle2" pt="1rem" pb="0">
             {field.label}{field.required ? <PiAsteriskSimpleFill className="bg-accent" /> : null}

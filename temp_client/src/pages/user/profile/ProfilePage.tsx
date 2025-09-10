@@ -6,12 +6,12 @@ import { Box, Typography, Paper, Button, useTheme } from "@mui/material";
 import { MdOutlineAddBox } from "react-icons/md";
 
 import GlobalContext from "contexts/creators/global/global.context";
-import { DChangePasswordValues } from "../definitions";
+import { ChangePasswordValues } from "../definitions";
 import UserCredentials from "./UserCredentials";
 import PageUrlsEnum from "utils/urls";
 import Page from "components/common/Page";
 import NotFound from "pages/404NotFound";
-import { DFamilyTreeState, DUserState } from "app/slices/definitions";
+import { FamilyTreeState, UserState } from "app/slices/definitions";
 import { EyeIcon, GroupIcon } from "utils/assets/icons";
 import { saveTreesListAction } from "app/slices/trees";
 import { submitPasswordChangeForm } from "services/auth";
@@ -21,8 +21,8 @@ import { useZDispatch, useZSelector } from "app/hooks";
 
 const UserProfilePage = (): JSX.Element => {
   const dispatch = useZDispatch();
-  const { list } = useZSelector<DFamilyTreeState>(state => state.tree);
-  const { currentUser } = useZSelector<DUserState>(state => state.user);
+  const { list } = useZSelector<FamilyTreeState>(state => state.tree);
+  const { currentUser } = useZSelector<UserState>(state => state.user);
   const { toggleLoading, updateModal } = useContext(GlobalContext);
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,12 +30,12 @@ const UserProfilePage = (): JSX.Element => {
 
   // React Query hook for getting family trees
   const { data: familyTreesData, isLoading, error } = useGetAllForUser(
-    currentUser?.userId || 0,
-    !!currentUser?.userId && currentUser?.userId === Number(id)
+    currentUser?.id || 0,
+    !!currentUser?.id && currentUser?.id === Number(id)
   );
 
   useEffect(() => {
-    if (currentUser?.userId && currentUser?.userId !== Number(id)) {
+    if (currentUser?.id && currentUser?.id !== Number(id)) {
       navigate(PageUrlsEnum.auth);
     }
   }, [currentUser, id, navigate]);
@@ -59,7 +59,7 @@ const UserProfilePage = (): JSX.Element => {
     }
   }, [error, updateModal, toggleLoading]);
 
-  function handlePasswordChange(values: DChangePasswordValues) {
+  function handlePasswordChange(values: ChangePasswordValues) {
     toggleLoading(true);
     submitPasswordChangeForm(values)
       .then((updatedUser) => {

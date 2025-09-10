@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-export interface DFieldAndLabelProps {
+export interface FieldAndLabelProps {
   label: string | ReactNode;
   fieldName: string;
   direction: 'row' | 'column';

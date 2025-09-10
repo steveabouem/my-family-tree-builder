@@ -1,4 +1,4 @@
-import { DFormField } from "components/common/definitions";
+import { FormField } from "components/common/definitions";
 import { DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "services/api.definitions";
 import axios, { AxiosResponse } from "axios";
 import { baseUrl } from ".";
@@ -32,8 +32,8 @@ export const addMembers = async (treeData: DFamilyTreeDAO): Promise<AxiosRespons
 /*
 * used to populate step form of family genealogy narrator
 */
-export const getGenealogyFormFieldsForStep = async (step: number): Promise<DFormField[]> => {
+export const getGenealogyFormFieldsForStep = async (step: number): Promise<FormField[]> => {
   // @ts-ignore
-  const results: DFormField[] = axios.get(`${baseUrl}/trees/narration-fields?step=${step}`);
+  const results: FormField[] = axios.get(`${baseUrl}/trees/narration-fields?step=${step}`);
   return results;
 };

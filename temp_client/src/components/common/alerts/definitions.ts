@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { DModalType } from "../definitions";
 
-export interface DModalProps {
+export interface ModalProps {
   hidden: boolean;
   id: string;
   title: string | ReactNode;

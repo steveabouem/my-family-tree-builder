@@ -4,7 +4,7 @@ import {  useParams } from "react-router-dom";
 import { Formik } from "formik";
 import Page from "components/common/Page";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { DFamilyTreeState } from "app/slices/definitions";
+import { FamilyTreeState } from "app/slices/definitions";
 import { populateTreeAction } from "app/slices/trees";
 import { formatTreeMemberDAOList } from "../create/genealogy/utils";
 import TreeLayout from 'pages/tree/layout/TreeLayout';
@@ -13,7 +13,7 @@ import { useGetTreeById } from "services/v2/familyTreeV2";
 
 const ViewFamilyTreeChartPage = () => {
   const dispatch = useZDispatch();
-  const { list, currentFamilyTree } = useZSelector<DFamilyTreeState>(state => state.tree);
+  const { list, currentFamilyTree } = useZSelector<FamilyTreeState>(state => state.tree);
   const { id } = useParams();
 
   // React Query hook for getting tree by ID

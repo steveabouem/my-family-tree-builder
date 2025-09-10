@@ -1,13 +1,13 @@
 import React, { ReactElement, ReactNode } from "react";
 
 /* +++++=> NAVIGATION <= +++++ */
-export interface DNavigationLink {
+export interface NavigationLink {
   link: string  | ReactNode;
   path: string  | ReactNode;
 }
 
 /* +++++=> PAGES <= +++++ */
-export interface DPageProps {
+export interface PageProps {
   title: string | ReactNode;
   subtitle: string | ReactNode;
   children?: React.ReactNode;
@@ -17,7 +17,7 @@ export interface DPageProps {
 }
 
 /* +++++=> FORMS <= +++++ */
-export interface DFormField {
+export interface FormField {
   fieldName: string;
   label: string | ReactNode;
   class?: string;
@@ -31,12 +31,12 @@ export interface DFormField {
   options?: {label: string | ReactElement, value: any}[];
 }
 
-export interface DBaseFormProps {
+export interface BaseFormProps {
   name?: string | ReactNode;
   withPaper?: boolean;
   mode?: 'read' | 'write',
   title?: string | ReactNode;
-  fields: DFormField[];
+  fields: FormField[];
   handleSubmit: () => void;
   size?: string | ReactNode;
   locked?: boolean; // controls display of submit button

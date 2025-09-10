@@ -1,12 +1,12 @@
 import React, { ReactNode } from "react";
 
-export interface DBaseMenuProps {
+export interface BaseMenuProps {
   items: DMenuItem[];
   position: DPositionEnum;
   children?: ReactNode;
 }
 
-export interface DMenuItem {
+export interface MenuItem {
   title: string;
   link: string;
   children?: DMenuItem[];

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { DUserDTO } from "../api.definitions";
-import { DChangePasswordValues } from "../../pages/user/definitions";
+import { ChangePasswordValues } from "../../pages/user/definitions";
 import { APILoginResponse, APIRequestPayload, LoginRequestPayload } from "../../../../shared";
 import { baseUrl } from "../index";
 
@@ -36,7 +36,7 @@ const handleRegister = async (values: Partial<DUserDTO>): Promise<any> => {
   return response.json();
 };
 
-const handlePasswordChange = async (values: DChangePasswordValues): Promise<any> => {
+const handlePasswordChange = async (values: ChangePasswordValues): Promise<any> => {
   const response = await fetch(`${baseUrl}/auth/password/change`, {
     method: 'POST',
     headers: {

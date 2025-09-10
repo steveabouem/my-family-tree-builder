@@ -1,4 +1,4 @@
-import { DUserState, LoggedInUser } from "../definitions";
+import { UserState, LoggedInUser } from "../definitions";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "services/api.definitions";
 
@@ -6,7 +6,7 @@ import { User } from "services/api.definitions";
 * State
 */
 const previousUser = localStorage.getItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`)
-const initialState: DUserState = {
+const initialState: UserState = {
   updating: false,
   currentUser: undefined,
 };
@@ -14,28 +14,28 @@ const initialState: DUserState = {
 /*
 * mutators
 */
-const manageUser = (state: DUserState, action: PayloadAction<LoggedInUser>) => {
+const manageUser = (state: UserState, action: PayloadAction<LoggedInUser>) => {
   state.updating = true;
   state.currentUser = { ...state.currentUser, ...action.payload };
   state.updating = false;
   return state;
 };
 
-const setUser = (state: DUserState, action: PayloadAction<LoggedInUser>) => {
+const setUser = (state: UserState, action: PayloadAction<LoggedInUser>) => {
   state.updating = true;
   state.currentUser = action.payload;
   state.updating = false;
   return state;
 };
 
-const clearUser = (state: DUserState) => {
+const clearUser = (state: UserState) => {
   state.updating = true;
   state.currentUser = undefined;
   state.updating = false;
   return state;
 };
 
-const resetUser = (state: DUserState) => {
+const resetUser = (state: UserState) => {
   state.updating = true;
   state = { ...initialState };
   state.updating = false;

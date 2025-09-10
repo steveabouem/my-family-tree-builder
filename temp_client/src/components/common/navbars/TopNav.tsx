@@ -9,7 +9,7 @@ import PageUrlsEnum from "utils/urls";
 import ThemeSelector from "../ThemeSelector";
 import { logout } from "services/auth";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { DUserState } from "app/slices/definitions";
+import { UserState } from "app/slices/definitions";
 import { updateUserAction } from "app/slices/user";
 
 const TopNav = () => {
@@ -17,7 +17,7 @@ const TopNav = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const theme = useTheme();
-  const { currentUser } = useZSelector<DUserState>(state => state.user);
+  const { currentUser } = useZSelector<UserState>(state => state.user);
   const dispatch = useZDispatch();
 
 

@@ -7,7 +7,7 @@ export enum themeEnum {
   dark = 'DARK',
 };
 
-export interface DGlobalContext {
+export interface GlobalContext {
   theme: themeEnum;
   loading: boolean;
   toggleLoading: (value?: boolean) => void;

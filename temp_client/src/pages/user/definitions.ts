@@ -1,4 +1,4 @@
-export interface DFamilyMember {
+export interface FamilyMember {
   firstName: string;
   lastName: string;
   age: number;
@@ -6,7 +6,7 @@ export interface DFamilyMember {
   avatarUrl?: string; // will have a check if user profile exists, and will use said user's info to populate
 };
 
-export interface DChangePasswordValues {
+export interface ChangePasswordValues {
   email: string;
   password: string;
   newPassword: string;

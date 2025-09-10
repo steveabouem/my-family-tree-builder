@@ -90,7 +90,7 @@ import { useChangePassword } from '../services/v2/authV2';
 const ChangePasswordComponent = () => {
   const changePasswordMutation = useChangePassword();
 
-  const handlePasswordChange = (values: DChangePasswordValues) => {
+  const handlePasswordChange = (values: ChangePasswordValues) => {
     changePasswordMutation.mutate(values, {
       onSuccess: () => {
         console.log('Password changed successfully');

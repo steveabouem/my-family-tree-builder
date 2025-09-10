@@ -1,6 +1,6 @@
 import axios from "axios";
 import { DUserDTO } from "./api.definitions";
-import { DChangePasswordValues } from "pages/user/definitions";
+import { ChangePasswordValues } from "pages/user/definitions";
 import { APILoginResponse, APIRequestPayload, LoginRequestPayload } from "../../../shared";
 import { baseUrl } from "./index";
 
@@ -15,7 +15,7 @@ export const submitRegistrationForm = async (values: Partial<DUserDTO>): Promise
   return currentSession;
 }
 
-export const submitPasswordChangeForm = async (values: DChangePasswordValues): Promise<any> => {
+export const submitPasswordChangeForm = async (values: ChangePasswordValues): Promise<any> => {
   const res = await axios.post(`${baseUrl}/auth/password/change`, values);
   return res;
 }

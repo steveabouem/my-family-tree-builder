@@ -1,9 +1,9 @@
-import { DFormField } from "components/common/definitions";
-import { DFamilyTreeDTO, DUserSession, User } from "services/api.definitions";
+import { FormField } from "components/common/definitions";
+import { FamilyTree, User } from "services/api.definitions";
 import { ReactNode } from "react";
 
 // theme
-export interface DThemeState {
+export interface ThemeState {
   season: ThemeSeasons;
 };
 export enum ThemeSeasons {
@@ -15,17 +15,17 @@ export enum ThemeSeasons {
 };
 // stepform
 export type DStepFormState = {
-  currentFormStepDetails: DStepDetails;
+  currentFormStepDetails: StepDetails;
   currentFormStep: number;
   updating: boolean;
   globalValues: any;
   totalSteps: number;
-  stepTree?: { [name: string]: DFormField[] };
+  stepTree?: { [name: string]: FormField[] };
   mode?: string;
 };
-export interface DStepDetails {
+export interface StepDetails {
   name: string;
-  fields: DFormField[];
+  fields: FormField[];
   title?: ReactNode;
   subtitle?: ReactNode;
 }
@@ -38,16 +38,16 @@ export enum stepFormModes {
   'create' = 'create',
 }
 //family tree
-export interface DFamilyTreeState {
+export interface FamilyTreeState {
   updating: boolean;
   treeId: number;
-  currentFamilyTree?: DFamilyTreeDTO;
+  currentFamilyTree?: FamilyTree;
   name?: string;
   list: any[];
 }
 
 // user
-export interface DUserState {
+export interface UserState {
   updating: boolean;
   currentUser?: LoggedInUser;
 }

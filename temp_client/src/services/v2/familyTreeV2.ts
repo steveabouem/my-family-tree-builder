@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { DFormField } from "../../components/common/definitions";
+import { FormField } from "../../components/common/definitions";
 import { APICreateFamilyResponse, APIGetAllTreesResponse, DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "../api.definitions";
 import { baseUrl } from "../index";
 
@@ -71,7 +71,7 @@ const addMembers = async (treeData: DFamilyTreeDAO): Promise<DApiResponse<{ payl
   return response.json();
 };
 
-const getGenealogyFormFieldsForStep = async (step: number): Promise<DFormField[]> => {
+const getGenealogyFormFieldsForStep = async (step: number): Promise<FormField[]> => {
   const response = await fetch(`${baseUrl}/trees/narration-fields?step=${step}`);
   
   if (!response.ok) {

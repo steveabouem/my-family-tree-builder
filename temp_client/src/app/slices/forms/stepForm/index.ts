@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { DStepDetails, DStepFormState, stepFormModes } from "../../definitions";
+import { StepDetails, DStepFormState, stepFormModes } from "../../definitions";
 
 /*
 * State
@@ -53,14 +53,14 @@ const changeMode = (state: DStepFormState, action: PayloadAction<stepFormModes>)
 /*
 * sends field values to API, which returns next field set
 */
-const setCurrentFields = (state: DStepFormState, action: PayloadAction<DStepDetails>) => {
+const setCurrentFields = (state: DStepFormState, action: PayloadAction<StepDetails>) => {
   state.updating = true;
   const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
   state.stepTree = newStepTree;
   state.currentFormStepDetails = action.payload;
   state.updating = false;
 };
-const setStepFields = (state: DStepFormState, action: PayloadAction<DStepDetails & { step: number }>) => {
+const setStepFields = (state: DStepFormState, action: PayloadAction<StepDetails & { step: number }>) => {
   state.updating = true;
   const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
   state.stepTree = newStepTree;

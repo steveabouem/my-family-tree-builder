@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@mui/material';
 
-interface DTreeNodeBubbleProps {
+interface TreeNodeBubbleProps {
   node: any;
   // onClick: (e: MouseEvent<HTMLBoxElement, MouseEvent>) => void;
   // onHover: (e: unknown) => void;

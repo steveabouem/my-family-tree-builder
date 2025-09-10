@@ -6,24 +6,24 @@ import { MdCancelPresentation } from "react-icons/md";
 import { Formik } from "formik";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
-import { DChangePasswordValues } from "../definitions";
-import { DFormField } from "components/common/definitions";
+import { ChangePasswordValues } from "../definitions";
+import { FormField } from "components/common/definitions";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
 import Spinner from "components/common/progressIndicators/Spinner";
 import { useZSelector } from "app/hooks";
-import { DUserState } from "app/slices/definitions";
+import { UserState } from "app/slices/definitions";
 
-const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: DChangePasswordValues) => void }) => {
+const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswordValues) => void }) => {
   const [passwordFormMode, setPasswordFormMode] = useState<'write' | 'read'>('read');
-  const {currentUser} = useZSelector<DUserState>(state => state.user);
-  const changePasswordInitialValues = useMemo((): DChangePasswordValues => ({
+  const {currentUser} = useZSelector<UserState>(state => state.user);
+  const changePasswordInitialValues = useMemo((): ChangePasswordValues => ({
     email: currentUser?.email || '',
     password: '',
     newPassword: '',
     repeatNewPassword: '',
     id: currentUser?.userId || 0
   }), [currentUser?.email, currentUser?.userId]);
-  const changePasswordFields: DFormField[] = [
+  const changePasswordFields: FormField[] = [
     { fieldName: 'email', label: <Trans>email_form_label</Trans>, type: 'email' },
     { fieldName: 'password', label: <Trans>password_form_label</Trans>, type: 'password' },
     { fieldName: 'newPassword', label: <Trans>new_password_form_label</Trans>, type: 'password' },
@@ -34,7 +34,7 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: DChangePassw
     setPasswordFormMode(passwordFormMode === 'read' ? 'write' : 'read');
   }
 
-  function submitPasswordForm(values: DChangePasswordValues) {
+  function submitPasswordForm(values: ChangePasswordValues) {
     handleSubmit(values);
     toggleMode();
   }

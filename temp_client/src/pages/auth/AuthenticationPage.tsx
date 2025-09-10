@@ -5,7 +5,7 @@ import { DAuthProps } from "./definitions";
 import { Formik } from "formik";
 import { Box, Button, FormControl } from "@mui/material";
 import GlobalContext from "../../contexts/creators/global";
-import { DFormField } from "../../components/common/definitions";
+import { FormField } from "../../components/common/definitions";
 import { APILoginResponse, APIRequestPayload, LoginRequestPayload, RegistrationRequestPayload } from "../../services/api.definitions";
 import { useLogin, useRegister } from "../../services/v2/authV2";
 import PageUrlsEnum from "utils/urls/";
@@ -47,7 +47,7 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
 
   ];
 
-  const registrationFormFields: DFormField[] = [
+  const registrationFormFields: FormField[] = [
     {
       fieldName: 'firstName',
       label: 'First Name',

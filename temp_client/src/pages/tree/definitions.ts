@@ -1,6 +1,6 @@
 import { DUserDTO } from "services/api.definitions";
 
-export interface DFamilyTree {
+export interface FamilyTree {
   id: number;
   name: string;
   public: boolean;
@@ -9,7 +9,7 @@ export interface DFamilyTree {
   authorized_ips: string;
   active: boolean;
 }
-export interface DTreeManagerFields {
+export interface TreeManagerFields {
   relation: keyof typeof relationType | '';
   firstName: string;
   lastName: string;
@@ -19,12 +19,12 @@ export interface DTreeManagerFields {
   marital_status: string;
 }
 
-export interface DTreeManagerProps {
+export interface TreeManagerProps {
   numberOfSiblings: number;
   hasSpouse: boolean;
 }
 
-export interface DSibling {
+export interface Sibling {
   firstName: string;
   lastName: string;
   age: string;
@@ -41,22 +41,22 @@ export interface DSibling {
 }
 
 /* REACT_FAMILY_TREE package */
-interface DParentDetails {
+interface ParentDetails {
   id: string;
   gender: 'male' | 'female';
 }
 
-interface DSiblingsDetails {
+interface SiblingsDetails {
   id: string;
   type: 'blood' | 'union';
 }
 
-interface DSpouseDetails {
+interface SpouseDetails {
   id: string;
   type: 'married' | 'divorced';
 }
 
-export interface DTreeNode {
+export interface TreeNode {
   id: string;
   hasSubTree?: boolean;
   gender: 'male' | 'female';
@@ -75,7 +75,7 @@ export interface DTreeNode {
 /*
 * React flow
 */
-export interface DNodeInfo {
+export interface NodeInfo {
   label: string;
   id: number;
   dob: string;
@@ -104,7 +104,7 @@ export type DReactFlowNode = DNodeInfo & {
     spouses: string;
     data: DNodeInfo;
 }
-export interface DReactFlowEdge {
+export interface ReactFlowEdge {
   id: string;
   position: { x: number, y: number };
   data: { label: string };

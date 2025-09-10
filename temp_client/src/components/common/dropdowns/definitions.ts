@@ -1,6 +1,6 @@
 import { Gendersenum } from "../definitions";
 
-export interface DBaseDropDownProps {
+export interface BaseDropDownProps {
   options: DDropdownOption[];
   name: string;
   additionalClass?: string;
@@ -11,7 +11,7 @@ export interface DBaseDropDownProps {
   displayVal?: string | number;
 }
 
-export interface DDropdownOption {
+export interface DropdownOption {
   label: string;
   value: string | number;
   active?: boolean;

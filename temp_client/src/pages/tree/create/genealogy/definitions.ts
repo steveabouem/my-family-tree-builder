@@ -1,16 +1,16 @@
-import { DFormField } from "components/common/definitions";
+import { FormField } from "components/common/definitions";
 
 export type DKinsCount = {
   [kinshipEnum.siblings]: { display: boolean; total: number };
   [kinshipEnum.partner]: boolean;
   [kinshipEnum.parents]: { mother: { display: boolean }; father: { display: boolean } };
 };
-export interface DStepsFieldsByKin {
-  [kinshipEnum.siblings]: { fields: DFormField[]; exist: boolean; total: number };
-  [kinshipEnum.partner]?: DFormField[];
-  [kinshipEnum.parents]: { father?: DFormField[], mother: DFormField[] };
+export interface StepsFieldsByKin {
+  [kinshipEnum.siblings]: { fields: FormField[]; exist: boolean; total: number };
+  [kinshipEnum.partner]?: FormField[];
+  [kinshipEnum.parents]: { father?: FormField[], mother: FormField[] };
 }
-export interface DFamilyTreeDTO {
+export interface FamilyTreeDTO {
   created_at: string;
   id:number;
   active: number; // 1 | 0
@@ -20,7 +20,7 @@ export interface DFamilyTreeDTO {
   name?:string;
   public: number; // 1 | 0
 }
-export interface DFamilyTreeFormData {
+export interface FamilyTreeFormData {
   // Base anchor fields (always present)
   anchor_node_id?: string;
   anchorNode?: string;

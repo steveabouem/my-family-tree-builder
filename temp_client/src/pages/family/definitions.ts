@@ -1,4 +1,4 @@
-export interface DFamilyDTO {
+export interface FamilyDTO {
   id: number;
   name:string;
   profile_url: string;
