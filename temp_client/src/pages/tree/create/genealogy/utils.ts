@@ -28,7 +28,7 @@ export const formatTreeMemberDAOList = (v: FamilyMember[]) => {
         data: {
           ...member,
           type: 'blackbox',
-          position: JSON.parse(member?.position || '{"x": 0, "y": 0}'),
+          position: member?.position,
           id: member.node_id,
           children: childrenIds,
           siblings: siblingsIds,
@@ -36,7 +36,7 @@ export const formatTreeMemberDAOList = (v: FamilyMember[]) => {
         },
         ...member,
           type: 'blackbox',
-          position: JSON.parse(member?.position || '{"x": 0, "y": 0}'),
+          position: member?.position,
           id: member.node_id,
           children: childrenIds,
           siblings: siblingsIds,

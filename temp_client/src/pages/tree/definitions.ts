@@ -1,11 +1,11 @@
-import { DUserDTO } from "services/api.definitions";
+import { FamilyMember, User } from "services/api.definitions";
 
 export interface FamilyTree {
   id: number;
   name: string;
   public: boolean;
   dob: string,
-  members?: DUserDTO[];
+  members?: User[];
   authorized_ips: string;
   active: boolean;
 }
@@ -40,7 +40,6 @@ export interface Sibling {
   relation: string; // value of relation type below
 }
 
-/* REACT_FAMILY_TREE package */
 interface ParentDetails {
   id: string;
   gender: 'male' | 'female';
@@ -66,15 +65,12 @@ export interface TreeNode {
   description?: string;
   marital_status?: string;
   profile_url?: string;
-  parents: DParentDetails[];
-  siblings: DSiblingsDetails[];
-  spouses: DSpouseDetails[];
-  children: DSiblingsDetails[];
+  parents: Partial<FamilyMember>;
+  siblings:Partial<FamilyMember>;
+  spouses: Partial<FamilyMember>;
+  children:Partial<FamilyMember>;
 }
 
-/*
-* React flow
-*/
 export interface NodeInfo {
   label: string;
   id: number;
@@ -97,19 +93,18 @@ export interface NodeInfo {
   user_id: number;
   created_by: number;
 }
-export type DReactFlowNode = DNodeInfo & {
+export type ReactFlowNode = Partial<FamilyMember> & {
     type: string;
     position: {x: number, y: number},
     children: string;
     spouses: string;
-    data: DNodeInfo;
+    data: Partial<FamilyMember>;
 }
 export interface ReactFlowEdge {
   id: string;
   position: { x: number, y: number };
   data: { label: string };
 }
-/* END */
 
 export const relationType = {
   a: 'aunt',

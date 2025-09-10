@@ -4,7 +4,7 @@ import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
 import GenealogyForm from './GenealogyForm';
 import TreePlayground from './GenealogyNarrator';
-import { DFamilyMemberDTO, DFamilyTreeDAO } from 'services/api.definitions';
+import { DFamilyMemberDTO, FamilyTree } from 'services/api.definitions';
 import { FamilyTreeState, DStepFormState, UserState, stepFormModes } from 'app/slices/definitions';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
@@ -29,7 +29,7 @@ const GenealogyContainer: React.FC = () => {
   * We will use the first part of the field name to determine the type of kinship to build an array for
   * the API will handle creatig a family member from each of these steps
   */
-  function formatOutgoingValues(v: DFamilyTreeFormData): DFamilyTreeDAO {
+  function formatOutgoingValues(v: DFamilyTreeFormData): FamilyTree {
     const mappedMembers = Object.keys(stepTree).reduce((acc: any, curr: string) => {
       const formatted: DFamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
       console.log('OUTGOING V ', v);
@@ -107,7 +107,7 @@ const GenealogyContainer: React.FC = () => {
     return formatted;
   }
   function handleSubmit(v: any) {
-    const formattedValues: DFamilyTreeDAO = formatOutgoingValues(v);
+    const formattedValues: FamilyTree = formatOutgoingValues(v);
     const userId = currentUser?.userId || 0;
 
     try {

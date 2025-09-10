@@ -12,8 +12,8 @@ import { Trans } from '@lingui/macro';
 import { useTheme } from '@mui/material';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
-import { DFamilyTreeDTO } from 'services/api.definitions';
-import { DReactFlowEdge, DReactFlowNode, NodeMenuActions } from '../definitions';
+import { FamilyTree } from 'services/api.definitions';
+import { ReactFlowEdge, ReactFlowNode, NodeMenuActions } from '../definitions';
 import { useZDispatch } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
@@ -25,7 +25,7 @@ const nodeTypes = {
 };
 const treeBgUrl = 'https://images.pexels.com/photos/22821246/pexels-photo-22821246/free-photo-of-plants-leaves-in-black-and-white.jpeg';
 
-const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
+const LayoutFlow = memo(({ tree }: { tree: FamilyTree }) => {
   const [nodesList, setNodesList] = useNodesState<any>([]);
   const [edgesList, setEdgesList] = useEdgesState<any>([]);
   const { setValues } = useFormikContext<any>();
@@ -41,7 +41,7 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
     // eslint-disable-next-line
   }, [tree]);
 
-  function populateFormWithNodeValues(node: DReactFlowNode) {
+  function populateFormWithNodeValues(node: ReactFlowNode) {
     setValues({
       // @ts-ignore: TODO FIX
       anchor_firstName: node?.firstName || node?.first_name || '',
@@ -110,11 +110,11 @@ const LayoutFlow = memo(({ tree }: { tree: DFamilyTreeDTO }) => {
   }
   function generateEdge(newEdge: any) {
     console.log({ newEdges: newEdge });
-    setEdgesList((prev: DReactFlowEdge[]) => {
-      const targetEdge = prev.find((edge: DReactFlowEdge) => edge.id === newEdge.id);
+    setEdgesList((prev: ReactFlowEdge[]) => {
+      const targetEdge = prev.find((edge: ReactFlowEdge) => edge.id === newEdge.id);
       console.log('found edge', targetEdge, newEdge);
 
-      return ([...prev.filter((edge: DReactFlowEdge) => edge.id !== newEdge.id), targetEdge]);
+      return ([...prev.filter((edge: ReactFlowEdge) => edge.id !== newEdge.id), targetEdge]);
     });
   }
   /*

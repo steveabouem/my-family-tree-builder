@@ -7,14 +7,14 @@ import PageUrlsEnum from "utils/urls";
 import { useGetAllForUser } from "services/v2";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { UserState } from "app/slices/definitions";
-import { DFamilyTreeDTO, FamilyTree } from "services/api.definitions";
+import { FamilyTree } from "services/api.definitions";
 import dayjs from "dayjs";
 import { EyeIcon } from "utils/assets/icons";
 import { populateTreeAction, saveTreeIdAction } from "app/slices/trees";
 
 const FamilyTreeDashboard = () => {
   const { currentUser } = useZSelector<UserState>(state => state.user);
-  const { data, isFetching, isLoading } = useGetAllForUser(currentUser?.userId);
+  const { data, isFetching, isLoading } = useGetAllForUser(currentUser?.id);
   const dispatch = useZDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -22,7 +22,7 @@ const FamilyTreeDashboard = () => {
   const selectTree = (t: FamilyTree) => {
     console.log({t});
     // @ts-ignore
-    const formattedTree:DFamilyTreeDTO = {members: JSON.parse(t.members).reduce((acc, curr) => ({
+    const formattedTree:FamilyTree = {members: JSON.parse(t.members).reduce((acc, curr) => ({
       ...acc,
        data: {
           ...curr,

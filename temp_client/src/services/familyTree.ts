@@ -1,5 +1,5 @@
 import { FormField } from "components/common/definitions";
-import { DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "services/api.definitions";
+import { APIRequestPayload, FamilyTree } from "services/api.definitions";
 import axios, { AxiosResponse } from "axios";
 import { baseUrl } from ".";
 
@@ -14,7 +14,7 @@ export const getTreeById = async (treeId: string) => {
   return results;
 };
 
-export const createFamilyTree = async (values: DFamilyTreeDAO) => { // ! TOFIX: no any
+export const createFamilyTree = async (values: FamilyTree) => { // ! TOFIX: no any
   const results = axios.post(`${baseUrl}/trees/create`, { ...values });
   return results;
 };
@@ -24,7 +24,7 @@ export const getMembers = async (treeId: number) => { // ! TOFIX: no any
   return results;
 };
 
-export const addMembers = async (treeData: DFamilyTreeDAO): Promise<AxiosResponse<DApiResponse<{ payload: DFamilyTreeRecord }>>> => { // ! TOFIX: no any
+export const addMembers = async (treeData: FamilyTree): Promise<AxiosResponse<APIRequestPayload<{ payload: FamilyTree }>>> => { // ! TOFIX: no any
   const results: any = axios.put(`${baseUrl}/trees/members`, { ...treeData });
   return results;
 };

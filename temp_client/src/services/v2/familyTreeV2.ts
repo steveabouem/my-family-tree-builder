@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FormField } from "../../components/common/definitions";
-import { APICreateFamilyResponse, APIGetAllTreesResponse, DApiResponse, DFamilyTreeDAO, DFamilyTreeRecord } from "../api.definitions";
+import { APICreateFamilyResponse, APIGetAllTreesResponse, APIRequestPayload, FamilyTree } from "../api.definitions";
 import { baseUrl } from "../index";
 
 //#region API Functions
@@ -29,7 +29,7 @@ const getTreeById = async (treeId: string) => {
   return response.json();
 };
 
-const createFamilyTree = async (values: DFamilyTreeDAO): Promise<APICreateFamilyResponse> => {
+const createFamilyTree = async (values: FamilyTree): Promise<APICreateFamilyResponse> => {
   const response = await fetch(`${baseUrl}/trees/create`, {
     method: 'POST',
     headers: {
@@ -55,7 +55,7 @@ const getMembers = async (treeId: number) => {
   return response.json();
 };
 
-const addMembers = async (treeData: DFamilyTreeDAO): Promise<DApiResponse<{ payload: DFamilyTreeRecord }>> => {
+const addMembers = async (treeData: FamilyTree): Promise<APIRequestPayload<{ payload: FamilyTree }>> => {
   const response = await fetch(`${baseUrl}/trees/members`, {
     method: 'PUT',
     headers: {
@@ -108,7 +108,7 @@ export const useCreateFamilyTree = () => {
     mutationFn: createFamilyTree,
     onSuccess: (data, variables) => {
       // Invalidate and refetch family trees for the user
-      queryClient.invalidateQueries({ queryKey: ['familyTrees', 'user', variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ['familyTrees', 'user', variables?.id || 0] });
       queryClient.invalidateQueries({ queryKey: ['familyTrees'] });
     },
     onError: (error) => {
@@ -133,8 +133,8 @@ export const useAddMembers = () => {
     mutationFn: addMembers,
     onSuccess: (data, variables) => {
       // Invalidate and refetch members for the tree
-      queryClient.invalidateQueries({ queryKey: ['familyTree', 'members', variables.treeId] });
-      queryClient.invalidateQueries({ queryKey: ['familyTree', 'details', variables.treeId] });
+      queryClient.invalidateQueries({ queryKey: ['familyTree', 'members', variables?.id || 0] });
+      queryClient.invalidateQueries({ queryKey: ['familyTree', 'details', variables?.id || 0] });
     },
     onError: (error) => {
       console.error('Add members failed:', error);

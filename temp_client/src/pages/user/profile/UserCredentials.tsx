@@ -21,8 +21,8 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswo
     password: '',
     newPassword: '',
     repeatNewPassword: '',
-    id: currentUser?.userId || 0
-  }), [currentUser?.email, currentUser?.userId]);
+    id: currentUser?.id || 0
+  }), [currentUser?.email, currentUser?.id]);
   const changePasswordFields: FormField[] = [
     { fieldName: 'email', label: <Trans>email_form_label</Trans>, type: 'email' },
     { fieldName: 'password', label: <Trans>password_form_label</Trans>, type: 'password' },

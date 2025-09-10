@@ -232,7 +232,7 @@ import { useCreateFamilyTree } from '../services/v2/familyTreeV2';
 const CreateTreeComponent = () => {
   const createTreeMutation = useCreateFamilyTree();
 
-  const handleCreateTree = (treeData: DFamilyTreeDAO) => {
+  const handleCreateTree = (treeData: FamilyTree) => {
     createTreeMutation.mutate(treeData, {
       onSuccess: (data) => {
         console.log('Tree created successfully:', data);

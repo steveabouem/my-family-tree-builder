@@ -173,8 +173,8 @@ export interface APIFTLoginFields { //registration form fields
 }
 
 export type APIFamilyMemberRecord = FamilyMember;
-export type ManageTreeAPIResponse = Promise<APIRequestPayload<APIGetFamilyTreeResponse | null>>;
-export type GetTreeAPIResponse = Promise<APIRequestPayload<FamilyTree | null>>;
+export type ManageTreeAPIEndpointResponse = Promise<APIRequestPayload<APIGetFamilyTreeResponse | null>>;
+export type GetTreeAPIEndpointResponse = Promise<APIRequestPayload<FamilyTree | null>>;
 export type APIFamilyMemberArrayKeys = keyof Pick<FamilyMember, 'children' | 'parents' | 'siblings' | 'spouses'>;
 
 
@@ -313,7 +313,7 @@ export interface ChangePasswordRequestPayload {
 
 
 // OLD
-interface ApiResponseRoot {
+interface APIEndpointResponseRoot {
     error: boolean;
     code: number;
     sessionId?: string;

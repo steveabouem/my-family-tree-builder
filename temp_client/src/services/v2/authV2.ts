@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { DUserDTO } from "../api.definitions";
+import { User } from "../api.definitions";
 import { ChangePasswordValues } from "../../pages/user/definitions";
 import { APILoginResponse, APIRequestPayload, LoginRequestPayload } from "../../../../shared";
 import { baseUrl } from "../index";
@@ -20,7 +20,7 @@ const handleLogin = async (values: LoginRequestPayload): Promise<APIRequestPaylo
   return response.json();
 };
 
-const handleRegister = async (values: Partial<DUserDTO>): Promise<any> => {
+const handleRegister = async (values: Partial<User>): Promise<any> => {
   const response = await fetch(`${baseUrl}/auth/register`, {
     method: 'POST',
     headers: {
@@ -139,7 +139,7 @@ export const useLogout = () => {
   });
 };
 
-export const validateRegistrationFields = (values: DUserDTO): boolean => {
+export const validateRegistrationFields = (values: User): boolean => {
   return false;
 };
 

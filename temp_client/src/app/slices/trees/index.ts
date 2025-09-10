@@ -1,4 +1,4 @@
-import { DFamilyTreeDTO } from "services/api.definitions";
+import { FamilyTree } from "services/api.definitions";
 import { FamilyTreeState } from "../definitions";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /*
@@ -14,7 +14,7 @@ const initialState: FamilyTreeState = {
 /*
 * mutators
 */
-const updateTree = (state: FamilyTreeState, action: PayloadAction<DFamilyTreeDTO>) => {
+const updateTree = (state: FamilyTreeState, action: PayloadAction<FamilyTree>) => {
   state.updating = true;
   state.currentFamilyTree = {...action.payload };
   state.updating = false;

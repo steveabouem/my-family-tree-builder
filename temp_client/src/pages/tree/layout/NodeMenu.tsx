@@ -2,10 +2,10 @@ import React, { useContext, useState } from 'react';
 import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material'
 import { Trans } from '@lingui/macro';
 import GlobalContext from 'contexts/creators/global';
-import { DReactFlowNode } from 'services/api.definitions';
+import { ReactFlowNode } from 'services/api.definitions';
 import { NodeMenuActions } from '../definitions';
 
-const NodeMenu = ({ data }: { data: Pick<DReactFlowNode, 'data'> }) => {
+const NodeMenu = ({ data }: { data: Pick<ReactFlowNode, 'data'> }) => {
   const [selectedAction, setSelectedAction] = useState<'edit' | 'delete' | 'expand'>("expand");
   const {updateModal, modal} = useContext(GlobalContext);
 
