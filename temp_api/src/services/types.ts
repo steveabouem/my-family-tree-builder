@@ -147,8 +147,21 @@ export interface APIReactFlowNode {
     type?: any;
 }
 
+export type FamilyMemberRelativesNodeIds = {
+    parents: string[]; // node_ids
+    children: string[]; // node_ids
+    siblings: string[]; // node_ids
+    spouses: string[]; // node_ids
+};
 
-export type FamilyMemberData = Omit<InferAttributes<FamilyMember>,
+export type FamilyMemberRelativesData = {
+    parents: FamilyMemberData[]; // node_ids
+    children: FamilyMemberData[]; // node_ids
+    siblings: FamilyMemberData[]; // node_ids
+    spouses: FamilyMemberData[]; // node_ids
+};
+
+export type FamilyMemberData = FamilyMemberRelativesNodeIds & Omit<InferAttributes<FamilyMember>,
     'parents' |
     'children' |
     'siblings' |
@@ -156,10 +169,7 @@ export type FamilyMemberData = Omit<InferAttributes<FamilyMember>,
     'position' |
     'connections'
 > & {
-    parents: string[]; // node_ids
-    children: string[]; // node_ids
-    siblings: string[]; // node_ids
-    spouses: string[]; // node_ids
+    node_id: string;
     position?: { x: number; y: number };
     tree_idd?: number;
     created_by?: number;
@@ -171,6 +181,25 @@ export type FamilyMemberData = Omit<InferAttributes<FamilyMember>,
     }[];
 }
 
+export type FamilyMemberDetailedData = FamilyMemberRelativesData & Omit<InferAttributes<FamilyMember>,
+    'parents' |
+    'children' |
+    'siblings' |
+    'spouses' |
+    'position' |
+    'connections'
+> & {
+    node_id: string;
+    position?: { x: number; y: number };
+    tree_idd?: number;
+    created_by?: number;
+    type?: string;
+    connections?: {
+        id: string;
+        source: string;
+        target: string;
+    }[];
+};
 export interface User {
     id?: number;
     first_name: string;

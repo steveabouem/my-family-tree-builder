@@ -72,7 +72,7 @@ export const positionFamilyMembers = async (members: FamilyMemberData[], anchorN
   if (anchor) {
     logger.info('Anchor data is ', { anchor })
     // position every one of the anchor's relatives
-    const position = { x: anchor?.position?.x ||  0, y: anchor?.position?.y ||  0 };
+    const position = { x: anchor?.position?.x || 0, y: anchor?.position?.y || 0 };
     const childrenNodeIds: string[] = anchor?.children || [];
     const siblingsNodeIds: string[] = anchor?.siblings || [];
     const spousesNodeIds: string[] = anchor?.spouses || [];
@@ -145,8 +145,9 @@ export const createTree = async (createData: ManageTreeRequestPayload): ManageTr
           });
         response.code = 200;
         response.error = false;
-        // members key will have the list of memebers, even if the db only has the list of node_ids
-        response.payload = { ...newTree?.dataValues, members: withCoords };
+
+        const detailedListOfMembers = await getAllRelativesData(newTree);
+        response.payload = { ...newTree?.dataValues, members: detailedListOfMembers || [] };
       } else {
         logger.error('Unable to create members: records array empty');
       }
@@ -490,3 +491,40 @@ const formatFamilyMemberToFront = (member: FamilyMember): FamilyMemberData => ({
   position: JSON.parse(member?.position || '{}'),
   connections: JSON.parse(member?.connections || '[]')
 });
+
+/**
+ * ? For each member of a family tree,
+ * ? populate all the relatives array with their actual data from db, not just node_id
+ * @param treeId number
+ * @returns 
+ */
+export const getAllRelativesData = async (treeRecord: FamilyTree | void): Promise<FamilyMemberData[] | null> => {
+  const relativesData: any = [];
+
+  try {
+    logger.info('The Tree ', { treeRecord });
+    if (treeRecord?.dataValues) {
+      const nodeIds: string[] = JSON.parse(treeRecord.dataValues?.members || '[]');
+      logger.info("current Tree's members", { treeMembers: nodeIds });
+
+      await Promise.all(nodeIds.map(async (m) => {
+        const memberRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: m } } });
+        logger.info('Found tree member record', { memberRecord });
+        if (memberRecord) {
+          const formattedRecord = formatFamilyMemberToFront(memberRecord);
+          relativesData.push(formattedRecord);
+        }
+      }));
+
+    } else {
+      logger.error('Invalid entry for tree record ', treeRecord);
+      return null;
+    }
+
+  } catch (e: unknown) {
+    logger.error('FAILED getting relatives', e);
+    return null;
+  }
+
+  return relativesData;
+};

@@ -1,9 +1,9 @@
 import { Router, Request, Response } from "express";
 
 import FamilyTree from "../models/FamilyTree";
-import { FamilyTreeFormData, APIGetFamilyTreeResponse, ManageTreeRequestPayload } from "../services/types";
+import { FamilyTreeFormData, APIGetFamilyTreeResponse, ManageTreeRequestPayload, FamilyMemberData } from "../services/types";
 import { sendRouteHandlerResponse } from "./helpers";
-import { createTree, deleteTree, getAllTrees, getTreeById, updateTree } from "../services/familyTree";
+import { createTree, deleteTree, getAllRelativesData, getAllTrees, getTreeById, updateTree } from "../services/familyTree";
 
 const router = Router();
 
@@ -24,10 +24,10 @@ router.post('/delete', (req: Request<{ id: string }, {}, {}, {}>, res: Response)
   sendRouteHandlerResponse<number, null>(treeId, deleteTree, res, 'Delete tree');
 });
 
-router.get('/members', (req: Request, res: Response) => {
-  const treeId = parseInt(req.params.id);
-  sendRouteHandlerResponse<number, null>(treeId, deleteTree, res, 'Delete tree');
-});
+// router.get('/members', (req: Request<{ }, {}, {}, {id: string}>, res: Response) => {
+//   const treeId = parseInt(req.query.id);
+//   sendRouteHandlerResponse<number, FamilyMemberData[] | null>(treeId, getAllRelativesData, res, 'Get members');
+// });
 
 router.put('/members', (req: Request<{}, {}, ManageTreeRequestPayload, {}>, res: Response) => {
   sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, updateTree, res, 'Update family tree');
