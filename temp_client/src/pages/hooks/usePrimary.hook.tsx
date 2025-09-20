@@ -1,5 +1,5 @@
 import GlobalContext from "contexts/creators/global/global.context";
-import { themeEnum } from "contexts/creators/global/globalContext.types";
+import { themeEnum } from "types";
 import React from "react";
 
 const usePrimary = (): string => {

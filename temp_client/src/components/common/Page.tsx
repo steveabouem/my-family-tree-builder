@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Box, Typography, useTheme } from '@mui/material';
-import { DPageProps } from "./definitions";
+import { PageProps } from "types";
 import Spinner from "./progressIndicators/Spinner";
 import useSessionValidation from "../../pages/hooks/useAuthValidation";
 import BaseModal from "./alerts/BaseModal";
@@ -8,7 +8,7 @@ import GlobalContext from "contexts/creators/global/global.context";
 import { BackIcon } from "utils/assets/icons";
 import { Link } from "react-router-dom";
 
-const Page = ({ title, subtitle, children, loading, bg, prevUrl }: DPageProps): JSX.Element => {
+const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): JSX.Element => {
   useSessionValidation();
   const { modal } = useContext(GlobalContext);
   const seasonalTheme = useTheme();

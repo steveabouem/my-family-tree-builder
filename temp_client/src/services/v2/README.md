@@ -18,7 +18,7 @@ import { useLogin } from '../services/v2/authV2';
 const LoginComponent = () => {
   const loginMutation = useLogin();
 
-  const handleLogin = (values: Partial<DUserDTO>) => {
+  const handleLogin = (values: Partial<UserDTO>) => {
     loginMutation.mutate(values, {
       onSuccess: (data) => {
         console.log('Login successful:', data);
@@ -54,7 +54,7 @@ import { useRegister } from '../services/v2/authV2';
 const RegisterComponent = () => {
   const registerMutation = useRegister();
 
-  const handleRegister = (values: Partial<DUserDTO>) => {
+  const handleRegister = (values: Partial<UserDTO>) => {
     registerMutation.mutate(values, {
       onSuccess: (data) => {
         console.log('Registration successful:', data);

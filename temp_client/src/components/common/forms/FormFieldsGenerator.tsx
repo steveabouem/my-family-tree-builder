@@ -3,13 +3,13 @@ import { Field, FieldArray, useFormikContext } from "formik";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
 import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/material";
 import { Trans, t } from "@lingui/macro";
-import { DBaseFormProps, FormField } from "../definitions";
+import { BaseFormProps, FormField } from "types";
 import CustomField from "./customField/CustomField";
 
 const FormFieldsGenerator = ({
   fields, handleSubmit, withPaper = true, name = 'form',
   size, handleFieldValueChange, title, mode = 'write', locked,
-}: DBaseFormProps): JSX.Element => {
+}: BaseFormProps): JSX.Element => {
   const { submitForm, values } = useFormikContext<any>();
 
   return (

@@ -12,17 +12,16 @@ import {
 import TopNav from "./navbars/TopNav";
 import Footer from "./navbars/Footer";
 import FTLandingPage from "../FT.Landing";
-import { DAuthMode } from "pages/auth/definitions";
 import PageUrlsEnum from "utils/urls/";
 import UserProfilePage from "pages/user/profile";
 import FamilyTreeDashboard from "pages/tree/dashboard";
 import ViewFamilyTreeChartPage from "pages/tree";
 import AuthenticationPage from "pages/auth";
 import CreateFamilyTreePage from "pages/tree/create";
-import { DUserDTO } from "services/api.definitions";
+import { DAuthMode,User } from "types";
 
 const AppContainer = (): JSX.Element => {
-  const [currentUser, setCurrentUser] = useState<DeepPartial<DUserDTO>>({});
+  const [currentUser, setCurrentUser] = useState<DeepPartial<User>>({});
   const [mode, setMode] = useState<DAuthMode | undefined>();
   const [throwError, setThrowError] = useState<boolean>(false);
 
@@ -41,7 +40,7 @@ const AppContainer = (): JSX.Element => {
     setThrowError(error);
   }
 
-  const updateUser = (user?: Partial<DUserDTO>) => {
+  const updateUser = (user?: Partial<User>) => {
     if (user) {
       // @ts-ignore
       setCurrentUser(prev => {

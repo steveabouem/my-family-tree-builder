@@ -1,5 +1,4 @@
-import { FamilyTree } from "services/api.definitions";
-import { FamilyTreeState } from "../definitions";
+import { FamilyTree ,FamilyTreeState } from "types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /*
 * State

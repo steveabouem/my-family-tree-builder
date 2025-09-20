@@ -4,18 +4,16 @@ import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
 import GenealogyForm from './GenealogyForm';
 import TreePlayground from './GenealogyNarrator';
-import { DFamilyMemberDTO, FamilyTree } from 'services/api.definitions';
-import { FamilyTreeState, DStepFormState, UserState, stepFormModes } from 'app/slices/definitions';
+import { FamilyTreeState, StepFormState, UserState, stepFormModes, FamilyMemberDTO, FamilyTree, FamilyTreeFormData } from 'types';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import GlobalContext from 'contexts/creators/global';
-import { formatTreeMemberDAOList } from 'pages/tree/create/genealogy/utils';
+import { formatTreeMembers } from 'pages/tree/create/genealogy/utils';
 import { useCreateFamilyTree, useAddMembers } from 'services/v2/familyTreeV2';
-import { DFamilyTreeFormData } from './definitions';
 
 const GenealogyContainer: React.FC = () => {
   const [treeCopy, setTreeCopy] = useState({});
-  const { stepTree = {}, mode } = useZSelector<DStepFormState>(state => state.stepForm);
+  const { stepTree = {}, mode } = useZSelector<StepFormState>(state => state.stepForm);
   const { treeId } = useZSelector<FamilyTreeState>(state => state.tree);
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const dispatch = useZDispatch();
@@ -29,9 +27,9 @@ const GenealogyContainer: React.FC = () => {
   * We will use the first part of the field name to determine the type of kinship to build an array for
   * the API will handle creatig a family member from each of these steps
   */
-  function formatOutgoingValues(v: DFamilyTreeFormData): FamilyTree {
+  function formatOutgoingValues(v: FamilyTreeFormData): FamilyTree {
     const mappedMembers = Object.keys(stepTree).reduce((acc: any, curr: string) => {
-      const formatted: DFamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
+      const formatted: FamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
       console.log('OUTGOING V ', v);
       if (!formatted?.node_id) {
         // TODO: this is to do a quick fix for key duplication when switching steps right after changing to edit mode and selecting a next of kin
@@ -82,10 +80,10 @@ const GenealogyContainer: React.FC = () => {
     // @ts-ignore
     return { data: { anchor: v.anchorNode, members: Object.values(mappedMembers), userId: currentUser?.id || 0, treeName: v?.treeName || '', treeId } };
   }
-  function cleanUpValuesPrefixes(indicator: string, valuesObject: DFamilyTreeFormData): DFamilyMemberDTO {
+  function cleanUpValuesPrefixes(indicator: string, valuesObject: FamilyTreeFormData): FamilyMemberDTO {
     console.log('CLEANUP PREFIX ISOLATED ', indicator, valuesObject);
 
-    const formatted: DFamilyMemberDTO = {
+    const formatted: FamilyMemberDTO = {
       dob: valuesObject?.[`${indicator}_dob`] || '',
       dod: valuesObject?.[`${indicator}_dod`] || '',
       node_id: valuesObject?.[`${indicator}_node_id`] || '',
@@ -96,7 +94,9 @@ const GenealogyContainer: React.FC = () => {
       last_name: valuesObject?.[`${indicator}_lastName`] || '',
       marital_status: valuesObject?.[`${indicator}_marital_status`] || '',
       occupation: valuesObject?.[`${indicator}_occupation`] || '',
+      // @ts-ignore
       parents: valuesObject?.[`${indicator}_parents`] || '',
+      // @ts-ignore
       siblings: valuesObject?.[`${indicator}_siblings`] || '',
       age: valuesObject?.[`${indicator}_age`] || '',
       description: valuesObject?.[`${indicator}_description`] || '',
@@ -108,19 +108,20 @@ const GenealogyContainer: React.FC = () => {
   }
   function handleSubmit(v: any) {
     const formattedValues: FamilyTree = formatOutgoingValues(v);
-    const userId = currentUser?.userId || 0;
+    const userId = currentUser?.id || 0;
 
     try {
       if (mode === stepFormModes.edit) {
         addMembersMutation.mutate(
-          { ...formattedValues, treeId, userId },
+          { ...formattedValues, id: formattedValues?.id || 0,  },
           {
             onSuccess: (response) => {
               console.log({response});
               
               if (response.code === 200) {
+      // @ts-ignore
                 const updatedListOfMembers = JSON.parse(response.payload.members);
-                const formattedMemberRecords = formatTreeMemberDAOList(updatedListOfMembers);
+                const formattedMemberRecords = formatTreeMembers(updatedListOfMembers);
                 updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_success_modal</Trans></Typography>, type: 'success' });
                 dispatch(populateTreeAction(formattedMemberRecords));
               } else {
@@ -140,7 +141,9 @@ const GenealogyContainer: React.FC = () => {
             onSuccess: (response) => {
               if (response.code === 200) {
                 const membersMap = (response.payload.members);
-                const formattedMemberRecords: any = formatTreeMemberDAOList(membersMap);
+      // @ts-ignore
+
+                const formattedMemberRecords: any = formatTreeMembers(membersMap);
                 updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
                 dispatch(populateTreeAction(formattedMemberRecords));
                 dispatch(saveTreeIdAction(response.payload.id));

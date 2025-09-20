@@ -6,12 +6,11 @@ import { Box, Typography, Paper, Button, useTheme } from "@mui/material";
 import { MdOutlineAddBox } from "react-icons/md";
 
 import GlobalContext from "contexts/creators/global/global.context";
-import { ChangePasswordValues } from "../definitions";
 import UserCredentials from "./UserCredentials";
 import PageUrlsEnum from "utils/urls";
 import Page from "components/common/Page";
 import NotFound from "pages/404NotFound";
-import { FamilyTreeState, UserState } from "app/slices/definitions";
+import { FamilyTreeState, UserState, ChangePasswordValues } from "types";
 import { EyeIcon, GroupIcon } from "utils/assets/icons";
 import { saveTreesListAction } from "app/slices/trees";
 import { submitPasswordChangeForm } from "services/auth";

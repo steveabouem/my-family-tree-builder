@@ -1,10 +1,10 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { Field, useFormikContext } from "formik";
-import { DFieldAndLabelProps } from "./definitions";
+import { FieldAndLabelProps } from "types";
 
 
-const FieldAndLabel = ({ direction = 'row', fieldName, label, fieldStyles, fieldType = 'text', labelStyles, sx, children, required = false }: DFieldAndLabelProps) => {
+const FieldAndLabel = ({ direction = 'row', fieldName, label, fieldStyles, fieldType = 'text', labelStyles, sx, children, required = false }: FieldAndLabelProps) => {
   const { values } = useFormikContext<any>();
 
   return (

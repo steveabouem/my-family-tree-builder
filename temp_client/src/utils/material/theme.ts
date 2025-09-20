@@ -1,6 +1,5 @@
 import { capitalize, createTheme } from "@mui/material";
-import { seasonalPaletteConfig } from "./definitions";
-import { ThemeSeasons } from "app/slices/definitions";
+import { seasonalPaletteConfig, ThemeSeasons } from "types";
 
 const defaultTypo = {
   fontSize: ".9rem",

@@ -1,10 +1,10 @@
-import { DThemeState, ThemeSeasons } from "../definitions";
+import { ThemeState, ThemeSeasons } from "types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 /*
 * State
 */
 const previousTheme = localStorage.getItem('ZTheme');
-const initialState: DThemeState = {
+const initialState: ThemeState = {
   // @ts-ignore
   season: previousTheme || ThemeSeasons.spring,
 };
@@ -12,7 +12,7 @@ const initialState: DThemeState = {
 /*
 * mutators
 */
-const changeSeason = (state: DThemeState, action: PayloadAction<ThemeSeasons>) => {
+const changeSeason = (state: ThemeState, action: PayloadAction<ThemeSeasons>) => {
   state.season = action.payload;
   localStorage.setItem('ZTheme', action.payload);
   return state;

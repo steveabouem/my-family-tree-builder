@@ -4,9 +4,9 @@ import {  useParams } from "react-router-dom";
 import { Formik } from "formik";
 import Page from "components/common/Page";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { FamilyTreeState } from "app/slices/definitions";
 import { populateTreeAction } from "app/slices/trees";
-import { formatTreeMemberDAOList } from "../create/genealogy/utils";
+import { FamilyTreeState } from "types";
+import { formatTreeMembers } from "../create/genealogy/utils";
 import TreeLayout from 'pages/tree/layout/TreeLayout';
 import PageUrlsEnum from "utils/urls";
 import { useGetTreeById } from "services/v2/familyTreeV2";
@@ -25,7 +25,7 @@ const ViewFamilyTreeChartPage = () => {
 
     if (list.length && !currentFamilyTree) {
       const target = list.find((tree: any) => tree.id == id);
-      const membersList: any = formatTreeMemberDAOList(JSON.parse(target?.members || '[]'));
+      const membersList: any = formatTreeMembers(JSON.parse(target?.members || '[]'));
 
       currTree = membersList?.reduce((mappedNodeIds: any, member: any) => ({ ...mappedNodeIds, [member.node_id]: member }), {});
       dispatch(populateTreeAction(currTree));
@@ -35,7 +35,7 @@ const ViewFamilyTreeChartPage = () => {
   // Handle tree data from React Query
   useEffect(() => {
     if (treeData?.payload?.members) {
-      const currTree = formatTreeMemberDAOList(JSON.parse(treeData.payload.members));
+      const currTree = formatTreeMembers(JSON.parse(treeData.payload.members));
       dispatch(populateTreeAction(currTree));
     }
   }, [treeData, dispatch]);

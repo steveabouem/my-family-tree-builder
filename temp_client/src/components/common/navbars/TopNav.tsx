@@ -9,7 +9,7 @@ import PageUrlsEnum from "utils/urls";
 import ThemeSelector from "../ThemeSelector";
 import { logout } from "services/auth";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { UserState } from "app/slices/definitions";
+import { UserState } from "types";
 import { updateUserAction } from "app/slices/user";
 
 const TopNav = () => {
@@ -55,10 +55,10 @@ const TopNav = () => {
             <Typography variant="button" ><Trans>Home</Trans></Typography>
           </Link>
         </Box>
-        {currentUser?.userId ? (
+        {currentUser?.id ? (
           <>
             <Box>
-              <Link to={PageUrlsEnum.user.replace(':id', `${currentUser.userId}`)} style={{ color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
+              <Link to={PageUrlsEnum.user.replace(':id', `${currentUser.id}`)} style={{ color: theme.palette.secondary.dark, textDecoration: isCurrentLocation("users") ? 'underline' : 'none' }}>
                 <Typography variant="button">
                   <Trans>Profile</Trans>
                 </Typography>

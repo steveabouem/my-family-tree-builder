@@ -1,6 +1,6 @@
 import React from 'react';
 import { useZSelector } from 'app/hooks';
-import { FamilyTreeState } from 'app/slices/definitions';
+import { FamilyTreeState } from 'types';
 import TreeLayout from 'pages/tree/layout/TreeLayout';
 import DataProgress from 'components/common/progressIndicators/DataProgress';
 import { Trans } from '@lingui/macro';

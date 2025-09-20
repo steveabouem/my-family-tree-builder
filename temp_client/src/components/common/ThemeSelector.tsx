@@ -3,12 +3,12 @@ import { Box, Typography } from "@mui/material";
 import { Trans } from "@lingui/macro";
 import { AutumnIcon, FlowerIcon, SnowmanIcon, SunIcon, ThemeSelectIcon } from "utils/assets/icons";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { DThemeState, ThemeSeasons } from "app/slices/definitions";
+import { ThemeState, ThemeSeasons } from "types";
 import { switchThemeAction } from "app/slices/theme";
 
 const ThemeSelector = () => {
   const [opened, setOpened] = useState<boolean>(false);
-  const { season } = useZSelector<DThemeState>(state => state.theme);
+  const { season } = useZSelector<ThemeState>(state => state.theme);
   const dispatch = useZDispatch();
 
   return (

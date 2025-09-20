@@ -1,7 +1,7 @@
-import { FamilyMember } from "services/api.definitions";
+import { MappedFamilyMember } from "types";
 
-export const formatTreeMemberDAOList = (v: FamilyMember[]) => {
-  const formattedNodes = v?.reduce((nodeList: any, member: FamilyMember) => {
+export const formatTreeMembers = (v: MappedFamilyMember[]) => {
+  const formattedNodes = v?.reduce((nodeList: any, member: any) => {
     let childrenIds: any = null;
     let siblingsIds: any = null;
     let spousesIds: any = null;

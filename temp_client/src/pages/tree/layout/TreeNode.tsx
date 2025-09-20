@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Box, Typography, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import Initials from 'components/common/Initials';
-import { Gendersenum } from 'components/common/definitions';
+import { Gendersenum } from 'types';
 import { BabyIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon } from 'utils/assets/icons';
 
 export default memo(({ data }: any) => {

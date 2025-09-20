@@ -2,13 +2,13 @@ import React from "react";
 import { useFormikContext } from "formik";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import { Trans } from "@lingui/macro";
-import { DBaseDropDownProps, DDropdownOption } from "./definitions";
+import { BaseDropDownProps, DropdownOption } from "types";
 
-const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, sx, displayVal }: DBaseDropDownProps): JSX.Element => {
+const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, sx, displayVal }: BaseDropDownProps): JSX.Element => {
   const { setFieldValue, setFieldTouched, values } = useFormikContext();
 
   function handleFieldValueChange(optionname: string | number) {
-    const selectedOption = options.find((option: DDropdownOption) => option.value === optionname);
+    const selectedOption = options.find((option: DropdownOption) => option.value === optionname);
 
     if (selectedOption) {
       setFieldTouched(name, true);
@@ -33,7 +33,7 @@ const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, s
         className={additionalClass}
         defaultValue="" // prevent DOM error for undefined value
       >
-        {options.map((option: DDropdownOption, i: number) => <MenuItem value={option.value} key={`${id || ''}-dropdown-option-${i}`}>{option.label}</MenuItem>)}
+        {options.map((option: DropdownOption, i: number) => <MenuItem value={option.value} key={`${id || ''}-dropdown-option-${i}`}>{option.label}</MenuItem>)}
       </Select>
     </FormControl>
   );

@@ -1,23 +1,21 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { t, Trans } from "@lingui/macro";
-import { DAuthProps } from "./definitions";
 import { Formik } from "formik";
 import { Box, Button, FormControl } from "@mui/material";
 import GlobalContext from "../../contexts/creators/global";
-import { FormField } from "../../components/common/definitions";
-import { APILoginResponse, APIRequestPayload, LoginRequestPayload, RegistrationRequestPayload } from "../../services/api.definitions";
+import { APILoginResponse, APIRequestPayload, LoginRequestPayload, RegistrationRequestPayload, FormField, AuthProps, maritalStatusOptions } from "types";
 import { useLogin, useRegister } from "../../services/v2/authV2";
 import PageUrlsEnum from "utils/urls/";
 import Page from "../../components/common/Page";
 import FormFieldsGenerator from "../../components/common/forms/FormFieldsGenerator";
 import GenderDropdown from "../../components/common/dropdowns/gender/GenderDropdown";
 import BaseDropDown from "../../components/common/dropdowns/BaseDropdown";
-import { maritalStatusOptions } from "../../components/common/dropdowns/definitions";
 import { updateUserAction } from "app/slices/user";
 import { useZDispatch } from "app/hooks";
 
-const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
+
+const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
   const [attempts, setAttempts] = React.useState<number>(0);
   const navigate = useNavigate();
   const { updateModal, toggleLoading, modal, loading } = React.useContext(GlobalContext);
@@ -226,7 +224,7 @@ const AuthenticationPage = ({ mode, changeMode }: DAuthProps): JSX.Element => {
                   required: true,
                   subComponent: () => (
                     <Box className="field-wrap base" sx={{ width: '100%' }}>
-                      <GenderDropdown name="gender" />
+                      <GenderDropdown name="gender" sx={{}}/>
                     </Box>
                   ),
                 },

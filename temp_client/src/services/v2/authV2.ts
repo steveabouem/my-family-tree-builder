@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { User } from "../api.definitions";
-import { ChangePasswordValues } from "../../pages/user/definitions";
+import { User, ChangePasswordValues } from "types";
 import { APILoginResponse, APIRequestPayload, LoginRequestPayload } from "../../../../shared";
 import { baseUrl } from "../index";
 

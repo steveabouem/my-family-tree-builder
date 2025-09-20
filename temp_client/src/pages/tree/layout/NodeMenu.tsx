@@ -2,8 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material'
 import { Trans } from '@lingui/macro';
 import GlobalContext from 'contexts/creators/global';
-import { ReactFlowNode } from 'services/api.definitions';
-import { NodeMenuActions } from '../definitions';
+import { NodeMenuActions, ReactFlowNode } from 'types';
 
 const NodeMenu = ({ data }: { data: Pick<ReactFlowNode, 'data'> }) => {
   const [selectedAction, setSelectedAction] = useState<'edit' | 'delete' | 'expand'>("expand");

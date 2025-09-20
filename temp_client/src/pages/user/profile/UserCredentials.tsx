@@ -6,12 +6,10 @@ import { MdCancelPresentation } from "react-icons/md";
 import { Formik } from "formik";
 import { Box, Button, Paper, Typography } from "@mui/material";
 
-import { ChangePasswordValues } from "../definitions";
-import { FormField } from "components/common/definitions";
+import { ChangePasswordValues,FormField,UserState } from "types";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
 import Spinner from "components/common/progressIndicators/Spinner";
 import { useZSelector } from "app/hooks";
-import { UserState } from "app/slices/definitions";
 
 const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswordValues) => void }) => {
   const [passwordFormMode, setPasswordFormMode] = useState<'write' | 'read'>('read');
@@ -23,7 +21,7 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswo
     repeatNewPassword: '',
     id: currentUser?.id || 0
   }), [currentUser?.email, currentUser?.id]);
-  const changePasswordFields: FormField[] = [
+  const changePassworFields: FormField[] = [
     { fieldName: 'email', label: <Trans>email_form_label</Trans>, type: 'email' },
     { fieldName: 'password', label: <Trans>password_form_label</Trans>, type: 'password' },
     { fieldName: 'newPassword', label: <Trans>new_password_form_label</Trans>, type: 'password' },
@@ -64,7 +62,7 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswo
             </Button>
           </Box>
           <Formik initialValues={changePasswordInitialValues} onSubmit={submitPasswordForm}>
-            {({ submitForm }) => <FormFieldsGenerator fields={changePasswordFields} handleSubmit={submitForm} size="med" withPaper={false} mode={passwordFormMode} />}
+            {({ submitForm }) => <FormFieldsGenerator fields={changePassworFields} handleSubmit={submitForm} size="med" withPaper={false} mode={passwordFormMode} />}
           </Formik>
         </>
       ) : <Spinner loading={true} />}

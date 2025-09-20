@@ -12,13 +12,11 @@ import { Trans } from '@lingui/macro';
 import { useTheme } from '@mui/material';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
-import { FamilyTree } from 'services/api.definitions';
-import { ReactFlowEdge, ReactFlowNode, NodeMenuActions } from '../definitions';
 import { useZDispatch } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
 import { setStepsCountAction, changeModeAction, changeformStepAction } from 'app/slices/forms/stepForm';
-import { stepFormModes } from 'app/slices/definitions';
+import { FamilyTree , ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes } from 'types';
 
 const nodeTypes = {
   blackbox: CustomNode,

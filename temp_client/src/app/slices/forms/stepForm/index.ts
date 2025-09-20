@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StepDetails, DStepFormState, stepFormModes } from "../../definitions";
+import { StepDetails, StepFormState, stepFormModes } from "types";
 
 /*
 * State
 */
-const initialState: DStepFormState = {
+const initialState: StepFormState = {
   currentFormStep: 0,
   updating: true,
   currentFormStepDetails: { name: '', fields: [] }, // this should be renamed currentStepInfo
@@ -15,13 +15,13 @@ const initialState: DStepFormState = {
 /*
 * mutators
 */
-const setTotalStep = (state: DStepFormState, action: PayloadAction<number>) => {
+const setTotalStep = (state: StepFormState, action: PayloadAction<number>) => {
   state.updating = true;
   state.totalSteps = action.payload;
   state.updating = false;
   return state;
 };
-const switchStep = (state: DStepFormState, action: PayloadAction<number>): DStepFormState => {
+const switchStep = (state: StepFormState, action: PayloadAction<number>): StepFormState => {
   /*
   * No need to worry about immutability here, redux already does a copy of the state for me
   */
@@ -30,13 +30,13 @@ const switchStep = (state: DStepFormState, action: PayloadAction<number>): DStep
   state.updating = false;
   return state;
 };
-const goToNext = (state: DStepFormState): DStepFormState => {
+const goToNext = (state: StepFormState): StepFormState => {
   state.updating = true;
   state.currentFormStep++;
   state.updating = false;
   return state;
 };
-const goToPrev = (state: DStepFormState): DStepFormState => {
+const goToPrev = (state: StepFormState): StepFormState => {
   state.updating = true;
   if (state.currentFormStep >= 1) {
     state.currentFormStep--;
@@ -44,7 +44,7 @@ const goToPrev = (state: DStepFormState): DStepFormState => {
   state.updating = false;
   return state;
 };
-const changeMode = (state: DStepFormState, action: PayloadAction<stepFormModes>): DStepFormState => {
+const changeMode = (state: StepFormState, action: PayloadAction<stepFormModes>): StepFormState => {
   state.updating = true;
   state.mode = action.payload;
   state.updating = false;
@@ -53,14 +53,14 @@ const changeMode = (state: DStepFormState, action: PayloadAction<stepFormModes>)
 /*
 * sends field values to API, which returns next field set
 */
-const setCurrentFields = (state: DStepFormState, action: PayloadAction<StepDetails>) => {
+const setCurrentFields = (state: StepFormState, action: PayloadAction<StepDetails>) => {
   state.updating = true;
   const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
   state.stepTree = newStepTree;
   state.currentFormStepDetails = action.payload;
   state.updating = false;
 };
-const setStepFields = (state: DStepFormState, action: PayloadAction<StepDetails & { step: number }>) => {
+const setStepFields = (state: StepFormState, action: PayloadAction<StepDetails & { step: number }>) => {
   state.updating = true;
   const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
   state.stepTree = newStepTree;
@@ -68,29 +68,29 @@ const setStepFields = (state: DStepFormState, action: PayloadAction<StepDetails 
   state.updating = false;
   return state;
 };
-const removeFieldsByStepName = (state: DStepFormState, action: PayloadAction<string>) => {
+const removeFieldsByStepName = (state: StepFormState, action: PayloadAction<string>) => {
   state.updating = true;
   state.currentFormStepDetails = { name: action.payload, fields: [] };
   state.updating = false;
   return state;
 };
-const getCurrentFields = (state: DStepFormState) => {
+const getCurrentFields = (state: StepFormState) => {
   state.updating = true;
   state.updating = false;
 };
-const fetchFields = (state: DStepFormState, action: PayloadAction<number>) => {
+const fetchFields = (state: StepFormState, action: PayloadAction<number>) => {
   state.updating = true;
 
   state.updating = false;
   return state;
 };
 const getCombinedStepValues = () => { };
-const setCombinedStepValues = <V,>(state: DStepFormState, action: PayloadAction<{ values: V }>) => {
+const setCombinedStepValues = <V,>(state: StepFormState, action: PayloadAction<{ values: V }>) => {
   state.updating = true;
   state.globalValues = { ...state.globalValues, ...action.payload };
   state.updating = false;
 };
-const cleanup = (state: DStepFormState) => {
+const cleanup = (state: StepFormState) => {
   state.updating = true;
     state.currentFormStep = 0;
     state.currentFormStepDetails = { name: '', fields: [] };
@@ -111,7 +111,7 @@ export const stepFormSlice = createSlice({
     changeformStepAction: switchStep,
     fetchNextStepFields: fetchFields,
     getStepFormValuesAction: getCurrentFields,
-    loadStepFormFieldsAction: setCurrentFields,
+    loaStepFormFieldsAction: setCurrentFields,
     populateStepAction: setStepFields,
     nextFormStepAction: goToNext,
     prevFormStepAction: goToPrev,
@@ -125,7 +125,7 @@ export const stepFormSlice = createSlice({
 });
 export const {
   changeformStepAction, nextFormStepAction, prevFormStepAction, clearFieldsByStepName, cleanupAction,
-  loadStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, populateStepAction,
+  loaStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, populateStepAction,
   getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction, changeModeAction
 } = stepFormSlice.actions;
 export default stepFormSlice.reducer;

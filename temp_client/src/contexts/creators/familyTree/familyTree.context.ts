@@ -1,12 +1,12 @@
 import { createContext } from "react";
-import { DFTContext } from "./familyTreeContext.types";
+import { FTContext } from "types";
 
 export interface ContextMutator<GEntity> {
   entity: string;
   action: (values?: Partial<GEntity>) => void;
 }
 
-const FamilyTreeContext = createContext<DFTContext>({
+const FamilyTreeContext = createContext<FTContext>({
   currentFamilyTree: {},
   familyTrees: [],
   updateUser: undefined,

@@ -1,14 +1,14 @@
 import React, { useMemo } from "react";
 import { Box, Button, Modal, Typography, useTheme } from "@mui/material";
 import { Trans } from "@lingui/macro";
-import { DModalProps } from "./definitions";
+import { ModalProps } from "types";
 import GlobalContext from "contexts/creators/global/global.context";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { TbFileSad } from "react-icons/tb";
 import { RiFileInfoLine } from "react-icons/ri";
 import { TbFileSmile } from "react-icons/tb";
 
-const BaseModal = ({ children, type = 'info' }: DModalProps): JSX.Element => {
+const BaseModal = ({ children, type = 'info' }: ModalProps): JSX.Element => {
   const { modal, updateModal } = React.useContext(GlobalContext);
   const seasonalTheme = useTheme();
   const headerIcon = useMemo(() => {

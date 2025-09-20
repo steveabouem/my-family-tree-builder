@@ -5,16 +5,12 @@ import { Trans } from "@lingui/macro";
 import { v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { clearFieldsByStepName, loadStepFormFieldsAction, populateStepAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
+import { clearFieldsByStepName, loaStepFormFieldsAction, populateStepAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
 import { resetAction } from "app/slices/trees";
-import { DStepFormState, stepFormModes } from "app/slices/definitions";
 import FieldAndLabel from "components/common/forms/fieldAndlabel";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
-import { genderOptions, maritalStatusOptions, relationOptions } from "components/common/dropdowns/definitions";
 import GlobalContext from "contexts/creators/global";
-import { NodeMenuActions } from "pages/tree/definitions";
-import { FormField } from "components/common/definitions";
-import { DFamilyTreeFormData } from "./definitions";
+import { StepFormState, stepFormModes, genderOptions, maritalStatusOptions, relationOptions, NodeMenuActions, FormField, FamilyTreeFormData } from "types";
 
 /*
 * This implementation of the <StepForm /> follows the following logic:
@@ -29,8 +25,8 @@ import { DFamilyTreeFormData } from "./definitions";
 */
 // @ts-ignore
 const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
-  const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<DStepFormState>(state => state.stepForm);
-  const { values, setFieldValue, setValues } = useFormikContext<DFamilyTreeFormData>();
+  const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
+  const { values, setFieldValue, setValues } = useFormikContext<FamilyTreeFormData>();
   const { modal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
   const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
@@ -90,7 +86,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
     const fieldsInTree = stepTree?.[nameOfStep];
 
     if (fieldsInTree?.length) {
-      dispatch(loadStepFormFieldsAction({ name: nameOfStep, fields: stepTree?.[nameOfStep] || [], title: <Trans>info_on_node {nameOfStep}</Trans> }));
+      dispatch(loaStepFormFieldsAction({ name: nameOfStep, fields: stepTree?.[nameOfStep] || [], title: <Trans>info_on_node {nameOfStep}</Trans> }));
       return;
     }
 
@@ -137,7 +133,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
       if (nameOfStep === 'anchor' || currentFormStep === 1 && !values?.anchorNode) {
         setFieldValue('anchorNode', newNodeId)
       }
-      dispatch(loadStepFormFieldsAction({ name: nameOfStep, fields, title: <Trans>info_on_node {nameOfStep}</Trans> }));
+      dispatch(loaStepFormFieldsAction({ name: nameOfStep, fields, title: <Trans>info_on_node {nameOfStep}</Trans> }));
     }
   }
   function addRelative() {
