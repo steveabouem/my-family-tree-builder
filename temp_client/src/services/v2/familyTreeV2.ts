@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { APICreateFamilyResponse, APIGetAllTreesResponse, APIRequestPayload, FamilyTree, FormField } from "types";
+import { APICreateFamilyResponse, APIGetAllTreesResponse, APIEndpointResponse, FamilyTree, FormField } from "types";
 import { baseUrl } from "../index";
+import { formatIncomingValues } from 'pages/tree/create/genealogy/utils';
 
 //#region API Functions
 // #region getAllTreesForUser
@@ -54,7 +55,7 @@ const getMembers = async (treeId: number) => {
   return response.json();
 };
 
-const addMembers = async (treeData: FamilyTree): Promise<APIRequestPayload<{ payload: FamilyTree }>> => {
+const addMembers = async (treeData: FamilyTree): Promise<APIEndpointResponse<{ payload: FamilyTree }>> => {
   const response = await fetch(`${baseUrl}/trees/members`, {
     method: 'PUT',
     headers: {
@@ -106,6 +107,8 @@ export const useCreateFamilyTree = () => {
   return useMutation({
     mutationFn: createFamilyTree,
     onSuccess: (data, variables) => {
+      // format incoming data for consumption
+      const formattedData = formatIncomingValues(data)
       // Invalidate and refetch family trees for the user
       queryClient.invalidateQueries({ queryKey: ['familyTrees', 'user', variables?.id || 0] });
       queryClient.invalidateQueries({ queryKey: ['familyTrees'] });

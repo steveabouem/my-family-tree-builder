@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserState, LoggedInUser } from "types";
+import { UserState, APILoginResponse } from "types";
 
 /*
 * State
@@ -13,14 +13,18 @@ const initialState: UserState = {
 /*
 * mutators
 */
-const manageUser = (state: UserState, action: PayloadAction<LoggedInUser>) => {
+const manageUser = (state: UserState, action: PayloadAction<APILoginResponse  | undefined>) => {
   state.updating = true;
-  state.currentUser = { ...state.currentUser, ...action.payload };
+  if (action.payload) {
+    state.currentUser = { ...state.currentUser, ...action.payload };
+  } else {
+    state.currentUser = undefined;
+  }
   state.updating = false;
   return state;
 };
 
-const setUser = (state: UserState, action: PayloadAction<LoggedInUser>) => {
+const setUser = (state: UserState, action: PayloadAction<APILoginResponse>) => {
   state.updating = true;
   state.currentUser = action.payload;
   state.updating = false;

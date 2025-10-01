@@ -29,12 +29,12 @@ const UserProfilePage = (): JSX.Element => {
 
   // React Query hook for getting family trees
   const { data: familyTreesData, isLoading, error } = useGetAllForUser(
-    currentUser?.id || 0,
-    !!currentUser?.id && currentUser?.id === Number(id)
+    currentUser?.userId || 0,
+    !!currentUser?.userId && currentUser?.userId === Number(id)
   );
 
   useEffect(() => {
-    if (currentUser?.id && currentUser?.id !== Number(id)) {
+    if (currentUser?.userId && currentUser?.userId !== Number(id)) {
       navigate(PageUrlsEnum.auth);
     }
   }, [currentUser, id, navigate]);

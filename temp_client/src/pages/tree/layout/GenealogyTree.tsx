@@ -6,45 +6,48 @@ import {
   useNodesState,
   useEdgesState,
   Controls,
+  MiniMap,
 } from '@xyflow/react';
 import { useFormikContext } from 'formik';
 import { Trans } from '@lingui/macro';
 import { useTheme } from '@mui/material';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
-import { useZDispatch } from 'app/hooks';
+import { useZDispatch, useZSelector } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
 import { setStepsCountAction, changeModeAction, changeformStepAction } from 'app/slices/forms/stepForm';
-import { FamilyTree , ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes } from 'types';
+import { ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes, FamilyTreeRecord, FamilyMemberDTO, FamilyTreeState } from 'types';
+import DataProgress from 'components/common/progressIndicators/DataProgress';
 
 const nodeTypes = {
-  blackbox: CustomNode,
+  custom: CustomNode,
 };
 const treeBgUrl = 'https://images.pexels.com/photos/22821246/pexels-photo-22821246/free-photo-of-plants-leaves-in-black-and-white.jpeg';
 
-const LayoutFlow = memo(({ tree }: { tree: FamilyTree }) => {
-  const [nodesList, setNodesList] = useNodesState<any>([]);
-  const [edgesList, setEdgesList] = useEdgesState<any>([]);
+const GenealogyTree = memo(() => {
+  const [nodesList, setNodesList, onNodesListChange] = useNodesState<any>([]);
+  const [edgesList, setEdgesList, onEdgesListChange] = useEdgesState<any>([]);
   const { setValues } = useFormikContext<any>();
   const { updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
+  const { currentFamilyTree } = useZSelector<FamilyTreeState>(state => state.tree);
+
   const theme = useTheme();
 
   useEffect(() => {
-    console.error('TREE CHANGED ', tree);
-
-    if (Object.keys(tree)?.length)
+    console.log('currentFamilyTree in treelayout', { currentFamilyTree });
+    // node is showing but not draggable. console errors mention missing coordinates?
+    if (currentFamilyTree?.members?.length)
       generateNodesAndEdges();
-    // eslint-disable-next-line
-  }, [tree]);
+  }, [currentFamilyTree?.members]);
 
   function populateFormWithNodeValues(node: ReactFlowNode) {
     setValues({
-      // @ts-ignore: TODO FIX
+      // @ts-ignore: TODO FIX. easy
       anchor_firstName: node?.firstName || node?.first_name || '',
       // @ts-ignore: TODO FIX
-      anchor_lastName: node?.lastName ||node?.last_name || '',
+      anchor_lastName: node?.lastName || node?.last_name || '',
       anchor_occupation: node?.occupation || '',
       anchor_dob: node?.dob || '',
       anchor_dod: node?.dod || '',
@@ -56,8 +59,8 @@ const LayoutFlow = memo(({ tree }: { tree: FamilyTree }) => {
     });
   }
   function showEditModal(event: any, node: any) {
-    console.log({node});
-    
+    console.log({ node });
+
     updateModal({
       hidden: false,
       buttons: {
@@ -71,7 +74,7 @@ const LayoutFlow = memo(({ tree }: { tree: FamilyTree }) => {
             dispatch(changeModeAction(stepFormModes.edit));
             dispatch(setStepsCountAction(1));
             dispatch(changeformStepAction(0));
-            populateFormWithNodeValues(node.data);
+            populateFormWithNodeValues(node);
 
             break;
           case NodeMenuActions.add:
@@ -85,24 +88,24 @@ const LayoutFlow = memo(({ tree }: { tree: FamilyTree }) => {
       content: <NodeMenu data={node} />,
     });
   }
-  // TODO: this is not being managed properly. Edges are not showing. Looks like connection is not parsed or present
+  // TODO: this is not being managed properly. Edges are not showing.
   function generateNodesAndEdges() {
-    const incomingNodes: any = Object.values(tree);
+    const incomingNodes: FamilyMemberDTO[] = currentFamilyTree?.members || [];
     console.log('INCOMING NODES VAL ', incomingNodes);
-    
     const incomingEdges = incomingNodes.reduce((listOfEdges: any, node: any) => {
-      const nodeConnections = JSON.parse(node?.data?.connections || '[]');
-      console.log({nodeConnections});
-      
+      const nodeConnections = node?.connections || [];
+      console.log({ nodeConnections, node });
+
       if (nodeConnections?.length) {
         return [...listOfEdges.flat(), nodeConnections.flat() || []];
       } else {
         return listOfEdges.flat();
       }
     }, []);
-
-    setNodesList(incomingNodes);
-    incomingEdges.forEach((e: any) => {
+    const nodesList = incomingNodes.map(n => ({ ...n, id: n.node_id, draggable: true, selectable: true, data: { ...n, id: n.node_id } }));// ReactFlow only reads the data object
+    console.log({ nodesList });
+    setNodesList(nodesList);
+    incomingEdges.forEach((e: any) => {// thats a lot of renders . use memo maybe?
       setEdgesList((eds) => addEdge(e, edgesList));
     });
   }
@@ -119,10 +122,11 @@ const LayoutFlow = memo(({ tree }: { tree: FamilyTree }) => {
   * Debouncing these, because otherwise it might blow up, especially if we implement group selection
   */
   function moveNode(action: any): void {
-    setTimeout(() => {
+    const nodeTimeout = setTimeout(() => {
       const nodeUpdate = action?.[0];
       if (nodeUpdate?.type === 'position' && !nodeUpdate?.dragging) {
-        const currentNode = nodesList.find((node: any) => node.id === nodeUpdate?.id);
+        const currentNode = nodesList.find((node: any) => node.node_id === nodeUpdate?.id);
+        console.log({ nodeUpdate, currentNode });
         setNodesList((prev: any) => {
           const newNodes = prev.map((node: any) => {
             if (node.id === currentNode.id) {
@@ -137,26 +141,32 @@ const LayoutFlow = memo(({ tree }: { tree: FamilyTree }) => {
         });
       }
     }, 300);
-    clearTimeout(undefined);
+    clearTimeout(nodeTimeout);
+  }
+  
+  if (!currentFamilyTree) {
+    return <DataProgress
+      msg={<Trans>fill_in_the_form_first</Trans>} />
   }
 
   return (
     <ReactFlow
-      nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes}
-      onNodeClick={showEditModal} onNodesChange={moveNode} fitView
-      onEdgesChange={generateEdge}
+      nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes} onNodeDrag={moveNode}
+      onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange} onNodeDragStop={() => { console.log('STAAAP') }}
     >
-      <Background style={{
-        backgroundSize: '100% 100%',
-        backgroundBlendMode: 'overlay',
-        backgroundRepeat: 'no-repeat',
-        backgroundColor: theme.palette.grey['400'],
-        backgroundImage: `url(${treeBgUrl})`,
-        borderRadius: '5px'
-      }} />
-      <Controls />
+      <Background
+        style={{
+          backgroundSize: '100% 100%',
+          backgroundBlendMode: 'overlay',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: theme.palette.grey['400'],
+          backgroundImage: `url(${treeBgUrl})`,
+          borderRadius: '5px'
+        }} />
+      {/* <MiniMap /> */}
+      {/* <Controls /> */}
     </ReactFlow>
   );
 });
 
-export default LayoutFlow;
+export default GenealogyTree;

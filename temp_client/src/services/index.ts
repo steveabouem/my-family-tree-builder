@@ -1,6 +1,6 @@
 import * as user from "./user";
 import * as auth from "./auth";
-import * as familyTree from "./familyTree";
+import * as familyTree from "./v2/familyTreeV2";
 import * as session from "./session";
 
 export const service = {

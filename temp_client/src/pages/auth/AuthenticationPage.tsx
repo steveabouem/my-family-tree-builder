@@ -4,7 +4,7 @@ import { t, Trans } from "@lingui/macro";
 import { Formik } from "formik";
 import { Box, Button, FormControl } from "@mui/material";
 import GlobalContext from "../../contexts/creators/global";
-import { APILoginResponse, APIRequestPayload, LoginRequestPayload, RegistrationRequestPayload, FormField, AuthProps, maritalStatusOptions } from "types";
+import { APILoginResponse, APIEndpointResponse, LoginRequestPayload, RegistrationRequestPayload, FormField, AuthProps, maritalStatusOptions } from "types";
 import { useLogin, useRegister } from "../../services/v2/authV2";
 import PageUrlsEnum from "utils/urls/";
 import Page from "../../components/common/Page";
@@ -120,7 +120,7 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
 
   const processLogin = async (values: LoginRequestPayload) => {
     loginMutation.mutate(values, {
-      onSuccess: (response: APIRequestPayload<APILoginResponse>) => {
+      onSuccess: (response: APIEndpointResponse<APILoginResponse>) => {
         const { payload, error } = response;
 
         if (payload.authenticated && !error) {

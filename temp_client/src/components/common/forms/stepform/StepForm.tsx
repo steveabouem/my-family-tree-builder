@@ -11,9 +11,11 @@ import { nextFormStepAction, prevFormStepAction } from 'app/slices/forms/stepFor
 // TODO: pass validations as props here, prevent save and submit in case of field errors. as well as current step title and otheres alike
 // This will ensure that the redux slice calls the api with no risk 
 const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: StepFormProps<V>) => {
+  // TODO: INVESTIGATE RERENDERES (they happen at every key input)
   const { submitForm } = useFormikContext<V>();
   const { currentFormStep, currentFormStepDetails, updating, totalSteps } = useZSelector(
     (state: { stepForm: StepFormState }) => state.stepForm);
+    console.log({currentFormStep});
   const dispatch = useZDispatch();
 
   return (

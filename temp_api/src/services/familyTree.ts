@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { InferAttributes, Op, where } from "sequelize";
+import { Op } from "sequelize";
 import FamilyTree from "../models/FamilyTree";
 import {
   FamilyTreeFormData, APIGetFamilyTreeResponse,
@@ -91,6 +91,7 @@ export const positionFamilyMembers = async (members: FamilyMemberData[], anchorN
     membersWithCoords.push({
       ...anchor,
       type: 'custom',
+      position: {x: 0, y: 0}
       // name: `${anchor.first_name} ${anchor.last_name}`
     });
 
@@ -124,6 +125,7 @@ export const createTree = async (createData: ManageTreeRequestPayload): ManageTr
     const currentUser = await extractSingleDataValuesFrom(User, { id: userId });
 
     if (currentUser) {
+      // TODO: it would be best if positionnning happens before creating the record so that db is only updated once instead of twice +
       const membersRecords = await generateTreeMembersRecords(data.members, userId);
       logger.info('RETURNED MEMBER RECORDS', { membersRecords });
       if (membersRecords) {
@@ -393,6 +395,7 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
         age: today.diff(dayjs(m.dob), 'years'),
         description: m?.description || '',
         created_by: userId,
+        position: JSON.stringify({x: 0, y:0}),
         parents: JSON.stringify(m.parents),
         spouses: JSON.stringify(m.spouses),
         siblings: JSON.stringify(m.siblings),

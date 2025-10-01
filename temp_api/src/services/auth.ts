@@ -55,7 +55,7 @@ export const login = async ({ email, password }: LoginRequestPayload): Promise<S
     if (passwordIsValid) {
       response.error = false;
       response.payload = {
-        userId: currentUser.id,
+        userId: currentUser.userId,
         authenticated: true,
         email: email,
         firstName: currentUser.first_name,

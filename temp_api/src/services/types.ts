@@ -119,7 +119,7 @@ export interface FamilyTreeFormData {
     treeId?: number;
 }
 
-export interface APIFamilyTreeDTO {
+export interface APIFamilyTree {
     public: number;
     name: string;
     authorized_ips: string;
@@ -130,7 +130,7 @@ export interface APIFamilyTreeDTO {
     active: number;
 }
 
-export type APIGetFamilyTreeResponse = Partial<APIFamilyTreeDTO> & { members: FamilyMemberData[] };
+export type APIGetFamilyTreeResponse = Partial<APIFamilyTree> & { members: FamilyMemberData[] };
 
 export type APIStepFormFieldDTO = {
     fieldName: string;
@@ -286,7 +286,7 @@ export interface APISessionUser {
     email?: string;
     firstName?: string;
     lastName?: string;
-    familyTree?: APIFamilyTreeDTO;
+    familyTree?: APIFamilyTree;
 }
 
 

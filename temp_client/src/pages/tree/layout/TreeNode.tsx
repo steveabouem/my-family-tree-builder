@@ -1,14 +1,17 @@
 import React, { memo, useState } from 'react';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Button, Typography, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import Initials from 'components/common/Initials';
 import { Gendersenum } from 'types';
-import { BabyIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon } from 'utils/assets/icons';
+import { BabyIcon, DeleteIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon, SettingsIcon } from 'utils/assets/icons';
 
+// TODO: check types in reacflow docs and create validations for node and edge structures. if any prop doesnt match the type, there can be undetected errors
+// anchor doesnt have the ability to be dragged for some reason, because position is empty
 export default memo(({ data }: any) => {
+  
   const [showDetails, setShowDetails] = useState(true);
   const theme = useTheme();
-
+console.log('Node content ', data)
   function getInitialsBG() {
     return data.gender === Gendersenum.female ? theme.palette.info.contrastText : theme.palette.info.main;
   }

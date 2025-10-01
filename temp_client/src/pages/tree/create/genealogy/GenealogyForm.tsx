@@ -12,17 +12,7 @@ import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import GlobalContext from "contexts/creators/global";
 import { StepFormState, stepFormModes, genderOptions, maritalStatusOptions, relationOptions, NodeMenuActions, FormField, FamilyTreeFormData } from "types";
 
-/*
-* This implementation of the <StepForm /> follows the following logic:
-* each step uses a unique name to be identified by the store
-* a hook listens to the change in step, and applies the matching fields for that step name, using the generateKinFields function
-* if the user modifies the number of steps (eg: increasing the number of siblings), the same function is triggered
-* the form is saved in the store until the user decides to submit. Formik handles each step separately, including the validations:
-*   user will not be able to switch steps, save or submit until the current step is valid
-* should the user want to remove a step (eg: reducing the nubmer of siblings), the unique name is then used to empty the fields for that specific step
-* Should the user modify a fields list (eg: adding children or partner to a fields list), Formik will prepopulate the form with the previous values,
-*    since adding those new fields will rerendre the form (values will be taken from the store's globalValues, it has all the field names we need)
-*/
+
 // @ts-ignore
 const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
   const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);

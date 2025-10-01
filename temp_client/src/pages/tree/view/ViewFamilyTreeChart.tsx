@@ -7,7 +7,7 @@ import { useZDispatch, useZSelector } from "app/hooks";
 import { populateTreeAction } from "app/slices/trees";
 import { FamilyTreeState } from "types";
 import { formatTreeMembers } from "../create/genealogy/utils";
-import TreeLayout from 'pages/tree/layout/TreeLayout';
+import GenealogyTree from 'pages/tree/layout/GenealogyTree';
 import PageUrlsEnum from "utils/urls";
 import { useGetTreeById } from "services/v2/familyTreeV2";
 
@@ -54,7 +54,7 @@ const ViewFamilyTreeChartPage = () => {
           </Grid2>
           <Grid2 size={8}>
             <Formik initialValues={{}} onSubmit={() => { }}>
-              {(props) => currentFamilyTree ? <TreeLayout tree={currentFamilyTree} /> : null}
+              {(props) => currentFamilyTree ? <GenealogyTree /> : null}
             </Formik>
           </Grid2>
         </Grid2>

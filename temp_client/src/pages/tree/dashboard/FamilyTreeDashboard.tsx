@@ -6,42 +6,43 @@ import Page from "components/common/Page";
 import PageUrlsEnum from "utils/urls";
 import { useGetAllForUser } from "services/v2";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { UserState, FamilyTree } from "types";
+import { UserState, FamilyTree, FamilyTreeRecord } from "types";
 import dayjs from "dayjs";
 import { EyeIcon } from "utils/assets/icons";
 import { populateTreeAction, saveTreeIdAction } from "app/slices/trees";
 
 const FamilyTreeDashboard = () => {
   const { currentUser } = useZSelector<UserState>(state => state.user);
-  const { data, isFetching, isLoading } = useGetAllForUser(currentUser?.id);
+  const { data, isFetching, isLoading } = useGetAllForUser(currentUser?.userId);
   const dispatch = useZDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const selectTree = (t: FamilyTree) => {
+  const selectTree = (t: FamilyTreeRecord) => {
+    // LOOK FOR ALL JSON PARSES FOR INCOMING FAMILY TREE. ITS NO LONGER NECESARY SINCE BACKEND DOES IT FOR YO
     console.log({t});
-    // @ts-ignore
-    const formattedTree:FamilyTree = {members: JSON.parse(t.members).reduce((acc, curr) => ({
-      ...acc,
-       data: {
-          ...curr,
-          type: 'blackbox',
-          position: JSON.parse(curr?.position || '{"x": 0, "y": 0}'),
-          connections: JSON.parse(curr?.connections || '[]'),
-          id: curr.node_id,
-          // children: JSON.parse(curr?.children || '[]'),
-          // siblings: siblingsIds,
-          // spouses: spousesIds,
-        },
-        ...curr,
-          type: 'blackbox',
-          position: JSON.parse(curr?.position || '{"x": 0, "y": 0}'),
-          connections: JSON.parse(curr?.connections || '[]'),
-          id: curr.node_id,
-          // children: JSON.parse(curr?.children || '[]'),
-    }))};
+    // // @ts-ignore
+    // const formattedTree:FamilyTree = {members: JSON.parse(t.members).reduce((acc, curr) => ({
+    //   ...acc,
+    //    data: {
+    //       ...curr,
+    //       type: 'blackbox',
+    //       position: JSON.parse(curr?.position || '{"x": 0, "y": 0}'),
+    //       connections: JSON.parse(curr?.connections || '[]'),
+    //       id: curr.node_id,
+    //       // children: JSON.parse(curr?.children || '[]'),
+    //       // siblings: siblingsIds,
+    //       // spouses: spousesIds,
+    //     },
+    //     ...curr,
+    //       type: 'blackbox',
+    //       position: JSON.parse(curr?.position || '{"x": 0, "y": 0}'),
+    //       connections: JSON.parse(curr?.connections || '[]'),
+    //       id: curr.node_id,
+    //       // children: JSON.parse(curr?.children || '[]'),
+    // }))};
     
-    dispatch(populateTreeAction(formattedTree));
+    dispatch(populateTreeAction(t));
     dispatch(saveTreeIdAction(t?.id || 0));
 
     navigate(PageUrlsEnum.newTree);
@@ -56,7 +57,7 @@ const FamilyTreeDashboard = () => {
       <Box>
         <Trans>tree_dashboard_lists_title</Trans>
         <Box sx={treeDashboardContainerStyles}>
-          {data?.payload?.map((t: FamilyTree, index: number) => (
+          {data?.payload?.map((t: FamilyTreeRecord, index: number) => (
             <Paper sx={{ margin: '1rem', ...treeHolderStyle }} key={t.id || index}>
               <Box key={t.id} display="flex" flexDirection="column" gap={2}>
                 <Box display="flex" gap={2} alignItems="center">
