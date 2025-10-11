@@ -13,7 +13,7 @@ const initialState: UserState = {
 /*
 * mutators
 */
-const manageUser = (state: UserState, action: PayloadAction<APILoginResponse  | undefined>) => {
+const updateUser = (state: UserState, action: PayloadAction<APILoginResponse  | undefined>) => {
   state.updating = true;
   if (action.payload) {
     state.currentUser = { ...state.currentUser, ...action.payload };
@@ -52,7 +52,7 @@ export const userSlice = createSlice({
   initialState,
   name: 'USER',
   reducers: {
-    updateUserAction: manageUser,
+    updateUserAction: updateUser,
     setUserAction: setUser,
     clearUserAction: clearUser,
     resetUserAction: resetUser

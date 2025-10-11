@@ -22,21 +22,21 @@ const GenealogyContainer: React.FC = () => {
   const addMembersMutation = useAddMembers();
   const userId = currentUser?.userId || 0;
 
-  useEffect(() => {
-    console.log('Rerendered from treeCopy', treeCopy)
-  }, [treeCopy])
-  useEffect(() => {
-    console.log('Rerendered from stepTree', stepTree)
-  }, [stepTree])
-  useEffect(() => {
-    console.log('Rerendered from treeId', treeId)
-  }, [treeId])
-  useEffect(() => {
-    console.log('Rerendered from currentUser', currentUser)
-  }, [currentUser])
-  useEffect(() => {
-    console.log('Rerendered from modal', modal)
-  }, [modal])
+  // useEffect(() => {
+  //   console.log('Rerendered from treeCopy', treeCopy)
+  // }, [treeCopy])
+  // useEffect(() => {
+  //   console.log('Rerendered from stepTree', stepTree)
+  // }, [stepTree])
+  // useEffect(() => {
+  //   console.log('Rerendered from treeId', treeId)
+  // }, [treeId])
+  // useEffect(() => {
+  //   console.log('Rerendered from currentUser', currentUser)
+  // }, [currentUser])
+  // useEffect(() => {
+  //   console.log('Rerendered from modal', modal)
+  // }, [modal])
 
   function handleSubmit(v: any) {
     const formattedValues: FamilyTree = formatOutgoingValues(v, stepTree, userId);
@@ -44,18 +44,15 @@ const GenealogyContainer: React.FC = () => {
     try {
       if (mode === stepFormModes.edit) {
         addMembersMutation.mutate(
-          { ...formattedValues, id: treeId || 0 },
+          { ...formattedValues, id: treeId || 0, userId },
           {
             onSuccess: (response) => {
-              console.log({ response });
-
-              if (response.code === 200) {
+              if (response.code == 200) {
                 // @ts-ignore
-                const updatedListOfMembers = JSON.parse(response.payload.members);
-                const formattedMemberRecords = formatTreeMembers(updatedListOfMembers);
-                updateModal({});
+                const updatedListOfMembers = response.payload.members;
+                // const formattedMemberRecords = formatTreeMembers(updatedListOfMembers);
                 updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_success_modal</Trans></Typography>, type: 'success' });
-                dispatch(populateTreeAction(formattedMemberRecords));
+                dispatch(populateTreeAction(updatedListOfMembers));
               } else {
                 updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_failed_modal</Trans></Typography>, type: 'error' });
               }
@@ -71,14 +68,12 @@ const GenealogyContainer: React.FC = () => {
           formattedValues,
           {
             onSuccess: (response) => {
-              console.log('Success Response ', response.code == 200);
+              console.log('Success', { response });
               if (response.code == 200) {
-                console.log('Success', { response });
                 dispatch(populateTreeAction(response.payload));
                 dispatch(saveTreeIdAction(response.payload.id));
                 updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
               } else {
-                console.log('Failure', { response });
                 updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_failed_modal</Trans></Typography>, type: 'error' });
               }
             },

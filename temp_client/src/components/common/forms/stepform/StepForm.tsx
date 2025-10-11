@@ -15,7 +15,6 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: StepFormProps<
   const { submitForm } = useFormikContext<V>();
   const { currentFormStep, currentFormStepDetails, updating, totalSteps } = useZSelector(
     (state: { stepForm: StepFormState }) => state.stepForm);
-    console.log({currentFormStep});
   const dispatch = useZDispatch();
 
   return (

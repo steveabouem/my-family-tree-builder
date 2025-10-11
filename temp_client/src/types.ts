@@ -359,6 +359,7 @@ export interface FamilyTree {
   created_by: number;
   created_at?: Date;
   updated_at?: Date;
+  userId?: number;
 }
 
 export interface FamilyTreeFormData {

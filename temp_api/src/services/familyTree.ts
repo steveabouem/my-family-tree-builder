@@ -91,7 +91,7 @@ export const positionFamilyMembers = async (members: FamilyMemberData[], anchorN
     membersWithCoords.push({
       ...anchor,
       type: 'custom',
-      position: {x: 0, y: 0}
+      position: { x: 0, y: 0 }
       // name: `${anchor.first_name} ${anchor.last_name}`
     });
 
@@ -208,7 +208,7 @@ export const updateTree = async (updateData: ManageTreeRequestPayload): ManageTr
 
   try {
     const tree = await FamilyTree.findByPk(data?.treeId || 0);
-
+    logger.info('Tree and incoming updates: ', { tree, updateData })
     if (!tree?.dataValues?.id) {
       logger.error('Invalid entries ', data);
     } else {
@@ -219,7 +219,8 @@ export const updateTree = async (updateData: ManageTreeRequestPayload): ManageTr
       // ! some other timeStamp, when I add a new membersRecordsFromUpdate, only the old ones are sent? not sure I saw this right
       // ! to the form, only the  existing member's kinship array will be updated. this might be the reaons why update tree doesnt work
       const membersRecordsFromUpdate = await FamilyMember.findAll({ where: { node_id: { [Op.in]: Object.keys(updatedMembersRecords || []) } } });
-      const formattedMembers = membersRecordsFromUpdate.map((m: FamilyMember) => formatFamilyMemberToFront(m));
+      const formattedMembers: FamilyMemberData[] = membersRecordsFromUpdate.map((m: FamilyMember) => formatFamilyMemberToFront(m));
+      logger.info("All members formatted", { formattedMembers })
       const withCoords = await positionFamilyMembers(formattedMembers, data.anchor);
       const nodeIdList = withCoords.map((curr) => curr.node_id);
       const emailList = withCoords.map((curr) => curr.email);
@@ -254,10 +255,10 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
   const existingMembersNodeIds = JSON.parse(tree.members);
   logger.info('This should be an array of node_id', { existingMembersNodeIds, members: updateData.members });
   const newRecords: any = []; //TODO: fix bulkcreate ops typing
-  const updatedRecords: any[] = [];
+  const updatedRecords: any[] = []; // TODO: no any
   const newMembers = updateData.members.filter((m: FamilyMemberData) => !existingMembersNodeIds.includes(m.node_id));
   let newMembersRecords: any[] = [];
-  logger.info('This should not contain anything else than brand new members', { newMembers });
+  logger.info('This should not contain anything else than brand new members', { newMembers, existingMembersNodeIds });
 
   if (newMembers.length) {
     const today = dayjs();
@@ -395,7 +396,7 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
         age: today.diff(dayjs(m.dob), 'years'),
         description: m?.description || '',
         created_by: userId,
-        position: JSON.stringify({x: 0, y:0}),
+        position: JSON.stringify({ x: 0, y: 0 }),
         parents: JSON.stringify(m.parents),
         spouses: JSON.stringify(m.spouses),
         siblings: JSON.stringify(m.siblings),
@@ -484,16 +485,18 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
 };
 //#endregion
 
-const formatFamilyMemberToFront = (member: FamilyMember): FamilyMemberData => ({
-  ...member.dataValues,
-  type: 'custom',
-  children: JSON.parse(member?.children?.length ? member?.children : '[]'),
-  siblings: JSON.parse(member?.siblings?.length ? member?.siblings : '[]'),
-  spouses: JSON.parse(member?.spouses?.length ? member?.spouses : '[]'),
-  parents: JSON.parse(member?.parents?.length ? member?.parents : '[]'),
-  position: JSON.parse(member?.position || '{}'),
-  connections: JSON.parse(member?.connections || '[]')
-});
+const formatFamilyMemberToFront = (member: FamilyMember): any => {
+  return ({
+    ...member.dataValues,
+    type: 'custom',
+    children: member?.dataValues?.children?.length ? member?.children : [],
+    siblings: member?.dataValues?.siblings?.length ? member?.siblings : [],
+    spouses: member?.dataValues?.spouses?.length ? member?.spouses : [],
+    parents: member?.dataValues?.parents?.length ? member?.parents : [],
+    position: member?.dataValues?.position || {},
+    connections: member?.dataValues?.connections || []
+  });
+}
 
 /**
  * ? For each member of a family tree,
@@ -531,3 +534,8 @@ export const getAllRelativesData = async (treeRecord: FamilyTree | void): Promis
 
   return relativesData;
 };
+
+// // TODO: no any
+// const removeEmptyCharsFromJson = (jsonData: string): string => {
+//   const sanitized = jsonData.
+// };

@@ -69,7 +69,7 @@ export function formatOutgoingValues(v: FamilyTreeFormData, stepsInStore: { [nam
     return acc;
   }, {});
   // @ts-ignore
-  return { data: { anchor: v.anchorNode, members: Object.values(mappedMembers), userId, treeName: v?.treeName || '' } };
+  return { data: { anchor: v.anchorNode, members: Object.values(mappedMembers), userId: 1, treeName: v?.treeName || '', treeId: 1 } }; //TODO HARDCODED
 }
 export function cleanUpValuesPrefixes(indicator: string, valuesObject: FamilyTreeFormData): FamilyMemberDTO {
   const formatted: FamilyMemberDTO = {
