@@ -11,7 +11,8 @@ import { isUserAuthenticated } from './src/routes/helpers';
 
 declare module "express-session" {
   interface SessionData extends Session {
-    details: any, // TODO: reinstate line below
+    details: any, 
+    // TODO: reinstate line below
     // details: Partial<APISessionUser>,
     sessionId: string,
   }
@@ -90,7 +91,7 @@ app.use('/api/trees', familyTreeHandler);
 
 const port = 4000;
 try {
-  app.listen(port, () => console.log(`Server running on port ${port}. .PLEASE CHECK TODOS/TOFIX`));
+  app.listen(port, () => console.log(`Server running on port ${port}. .PLEASE CHECK RUN TS LINT`));
 } catch (e) {
   console.log('Server error ', e);
 }

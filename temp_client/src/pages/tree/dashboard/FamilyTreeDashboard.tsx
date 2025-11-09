@@ -20,7 +20,6 @@ const FamilyTreeDashboard = () => {
 
   const selectTree = (t: FamilyTreeRecord) => {
     // LOOK FOR ALL JSON PARSES FOR INCOMING FAMILY TREE. ITS NO LONGER NECESARY SINCE BACKEND DOES IT FOR YO
-    console.log({t});
     // // @ts-ignore
     // const formattedTree:FamilyTree = {members: JSON.parse(t.members).reduce((acc, curr) => ({
     //   ...acc,

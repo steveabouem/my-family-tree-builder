@@ -8,10 +8,9 @@ import { BabyIcon, DeleteIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleI
 // TODO: check types in reacflow docs and create validations for node and edge structures. if any prop doesnt match the type, there can be undetected errors
 // anchor doesnt have the ability to be dragged for some reason, because position is empty
 export default memo(({ data }: any) => {
-  
   const [showDetails, setShowDetails] = useState(true);
   const theme = useTheme();
-console.log('Node content ', data)
+
   function getInitialsBG() {
     return data.gender === Gendersenum.female ? theme.palette.info.contrastText : theme.palette.info.main;
   }

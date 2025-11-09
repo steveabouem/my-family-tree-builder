@@ -6,12 +6,16 @@ import GenealogyForm from './GenealogyForm';
 import { FamilyTreeState, StepFormState, UserState, stepFormModes, FamilyTree } from 'types';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
+import { changeformStepAction } from 'app/slices/forms/stepForm';
 import GlobalContext from 'contexts/creators/global';
 import { formatOutgoingValues, formatTreeMembers } from 'pages/tree/create/genealogy/utils';
 import { useCreateFamilyTree, useAddMembers } from 'services/v2/familyTreeV2';
 import GenealogyTree from 'pages/tree/layout/GenealogyTree';
 
 const GenealogyContainer: React.FC = () => {
+  // is used to keep copy of the tree through all events.
+  // for instance, updating a member requires to rerender the form with only that member's fields.
+  // the copy allows for the other existing members to remain rendered in the graph
   const [treeCopy, setTreeCopy] = useState({});
   const { stepTree = {}, mode } = useZSelector<StepFormState>(state => state.stepForm);
   const { treeId } = useZSelector<FamilyTreeState>(state => state.tree);
@@ -22,22 +26,6 @@ const GenealogyContainer: React.FC = () => {
   const addMembersMutation = useAddMembers();
   const userId = currentUser?.userId || 0;
 
-  // useEffect(() => {
-  //   console.log('Rerendered from treeCopy', treeCopy)
-  // }, [treeCopy])
-  // useEffect(() => {
-  //   console.log('Rerendered from stepTree', stepTree)
-  // }, [stepTree])
-  // useEffect(() => {
-  //   console.log('Rerendered from treeId', treeId)
-  // }, [treeId])
-  // useEffect(() => {
-  //   console.log('Rerendered from currentUser', currentUser)
-  // }, [currentUser])
-  // useEffect(() => {
-  //   console.log('Rerendered from modal', modal)
-  // }, [modal])
-
   function handleSubmit(v: any) {
     const formattedValues: FamilyTree = formatOutgoingValues(v, stepTree, userId);
 
@@ -47,15 +35,16 @@ const GenealogyContainer: React.FC = () => {
           { ...formattedValues, id: treeId || 0, userId },
           {
             onSuccess: (response) => {
-              if (response.code == 200) {
-                // @ts-ignore
-                const updatedListOfMembers = response.payload.members;
-                // const formattedMemberRecords = formatTreeMembers(updatedListOfMembers);
-                updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_success_modal</Trans></Typography>, type: 'success' });
-                dispatch(populateTreeAction(updatedListOfMembers));
-              } else {
-                updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_failed_modal</Trans></Typography>, type: 'error' });
-              }
+              setTimeout(() => {
+                if (response.code == 200) {
+                  updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_success_modal</Trans></Typography>, type: 'success' });
+                  // @ts-ignore
+                  dispatch(populateTreeAction(response.payload));
+                  dispatch(changeformStepAction(0));
+                } else {
+                  updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_failed_modal</Trans></Typography>, type: 'error' });
+                }
+              }, 3000);
             },
             onError: (error) => {
               console.error('Failed to add members:', error);
@@ -68,11 +57,10 @@ const GenealogyContainer: React.FC = () => {
           formattedValues,
           {
             onSuccess: (response) => {
-              console.log('Success', { response });
               if (response.code == 200) {
+                updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
                 dispatch(populateTreeAction(response.payload));
                 dispatch(saveTreeIdAction(response.payload.id));
-                updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_success_modal</Trans></Typography>, type: 'success' });
               } else {
                 updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_failed_modal</Trans></Typography>, type: 'error' });
               }
@@ -85,7 +73,7 @@ const GenealogyContainer: React.FC = () => {
         );
       }
     } catch (e: unknown) {
-      console.log('Failed to create tree', e);
+      //TODO: handle error
     }
   }
 

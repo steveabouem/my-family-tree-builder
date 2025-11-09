@@ -91,7 +91,7 @@ export interface ManageTreeRequestPayload {
 
 
 export interface MappedFamilyMembers {
-    [id: string]: FamilyMemberData
+    [id: string]: FamilyMember
 }
 
 export type APIFamilyMemberArrayKeys = keyof Pick<FamilyMemberData, 'children' | 'parents' | 'siblings' | 'spouses'>;
@@ -272,7 +272,6 @@ export interface APIUserDTO {
     imm_family: number,
     has_ipa?: number,
     partner?: number,
-    // ! -TOFIX: replace with association
     realated_to: number[],
     created_at: Date,
     updated_at?: Date,

@@ -365,7 +365,6 @@ export interface FamilyTree {
 export interface FamilyTreeFormData {
   // Base anchor fields (always present)
   anchor_node_id?: string;
-  anchorNode?: string;
   treeName?: string;
   anchor_firstName?: string;
   anchor_lastName?: string;

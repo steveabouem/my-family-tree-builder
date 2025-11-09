@@ -5,7 +5,7 @@ import { Trans } from "@lingui/macro";
 import { v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { clearFieldsByStepName, loaStepFormFieldsAction, populateStepAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
+import { clearFieldsByStepName, loaStepFormFieldsAction, setStepFieldsAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
 import { resetAction } from "app/slices/trees";
 import FieldAndLabel from "components/common/forms/fieldAndlabel";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
@@ -62,12 +62,13 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
 
     /* 
     * this causes a problem because when you add a kin to a random node in the tree, it messes with the index.
-    * Thats because you remove all the indexes and use the selecte node as an anchor, and add the new kin as the next step.
-    * in other words, if step 2 had previously existed in the slice, regardless of what kin youre trying to add, it will match with whatever that step 2 was in the slice
-    * adding id in the store dosnt change anything since you would need to know the id from within this component to check in the store what it refers to. 
+    * Thats because you remove all the indexes and use the selected node as an anchor, and add the new kin as the next step.
+    * in other words, if step 2 had previously existed in the slice, regardless of what kin youre trying to add, 
+    * it will match with whatever that step 2 was in the slice. adding id in the store dosnt change anything since you would need to know
+    * the id from within this component to check in the store what it refers to. 
     * an alternative is to ave a state property that gets updated every time the next_of_kin value is confirmed,
     * since when that happens the new kin is added as the last step you can then cross reference that object to determine the value of matchingSteNameInTree. 
-    * It should work as long as you make sure to update is when you go in edit mode (press confirm in the modal)
+    * It should work as long as you make sure to update it when you go in edit mode (press confirm in the modal)
     */
     //  @ts-ignore
     const matchingStepNameInTree = isEditMode ? treeCopy[stepNumber] : Object.keys(stepTree || {})
@@ -120,8 +121,8 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
 
       setFieldValue(`${nameOfStep}_node_id`, newNodeId);
 
-      if (nameOfStep === 'anchor' || currentFormStep === 1 && !values?.anchorNode) {
-        setFieldValue('anchorNode', newNodeId)
+      if (nameOfStep === 'anchor' || currentFormStep === 1 && !values?.anchor_node_id) {
+        setFieldValue('anchor_node_id', newNodeId)
       }
       dispatch(loaStepFormFieldsAction({ name: nameOfStep, fields, title: <Trans>info_on_node {nameOfStep}</Trans> }));
     }
@@ -129,19 +130,18 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
   function addRelative() {
     /*
     * user will select the relative type (kinship) for the next step.
-    * this function ensures that 
-      * - 1: Adds an additional step at the end of the list
-      * - 2: assign right prefixto that step, without creating the fields
-      * - 3: the  current step is setup to receive the values based on stepname mapping. 
     */
+    //1: Adds an additional step at the end of the list
     dispatch(setStepsCountAction(totalSteps + 1));
-    dispatch(populateStepAction({ name: `${values.next_of_kin}-${totalSteps}`, fields: [], step: totalSteps + 1 }));
-    if (isEditMode)
-      //   this does allow to get the new node name for the next stepFormModes, but upon sumbission,
-      //  there are a lot of empty objects that seem to be replacing previously generated kinships. Investigate the formattingOutgoingValues. The issue might be there
-      setTreeCopy({ ...treeCopy, [`${totalSteps}`]: values.next_of_kin });
-  }
+    //2: assign right prefixto that step, without creating the fields
+    dispatch(setStepFieldsAction({ name: `${values.next_of_kin}-${totalSteps}`, fields: [], step: totalSteps + 1 }));
 
+    if (isEditMode) {
+      setTreeCopy({ ...treeCopy, [`${totalSteps}`]: values.next_of_kin });
+    }
+  }
+  // you are adding an extra empty array when selecting edit in the modal. That extra step currently doesnt get the fields loaded. 
+  // If you fix that, you will be one step closer to fixing the issue of haveing a ghost member when submitting edit tree
   return (
     <Paper sx={{ flexDirection: "column" }}>
       <Typography variant="body2"><Trans>family_tree_building_explanation</Trans></Typography>

@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik';
 import LocalSpinner from 'components/common/progressIndicators/LocalSpinner';
 import { StepFormProps,StepFormState } from 'types';
 import { useZDispatch, useZSelector } from 'app/hooks';
-import { nextFormStepAction, prevFormStepAction } from 'app/slices/forms/stepForm';
+import { goToNextStepAction, goToPrevStepAction } from 'app/slices/forms/stepForm';
 
 // TODO: pass validations as props here, prevent save and submit in case of field errors. as well as current step title and otheres alike
 // This will ensure that the redux slice calls the api with no risk 
@@ -32,10 +32,10 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave }: StepFormProps<
           <Typography variant="body1">{currentFormStepDetails?.subtitle}</Typography>
         </Box>
         <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
-          <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(prevFormStepAction())}>
+          <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
             <Trans>prev</Trans>
           </Button>
-          <Button variant="contained" color="primary" onClick={() => dispatch(nextFormStepAction())} disabled={currentFormStep === totalSteps - 1}>
+          <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps - 1}>
             <Trans>next</Trans>
           </Button>
         </Box>

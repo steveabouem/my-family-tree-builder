@@ -28,15 +28,13 @@ const treeBgUrl = 'https://images.pexels.com/photos/22821246/pexels-photo-228212
 const GenealogyTree = memo(() => {
   const [nodesList, setNodesList, onNodesListChange] = useNodesState<any>([]);
   const [edgesList, setEdgesList, onEdgesListChange] = useEdgesState<any>([]);
-  const { setValues } = useFormikContext<any>();
+  const { setValues, setFieldValue } = useFormikContext<any>();
   const { updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
   const { currentFamilyTree } = useZSelector<FamilyTreeState>(state => state.tree);
-
   const theme = useTheme();
 
   useEffect(() => {
-    console.log('currentFamilyTree in treelayout', { currentFamilyTree });
     // node is showing but not draggable. console errors mention missing coordinates?
     if (currentFamilyTree?.members?.length)
       generateNodesAndEdges();
@@ -59,7 +57,7 @@ const GenealogyTree = memo(() => {
     });
   }
   function showEditModal(event: any, node: any) {
-    console.log({ node });
+    setFieldValue('anchor_node_id', node.node_id);
 
     updateModal({
       hidden: false,
@@ -91,10 +89,8 @@ const GenealogyTree = memo(() => {
   // TODO: this is not being managed properly. Edges are not showing.
   function generateNodesAndEdges() {
     const incomingNodes: FamilyMemberDTO[] = currentFamilyTree?.members || [];
-    console.log('INCOMING NODES VAL ', incomingNodes);
     const incomingEdges = incomingNodes.reduce((listOfEdges: any, node: any) => {
       const nodeConnections = node?.connections || [];
-      console.log({ nodeConnections, node });
 
       if (nodeConnections?.length) {
         return [...listOfEdges.flat(), nodeConnections.flat() || []];
@@ -103,17 +99,14 @@ const GenealogyTree = memo(() => {
       }
     }, []);
     const nodesList = incomingNodes.map(n => ({ ...n, id: n.node_id, draggable: true, selectable: true, data: { ...n, id: n.node_id } }));// ReactFlow only reads the data object
-    console.log({ nodesList });
     setNodesList(nodesList);
     incomingEdges.forEach((e: any) => {// thats a lot of renders . use memo maybe?
       setEdgesList((eds) => addEdge(e, edgesList));
     });
   }
   function generateEdge(newEdge: any) {
-    console.log({ newEdges: newEdge });
     setEdgesList((prev: ReactFlowEdge[]) => {
       const targetEdge = prev.find((edge: ReactFlowEdge) => edge.id === newEdge.id);
-      console.log('found edge', targetEdge, newEdge);
 
       return ([...prev.filter((edge: ReactFlowEdge) => edge.id !== newEdge.id), targetEdge]);
     });
@@ -126,7 +119,7 @@ const GenealogyTree = memo(() => {
       const nodeUpdate = action?.[0];
       if (nodeUpdate?.type === 'position' && !nodeUpdate?.dragging) {
         const currentNode = nodesList.find((node: any) => node.node_id === nodeUpdate?.id);
-        console.log({ nodeUpdate, currentNode });
+
         setNodesList((prev: any) => {
           const newNodes = prev.map((node: any) => {
             if (node.id === currentNode.id) {
@@ -143,7 +136,7 @@ const GenealogyTree = memo(() => {
     }, 300);
     clearTimeout(nodeTimeout);
   }
-  
+
   if (!currentFamilyTree) {
     return <DataProgress
       msg={<Trans>fill_in_the_form_first</Trans>} />
@@ -152,7 +145,8 @@ const GenealogyTree = memo(() => {
   return (
     <ReactFlow
       nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes} onNodeDrag={moveNode}
-      onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange} onNodeDragStop={() => { console.log('STAAAP') }}
+      onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange}
+    // onNodeDragStop={save to backend}
     >
       <Background
         style={{

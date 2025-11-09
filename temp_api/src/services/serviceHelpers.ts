@@ -8,8 +8,7 @@ export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> 
   };
 };
 
-// TODO: THIS FILE IS POLLUTED BY ANYs
-/**
+/** 
  * extract the dataValues property of any Sequelize Model that a service function would need
  * @param bindings 
  * @param entity 
@@ -32,4 +31,3 @@ export async function extractGroupDataValuesFrom(entity: any, bindings: any): Pr
   }
 
   return null;
-}

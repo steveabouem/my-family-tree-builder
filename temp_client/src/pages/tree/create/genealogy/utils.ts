@@ -69,7 +69,7 @@ export function formatOutgoingValues(v: FamilyTreeFormData, stepsInStore: { [nam
     return acc;
   }, {});
   // @ts-ignore
-  return { data: { anchor: v.anchorNode, members: Object.values(mappedMembers), userId: 1, treeName: v?.treeName || '', treeId: 1 } }; //TODO HARDCODED
+  return { data: { anchor: v.anchor_node_id, members: Object.values(mappedMembers), userId: 1, treeName: v?.treeName || '', treeId: 1 } }; //TODO HARDCODED
 }
 export function cleanUpValuesPrefixes(indicator: string, valuesObject: FamilyTreeFormData): FamilyMemberDTO {
   const formatted: FamilyMemberDTO = {
@@ -87,6 +87,8 @@ export function cleanUpValuesPrefixes(indicator: string, valuesObject: FamilyTre
     parents: valuesObject?.[`${indicator}_parents`] || '',
     // @ts-ignore
     siblings: valuesObject?.[`${indicator}_siblings`] || '',
+    // @ts-ignore
+    children: valuesObject?.[`${indicator}_children`] || '',
     age: valuesObject?.[`${indicator}_age`] || '',
     description: valuesObject?.[`${indicator}_description`] || '',
     profile_url: valuesObject?.[`${indicator}_profile_url`] || '',

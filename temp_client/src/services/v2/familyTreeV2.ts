@@ -108,7 +108,7 @@ export const useCreateFamilyTree = () => {
     mutationFn: createFamilyTree,
     onSuccess: (data, variables) => {
       // format incoming data for consumption
-      const formattedData = formatIncomingValues(data)
+      // const formattedData = formatIncomingValues(data)
       // Invalidate and refetch family trees for the user
       queryClient.invalidateQueries({ queryKey: ['familyTrees', 'user', variables?.id || 0] });
       queryClient.invalidateQueries({ queryKey: ['familyTrees'] });

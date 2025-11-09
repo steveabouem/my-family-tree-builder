@@ -21,7 +21,7 @@ const setTotalStep = (state: StepFormState, action: PayloadAction<number>) => {
   state.updating = false;
   return state;
 };
-const switchStep = (state: StepFormState, action: PayloadAction<number>): StepFormState => {
+const changeFormStep = (state: StepFormState, action: PayloadAction<number>): StepFormState => {
   /*
   * No need to worry about immutability here, redux already does a copy of the state for me
   */
@@ -30,13 +30,13 @@ const switchStep = (state: StepFormState, action: PayloadAction<number>): StepFo
   state.updating = false;
   return state;
 };
-const goToNext = (state: StepFormState): StepFormState => {
+const goToNextStep = (state: StepFormState): StepFormState => {
   state.updating = true;
   state.currentFormStep++;
   state.updating = false;
   return state;
 };
-const goToPrev = (state: StepFormState): StepFormState => {
+const goToPrevStep = (state: StepFormState): StepFormState => {
   state.updating = true;
   if (state.currentFormStep >= 1) {
     state.currentFormStep--;
@@ -108,13 +108,13 @@ export const stepFormSlice = createSlice({
   name: 'FORM_STEPS',
   initialState,
   reducers: {
-    changeformStepAction: switchStep,
+    changeformStepAction: changeFormStep,
     fetchNextStepFields: fetchFields,
     getStepFormValuesAction: getCurrentFields,
     loaStepFormFieldsAction: setCurrentFields,
-    populateStepAction: setStepFields,
-    nextFormStepAction: goToNext,
-    prevFormStepAction: goToPrev,
+    setStepFieldsAction: setStepFields,
+    goToNextStepAction: goToNextStep,
+    goToPrevStepAction: goToPrevStep,
     updateGlobalValuesAction: setCombinedStepValues,
     getGlobalValuesAction: getCombinedStepValues,
     setStepsCountAction: setTotalStep,
@@ -124,8 +124,8 @@ export const stepFormSlice = createSlice({
   }
 });
 export const {
-  changeformStepAction, nextFormStepAction, prevFormStepAction, clearFieldsByStepName, cleanupAction,
-  loaStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, populateStepAction,
+  changeformStepAction, goToNextStepAction, goToPrevStepAction, clearFieldsByStepName, cleanupAction,
+  loaStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, setStepFieldsAction,
   getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction, changeModeAction
 } = stepFormSlice.actions;
 export default stepFormSlice.reducer;

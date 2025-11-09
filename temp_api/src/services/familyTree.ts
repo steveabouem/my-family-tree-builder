@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Op } from "sequelize";
+import { InferAttributes, Op } from "sequelize";
 import FamilyTree from "../models/FamilyTree";
 import {
   FamilyTreeFormData, APIGetFamilyTreeResponse,
@@ -64,11 +64,17 @@ export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPa
  * @param anchorNodeId 
  * @returns FamilyMember[]
  */
-export const positionFamilyMembers = async (members: FamilyMemberData[], anchorNodeId: string): Promise<FamilyMemberData[]> => {
+// create was once again returning an empty arrayBuffer. I had mistyped the members arg.
+// need to make sure to always extract the actual attributes. By creataing actualMemberDataList
+// I bypassed the error for create, but I need to cleanup and ideally avoid the workaroud.
+// it should be clearer  what goes in and what comes out and ideally the same for create and update
+export const positionFamilyMembers = async (members: any[], anchorNodeId: string): Promise<FamilyMemberData[]> => {
+  // TODO: review crud and decide on FamilyMember[] and InferAttributes<FamilyMember>[]
+  const actualMemberDataList = members.map(m => m?.dataValues || m)
   const membersWithCoords: FamilyMemberData[] = [];
-  const anchor = members.find(m => m.node_id === anchorNodeId);
-  logger.info('FOUND ANCHOR ', { anchor })
-  // go through all the anchor and its relative, and update the positions based on the anchor's position. make sure to use existing position if already available
+  const anchor = actualMemberDataList.find(m => m.node_id === anchorNodeId);
+  logger.info('FOUND ANCHOR ', { anchor, actualMemberDataList })
+  // go through  the anchor and its relative, and update the positions based on the anchor's position. make sure to use existing position if already available
   if (anchor) {
     logger.info('Anchor data is ', { anchor })
     // position every one of the anchor's relatives
@@ -77,10 +83,10 @@ export const positionFamilyMembers = async (members: FamilyMemberData[], anchorN
     const siblingsNodeIds: string[] = anchor?.siblings || [];
     const spousesNodeIds: string[] = anchor?.spouses || [];
     const parentsNodeIds: string[] = anchor?.parents || [];
-    const childrenList = await bulkUpdateRecordsPosition(childrenNodeIds, members, position, KinshipEnum.child, anchorNodeId);
-    const siblingsList = await bulkUpdateRecordsPosition(siblingsNodeIds, members, position, KinshipEnum.sibling, anchorNodeId);
-    const parentsList = await bulkUpdateRecordsPosition(parentsNodeIds, members, position, KinshipEnum.parent, anchorNodeId);
-    const spousesList = await bulkUpdateRecordsPosition(spousesNodeIds, members, position, KinshipEnum.spouse, anchorNodeId);
+    const childrenList = await bulkUpdateRecordsPosition(childrenNodeIds, actualMemberDataList, position, KinshipEnum.child, anchorNodeId);
+    const siblingsList = await bulkUpdateRecordsPosition(siblingsNodeIds, actualMemberDataList, position, KinshipEnum.sibling, anchorNodeId);
+    const parentsList = await bulkUpdateRecordsPosition(parentsNodeIds, actualMemberDataList, position, KinshipEnum.parent, anchorNodeId);
+    const spousesList = await bulkUpdateRecordsPosition(spousesNodeIds, actualMemberDataList, position, KinshipEnum.spouse, anchorNodeId);
 
     // add them all to the list of members
     membersWithCoords.push(...childrenList);
@@ -91,14 +97,14 @@ export const positionFamilyMembers = async (members: FamilyMemberData[], anchorN
     membersWithCoords.push({
       ...anchor,
       type: 'custom',
-      position: { x: 0, y: 0 }
+      position // in case of update, position my aalready exist
       // name: `${anchor.first_name} ${anchor.last_name}`
     });
 
     logger.info('newNodeState', membersWithCoords);
     return membersWithCoords;
   } else {
-    logger.error('No anchor provided. ', members);
+    logger.error('No anchor provided. ', actualMemberDataList);
   }
 
   return [];
@@ -213,15 +219,9 @@ export const updateTree = async (updateData: ManageTreeRequestPayload): ManageTr
       logger.error('Invalid entries ', data);
     } else {
       const updatedMembersRecords = await updateTreeMembers(tree, userId, data);
-      // use data from the members post update: important properties may have changed. i.e name or kinship
-      // TODO: the front seems to not make a two way update of the kinship arrays: 
-      // ! if I add a sibling sometimes it adds it to the payload, but doesn tupdate its own kinship array. Some other times
-      // ! some other timeStamp, when I add a new membersRecordsFromUpdate, only the old ones are sent? not sure I saw this right
-      // ! to the form, only the  existing member's kinship array will be updated. this might be the reaons why update tree doesnt work
-      const membersRecordsFromUpdate = await FamilyMember.findAll({ where: { node_id: { [Op.in]: Object.keys(updatedMembersRecords || []) } } });
-      const formattedMembers: FamilyMemberData[] = membersRecordsFromUpdate.map((m: FamilyMember) => formatFamilyMemberToFront(m));
-      logger.info("All members formatted", { formattedMembers })
-      const withCoords = await positionFamilyMembers(formattedMembers, data.anchor);
+      logger.info('updateTree: updatedMembersRecords from updateTreeMembers', { updatedMembersRecords, keys: Object.keys(updatedMembersRecords || {}) });
+      const withCoords = await positionFamilyMembers(Object.values(updatedMembersRecords || {}), data.anchor);
+      logger.info('updateTree: with coords ', { withCoords })
       const nodeIdList = withCoords.map((curr) => curr.node_id);
       const emailList = withCoords.map((curr) => curr.email);
       logger.info('withcoords', withCoords)
@@ -247,82 +247,94 @@ export const updateTree = async (updateData: ManageTreeRequestPayload): ManageTr
  * 
  * @param tree : includes list of members as currently stored in db
  * @param userId 
- * @param updateData: member and tree updates
+ * @param updateData: member and tree updates (including both new and existing members)
  */
 //#region updateTreeMembers
-// TODO: there are more validations to be done here
-const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: FamilyTreeFormData): Promise<{ [id: string]: FamilyMember } | null> => {
+// TODO: there are more validations to be done here.
+const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: FamilyTreeFormData):
+  Promise<{ [id: string]: FamilyMemberData } | null> => {
   const existingMembersNodeIds = JSON.parse(tree.members);
-  logger.info('This should be an array of node_id', { existingMembersNodeIds, members: updateData.members });
-  const newRecords: any = []; //TODO: fix bulkcreate ops typing
-  const updatedRecords: any[] = []; // TODO: no any
-  const newMembers = updateData.members.filter((m: FamilyMemberData) => !existingMembersNodeIds.includes(m.node_id));
-  let newMembersRecords: any[] = [];
-  logger.info('This should not contain anything else than brand new members', { newMembers, existingMembersNodeIds });
+  const newRecords: InferAttributes<FamilyMember>[] = [];
+  const recordsFormattedAndUpdated: FamilyMemberData[] = [];
+  const newMembersToAdd = updateData.members.filter((m: FamilyMemberData) =>
+    !existingMembersNodeIds.includes(m.node_id));
+  const existingMembers = updateData.members.filter((m: FamilyMemberData) =>
+    existingMembersNodeIds.includes(m.node_id));
+  let newMembersRecords: FamilyMember[] = [];
 
-  if (newMembers.length) {
+  logger.info('updateTreeMembers: Tree members array', { existingMembersNodeIds });
+  logger.info('updateTreeMembers: All incoming members', { allMembers: updateData.members });
+  logger.info('updateTreeMembers: New members to add', { newMembersToAdd });
+  logger.info('updateTreeMembers: Existing members to update', { existingMembers });
+
+  if (newMembersToAdd.length) {
     const today = dayjs();
-    logger.info('Tree update includes new members', newMembers);
 
-    for (const m of newMembers) {
+    for (const m of newMembersToAdd) {
       // there shouldnt be any duplicates here
-      logger.info('Current tree member ', m, tree)
       newRecords.push({
         ...m,
         age: today.diff(dayjs(m.dob), 'years'),
         description: m?.description || '',
         created_by: userId,
-        parents: m.parents,
-        spouses: m.spouses,
-        siblings: m.siblings,
-        children: m.children,
+        position: JSON.stringify(m.position || { x: 0, y: 0 }), // TODO: as a new record, this should not have any incoming value. ternary is not needed
+        connections: JSON.stringify(m.connections || []), // TODO: as a new record, this should not have any incoming value. ternary is not needed
+        parents: JSON.stringify(Array.isArray(m.parents) ? m.parents : (m.parents ? [m.parents] : [])),
+        spouses: JSON.stringify(Array.isArray(m.spouses) ? m.spouses : (m.spouses ? [m.spouses] : [])),
+        siblings: JSON.stringify(Array.isArray(m.siblings) ? m.siblings : (m.siblings ? [m.siblings] : [])),
+        children: JSON.stringify(Array.isArray(m.children) ? m.children : (m.children ? [m.children] : [])),
       });
     };
   }
 
   if (newRecords.length) {
     // create records for any family member that doesnt already have one. 
+    logger.info("updateTreeMembers: Ready for bulk create: ", { newRecords: newRecords })
     newMembersRecords = await FamilyMember.bulkCreate(newRecords);
-    // (...)
   }
 
-  //add the newly created records to the mapped records object
-  newMembersRecords.forEach((r: FamilyMemberData) => {
-    logger.info('Newly created record to add ', r);
-    updatedRecords.push({ ...r });
+  // ensure to account for already existing members
+  const recordsAlreadyInDb = await FamilyMember.findAll({
+    where: { node_id: { [Op.in]: existingMembersNodeIds } }
   });
+  logger.info("updateTreeMembers: gathered all existing records", { recordsAlreadyInDb });
+  const allRecords = [...recordsAlreadyInDb, ...newMembersRecords];
 
-  await Promise.all(updateData.members.map(async (m) => {
-    // todo: its better to do the findall then loop the result of that. 1 query instead of potential dozen
-    const memberRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: m.node_id } } });
+  await Promise.all(recordsAlreadyInDb.map(async (existingRecord: FamilyMember) => {
+    const incomingData = existingMembers.find((m: FamilyMemberData) => m.node_id === existingRecord.dataValues.node_id);
+    logger.info('updateTreeMembers: ready to update already existing member ', { existingRecord });
 
-    if (memberRecord?.dataValues) {// TODO: what if any of htese arrays exist and are just being expanded rather than replaced? Front must handle that? No
-      const newChildren = m?.children?.length ? JSON.stringify(m?.children) : memberRecord.dataValues?.children;
-      const newParents = m?.parents?.length ? JSON.stringify(m?.parents) : memberRecord.dataValues?.parents;
-      const newSiblings = m?.siblings?.length ? JSON.stringify(m?.siblings) : memberRecord.dataValues?.siblings;
-      const newSpouses = m?.spouses?.length ? JSON.stringify(m?.spouses) : memberRecord.dataValues?.spouses;
-      const newPosition = m?.position?.x ? JSON.stringify(m.position) : memberRecord.dataValues?.position;
-      const newConnections = m?.connections?.length ? JSON.stringify(m.connections) : memberRecord.dataValues?.connections;
-      const recordWithUpdates = await memberRecord.update({
-        ...memberRecord.dataValues,
-        ...m,
-        position: newPosition,
-        connections: newConnections,
-        children: newChildren,
-        parents: newParents,
-        siblings: newSiblings,
-        spouses: newSpouses,
-        age: memberRecord.age // form comes in with null for age. avoid replacing it
+    if (incomingData) {
+      // Update the existing record with incoming data
+      const updatedRecord = await existingRecord.update({
+        ...existingRecord.dataValues,
+        ...incomingData,
+        age: existingRecord.dataValues.age,
+        // Update JSON fields if provided
+        position: incomingData.position ? JSON.stringify(incomingData.position) : existingRecord.dataValues.position,
+        connections: incomingData.connections ? JSON.stringify(incomingData.connections) : existingRecord.dataValues.connections,
+        children: incomingData.children ? JSON.stringify(incomingData.children) : existingRecord.dataValues.children,
+        parents: incomingData.parents ? JSON.stringify(incomingData.parents) : existingRecord.dataValues.parents,
+        siblings: incomingData.siblings ? JSON.stringify(incomingData.siblings) : existingRecord.dataValues.siblings,
+        spouses: incomingData.spouses ? JSON.stringify(incomingData.spouses) : existingRecord.dataValues.spouses,
       });
-      logger.info('Updated. Return value is ', recordWithUpdates);
-      updatedRecords.push({ ...recordWithUpdates.dataValues });
-    } else {
-      logger.error('Invalid record provided ', m);
+
+      const formattedUpdatedRecord = formatFamilyMemberToFront(updatedRecord);
+      recordsFormattedAndUpdated.push(formattedUpdatedRecord);
+      logger.info('updateTreeMembers: Updated existing record', { nodeId: existingRecord.node_id, updatedRecord: formattedUpdatedRecord });
     }
   }));
 
-  logger.info('Records After all updates', updatedRecords);
-  const result = updatedRecords.reduce((map: { [nodeId: string]: FamilyMemberData }, curr: any) => ({ ...map, [curr.node_id]: curr }), {});
+  //add the newly created records to the mapped records object
+  newMembersRecords.forEach((r: FamilyMember) => {
+    const formattedRecord = formatFamilyMemberToFront(r);
+    logger.info('updateTreeMembers: Newly created record to add ', formattedRecord);
+    recordsFormattedAndUpdated.push(formattedRecord);
+  });
+
+  logger.info('updateTreeMembers: Records After all updates', recordsFormattedAndUpdated);
+  const result = recordsFormattedAndUpdated.reduce((map: { [nodeId: string]: FamilyMemberData }, curr: any) => ({ ...map, [curr.node_id]: curr }), {});
+  logger.info('updateTreeMembers: Final result object', { result, resultKeys: Object.keys(result) });
 
   return result;//includes both new and existing records
 };
@@ -334,7 +346,7 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
   const tree = await FamilyTree.findByPk(treeId);
 
   if (!tree) {
-    logger.error('Tree does not exist. Cannot delete', { treeId });
+    logger.error('updateTreeMembers: Tree does not exist. Cannot delete', { treeId });
   } else {
     await tree.destroy();
     response = {
@@ -345,6 +357,10 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
   return response;
 };
 //#endregion
+
+// TODO: you need to separate the action of updating a single member's data with the action of adding relatives to a member.
+//  This is to avoir always running an update on the members records even when all youre doing is adding relatives to it. make sure to also make that distinction in the frontend's CTAs
+// export const updateSingleMemberData = (memberDAta: FamilyTreeFormData, memberId: number)
 
 // async function canUserViewTree(treeId: number, userId: number): Promise<boolean> {
 //   try {
@@ -431,6 +447,8 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
  */
 const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: FamilyMemberData[], initialPosition: { x: number, y: number }, relation: KinshipEnum, anchor: string): Promise<FamilyMemberData[]> => {
   const result: FamilyMemberData[] = [];
+  //! TODO: URGENT instead of creating/getUnpackedSettings, then make another operation for SVGTextPositioningElement, you should 
+  // manage the incomning data object for each membersList, use the position function to assign a x and yield, and only then create/ updte the record
 
   if (Array.isArray(nodeIds)) {
     await Promise.all(nodeIds.map(async (nodeId: string, nodeIndex: number) => {
@@ -486,15 +504,16 @@ const bulkUpdateRecordsPosition = async (nodeIds: string[] = [], membersList: Fa
 //#endregion
 
 const formatFamilyMemberToFront = (member: FamilyMember): any => {
+  logger.info('formatFamilyMemberToFront: shape of a member', { member })
   return ({
     ...member.dataValues,
     type: 'custom',
-    children: member?.dataValues?.children?.length ? member?.children : [],
-    siblings: member?.dataValues?.siblings?.length ? member?.siblings : [],
-    spouses: member?.dataValues?.spouses?.length ? member?.spouses : [],
-    parents: member?.dataValues?.parents?.length ? member?.parents : [],
-    position: member?.dataValues?.position || {},
-    connections: member?.dataValues?.connections || []
+    children: JSON.parse(member?.children?.length ? member?.children : '[]'),
+    siblings: JSON.parse(member?.siblings?.length ? member?.siblings : '[]'),
+    spouses: JSON.parse(member?.spouses?.length ? member?.spouses : '[]'),
+    parents: JSON.parse(member?.parents?.length ? member?.parents : '[]'),
+    position: JSON.parse(member?.position || '{x: 0, y: 0}'),
+    connections: JSON.parse(member?.connections || '[]')
   });
 }
 
@@ -505,7 +524,7 @@ const formatFamilyMemberToFront = (member: FamilyMember): any => {
  * @returns 
  */
 export const getAllRelativesData = async (treeRecord: FamilyTree | void): Promise<FamilyMemberData[] | null> => {
-  const relativesData: any = [];
+  const relativesData: FamilyMemberData[] = [];
 
   try {
     logger.info('The Tree ', { treeRecord });
@@ -534,8 +553,3 @@ export const getAllRelativesData = async (treeRecord: FamilyTree | void): Promis
 
   return relativesData;
 };
-
-// // TODO: no any
-// const removeEmptyCharsFromJson = (jsonData: string): string => {
-//   const sanitized = jsonData.
-// };
