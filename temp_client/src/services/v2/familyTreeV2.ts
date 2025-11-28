@@ -10,7 +10,7 @@ const getAllTreesForUser = async (userId?: number): Promise<APIGetAllTreesRespon
     throw new Error('Invalid parameter');
   }
 
-  const response = await fetch(`${baseUrl}/trees/index?member=${userId}`);
+  const response = await fetch(`${baseUrl}/trees/index?user=${userId}`);
   
   if (!response.ok) {
     throw new Error(`Failed to get trees for user: ${response.statusText}`);

@@ -7,8 +7,8 @@ import { createTree, deleteTree, getAllRelativesData, getAllTrees, getTreeById, 
 
 const router = Router();
 
-router.get('/index', (req: Request<{}, {}, {}, { member: string }>, res: Response) => {
-  sendRouteHandlerResponse<string, FamilyTree[] | null>(req.query.member, getAllTrees, res, 'Get all trees');
+router.get('/index', (req: Request<{}, {}, {}, { user: string }>, res: Response) => {
+  sendRouteHandlerResponse<string, FamilyTree[] | null>(req.query.user, getAllTrees, res, 'Get all trees');
 });
 
 router.get('/details', (req: Request<{}, {}, {}, { id: string }>, res: Response) => {

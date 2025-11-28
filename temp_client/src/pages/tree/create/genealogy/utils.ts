@@ -4,17 +4,27 @@ export function formatIncomingValues(data: APICreateFamilyResponse) {
 
 }
 /*
- * At every step, the field names will be prefixed by the type of kin (fatherm, mother, children etc..)
+ * At every step, the field names will be prefixed by the type of kin (father, mother, children etc..)
  * We need to remove that prefix to match the DAO expected by the API
  * We will use the first part of the field name to determine the type of kinship to build an array for
- * the API will handle creatig a family member from each of these steps
+ * the API will handle creating a family member from each of these steps
  */
-export function formatOutgoingValues(v: FamilyTreeFormData, stepsInStore: { [name: string]: FormField[] }, userId: number): FamilyTree {
-  let anchorAdded: boolean = false;
 
+export function formatOutgoingValues(v: FamilyTreeFormData, stepsInStore: { [name: string]: FormField[] }, userId: number, treeId?: number): FamilyTree {
+  let anchorAdded: boolean = false;
+  console.log('Original values sent', v);
+  
   const mappedMembers = Object.keys(stepsInStore).reduce((acc: any, curr: string) => {
     const formatted: FamilyMemberDTO = cleanUpValuesPrefixes(curr, v);
+    // @ts-ignore
+    const hasName = !!formatted?.first_name?.length;
+    
+    // Skip empty/ghost members that don't have valid data
+    if (!hasName) {
+      return acc;
+    }
 
+    // Handle anchor (first member)
     if (!anchorAdded) {
       anchorAdded = true;
       return { anchor: formatted };
@@ -69,7 +79,7 @@ export function formatOutgoingValues(v: FamilyTreeFormData, stepsInStore: { [nam
     return acc;
   }, {});
   // @ts-ignore
-  return { data: { anchor: v.anchor_node_id, members: Object.values(mappedMembers), userId: 1, treeName: v?.treeName || '', treeId: 1 } }; //TODO HARDCODED
+  return { data: { anchor: v.anchor_node_id, members: Object.values(mappedMembers), userId: userId, treeName: v?.treeName || '', treeId: treeId || 1 } };
 }
 export function cleanUpValuesPrefixes(indicator: string, valuesObject: FamilyTreeFormData): FamilyMemberDTO {
   const formatted: FamilyMemberDTO = {

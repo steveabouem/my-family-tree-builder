@@ -6,7 +6,6 @@ import { v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { clearFieldsByStepName, loaStepFormFieldsAction, setStepFieldsAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
-import { resetAction } from "app/slices/trees";
 import FieldAndLabel from "components/common/forms/fieldAndlabel";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import GlobalContext from "contexts/creators/global";
@@ -22,14 +21,12 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
   const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
 
   useEffect(() => {
-    generateFieldsForRelative(0, false);
-  }, []);
-  useEffect(() => {
     // TODO: a nice to have: dropdown to display step number or name above the fields. 
     /*
     * the form will direct user to build the tree one  member at the time
     * for each member, the user will be able to add partners, parents and children (potentially more)
     */
+   
     generateFieldsForRelative(currentFormStep, false);
   }, [currentFormStep]);
   useEffect(() => {
@@ -39,11 +36,6 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
     }
   }, [modal?.transferData])
 
-  function resetAll() {
-    setValues({});
-    dispatch(updateGlobalValuesAction({ values: {} }));
-    dispatch(resetAction());
-  }
   /*
   * save each step of the form in redux store
   */

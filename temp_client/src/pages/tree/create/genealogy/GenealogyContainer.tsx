@@ -27,7 +27,7 @@ const GenealogyContainer: React.FC = () => {
   const userId = currentUser?.userId || 0;
 
   function handleSubmit(v: any) {
-    const formattedValues: FamilyTree = formatOutgoingValues(v, stepTree, userId);
+    const formattedValues: FamilyTree = formatOutgoingValues(v, stepTree, userId, treeId);
 
     try {
       if (mode === stepFormModes.edit) {
@@ -53,8 +53,9 @@ const GenealogyContainer: React.FC = () => {
           }
         );
       } else {
+        // Ensure userId is at the top level for the backend
         createFamilyTreeMutation.mutate(
-          formattedValues,
+          { ...formattedValues, userId },
           {
             onSuccess: (response) => {
               if (response.code == 200) {
