@@ -72,13 +72,26 @@ export const positionFamilyMembers = async (members: any[], anchorNodeId: string
   // TODO: review crud and decide on FamilyMember[] and InferAttributes<FamilyMember>[]
   const actualMemberDataList = members.map(m => m?.dataValues || m)
   const membersWithCoords: FamilyMemberData[] = [];
-  const anchor = actualMemberDataList.find(m => m.node_id === anchorNodeId);
+  let anchor = actualMemberDataList.find(m => m.node_id === anchorNodeId);
   logger.info('FOUND ANCHOR ', { anchor, actualMemberDataList })
   // go through  the anchor and its relative, and update the positions based on the anchor's position. make sure to use existing position if already available
   if (anchor) {
-    logger.info('Anchor data is ', { anchor })
+    // Always fetch anchor's position from database to ensure we have the latest value
+    // This is important because updateTreeMembers may have preserved the existing position
+    const anchorRecord = await FamilyMember.findOne({ where: { node_id: { [Op.eq]: anchorNodeId } } });
+    let anchorPosition = { x: 0, y: 0 };
+    if (anchorRecord) {
+      const formattedAnchor = formatFamilyMemberToFront(anchorRecord);
+      anchorPosition = formattedAnchor.position || { x: 0, y: 0 };
+      // Update anchor object with position from database
+      anchor = { ...anchor, position: anchorPosition };
+    } else if (anchor.position) {
+      // Fallback to anchor's position if DB record not found
+      anchorPosition = anchor.position;
+    }
+    logger.info('Anchor data is ', { anchor, anchorPosition })
     // position every one of the anchor's relatives
-    const position = { x: anchor?.position?.x || 0, y: anchor?.position?.y || 0 };
+    const position = anchorPosition;
     const childrenNodeIds: string[] = anchor?.children || [];
     const siblingsNodeIds: string[] = anchor?.siblings || [];
     const spousesNodeIds: string[] = anchor?.spouses || [];
@@ -94,10 +107,15 @@ export const positionFamilyMembers = async (members: any[], anchorNodeId: string
     membersWithCoords.push(...parentsList);
     membersWithCoords.push(...spousesList);
     // once thats done, position the current member themselves
+    // Update anchor's position in database (it may have been preserved from existing record)
+    await FamilyMember.update(
+      { position: JSON.stringify(position) },
+      { where: { node_id: { [Op.eq]: anchorNodeId } } }
+    );
     membersWithCoords.push({
       ...anchor,
       type: 'custom',
-      position // in case of update, position my aalready exist
+      position // position is already set from database fetch above
       // name: `${anchor.first_name} ${anchor.last_name}`
     });
 
@@ -299,7 +317,9 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
       existingMembersFormData.push({
         ...m,
         description: m?.description || '',
-        position: JSON.stringify(m.position || { x: 0, y: 0 }),
+        // Don't stringify position here - it will be handled by positionFamilyMembers
+        // Only stringify if position is explicitly provided, otherwise preserve existing
+        position: m.position ? JSON.stringify(m.position) : undefined,
         connections: JSON.stringify(m.connections || []),
         parents: JSON.stringify(Array.isArray(m.parents) ? m.parents : (m.parents ? [m.parents] : [])),
         spouses: JSON.stringify(Array.isArray(m.spouses) ? m.spouses : (m.spouses ? [m.spouses] : [])),
@@ -326,6 +346,11 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
       logger.info("updateTreeMembers: Ready for bulk create: ", { newRecords: newMembersFormData });
       // @ts-ignore
       membersRecordsCreated = await FamilyMember.bulkCreate(newMembersFormData);
+      // Add formatted new records to the result
+      membersRecordsCreated.forEach((member: FamilyMember) => {
+        const formattedRecord = formatFamilyMemberToFront(member);
+        recordsFormattedAndUpdated.push(formattedRecord);
+      });
     }
 
     // update records for any family member that already has one. 
@@ -346,13 +371,17 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
             ...memberData,
             age: existingMemberRecord.dataValues.age,
             // Update JSON fields if provided - memberData already contains stringified values from existingMembersFormData
-            position: memberData.position || existingMemberRecord.dataValues.position,
+            // Preserve existing position if not explicitly provided (positioning will be handled by positionFamilyMembers)
+            position: memberData.position ?? existingMemberRecord.dataValues.position,
             connections: memberData.connections || existingMemberRecord.dataValues.connections,
             children: memberData.children || existingMemberRecord.dataValues.children,
             parents: memberData.parents || existingMemberRecord.dataValues.parents,
             siblings: memberData.siblings || existingMemberRecord.dataValues.siblings,
             spouses: memberData.spouses || existingMemberRecord.dataValues.spouses,
           });
+          // Add formatted record to the result
+          const formattedRecord = formatFamilyMemberToFront(updatedRecord);
+          recordsFormattedAndUpdated.push(formattedRecord);
         } else {
           logger.info('NOT FOUND EXISTING MEMBER')
         }
