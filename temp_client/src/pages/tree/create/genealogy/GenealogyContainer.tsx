@@ -21,7 +21,7 @@ const GenealogyContainer: React.FC = () => {
   const { treeId } = useZSelector<FamilyTreeState>(state => state.tree);
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const dispatch = useZDispatch();
-  const { updateModal, modal } = React.useContext(GlobalContext);
+  const { updateModal } = React.useContext(GlobalContext);
   const createFamilyTreeMutation = useCreateFamilyTree();
   const addMembersMutation = useAddMembers();
   const userId = currentUser?.userId || 0;

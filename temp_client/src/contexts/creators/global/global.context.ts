@@ -11,9 +11,10 @@ const GlobalContext = createContext<GlobalContextProps>({
     title: '',
     transferData: undefined,
     id: 'app-modal',
-    buttons: {cancel: true, confirm: true}
+    buttons: {cancel: true, confirm: true, confirmText: '', cancelText: ''}
   },
   updateModal: () => {},
+  clearModal: () => {},
   tree: {},
   updateTheme: undefined,
   toggleLoading: () => {},

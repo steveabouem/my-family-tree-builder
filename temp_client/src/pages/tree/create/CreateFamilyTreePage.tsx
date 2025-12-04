@@ -5,7 +5,7 @@ import GlobalContext from 'contexts/creators/global';
 import Page from 'components/common/Page';
 
 const CreateFamilyTreePage = (): JSX.Element => {
-  const { modal, updateModal, toggleLoading } = useContext(GlobalContext);
+  const { loading, toggleLoading } = useContext(GlobalContext);
 
   useEffect(() => {
     toggleLoading(false);
@@ -13,7 +13,7 @@ const CreateFamilyTreePage = (): JSX.Element => {
 
 
   return (
-    <Page title={<Trans>my_tree_page_title</Trans>} subtitle={<Trans>describe_your_family</Trans>} prevUrl='family-trees'>
+    <Page loading={loading} title={<Trans>my_tree_page_title</Trans>} subtitle={<Trans>describe_your_family</Trans>} prevUrl='family-trees'>
       <GenealogyContainer />
     </Page>
   );

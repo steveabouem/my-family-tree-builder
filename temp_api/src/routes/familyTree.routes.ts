@@ -1,9 +1,9 @@
 import { Router, Request, Response } from "express";
 
 import FamilyTree from "../models/FamilyTree";
-import { FamilyTreeFormData, APIGetFamilyTreeResponse, ManageTreeRequestPayload, FamilyMemberData } from "../services/types";
+import { FamilyTreeFormData, APIGetFamilyTreeResponse, ManageTreeRequestPayload, FamilyMemberData, ManageMembersRequestPayload } from "../services/types";
 import { sendRouteHandlerResponse } from "./helpers";
-import { createTree, deleteTree, getAllRelativesData, getAllTrees, getTreeById, updateTree } from "../services/familyTree";
+import { createTree, deleteTree, getAllRelativesData, getAllTrees, getTreeById, updateMemberPositions, updateTree } from "../services/familyTree";
 
 const router = Router();
 
@@ -31,6 +31,10 @@ router.post('/delete', (req: Request<{ id: string }, {}, {}, {}>, res: Response)
 
 router.put('/members', (req: Request<{}, {}, ManageTreeRequestPayload, {}>, res: Response) => {
   sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, updateTree, res, 'Update family tree');
+});
+
+router.post('/members/positions', (req: Request<{}, {}, ManageMembersRequestPayload, {}>, res: Response) => {
+  sendRouteHandlerResponse<ManageMembersRequestPayload, APIGetFamilyTreeResponse | null>(req.body, updateMemberPositions, res, 'Update family tree');
 });
 
 export default router;

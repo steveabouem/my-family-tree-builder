@@ -4,7 +4,8 @@ import FamilyTree from "../models/FamilyTree";
 import {
   FamilyTreeFormData, APIGetFamilyTreeResponse,
   APIRequestPayload, FamilyMemberData, ManageTreeAPIResponse, ManageTreeRequestPayload,
-  MappedFamilyMembers, ServiceResponseWithPayload
+  ServiceResponseWithPayload,
+  ManageMembersRequestPayload
 } from "./types";
 import logger from "../utils/logger";
 import User from "../models/User";
@@ -36,10 +37,9 @@ export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPa
         },
       });
       await Promise.all(treeList.map(async (t: FamilyTree) => {
-        const memberRecords = await FamilyMember.findAll({ where: { node_id: { [Op.in]: JSON.parse(t.members) } } });
-        // TODO: the type of the response will account for this array being string or records
-        // @ts-ignore
-        t.members = memberRecords
+        const memberRecords: FamilyMember[] = await FamilyMember.findAll({ where: { node_id: { [Op.in]: JSON.parse(t.members) } } });
+        // @ts-ignore: I dont feel like fixing this. Its a simple fix, but I dont feel like it rn
+        t.members = memberRecords?.map(m => formatFamilyMemberToFront(m));
       }));
       logger.info('Trees ', { treeList });
       response.payload = treeList;
@@ -247,7 +247,7 @@ export const updateTree = async (updateData: ManageTreeRequestPayload): ManageTr
         // ! in order to have all the records sent back to the user, query all the tree members before updating the positions
         const prevNodeIds = JSON.parse(tree.dataValues.members);
         logger.info('Members list before tree update with new positions ', { prevNodeIds });
-        const incomingnodeIdList = data.members.map( m => m.node_id);
+        const incomingnodeIdList = data.members.map(m => m.node_id);
 
         incomingnodeIdList.forEach((n: string) => {
           if (!prevNodeIds.includes(n)) {
@@ -395,6 +395,47 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
   //#endregion
 };
 
+//#region update positions
+/**
+ * Used to save family members new positions (single or in bulk alike)
+ * @param members 
+ * @param userId 
+ */
+export const updateMemberPositions = async (positions: ManageMembersRequestPayload) => {
+  // TODO: return entire list of members to refresh the tree in the front
+  let response: ServiceResponseWithPayload<any | null> = { code: 500, error: true, payload: null };
+
+  try {
+    if (positions.userId) {
+      const nodeIds = positions.data.map(m => m.node_id);
+      const memberRecords = await FamilyMember.findAll({
+        where: {
+          node_id: {
+            [Op.in]: nodeIds
+          }
+        }
+      });
+
+      if (memberRecords?.length) {
+        await Promise.all(memberRecords.map(m => {
+          const newCoords = positions.data.find(p => p.node_id === m.node_id);
+          m.position = JSON.stringify(newCoords?.new_position);
+          m.save();
+        }));
+      }
+      response.payload = memberRecords;
+      response.code = 200;
+      response.error = false;
+    } else {
+      response.message = 'Invalid entry';
+    }
+  } catch (e: unknown) {
+    response.message = 'Failed operation';
+  }
+  return response;
+};
+//#endregion
+
 //#region deleteTree
 export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPayload<null>> => {
   let response: ServiceResponseWithPayload<null> = { code: 500, error: true, payload: null };
@@ -447,7 +488,7 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
  * @param members 
  * @param userId 
  */
-const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], userId: number): Promise<MappedFamilyMembers | null> => {
+const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], userId: number): Promise<{[key: string]: FamilyMemberData} | null> => {
   logger.info("START GENERATION ", members)
   const today = dayjs();
   const newMemberGroup: any[] = [];
@@ -479,7 +520,7 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
   if (newMemberGroup.length) {
     const newRecords = await FamilyMember.bulkCreate(newMemberGroup);
     logger.info('All new members created: ', { newRecords });
-    const newMembersMap: MappedFamilyMembers = newRecords.reduce((map: { [nodeId: string]: FamilyMemberData }, currentMember: FamilyMember) => {
+    const newMembersMap: {[key: string]: FamilyMemberData} = newRecords.reduce((map: { [nodeId: string]: FamilyMemberData }, currentMember: FamilyMember) => {
       const currentMemberData = formatFamilyMemberToFront(currentMember)
       return ({ ...map, [currentMember.dataValues.node_id]: currentMemberData });
     }, {});
@@ -561,11 +602,11 @@ const bulkUpdateRecordsPosition = async (
 };
 //#endregion
 
-const formatFamilyMemberToFront = (member: FamilyMember): any => {
+const formatFamilyMemberToFront = (member: FamilyMember): FamilyMemberData => {
   logger.info('formatFamilyMemberToFront: shape of a member', { member, pos: member.position, s: member.siblings });
   //! member could be coming from a create or update operation. sequelize returns with datavalues in one case, and the direct object in the other
   const memberObject = member?.dataValues || member;
-  
+
   return ({
     ...memberObject,
     type: 'custom',

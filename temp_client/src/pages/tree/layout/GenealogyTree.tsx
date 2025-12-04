@@ -1,24 +1,23 @@
-import React, { memo, useContext, useEffect } from 'react';
+import React, { memo, useContext, useEffect, useState } from 'react';
 import {
   Background,
   ReactFlow,
   addEdge,
   useNodesState,
   useEdgesState,
-  Controls,
-  MiniMap,
 } from '@xyflow/react';
 import { useFormikContext } from 'formik';
 import { Trans } from '@lingui/macro';
-import { useTheme } from '@mui/material';
+import { Button, useTheme } from '@mui/material';
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
 import { setStepsCountAction, changeModeAction, changeformStepAction } from 'app/slices/forms/stepForm';
-import { ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes, FamilyTreeRecord, FamilyMemberDTO, FamilyTreeState } from 'types';
+import { ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes, FamilyMemberDTO, FamilyTreeState, UserState, MemberPosition } from 'types';
 import DataProgress from 'components/common/progressIndicators/DataProgress';
+import { useChangeMemberPositions } from 'services/v2';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -28,17 +27,23 @@ const treeBgUrl = 'https://images.pexels.com/photos/22821246/pexels-photo-228212
 const GenealogyTree = memo(() => {
   const [nodesList, setNodesList, onNodesListChange] = useNodesState<any>([]);
   const [edgesList, setEdgesList, onEdgesListChange] = useEdgesState<any>([]);
+  const [pendingPositions, setPositionsPending] = useState<MemberPosition[]>([]);
   const { setValues, setFieldValue } = useFormikContext<any>();
-  const { updateModal } = useContext(GlobalContext);
+  const { updateModal, clearModal, toggleLoading } = useContext(GlobalContext);
   const dispatch = useZDispatch();
   const { currentFamilyTree } = useZSelector<FamilyTreeState>(state => state.tree);
+  const { currentUser } = useZSelector<UserState>(state => state.user);
   const theme = useTheme();
+  const { mutate: savePositionsMutation, isPending } = useChangeMemberPositions();
 
   useEffect(() => {
-    // node is showing but not draggable. console errors mention missing coordinates?
     if (currentFamilyTree?.members?.length)
       generateNodesAndEdges();
   }, [currentFamilyTree?.members]);
+
+  useEffect(() => {
+    toggleLoading(isPending);
+  }, [isPending]);
 
   function populateFormWithNodeValues(node: ReactFlowNode) {
     setValues({
@@ -86,6 +91,51 @@ const GenealogyTree = memo(() => {
       content: <NodeMenu data={node} />,
     });
   }
+  function showCoordinatesChangeWarning(event: any, action: any) {
+    updateModal({
+      hidden: false,
+      buttons: {
+        cancel: true,
+        cancelText: <Trans>no_continue</Trans>,
+        confirm: true,
+        confirmText: <Trans>save</Trans>,
+      },
+      // @ts-ignore
+      title: <Trans>save_position_or_continue_title {action.first_name}?</Trans>,
+      content: <Trans>save_position_or_continue_msg</Trans>,
+      onConfirm: () => {
+        savePositionsMutation({
+          data: [...pendingPositions, { new_position: action.position, node_id: action.node_id }],
+          userId: currentUser?.userId || 0
+        });
+        clearModal();
+      },
+      onCancel: () => {
+        setPositionsPending((prev => ([
+          ...prev, { new_position: action.position, node_id: action.node_id }
+        ])));
+        clearModal();
+      }
+    });
+  }
+  function showCoordinatesChangeConfirm() {
+    updateModal({
+      hidden: false,
+      buttons: {
+        cancel: true,
+        confirm: true,
+      },
+      // @ts-ignore
+      title: <Trans>save_position_confirm_title?</Trans>,
+      content: <Trans>save_position_confirm_msg</Trans>,
+      onConfirm: () => {
+        savePositionsMutation({ data: pendingPositions, userId: currentUser?.userId || 0 });
+      },
+      onCancel: () => {
+        clearModal();
+      }
+    });
+  }
   // TODO: this is not being managed properly. Edges are not showing.
   function generateNodesAndEdges() {
     const incomingNodes: FamilyMemberDTO[] = currentFamilyTree?.members || [];
@@ -93,9 +143,11 @@ const GenealogyTree = memo(() => {
       const nodeConnections = node?.connections || [];
 
       if (nodeConnections?.length) {
-        return [...listOfEdges.flat(), nodeConnections.flat() || []];
+        console.log('CONNECTIONS ', nodeConnections);
+
+        return [...listOfEdges, nodeConnections || []];
       } else {
-        return listOfEdges.flat();
+        return listOfEdges;
       }
     }, []);
     const nodesList = incomingNodes.map(n => ({ ...n, id: n.node_id, draggable: true, selectable: true, data: { ...n, id: n.node_id } }));// ReactFlow only reads the data object
@@ -143,24 +195,34 @@ const GenealogyTree = memo(() => {
   }
 
   return (
-    <ReactFlow
-      nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes} onNodeDrag={moveNode}
-      onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange}
-    // onNodeDragStop={save to backend}
-    >
-      <Background
-        style={{
-          backgroundSize: '100% 100%',
-          backgroundBlendMode: 'overlay',
-          backgroundRepeat: 'no-repeat',
-          backgroundColor: theme.palette.grey['400'],
-          backgroundImage: `url(${treeBgUrl})`,
-          borderRadius: '5px'
-        }} />
-      {/* <MiniMap /> */}
-      {/* <Controls /> */}
-    </ReactFlow>
+    <>
+      {pendingPositions.length ? <Button variant='contained' color='info' sx={positionButonStyle} onClick={showCoordinatesChangeConfirm}>Save positions?</Button> : ''}
+
+      <ReactFlow
+        nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes} onNodeDrag={moveNode}
+        onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange}
+        onNodeDragStop={showCoordinatesChangeWarning}
+      >
+        <Background
+          style={{
+            backgroundSize: '100% 100%',
+            backgroundBlendMode: 'overlay',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: theme.palette.grey['400'],
+            backgroundImage: `url(${treeBgUrl})`,
+            borderRadius: '5px'
+          }} />
+        {/* <MiniMap /> */}
+        {/* <Controls /> */}
+      </ReactFlow>
+    </>
   );
 });
+
+const positionButonStyle = {
+  position: 'absolute',
+  zIndex: 150,
+  top: '20%'
+};
 
 export default GenealogyTree;

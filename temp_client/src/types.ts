@@ -104,6 +104,7 @@ export interface GlobalContextProps {
   loading: boolean;
   toggleLoading: (value?: boolean) => void;
   updateModal: (values: Partial<ModalProps>) => void;
+  clearModal: () => void;
   session?: string;
   modal?: Partial<ModalProps>;
   tree?: Partial<FamilyTree>;
@@ -253,7 +254,7 @@ export interface ModalProps {
   hidden: boolean;
   id: string;
   title: string | ReactNode;
-  buttons: { cancel: boolean, confirm: boolean };
+  buttons: { cancel: boolean, confirm: boolean, confirmText?: ReactNode, cancelText?: ReactNode }; //the text will be wrapped in a translation component
   type: ModalType;
   transferData?: any;
   onConfirm?: (v?: any) => void;
@@ -443,6 +444,16 @@ export interface FamilyMemberDTO {
 
 export interface MappedFamilyMember {
   [id: string]: FamilyMemberDTO
+}
+
+export interface MembersPositions {
+    data: MemberPosition[];
+    userId: number
+}
+
+export interface MemberPosition {
+    node_id: string,
+    new_position: { x: number, y: number }
 }
 
 export type DKinsCount = {

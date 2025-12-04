@@ -8,8 +8,10 @@ import { TbFileSad } from "react-icons/tb";
 import { RiFileInfoLine } from "react-icons/ri";
 import { TbFileSmile } from "react-icons/tb";
 
-const BaseModal = ({ children, type = 'info' }: ModalProps): JSX.Element => {
-  const { modal, updateModal } = React.useContext(GlobalContext);
+const BaseModal = ({ children, type = 'info', buttons }: ModalProps): JSX.Element => {
+  const cancelText = buttons?.cancelText;
+  const confirmText = buttons?.confirmText;
+  const { modal, updateModal, clearModal} = React.useContext(GlobalContext);
   const seasonalTheme = useTheme();
   const headerIcon = useMemo(() => {
     switch (type) {
@@ -29,14 +31,16 @@ const BaseModal = ({ children, type = 'info' }: ModalProps): JSX.Element => {
       modal?.onCancel();
     }
 
-    updateModal({ ...modal, hidden: true });
+    clearModal();
   };
 
   const handleConfirm = () => {
     if (modal?.onConfirm) {
       modal.onConfirm(modal?.transferData);
+      clearModal();
+    } else {
+      clearModal();
     }
-    updateModal({ ...modal, hidden: true });
   };
 
   return (
@@ -55,8 +59,8 @@ const BaseModal = ({ children, type = 'info' }: ModalProps): JSX.Element => {
         <Typography variant="body1"> {modal?.content || null}</Typography>
         {children}
         <Box display="flex" justifyContent="space-between">
-          {modal?.buttons?.cancel ? <Button variant="outlined" color="error" onClick={() => handleCancel()} sx={{ marginLeft: 'auto' }}><Trans>cancel</Trans></Button> : ''}
-          {modal?.buttons?.confirm ? <Button variant="contained" color="success" onClick={() => handleConfirm()} sx={{ marginLeft: 'auto' }}><Trans>confirm</Trans></Button> : ''}
+          {modal?.buttons?.cancel ? <Button variant="outlined" color="error" onClick={() => handleCancel()} sx={{ marginLeft: 'auto' }}>{cancelText || <Trans>cancel</Trans>}</Button> : ''}
+          {modal?.buttons?.confirm ? <Button variant="contained" color="success" onClick={() => handleConfirm()} sx={{ marginLeft: 'auto' }}>{confirmText || <Trans>confirm</Trans>}</Button> : ''}
         </Box>
       </Box>
     </Modal>

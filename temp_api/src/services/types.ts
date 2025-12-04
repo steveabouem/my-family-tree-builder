@@ -89,7 +89,15 @@ export interface ManageTreeRequestPayload {
     userId: number
 }
 
+export interface ManageMembersRequestPayload {
+    data: MemberPosition[];
+    userId: number
+}
 
+export interface MemberPosition {
+    node_id: string,
+    new_position: { x: number, y: number }
+}
 export interface MappedFamilyMembers {
     [id: string]: FamilyMember
 }
