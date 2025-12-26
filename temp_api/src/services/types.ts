@@ -89,9 +89,16 @@ export interface ManageTreeRequestPayload {
     userId: number
 }
 
+export interface DeleteTreeRequestPayload { userId: number, id: number };
+
 export interface ManageMembersRequestPayload {
     data: MemberPosition[];
     userId: number
+}
+
+export interface DeleteMembersRequestPayload {
+    node_id: string;
+    treeId: number;
 }
 
 export interface MemberPosition {

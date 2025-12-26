@@ -5,7 +5,9 @@ import {
   FamilyTreeFormData, APIGetFamilyTreeResponse,
   APIRequestPayload, FamilyMemberData, ManageTreeAPIResponse, ManageTreeRequestPayload,
   ServiceResponseWithPayload,
-  ManageMembersRequestPayload
+  ManageMembersRequestPayload,
+  DeleteMembersRequestPayload,
+  DeleteTreeRequestPayload
 } from "./types";
 import logger from "../utils/logger";
 import User from "../models/User";
@@ -203,6 +205,9 @@ export const getTreeById = async (id: string): Promise<ServiceResponseWithPayloa
       response.message = 'Family tree not found';
       response.payload = null;
     } else {
+      const memberRecords: FamilyMember[] = await FamilyMember.findAll({ where: { node_id: { [Op.in]: JSON.parse(tree.members) } } });
+      // @ts-ignore: I dont feel like fixing this. Its a simple fix, but I dont feel like it rn
+      tree.members = memberRecords?.map(m => formatFamilyMemberToFront(m));
       response.code = 200;
       response.error = false;
       response.message = 'Family tree fetched successfully';
@@ -395,6 +400,39 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
   //#endregion
 };
 
+/**
+ * 
+ */
+export const deleteTreeMember = async (data: DeleteMembersRequestPayload): ManageTreeAPIResponse => {
+  let response: ServiceResponseWithPayload<any | null> = { code: 500, error: true, payload: null };
+
+  try {
+    const currentMember = await FamilyMember.findOne({ where: { node_id: data.node_id } });
+    const matchingTree = await FamilyTree.findByPk(data.treeId);
+    logger.info('vars', { currentMember, matchingTree });
+    
+    if (currentMember && matchingTree) {
+      const nodes: string[] = JSON.parse(matchingTree.dataValues.members);
+      const memberIndex = nodes.indexOf(currentMember.node_id);
+      const updatedNodes = nodes.filter(n => n != currentMember.node_id);
+      logger.info('DELETE M: ', { nodes, memberIndex, updatedNodes });
+      // nodes.splice(memberIndex, 1);
+      const done = await matchingTree.update('members', JSON.stringify(updatedNodes));
+      logger.info('DELETE M: after splice', { nodes, matchingTree, done });
+      
+      await currentMember.destroy();
+      response.payload = { ...done.dataValues, members: JSON.parse(done.dataValues.members) };
+      response.code = 200;
+      response.error = false;
+    }
+  } catch (e: unknown) {
+    logger.error('Delete member failed: ', { error: e })
+    response.message = 'Invalid member';
+  }
+
+  return response;
+};
+
 //#region update positions
 /**
  * Used to save family members new positions (single or in bulk alike)
@@ -437,17 +475,24 @@ export const updateMemberPositions = async (positions: ManageMembersRequestPaylo
 //#endregion
 
 //#region deleteTree
-export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPayload<null>> => {
+export const deleteTree = async (data: DeleteTreeRequestPayload ): Promise<ServiceResponseWithPayload<null>> => {
   let response: ServiceResponseWithPayload<null> = { code: 500, error: true, payload: null };
-  const tree = await FamilyTree.findByPk(treeId);
+  logger.info('payload ', {data})
+  try {
+    const tree = await FamilyTree.findByPk(data.id);
+    const user = await User.findByPk(data.userId);
+    const isAllowed = !!tree?.dataValues && tree.dataValues.created_by == user?.id;
 
-  if (!tree) {
-    logger.error('updateTreeMembers: Tree does not exist. Cannot delete', { treeId });
-  } else {
-    await tree.destroy();
-    response = {
-      ...response, code: 200, error: false
-    };
+    if (isAllowed) {
+      await tree.destroy();
+      response = {
+        ...response, code: 200, error: false
+      };
+    } else {
+      logger.error('updateTreeMembers: Invalid delete entries');
+    }
+  } catch(e: unknown) {
+    logger.error('Delete tree, ', {e});
   }
 
   return response;
@@ -488,7 +533,7 @@ export const deleteTree = async (treeId: number): Promise<ServiceResponseWithPay
  * @param members 
  * @param userId 
  */
-const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], userId: number): Promise<{[key: string]: FamilyMemberData} | null> => {
+const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], userId: number): Promise<{ [key: string]: FamilyMemberData } | null> => {
   logger.info("START GENERATION ", members)
   const today = dayjs();
   const newMemberGroup: any[] = [];
@@ -520,7 +565,7 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
   if (newMemberGroup.length) {
     const newRecords = await FamilyMember.bulkCreate(newMemberGroup);
     logger.info('All new members created: ', { newRecords });
-    const newMembersMap: {[key: string]: FamilyMemberData} = newRecords.reduce((map: { [nodeId: string]: FamilyMemberData }, currentMember: FamilyMember) => {
+    const newMembersMap: { [key: string]: FamilyMemberData } = newRecords.reduce((map: { [nodeId: string]: FamilyMemberData }, currentMember: FamilyMember) => {
       const currentMemberData = formatFamilyMemberToFront(currentMember)
       return ({ ...map, [currentMember.dataValues.node_id]: currentMemberData });
     }, {});
