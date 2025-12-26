@@ -15,9 +15,10 @@ import { useZDispatch, useZSelector } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
 import { setStepsCountAction, changeModeAction, changeformStepAction } from 'app/slices/forms/stepForm';
-import { ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes, FamilyMemberDTO, FamilyTreeState, UserState, MemberPosition } from 'types';
+import { ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes, FamilyMemberDTO, FamilyTreeState, UserState, MemberPosition, DeleteMembersRequestPayload } from 'types';
 import DataProgress from 'components/common/progressIndicators/DataProgress';
-import { useChangeMemberPositions } from 'services/v2';
+import { useChangeMemberPositions, useDeleteMembers } from 'services/v2';
+import { populateTreeAction } from 'app/slices/trees';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -29,21 +30,18 @@ const GenealogyTree = memo(() => {
   const [edgesList, setEdgesList, onEdgesListChange] = useEdgesState<any>([]);
   const [pendingPositions, setPositionsPending] = useState<MemberPosition[]>([]);
   const { setValues, setFieldValue } = useFormikContext<any>();
-  const { updateModal, clearModal, toggleLoading } = useContext(GlobalContext);
+  const { updateModal, clearModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
   const { currentFamilyTree } = useZSelector<FamilyTreeState>(state => state.tree);
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const theme = useTheme();
-  const { mutate: savePositionsMutation, isPending } = useChangeMemberPositions();
+  const { mutate: savePositionsMutation } = useChangeMemberPositions();
+  const { mutate: deleteMemberMutation } = useDeleteMembers();
 
   useEffect(() => {
     if (currentFamilyTree?.members?.length)
       generateNodesAndEdges();
   }, [currentFamilyTree?.members]);
-
-  useEffect(() => {
-    toggleLoading(isPending);
-  }, [isPending]);
 
   function populateFormWithNodeValues(node: ReactFlowNode) {
     setValues({
@@ -83,6 +81,12 @@ const GenealogyTree = memo(() => {
           case NodeMenuActions.add:
             break;
           case NodeMenuActions.delete:
+            if (!!currentFamilyTree?.id) {
+              const newTree = deleteMemberMutation({ nodeId: node.node_id, treeId: currentFamilyTree.id });
+              console.log({ newTree });
+              // if (newTree.payload)
+              // dispatch(populateTreeAction(newTree.payload))
+            }
             //reset form state in case it was in edit mode
             dispatch(changeModeAction(stepFormModes.create));
             break;
@@ -96,7 +100,7 @@ const GenealogyTree = memo(() => {
       hidden: false,
       buttons: {
         cancel: true,
-        cancelText: <Trans>no_continue</Trans>,
+        cancelText: <Trans>modal_no_continue</Trans>,
         confirm: true,
         confirmText: <Trans>save</Trans>,
       },
@@ -125,7 +129,6 @@ const GenealogyTree = memo(() => {
         cancel: true,
         confirm: true,
       },
-      // @ts-ignore
       title: <Trans>save_position_confirm_title?</Trans>,
       content: <Trans>save_position_confirm_msg</Trans>,
       onConfirm: () => {
@@ -201,7 +204,7 @@ const GenealogyTree = memo(() => {
       <ReactFlow
         nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes} onNodeDrag={moveNode}
         onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange}
-        onNodeDragStop={showCoordinatesChangeWarning}
+        onNodeDragStop={showCoordinatesChangeWarning} 
       >
         <Background
           style={{

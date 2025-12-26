@@ -802,9 +802,6 @@ export interface APISessionUser {
 
 
 // Family Tree API
-export type APIGetFamilyTreeResponse = APIEndpointResponse<FamilyTreeRecord[]>;
-export type APIGetAllTreesResponse = APIEndpointResponse<FamilyTreeRecord[]>;
-
 export interface FamilyTreeDataPayload {
   treeId: number;
   treeName?: string;
@@ -819,10 +816,14 @@ export interface ManageTreeRequestPayload {
   userId: number
 }
 
-export type ManageTreeAPIEndpointResponse = Promise<APIEndpointResponse<APIGetFamilyTreeResponse | null>>;
+export type ManageTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTreeRecord[]> | null>;
+export type APIDeleteTreeResponse = Promise<APIEndpointResponse<void> | null>;
 export type GetTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTree | null>>;
 export type APIFamilyMemberArrayKeys = keyof Pick<FamilyMemberDTO, 'children' | 'parents' | 'siblings' | 'spouses'>;
-
+export interface DeleteMembersRequestPayload {
+    nodeId: string;
+    treeId: number;
+}
 // Project & Team API
 export interface CreateProjectRequestPayload {
   data: ProjectData;

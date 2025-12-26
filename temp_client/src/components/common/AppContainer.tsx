@@ -68,7 +68,7 @@ const AppContainer = (): JSX.Element => {
             <Route path={PageUrlsEnum.user} element={<UserProfilePage />} />
             <Route  path={PageUrlsEnum.trees} element={<FamilyTreeDashboard />} />
             <Route path={PageUrlsEnum.newTree} element={<CreateFamilyTreePage />} />
-            <Route path={PageUrlsEnum.viewTree} element={<ViewFamilyTreeChartPage />} />
+            <Route path={PageUrlsEnum.viewTree} element={<CreateFamilyTreePage />} />
             <Route path="*" element={<FTLandingPage />} />
           </Routes>
         </Container>

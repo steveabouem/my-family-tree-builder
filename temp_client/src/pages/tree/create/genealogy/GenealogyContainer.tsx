@@ -9,11 +9,12 @@ import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import { changeformStepAction } from 'app/slices/forms/stepForm';
 import GlobalContext from 'contexts/creators/global';
 import { formatOutgoingValues, formatTreeMembers } from 'pages/tree/create/genealogy/utils';
-import { useCreateFamilyTree, useAddMembers } from 'services/v2/familyTreeV2';
+import { useCreateFamilyTree, useAddMembers, useGetTreeById } from 'services/v2/familyTreeV2';
 import GenealogyTree from 'pages/tree/layout/GenealogyTree';
+import { useParams } from 'react-router';
 
 const GenealogyContainer: React.FC = () => {
-  // is used to keep copy of the tree through all events.
+  // treeCopy is used to keep copy of the tree through all events.
   // for instance, updating a member requires to rerender the form with only that member's fields.
   // the copy allows for the other existing members to remain rendered in the graph
   const [treeCopy, setTreeCopy] = useState({});
@@ -22,8 +23,8 @@ const GenealogyContainer: React.FC = () => {
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const dispatch = useZDispatch();
   const { updateModal } = React.useContext(GlobalContext);
-  const createFamilyTreeMutation = useCreateFamilyTree();
-  const addMembersMutation = useAddMembers();
+  const { mutate: createFamilyTreeMutation } = useCreateFamilyTree();
+  const { mutate: addMembersMutation } = useAddMembers();
   const userId = currentUser?.userId || 0;
 
   function handleSubmit(v: any) {
@@ -31,7 +32,7 @@ const GenealogyContainer: React.FC = () => {
 
     try {
       if (mode === stepFormModes.edit) {
-        addMembersMutation.mutate(
+        addMembersMutation(
           { ...formattedValues, id: treeId || 0, userId },
           {
             onSuccess: (response) => {
@@ -54,7 +55,7 @@ const GenealogyContainer: React.FC = () => {
         );
       } else {
         // Ensure userId is at the top level for the backend
-        createFamilyTreeMutation.mutate(
+        createFamilyTreeMutation(
           { ...formattedValues, userId },
           {
             onSuccess: (response) => {

@@ -1,51 +1,49 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Trans } from "@lingui/macro";
-import { Box, Button, Typography, useTheme, Divider, Paper } from "@mui/material";
+import { Box, Typography, useTheme, Divider, Paper } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import Page from "components/common/Page";
 import PageUrlsEnum from "utils/urls";
-import { useGetAllForUser } from "services/v2";
+import { useDeleteTree, useGetAllForUser } from "services/v2";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { UserState, FamilyTree, FamilyTreeRecord } from "types";
+import { UserState, FamilyTreeRecord } from "types";
 import dayjs from "dayjs";
-import { EyeIcon } from "utils/assets/icons";
 import { populateTreeAction, saveTreeIdAction } from "app/slices/trees";
+import { DeleteIcon, EyeIcon } from "utils/assets/icons";
+import GlobalContext from "contexts/creators/global";
 
 const FamilyTreeDashboard = () => {
+  const {updateModal, clearModal} = useContext(GlobalContext);
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const { data, isFetching, isLoading } = useGetAllForUser(currentUser?.userId);
+  const { mutate: deleteTreeMutation } = useDeleteTree();
   const dispatch = useZDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
 
-  const selectTree = (t: FamilyTreeRecord) => {
-    // LOOK FOR ALL JSON PARSES FOR INCOMING FAMILY TREE. ITS NO LONGER NECESARY SINCE BACKEND DOES IT FOR YO
-    // // @ts-ignore
-    // const formattedTree:FamilyTree = {members: JSON.parse(t.members).reduce((acc, curr) => ({
-    //   ...acc,
-    //    data: {
-    //       ...curr,
-    //       type: 'blackbox',
-    //       position: JSON.parse(curr?.position || '{"x": 0, "y": 0}'),
-    //       connections: JSON.parse(curr?.connections || '[]'),
-    //       id: curr.node_id,
-    //       // children: JSON.parse(curr?.children || '[]'),
-    //       // siblings: siblingsIds,
-    //       // spouses: spousesIds,
-    //     },
-    //     ...curr,
-    //       type: 'blackbox',
-    //       position: JSON.parse(curr?.position || '{"x": 0, "y": 0}'),
-    //       connections: JSON.parse(curr?.connections || '[]'),
-    //       id: curr.node_id,
-    //       // children: JSON.parse(curr?.children || '[]'),
-    // }))};
-    
+  function selectTree (t: FamilyTreeRecord) {
     dispatch(populateTreeAction(t));
     dispatch(saveTreeIdAction(t?.id || 0));
 
-    navigate(PageUrlsEnum.newTree);
+    navigate(PageUrlsEnum.viewTree.replace(':id', `${t?.id}`));
   };
+
+   function showDeleteTreeWarning(t: FamilyTreeRecord) {
+      updateModal({
+        hidden: false,
+        buttons: {
+          cancel: true,
+          confirm: true,
+        },
+        // @ts-ignore
+        title: <Trans>delete_tree_warning_title?</Trans>,
+        content: <Trans>delete_tree_warning_msg</Trans>,
+        onConfirm: () => {
+        deleteTreeMutation({ id: t.id, userId: currentUser?.userId || 0 });
+          clearModal();
+        },
+      });
+    }
 
   return (
     <Page title={<Trans>tree_dashboard_title</Trans>} subtitle={<Trans>tree_dashboard_subtitle</Trans>} loading={isFetching || isLoading}>
@@ -57,7 +55,7 @@ const FamilyTreeDashboard = () => {
         <Trans>tree_dashboard_lists_title</Trans>
         <Box sx={treeDashboardContainerStyles}>
           {data?.payload?.map((t: FamilyTreeRecord, index: number) => (
-            <Paper sx={{ margin: '1rem', ...treeHolderStyle }} key={t.id || index}>
+            <Paper sx={treeHolderStyle} key={t.id || index}>
               <Box key={t.id} display="flex" flexDirection="column" gap={2}>
                 <Box display="flex" gap={2} alignItems="center">
                   <Typography><Trans>name</Trans>: {t?.name || ''}</Typography>
@@ -74,8 +72,9 @@ const FamilyTreeDashboard = () => {
                     <Trans>status</Trans>: {t.active ? <Trans>active</Trans> : <Trans>inactive</Trans>}
                   </Typography>
                 </Box>
-                <Box display="flex" gap={2} alignItems="center">
-                  <Button color="warning" variant="outlined" onClick={() => { selectTree(t) }}><Trans>edit</Trans><EyeIcon /></Button>
+                <Box display="flex" gap={2} alignItems="center" justifyContent="end">
+                  <EyeIcon sx={{ cursor: 'pointer' }} onClick={() => selectTree(t)} />
+                  <DeleteIcon sx={{ cursor: 'pointer' }} onClick={() => { showDeleteTreeWarning(t)}} />
                 </Box>
               </Box>
             </Paper>
@@ -94,6 +93,7 @@ const treeDashboardContainerStyles = {
 };
 
 const treeHolderStyle = {
+  margin: '1rem',
   background: ' rgba(243, 245, 247, 0.21)',
   boxShadow: ' 0 4px 30px rgba(0, 0, 0, 0.1)',
   backdropFilter: ' blur(12.9px)',

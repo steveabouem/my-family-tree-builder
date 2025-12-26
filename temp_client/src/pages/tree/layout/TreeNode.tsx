@@ -43,7 +43,7 @@ export default memo(({ data }: any) => {
         bgcolor: getNodeBG(),
         ...mainContainerStyles
       }}
-      onMouseEnter={() => { setShowDetails(true) }} onMouseLeave={() => { setShowDetails(false) }}
+      // onMouseEnter={() => { setShowDetails(true) }} onMouseLeave={() => { setShowDetails(false) }}
     >
       <Box sx={headerContainerStyle}>
         {
