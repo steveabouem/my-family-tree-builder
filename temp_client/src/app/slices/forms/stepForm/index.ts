@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StepDetails, StepFormState, stepFormModes } from "types";
+import { FormImageInfo, StepDetails, StepFormState, stepFormModes } from "types";
 
 /*
 * State
@@ -10,7 +10,8 @@ const initialState: StepFormState = {
   currentFormStepDetails: { name: '', fields: [] }, // this should be renamed currentStepInfo
   globalValues: {},
   totalSteps: 1,
-  mode: 'create'
+  mode: 'create',
+  files: []
 };
 /*
 * mutators
@@ -50,9 +51,7 @@ const changeMode = (state: StepFormState, action: PayloadAction<stepFormModes>):
   state.updating = false;
   return state;
 };
-/*
-* sends field values to API, which returns next field set
-*/
+
 const setCurrentFields = (state: StepFormState, action: PayloadAction<StepDetails>) => {
   state.updating = true;
   const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
@@ -92,15 +91,20 @@ const setCombinedStepValues = <V,>(state: StepFormState, action: PayloadAction<{
 };
 const cleanup = (state: StepFormState) => {
   state.updating = true;
-    state.currentFormStep = 0;
-    state.currentFormStepDetails = { name: '', fields: [] };
-    state.globalValues = {};
-    state.totalSteps = 1;
-    state.updating = false;
-    state.stepTree = {};
-  
-    return state;
+  state.currentFormStep = 0;
+  state.currentFormStepDetails = { name: '', fields: [] };
+  state.globalValues = {};
+  state.totalSteps = 1;
+  state.updating = false;
+  state.stepTree = {};
+
+  return state;
 };
+const toggleUpdating = (state: StepFormState, action: PayloadAction<boolean>) => {
+  state.updating = action.payload;
+  return state;
+};
+
 /*
 * Slice (reducer)
 */
@@ -120,12 +124,14 @@ export const stepFormSlice = createSlice({
     setStepsCountAction: setTotalStep,
     clearFieldsByStepName: removeFieldsByStepName,
     changeModeAction: changeMode,
-    cleanupAction: cleanup
+    cleanupAction: cleanup,
+    toggleStepFormUpdatingAction: toggleUpdating,
   }
 });
+
 export const {
   changeformStepAction, goToNextStepAction, goToPrevStepAction, clearFieldsByStepName, cleanupAction,
   loaStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, setStepFieldsAction,
-  getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction, changeModeAction
+  getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction, changeModeAction, toggleStepFormUpdatingAction
 } = stepFormSlice.actions;
 export default stepFormSlice.reducer;

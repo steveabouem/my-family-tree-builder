@@ -7,7 +7,8 @@ const initialState: FamilyTreeState = {
   updating: true,
   name: '',
   treeId: 0,
-  list: []
+  list: [],
+  currentFamilyTree: undefined
 };
 
 /*

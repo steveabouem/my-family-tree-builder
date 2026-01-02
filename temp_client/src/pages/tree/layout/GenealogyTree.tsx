@@ -5,6 +5,7 @@ import {
   addEdge,
   useNodesState,
   useEdgesState,
+  Controls,
 } from '@xyflow/react';
 import { useFormikContext } from 'formik';
 import { Trans } from '@lingui/macro';
@@ -216,7 +217,7 @@ const GenealogyTree = memo(() => {
             borderRadius: '5px'
           }} />
         {/* <MiniMap /> */}
-        {/* <Controls /> */}
+        <Controls />
       </ReactFlow>
     </>
   );

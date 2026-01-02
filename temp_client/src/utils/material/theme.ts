@@ -12,7 +12,7 @@ const defaultTypo = {
 const theme = (season: ThemeSeasons) => createTheme({
   cssVariables: true,
   palette: {
-    primary: { main: seasonalPaletteConfig.primary[season], dark: seasonalPaletteConfig.dark[season], contrastText: seasonalPaletteConfig.secondary[season] },
+    primary: { main: seasonalPaletteConfig.primary[season], dark: seasonalPaletteConfig.dark[season], contrastText: seasonalPaletteConfig.accentBg[season] },
     secondary: { main: seasonalPaletteConfig.light[season], dark: seasonalPaletteConfig.secondary[season], contrastText: seasonalPaletteConfig.dark[season] },
     error: { main: seasonalPaletteConfig.cancel[season] },
     text: { primary: seasonalPaletteConfig.dark[season] },
@@ -35,7 +35,7 @@ const theme = (season: ThemeSeasons) => createTheme({
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "2rem",
-      color: seasonalPaletteConfig.dark[season],
+      color: seasonalPaletteConfig.secondary[season],
       padding: ".8rem 0"
     },
     h2: {
@@ -56,7 +56,7 @@ const theme = (season: ThemeSeasons) => createTheme({
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.1rem",
-      color: seasonalPaletteConfig.dark[season],
+      color: seasonalPaletteConfig.pillBg[season],
       padding: ".8rem 0"
     },
     body1: {
@@ -100,6 +100,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     MuiContainer: {
       styleOverrides: {
         root: ({ theme }) => ({
+          transition: '.8s',
           background: theme.palette.primary.main,
           height: "100vh",
           overflow: "hidden"
@@ -109,6 +110,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     MuiGrid: {
       styleOverrides: {
         root: ({ theme }) => ({
+          transition: '.8s',
           background: theme.palette.secondary.main,
         })
       }
@@ -116,6 +118,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     MuiPaper: {
       styleOverrides: {
         root: ({ theme }) => ({
+          transition: '.8s',
           // background: theme.palette.secondary.main,
           padding: '1rem',
           display: "flex",
@@ -127,6 +130,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     MuiModal: {
       styleOverrides: {
         root: ({ theme }) => ({
+          transition: '.8s',
           '.MuiBox-root': {
             background: theme.palette.background.paper,
             '&.info': {
@@ -152,14 +156,38 @@ const theme = (season: ThemeSeasons) => createTheme({
     MuiButtonBase: {
       styleOverrides: {
         root: ({ theme }) => ({
-          fontSize: '.65rem!important',
           transition: '.8s',
+          fontSize: '.65rem!important',
+          boxShadow: 'none!important',
+          '&:hover': {
+            boxShadow: '1px 1px 4px 0px grey !important'
+          },
+          '&.MuiButton-colorPrimary': {
+            color: theme.palette.primary.dark,
+            background: theme.palette.primary.main,
+            '&.MuiButton-outlined': {
+              background: 'transparent'
+            }
+          },
+          '&.MuiButton-colorSecondary': {
+            background: theme.palette.secondary.dark,
+            color: theme.palette.secondary.light,
+            '&.MuiButton-outlined': {
+              background: 'transparent',
+              color: theme.palette.secondary.dark,
+              '&:hover': {
+                background: theme.palette.secondary.dark,
+                color: theme.palette.secondary.light,
+              }
+            }
+          },
         })
       }
     },
     MuiSelect: {
       styleOverrides: {
         root: ({ theme }) => ({
+          transition: '.8s',
           background: 'white'
         })
       }

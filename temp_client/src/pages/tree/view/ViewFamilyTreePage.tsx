@@ -10,8 +10,9 @@ import { formatTreeMembers } from "../create/genealogy/utils";
 import GenealogyTree from 'pages/tree/layout/GenealogyTree';
 import PageUrlsEnum from "utils/urls";
 import { useGetTreeById } from "services/v2/familyTreeV2";
+import PaperSection from "components/common/containers/PaperSection";
 
-const ViewFamilyTreeChartPage = () => {
+const ViewFamilyTreePage = () => {
   const dispatch = useZDispatch();
   const { list, currentFamilyTree } = useZSelector<FamilyTreeState>(state => state.tree);
   const { id } = useParams();
@@ -48,6 +49,7 @@ const ViewFamilyTreeChartPage = () => {
   return (
     <Page subtitle="" title={`${currentFamilyTree?.name || ''}`} prevUrl={PageUrlsEnum.trees} loading={isLoading}>
       <Box sx={mainContainerStyle}>
+        <PaperSection>
         <Grid2 container spacing={2} height="100%">
           <Grid2 size={4}>
             Details/description/actions
@@ -58,6 +60,7 @@ const ViewFamilyTreeChartPage = () => {
             </Formik>
           </Grid2>
         </Grid2>
+        </PaperSection>
       </Box>
     </Page>
   );
@@ -69,5 +72,5 @@ const mainContainerStyle = {
   position: 'absolute',
 };
 
-export default ViewFamilyTreeChartPage;
+export default ViewFamilyTreePage;
 

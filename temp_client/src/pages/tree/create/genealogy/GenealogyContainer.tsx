@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Grid2, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
@@ -8,16 +8,16 @@ import { useZDispatch, useZSelector } from 'app/hooks';
 import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import { changeformStepAction } from 'app/slices/forms/stepForm';
 import GlobalContext from 'contexts/creators/global';
-import { formatOutgoingValues, formatTreeMembers } from 'pages/tree/create/genealogy/utils';
-import { useCreateFamilyTree, useAddMembers, useGetTreeById } from 'services/v2/familyTreeV2';
+import { formatOutgoingValues } from 'pages/tree/create/genealogy/utils';
+import { useCreateFamilyTree, useAddMembers } from 'services/v2/familyTreeV2';
 import GenealogyTree from 'pages/tree/layout/GenealogyTree';
-import { useParams } from 'react-router';
 
 const GenealogyContainer: React.FC = () => {
   // treeCopy is used to keep copy of the tree through all events.
   // for instance, updating a member requires to rerender the form with only that member's fields.
   // the copy allows for the other existing members to remain rendered in the graph
   const [treeCopy, setTreeCopy] = useState({});
+  const [profileImages, setProfileImages] = useState<any[]>([]);
   const { stepTree = {}, mode } = useZSelector<StepFormState>(state => state.stepForm);
   const { treeId } = useZSelector<FamilyTreeState>(state => state.tree);
   const { currentUser } = useZSelector<UserState>(state => state.user);
@@ -27,6 +27,10 @@ const GenealogyContainer: React.FC = () => {
   const { mutate: addMembersMutation } = useAddMembers();
   const userId = currentUser?.userId || 0;
 
+  function grabProfilePictureFile(f: any) {
+    console.log('file', f);
+    
+  }
   function handleSubmit(v: any) {
     const formattedValues: FamilyTree = formatOutgoingValues(v, stepTree, userId, treeId);
 
@@ -86,7 +90,9 @@ const GenealogyContainer: React.FC = () => {
         {(props) => (
           <Grid2 container spacing={2} sx={gridContainerStyle}>
             <Grid2 size={6} >
-              <GenealogyForm treeCopy={treeCopy} setTreeCopy={setTreeCopy} />
+              <form name="gen">
+                <GenealogyForm treeCopy={treeCopy} setTreeCopy={setTreeCopy} storeImg={grabProfilePictureFile} />
+              </form>
             </Grid2>
             <Grid2 size={6}>
               <GenealogyTree />

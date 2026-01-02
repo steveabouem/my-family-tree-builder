@@ -5,6 +5,7 @@ import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/mate
 import { Trans, t } from "@lingui/macro";
 import { BaseFormProps, FormField } from "types";
 import CustomField from "./customField/CustomField";
+import ImageField from "./imageField";
 
 const FormFieldsGenerator = ({
   fields, handleSubmit, withPaper = true, name = 'form',
@@ -13,7 +14,7 @@ const FormFieldsGenerator = ({
   const { submitForm, values } = useFormikContext<any>();
 
   return (
-    <Paper elevation={withPaper ? 1 : 0} sx={{ width: '100%', padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem" }}>
+    <Paper elevation={withPaper ? 1 : 0} sx={{ width: '100%', padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem", border: 'none' }}>
       {title ? <Typography variant="h4">{title}</Typography> : null}
       {fields.map((field: FormField, i: number) => (
         <Box display="flex" flexDirection="column" gap={2} key={`${name}-fields-wrapper-${i}`}>
@@ -31,10 +32,15 @@ const FormFieldsGenerator = ({
                 <FormControl aria-label="Default select example" key={`${field.fieldName}-select`}>
                   {field?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</MenuItem>)}
                 </FormControl>
+              ) : field.type === 'image' ? (
+                <FormControl>
+                  <ImageField id={field?.id || ''} name={field.fieldName} required={!!field.required}
+                    key={`${field.fieldName}-image`} />
+                </FormControl>
               ) : (
                 <Field
                   id={field?.id || ''} name={field.fieldName} value={values[field.fieldName]}
-                  required={!!field.required} type={field?.type || 'input'} key={`${field.fieldName}-input`}
+                  required={!!field.required} type={field?.type || 'text'} key={`${field.fieldName}-input`}
                 />
               )}
             </>
@@ -43,11 +49,11 @@ const FormFieldsGenerator = ({
           )}
         </Box>
       ))}
-      {!locked ? (
+      {locked || mode === 'read'  ? '' :(
         <Box display="flex" justifyContent="end" width="100%">
           <Button variant="contained" color="success" onClick={submitForm}><Trans>submit</Trans></Button>
         </Box>
-      ) : ''}
+      )}
     </Paper>
   );
 }

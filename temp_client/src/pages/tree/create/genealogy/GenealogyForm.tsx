@@ -5,28 +5,36 @@ import { Trans } from "@lingui/macro";
 import { v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { clearFieldsByStepName, loaStepFormFieldsAction, setStepFieldsAction, setStepsCountAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
+import { clearFieldsByStepName, loaStepFormFieldsAction, setStepFieldsAction, setStepsCountAction, toggleStepFormUpdatingAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
 import FieldAndLabel from "components/common/forms/fieldAndlabel";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import GlobalContext from "contexts/creators/global";
 import { StepFormState, stepFormModes, genderOptions, maritalStatusOptions, relationOptions, NodeMenuActions, FormField, FamilyTreeFormData } from "types";
+import { useAddMembers, useChangeMemberPositions, useCreateFamilyTree } from "services/v2";
 
 
 // @ts-ignore
-const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
+const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
   const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
   const { values, setFieldValue, setValues } = useFormikContext<FamilyTreeFormData>();
   const { modal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
+  const { isPending: isCreateFamilyTreePending } = useCreateFamilyTree();
+  const { isPending: isAddMembersPending } = useAddMembers();
+  const { isPending: isChangePositionsPending } = useChangeMemberPositions();
+  const isProcessing = isChangePositionsPending || isCreateFamilyTreePending || isAddMembersPending;
   const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
 
+  useEffect(() => {
+    dispatch(toggleStepFormUpdatingAction(isProcessing));
+  }, [isProcessing]);
   useEffect(() => {
     // TODO: a nice to have: dropdown to display step number or name above the fields. 
     /*
     * the form will direct user to build the tree one  member at the time
     * for each member, the user will be able to add partners, parents and children (potentially more)
     */
-   
+
     generateFieldsForRelative(currentFormStep, false);
   }, [currentFormStep]);
   useEffect(() => {
@@ -105,6 +113,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
         },
         { fieldName: `${nameOfStep}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${nameOfStep}_email`] || '' },
         { fieldName: `${nameOfStep}_description`, label: <Trans>description</Trans>, value: values?.[`${nameOfStep}_description`] || '' },
+        { fieldName: `${nameOfStep}_profile_url`, label: <Trans>picture</Trans>, type: 'image' },
       ];
       /*
       * Add nodeId to formik values for post request payload
@@ -139,14 +148,13 @@ const GenealogyForm = ({ setTreeCopy, treeCopy }) => {
       <Typography variant="body2"><Trans>family_tree_building_explanation</Trans></Typography>
       <Box sx={treeNameContainerStyle}>
         <FieldAndLabel direction="row" fieldName="treeName" label={<Trans>name_your_tree</Trans>} sx={{ justifyContent: 'start', flex: '1 1 auto' }} fieldStyles={{ marginLeft: 'auto', width: '40%' }} />
-        <Button variant="contained" color="secondary" ><Trans>confirm</Trans></Button>
       </Box>
       <Box sx={nextOfKinContainerStyle}>
         <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
         <BaseDropDown name="next_of_kin" options={relationOptions} sx={{ width: '40%', marginLeft: 'auto' }} />
-        <Button variant="contained" color="secondary" onClick={addRelative}><Trans>confirm</Trans></Button>
+        <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
       </Box>
-      <StepForm handleSave={saveProgress} />
+      <StepForm handleSave={saveProgress} duplicateBottomActions />
     </Paper>
   );
 };

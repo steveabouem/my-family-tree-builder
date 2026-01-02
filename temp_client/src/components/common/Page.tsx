@@ -27,8 +27,8 @@ const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): J
           width: '30px',
         }}><BackIcon color={seasonalTheme.palette.primary.contrastText} /> </Link>}
         <Box className="section-main">
-          <Typography variant="h3" color={seasonalTheme.palette.primary.main}>{title}</Typography>
-          {subtitle ? <Typography variant="h4" color="">{subtitle}</Typography> : ''}
+          <Typography variant="h3">{title}</Typography>
+          {subtitle ? <Typography variant="h4">{subtitle}</Typography> : ''}
           <Spinner loading={!!loading} />
           {children || null}
           <BaseModal

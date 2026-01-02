@@ -44,7 +44,7 @@ const createFamilyTree = async (values: FamilyTree): Promise<APICreateFamilyResp
 };
 
 const deleteTree = async (data: {id: number, userId: number}): Promise<void> => {
-  const response = await fetch(`${baseUrl}/trees/delete`, {
+  const response =  await fetch(`${baseUrl}/trees/delete`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

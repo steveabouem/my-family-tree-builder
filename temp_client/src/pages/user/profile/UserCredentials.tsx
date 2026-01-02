@@ -1,19 +1,19 @@
 import React, { useMemo, useState } from "react";
-
 import { Trans } from "@lingui/macro";
 import { FaRegEdit } from "react-icons/fa";
 import { MdCancelPresentation } from "react-icons/md";
 import { Formik } from "formik";
 import { Box, Button, Paper, Typography } from "@mui/material";
-
-import { ChangePasswordValues,FormField,UserState } from "types";
+// @ts-ignore
+import styled from "styled-components";
+import { ChangePasswordValues, FormField, UserState } from "types";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
 import Spinner from "components/common/progressIndicators/Spinner";
 import { useZSelector } from "app/hooks";
 
 const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswordValues) => void }) => {
   const [passwordFormMode, setPasswordFormMode] = useState<'write' | 'read'>('read');
-  const {currentUser} = useZSelector<UserState>(state => state.user);
+  const { currentUser } = useZSelector<UserState>(state => state.user);
   const changePasswordInitialValues = useMemo((): ChangePasswordValues => ({
     email: currentUser?.email || '',
     password: '',
@@ -39,12 +39,11 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswo
 
   return (
 
-    <Paper style={{ display: 'flex', flexDirection: 'column', flex: '0 1 47%', padding: '1rem .5rem' }}>
-      <Typography variant="h4"><Trans>profile_management_label</Trans></Typography>
+    <ProfileFieldsContainer sx={{border: 'none', padding: '1rem .5rem'}} elevation={0}>
       {currentUser?.email?.length ? (
         <>
-          <Box sx={editButtonContainerStyle}>
-            <Button variant="outlined" color="secondary" sx={{ display: 'flex', gap: "1rem" }} onClick={() => toggleMode()}>
+          <EditButtonContainer>
+            <Button variant="outlined" color="primary" sx={{ display: 'flex', gap: "1rem" }} onClick={() => toggleMode()}>
               {
                 passwordFormMode === 'read' ? (
                   <>
@@ -60,21 +59,27 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswo
                   )
               }
             </Button>
-          </Box>
+          </EditButtonContainer>
           <Formik initialValues={changePasswordInitialValues} onSubmit={submitPasswordForm}>
             {({ submitForm }) => <FormFieldsGenerator fields={changePassworFields} handleSubmit={submitForm} size="med" withPaper={false} mode={passwordFormMode} />}
           </Formik>
         </>
       ) : <Spinner loading={true} />}
-    </Paper>
+    </ProfileFieldsContainer>
   )
 }
 
-const editButtonContainerStyle = {
-  display: 'flex',
-  justifyContent: 'flex-end',
-  width: '100%',
-  alignItems: 'center',
-};
+const ProfileFieldsContainer = styled(Paper)`
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  width: 100%;
+`;
+const EditButtonContainer = styled(Box)`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  align_items: center;
+`;
 
 export default UserCredentials;

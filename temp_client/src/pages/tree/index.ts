@@ -1,1 +1,1 @@
-export {default} from './view/ViewFamilyTreeChart';
+export {default} from './view/ViewFamilyTreePage';

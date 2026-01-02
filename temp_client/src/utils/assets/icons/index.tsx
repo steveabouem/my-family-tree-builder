@@ -1,13 +1,13 @@
 import React from 'react';
 import { TfiWrite } from "react-icons/tfi";
-import { LuImagePlus } from "react-icons/lu";
-import { PiTreeStructure, PiBabyFill  } from 'react-icons/pi';
-import { IoWoman, IoMan, IoSettings, IoCaretBackOutline  } from "react-icons/io5";
+import { LuAlbum, LuArmchair, LuBaggageClaim, LuImagePlus } from "react-icons/lu";
+import { PiTreeStructure, PiBabyFill, PiListMagnifyingGlassDuotone, PiAppWindow  } from 'react-icons/pi';
+import { IoWoman, IoMan, IoSettings, IoCaretBackOutline, IoTrash, IoArchiveOutline  } from "react-icons/io5";
 import { FaChild, FaChildDress, FaUsers  } from "react-icons/fa6";
-import { RiDeleteBin5Fill } from "react-icons/ri";
+import { RiAddCircleLine, RiAddFill, RiDeleteBin5Fill } from "react-icons/ri";
 import { GiFamilyTree } from "react-icons/gi";
 import { HiColorSwatch } from "react-icons/hi";
-import { CiSun } from "react-icons/ci";
+import { CiCircleList, CiSun } from "react-icons/ci";
 import { FaSnowman, FaEye } from "react-icons/fa";
 import { TbLeaf } from "react-icons/tb";
 import { LuFlower2 } from "react-icons/lu";
@@ -43,6 +43,9 @@ export const  SettingsIcon = ({sx = {}, color = '', size = 20, onClick}: IconPro
 export const  DeleteIcon = ({sx = {}, color = '', size = 20, onClick}: IconProps) => {
   return <RiDeleteBin5Fill style={sx} color={color} size={size} onClick={onClick}/>;
 };
+export const  AddIcon = ({sx = {}, color = '', size = 20, onClick}: IconProps) => {
+  return <RiAddCircleLine style={sx} color={color} size={size} onClick={onClick}/>;
+};
 export const  ThemeSelectIcon = ({sx = {}, color = '', size = 20, onClick}: IconProps) => {
   return <HiColorSwatch style={sx} color={color} size={size} onClick={onClick}/>;
 };
@@ -69,4 +72,7 @@ export const  EyeIcon = ({sx = {}, color = '', size = 20, onClick}: IconProps) =
 };
 export const  GroupIcon = ({sx = {}, color = '', size = 20, onClick}: IconProps) => {
   return <FaUsers style={sx} color={color} size={size} onClick={onClick} />;
+};
+export const  EmptyIcon = ({sx = {}, color = '', size = 20, onClick}: IconProps) => {
+  return <CiCircleList style={sx} color={color} size={size} onClick={onClick} />;
 };

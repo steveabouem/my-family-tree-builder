@@ -179,6 +179,11 @@ export interface FieldAndLabelProps {
   fieldStyles?: { [key: string]: string | number };
 }
 
+export interface EmptyListProps {
+  handleAdd: () => void;
+  message?: string;
+  icon?: ReactNode;
+}
 // ============================================================================
 // FORMS
 // ============================================================================
@@ -217,8 +222,14 @@ export type StepFormState = {
   updating: boolean;
   globalValues: any;
   totalSteps: number;
+  files?: FormImageInfo[];
   stepTree?: { [name: string]: FormField[] };
   mode?: string;
+}
+
+export interface FormImageInfo {
+  fieldName: string;
+  file: string; //base64 image
 }
 
 export interface StepDetails {
@@ -240,6 +251,7 @@ export enum stepFormModes {
 export interface StepFormProps<V> {
   sx?: { [key: string]: string | number };
   handleSave: () => void;
+  duplicateBottomActions?: boolean;
   handleNext?: (step: number) => void;
   handlePrev?: (step: number) => void;
 }
@@ -383,7 +395,7 @@ export interface FamilyTreeRecord {
   created_at: string,
   id: number;
   active: BoolEnum;
-  members:FamilyMemberDTO[],
+  members: FamilyMemberDTO[],
   emails: string;
   name: string;
   public: BoolEnum;
@@ -447,13 +459,13 @@ export interface MappedFamilyMember {
 }
 
 export interface MembersPositions {
-    data: MemberPosition[];
-    userId: number
+  data: MemberPosition[];
+  userId: number
 }
 
 export interface MemberPosition {
-    node_id: string,
-    new_position: { x: number, y: number }
+  node_id: string,
+  new_position: { x: number, y: number }
 }
 
 export type DKinsCount = {
@@ -821,8 +833,8 @@ export type APIDeleteTreeResponse = Promise<APIEndpointResponse<void> | null>;
 export type GetTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTree | null>>;
 export type APIFamilyMemberArrayKeys = keyof Pick<FamilyMemberDTO, 'children' | 'parents' | 'siblings' | 'spouses'>;
 export interface DeleteMembersRequestPayload {
-    nodeId: string;
-    treeId: number;
+  nodeId: string;
+  treeId: number;
 }
 // Project & Team API
 export interface CreateProjectRequestPayload {

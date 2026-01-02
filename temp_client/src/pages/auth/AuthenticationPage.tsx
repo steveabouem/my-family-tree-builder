@@ -47,12 +47,12 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
 
   const registrationFormFields: FormField[] = [
     {
-      fieldName: 'firstName',
+      fieldName: 'first_name',
       label: 'First Name',
       required: true
     },
     {
-      fieldName: 'lastName',
+      fieldName: 'last_name',
       label: 'Last Name',
       required: true
     },
@@ -193,9 +193,9 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
     >
       <Box>
         {mode === 'register' ? (
-          <Button variant="text" color="secondary" onClick={() => changeMode('login')}>Login</Button>
+          <Button variant="outlined" color="secondary" onClick={() => changeMode('login')}>Login</Button>
         ) : (
-          <Button variant="text" color="primary" onClick={() => changeMode('register')}>Register</Button>
+          <Button variant="outlined" color="secondary" onClick={() => changeMode('register')}>Register</Button>
         )}
       </Box>
       <Box sx={formContainerStyle}>
