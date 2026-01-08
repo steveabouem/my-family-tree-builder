@@ -314,10 +314,14 @@ export interface UserRegistrationData {
 }
 
 
-export interface PasswordChangeRequestPayload {
-    email: string;
-    currentPassword: string;
-    newPassword: string;
+export interface UpdateUserRequestPayload {
+    userId: number;
+    email?: string;
+    first_name?: string;
+    last_name?: string;
+    password?: string;
+    new_password?: string;
+    repeat_new_password?: string;
 }
 
 // #region PROJECT & TEAM TYPES

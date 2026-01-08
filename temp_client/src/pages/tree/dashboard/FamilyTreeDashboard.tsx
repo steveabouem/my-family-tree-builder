@@ -104,40 +104,44 @@ const FamilyTreeDashboard = () => {
     <Page title={<Trans>tree_dashboard_title</Trans>} subtitle={<Trans>tree_dashboard_lists_title</Trans>} loading={isFetching || isLoading}>
       {/* <Trans>tree_dashboard_lists_title</Trans> */}
       <PaperSection>
-        <BoxRow sx={{ justifyContent: 'end' }}>
-          <AddTreeButton variant="outlined" color={theme.palette.secondary.contrastText} elevation={0} onClick={() => navigate(PageUrlsEnum.newTree)} sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}>
-            <Trans>add</Trans>
-            <AddIcon size={15} color={theme.palette.success.dark} />
-          </AddTreeButton>
-        </BoxRow>
         {hasTrees ? (
-          <TreeDashboardContainer sx={{ border: 'none' }}>
-            {data?.payload?.map((t: FamilyTreeRecord, index: number) => (
-              <TreeCard key={t.id || index}>
-                <Box key={t.id} display="flex" flexDirection="column" gap={2}>
-                  <Box display="flex" gap={2} alignItems="center">
-                    <Typography><Trans>name</Trans>: {t?.name || ''}</Typography>
+          <>
+
+            <BoxRow sx={{ justifyContent: 'end' }}>
+              <AddTreeButton variant="outlined" color={theme.palette.secondary.contrastText} elevation={0} onClick={() => navigate(PageUrlsEnum.newTree)} sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}>
+                <Trans>add</Trans>
+                <AddIcon size={15} color={theme.palette.success.dark} />
+              </AddTreeButton>
+            </BoxRow>
+            <TreeDashboardContainer sx={{ border: 'none' }}>
+              {data?.payload?.map((t: FamilyTreeRecord, index: number) => (
+                <TreeCard key={t.id || index}>
+                  <Box key={t.id} display="flex" flexDirection="column" gap={2}>
+                    <Box display="flex" gap={2} alignItems="center">
+                      <Typography><Trans>name</Trans>: {t?.name || ''}</Typography>
+                    </Box>
+                    <Divider variant="fullWidth" />
+                    <Box display="flex" gap={2} alignItems="center">
+                      <Typography><Trans>number_of_kin</Trans>: {t?.members?.length || ''}</Typography>
+                    </Box>
+                    <Box display="flex" gap={2} alignItems="center">
+                      <Typography><Trans>date_created</Trans>: {dayjs(t.created_at).format('YYYY, MMM, dd, HH:mm:ss')}</Typography>
+                    </Box>
+                    <Box display="flex" gap={2} alignItems="center">
+                      <Typography>
+                        <Trans>status</Trans>: {t.active ? <Trans>active</Trans> : <Trans>inactive</Trans>}
+                      </Typography>
+                    </Box>
+                    <Box display="flex" gap={2} alignItems="center" justifyContent="end">
+                      <EyeIcon sx={{ cursor: 'pointer' }} onClick={() => selectTree(t)} />
+                      <DeleteIcon sx={{ cursor: 'pointer' }} onClick={() => { showDeleteTreeWarning(t) }} />
+                    </Box>
                   </Box>
-                  <Divider variant="fullWidth" />
-                  <Box display="flex" gap={2} alignItems="center">
-                    <Typography><Trans>number_of_kin</Trans>: {t?.members?.length || ''}</Typography>
-                  </Box>
-                  <Box display="flex" gap={2} alignItems="center">
-                    <Typography><Trans>date_created</Trans>: {dayjs(t.created_at).format('YYYY, MMM, dd, HH:mm:ss')}</Typography>
-                  </Box>
-                  <Box display="flex" gap={2} alignItems="center">
-                    <Typography>
-                      <Trans>status</Trans>: {t.active ? <Trans>active</Trans> : <Trans>inactive</Trans>}
-                    </Typography>
-                  </Box>
-                  <Box display="flex" gap={2} alignItems="center" justifyContent="end">
-                    <EyeIcon sx={{ cursor: 'pointer' }} onClick={() => selectTree(t)} />
-                    <DeleteIcon sx={{ cursor: 'pointer' }} onClick={() => { showDeleteTreeWarning(t) }} />
-                  </Box>
-                </Box>
-              </TreeCard>
-            ))}
-          </TreeDashboardContainer>
+                </TreeCard>
+
+              ))}
+            </TreeDashboardContainer>
+          </>
         ) : <EmptyList handleAdd={() => navigate(PageUrlsEnum.newTree)} />}
       </PaperSection>
     </Page>

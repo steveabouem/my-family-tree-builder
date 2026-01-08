@@ -1,21 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { useFormikContext } from "formik";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import { Trans } from "@lingui/macro";
 import { BaseDropDownProps, DropdownOption } from "types";
 
-const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, sx, displayVal }: BaseDropDownProps): JSX.Element => {
-  const { setFieldValue, setFieldTouched, values } = useFormikContext();
+const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, sx, selectedOption }: BaseDropDownProps): JSX.Element => {
+  const [currentOption, setCurrentOption] = useState<string | undefined>();
+  const { setFieldValue, setFieldTouched, values } = useFormikContext<any>();
 
   function handleFieldValueChange(optionname: string | number) {
-    const selectedOption = options.find((option: DropdownOption) => option.value === optionname);
+    const currentOption = options.find((option: DropdownOption) => option.value === optionname);
 
-    if (selectedOption) {
+    if (currentOption) {
       setFieldTouched(name, true);
-      setFieldValue(name, selectedOption.value);
+      setFieldValue(name, currentOption.value);
+      setCurrentOption(currentOption.label);
 
       if (onChangeCB)
-        onChangeCB(selectedOption.value);
+        onChangeCB(currentOption.value);
     }
   }
 
@@ -33,7 +35,19 @@ const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, s
         className={additionalClass}
         defaultValue="" // prevent DOM error for undefined value
       >
-        {options.map((option: DropdownOption, i: number) => <MenuItem value={option.value} key={`${id || ''}-dropdown-option-${i}`}>{option.label}</MenuItem>)}
+        {options.map((option: DropdownOption, i: number) => {
+          const isSelected = currentOption === option.label || selectedOption?.label === option.label;
+
+          return (
+            <MenuItem
+              value={option.value}
+              key={`${id || ''}-dropdown-option-${i}`}
+              selected={isSelected}
+            >
+              {option.label}
+            </MenuItem>
+          );
+        })}
       </Select>
     </FormControl>
   );

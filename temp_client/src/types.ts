@@ -29,63 +29,63 @@ export type seasonalCssVariable =
 
 export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeasons, string>> = {
   primary: {
-    default: "#000",
-    fall: "#000",
+    default: "#000000ff",
+    fall: "#fff2f2ff",
     spring: "#e8fff4",
     summer: "#f2c94e",
     winter: "#ffff"
   },
   secondary: {
-    default: "#000",
+    default: "#2692b9ff",
     fall: "#000",
     spring: "#e8fff4",
     summer: "#8f7c30",
     winter: "#0e8bb5"
   },
   accentBg: {
-    default: "#000",
+    default: "#00628fff",
     fall: "#000",
     spring: "#e8fff4",
     summer: "#51400ba3",
     winter: "#4c5054"
   },
   pillBg: {
-    default: "#ffffffe8",
+    default: "#97d2ffe8",
     fall: "#ffffffe8",
     spring: "#ffffffe8",
     summer: "#ffffffe8",
     winter: "#83b2c7e8"
   },
   pillBgInverse: {
-    default: "#ffffffe8",
+    default: "#00449ee8",
     fall: "#ffffffe8",
     spring: "#ffffffe8",
     summer: "#ffffffe8",
     winter: "#684f73e8"
   },
   cancel: {
-    default: "#000",
+    default: "#ff6b6bff",
     fall: "#000",
     spring: "#e8fff4",
     summer: "#f47d1d",
     winter: "#ea4c89"
   },
   confirm: {
-    default: "#000",
+    default: "#85ffa8ff",
     fall: "#000",
     spring: "#e8fff4",
     summer: "#85c370",
     winter: "#b6ebff"
   },
   dark: {
-    default: "#000",
+    default: "#ffffffff",
     fall: "#000",
     spring: "#2a3c2b",
     summer: "#000000",
     winter: "#0e2232"
   },
   light: {
-    default: "#000",
+    default: "#000000ff",
     fall: "#000",
     spring: "#2a3c2b",
     summer: "#faeecb",
@@ -151,6 +151,7 @@ enum DPositionEnum {
 export interface BaseDropDownProps {
   options: DropdownOption[];
   name: string;
+  selectedOption?: DropdownOption;
   additionalClass?: string;
   onChangeCB?: (value: string | number) => void;
   label?: string;
@@ -324,10 +325,12 @@ export interface UserSession {
 }
 
 export interface ChangePasswordValues {
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
-  newPassword: string;
-  repeatNewPassword: string;
+  new_password: string;
+  repeat_new_password: string;
   id: number;
 }
 

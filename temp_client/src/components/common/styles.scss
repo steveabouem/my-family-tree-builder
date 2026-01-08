@@ -41,7 +41,8 @@
 
   /* Track */
   ::-webkit-scrollbar-track {
-    display: none;
+    // display: none;
+    background: transparent;
   }
 
   /* Handle */
@@ -54,6 +55,7 @@
     background: rgb(90, 90, 90);
   }
 
+  border-radius: 5px;
   body {
     font-family: 'Dosis',
       sans-serif;

@@ -17,7 +17,7 @@ module.exports = {
       stale_time: {
         type: DataTypes.BIGINT,
         allowNull: false
-      }
+      },
     });
   },
   async down(queryInterface, Sequelize) {

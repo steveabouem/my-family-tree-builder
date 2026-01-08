@@ -4,7 +4,6 @@ import { UserState, APILoginResponse } from "types";
 /*
 * State
 */
-const previousUser = localStorage.getItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`)
 const initialState: UserState = {
   updating: false,
   currentUser: undefined,
@@ -13,7 +12,7 @@ const initialState: UserState = {
 /*
 * mutators
 */
-const updateUser = (state: UserState, action: PayloadAction<APILoginResponse  | undefined>) => {
+const updateUser = (state: UserState, action: PayloadAction<APILoginResponse | undefined>) => {
   state.updating = true;
   if (action.payload) {
     state.currentUser = { ...state.currentUser, ...action.payload };
@@ -45,6 +44,15 @@ const resetUser = (state: UserState) => {
   return state;
 };
 
+export const getCurrentUserFromStorage = (state: UserState) => {
+  console.log({ localStorage });
+  const previousUser = localStorage.getItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`)
+
+  state.updating = true;
+  state.currentUser = JSON.parse(previousUser || '{}')?.currentUser;
+  state.updating = false;
+  return state;
+};
 /*
 * Slice (reducer)
 */
@@ -55,7 +63,8 @@ export const userSlice = createSlice({
     updateUserAction: updateUser,
     setUserAction: setUser,
     clearUserAction: clearUser,
-    resetUserAction: resetUser
+    resetUserAction: resetUser,
+    refreshUserAction: getCurrentUserFromStorage
   }
 });
 
@@ -63,7 +72,8 @@ export const {
   updateUserAction,
   setUserAction,
   clearUserAction,
-  resetUserAction
+  resetUserAction,
+  refreshUserAction
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -3,7 +3,7 @@ import { User, ChangePasswordValues } from "types";
 import { APILoginResponse, APIRequestPayload, LoginRequestPayload } from "../../../../shared";
 import { baseUrl } from "../index";
 
-const handleLogin = async (values: LoginRequestPayload): Promise<APIRequestPayload<APILoginResponse>> => {
+const login = async (values: LoginRequestPayload): Promise<APIRequestPayload<APILoginResponse>> => {
   const response = await fetch(`${baseUrl}/auth/login`, {
     method: 'POST',
     headers: {
@@ -11,15 +11,15 @@ const handleLogin = async (values: LoginRequestPayload): Promise<APIRequestPaylo
     },
     body: JSON.stringify(values),
   });
-  
+
   if (!response.ok) {
     throw new Error(`Login failed: ${response.statusText}`);
   }
-  
+
   return response.json();
 };
 
-const handleRegister = async (values: Partial<User>): Promise<any> => {
+const register = async (values: Partial<User>): Promise<any> => {
   const response = await fetch(`${baseUrl}/auth/register`, {
     method: 'POST',
     headers: {
@@ -27,114 +27,69 @@ const handleRegister = async (values: Partial<User>): Promise<any> => {
     },
     body: JSON.stringify(values),
   });
-  
+
   if (!response.ok) {
     throw new Error(`Registration failed: ${response.statusText}`);
   }
-  
+
   return response.json();
 };
 
-const handlePasswordChange = async (values: ChangePasswordValues): Promise<any> => {
-  const response = await fetch(`${baseUrl}/auth/password/change`, {
+const updateUser = async (values: ChangePasswordValues): Promise<any> => {
+  const response = await fetch(`${baseUrl}/auth/user/${values.id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(values),
   });
-  
-  if (!response.ok) {
-    throw new Error(`Password change failed: ${response.statusText}`);
-  }
-  
+
   return response.json();
 };
 
-const handleLogout = async (): Promise<void> => {
+const logout = async (): Promise<void> => {
   const response = await fetch(`${baseUrl}/auth/logout`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
   });
-  
+
   if (!response.ok) {
     throw new Error(`Logout failed: ${response.statusText}`);
   }
-  
-  localStorage.clear();
+
   return;
 };
 
 // React Query hooks
 export const useLogin = () => {
-  const queryClient = useQueryClient();
-  
   return useMutation({
-    mutationFn: handleLogin,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-      queryClient.invalidateQueries({ queryKey: ['session'] });
-      
-      if (data.payload?.authenticated) {
-        queryClient.setQueryData(['user'], data.payload);
-      }
-    },
-    onError: (error) => {
-      console.error('Login failed:', error);
-    }
+    mutationFn: login,
   });
 };
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: handleRegister,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-      queryClient.invalidateQueries({ queryKey: ['session'] });
-      
-      if (data.payload?.authenticated) {
-        queryClient.setQueryData(['user'], data.payload);
-      }
-    },
-    onError: (error) => {
-      console.error('Registration failed:', error);
-    }
+    mutationFn: register,
   });
 };
 
-export const useChangePassword = () => {
+export const useUpdatUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: handlePasswordChange,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-      queryClient.invalidateQueries({ queryKey: ['session'] });
-    },
-    onError: (error) => {
-      console.error('Password change failed:', error);
-    }
+    mutationFn: updateUser,
   });
 };
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: handleLogout,
-    onSuccess: () => {
-      queryClient.clear();
-      queryClient.removeQueries({ queryKey: ['user'] });
-      queryClient.removeQueries({ queryKey: ['session'] });
-    },
-    onError: (error) => {
-      console.error('Logout failed:', error);
-      queryClient.clear();
-    }
+    mutationFn: logout,
   });
 };
 
@@ -143,8 +98,8 @@ export const validateRegistrationFields = (values: User): boolean => {
 };
 
 export {
-  handleLogin,
-  handleRegister,
-  handlePasswordChange,
-  handleLogout
+  login as handleLogin,
+  register as handleRegister,
+  updateUser as handlePasswordChange,
+  logout as handleLogout
 };

@@ -175,6 +175,7 @@ export const createTree = async (createData: ManageTreeRequestPayload): ManageTr
         response.error = false;
 
         const detailedListOfMembers = await getAllRelativesData(newTree);
+        logger.info('Detailed list of members ', detailedListOfMembers);
         response.payload = { ...newTree?.dataValues, members: detailedListOfMembers || [] };
       } else {
         logger.error('Unable to create members: records array empty');
@@ -332,6 +333,15 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
         children: JSON.stringify(Array.isArray(m.children) ? m.children : (m.children ? [m.children] : [])),
       });
     } else {
+      const profileImage = m?.profile_url;
+      let formattedProfileImage = null;
+
+      if (profileImage) {
+        const memberImage = profileImage.replace(/^data:image\/\w+;base64,/, '');
+        formattedProfileImage = Buffer.from(memberImage, 'base64');
+        logger.info('Created Image buffer ', { formattedProfileImage })
+      }
+
       newMembersFormData.push({
         ...m,
         age: today.diff(dayjs(m.dob), 'years'),
@@ -343,6 +353,8 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
         spouses: JSON.stringify(Array.isArray(m.spouses) ? m.spouses : (m.spouses ? [m.spouses] : [])),
         siblings: JSON.stringify(Array.isArray(m.siblings) ? m.siblings : (m.siblings ? [m.siblings] : [])),
         children: JSON.stringify(Array.isArray(m.children) ? m.children : (m.children ? [m.children] : [])),
+        profile_url: formattedProfileImage ? `data:image/png;base64,${formattedProfileImage}` : undefined
+
       });
     }
 
@@ -410,7 +422,7 @@ export const deleteTreeMember = async (data: DeleteMembersRequestPayload): Manag
     const currentMember = await FamilyMember.findOne({ where: { node_id: data.node_id } });
     const matchingTree = await FamilyTree.findByPk(data.treeId);
     logger.info('vars', { currentMember, matchingTree });
-    
+
     if (currentMember && matchingTree) {
       const nodes: string[] = JSON.parse(matchingTree.dataValues.members);
       const memberIndex = nodes.indexOf(currentMember.node_id);
@@ -419,7 +431,7 @@ export const deleteTreeMember = async (data: DeleteMembersRequestPayload): Manag
       // nodes.splice(memberIndex, 1);
       const done = await matchingTree.update('members', JSON.stringify(updatedNodes));
       logger.info('DELETE M: after splice', { nodes, matchingTree, done });
-      
+
       await currentMember.destroy();
       response.payload = { ...done.dataValues, members: JSON.parse(done.dataValues.members) };
       response.code = 200;
@@ -475,9 +487,9 @@ export const updateMemberPositions = async (positions: ManageMembersRequestPaylo
 //#endregion
 
 //#region deleteTree
-export const deleteTree = async (data: DeleteTreeRequestPayload ): Promise<ServiceResponseWithPayload<null>> => {
+export const deleteTree = async (data: DeleteTreeRequestPayload): Promise<ServiceResponseWithPayload<null>> => {
   let response: ServiceResponseWithPayload<null> = { code: 500, error: true, payload: null };
-  logger.info('payload ', {data})
+  logger.info('payload ', { data })
   try {
     const tree = await FamilyTree.findByPk(data.id);
     const user = await User.findByPk(data.userId);
@@ -491,8 +503,8 @@ export const deleteTree = async (data: DeleteTreeRequestPayload ): Promise<Servi
     } else {
       logger.error('updateTreeMembers: Invalid delete entries');
     }
-  } catch(e: unknown) {
-    logger.error('Delete tree, ', {e});
+  } catch (e: unknown) {
+    logger.error('Delete tree, ', { e });
   }
 
   return response;
@@ -544,6 +556,15 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
 
   for (const m of members) {
     const currentMemberIsDuplicate = !!duplicateRecords?.find((r: FamilyMember) => r.dataValues.node_id === m.node_id);
+    const profileImage = m?.profile_url;
+    let formattedProfileImage = null;
+
+    if (profileImage) {
+      const memberImage = profileImage.replace(/^data:image\/\w+;base64,/, '');
+      formattedProfileImage = Buffer.from(memberImage, 'base64');
+      logger.info('Created Image buffer ', { formattedProfileImage })
+    }
+
     logger.info('member in list ', m);
     if (currentMemberIsDuplicate) {
       continue;
@@ -558,6 +579,7 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
         spouses: JSON.stringify(m.spouses),
         siblings: JSON.stringify(m.siblings),
         children: JSON.stringify(m.children),
+        profile_url: formattedProfileImage
       });
     }
   };
@@ -651,6 +673,12 @@ const formatFamilyMemberToFront = (member: FamilyMember): FamilyMemberData => {
   logger.info('formatFamilyMemberToFront: shape of a member', { member, pos: member.position, s: member.siblings });
   //! member could be coming from a create or update operation. sequelize returns with datavalues in one case, and the direct object in the other
   const memberObject = member?.dataValues || member;
+  let memberProfilePic;
+
+  if (member?.profile_url) {
+    const buffer = Buffer.from(member.profile_url);
+    memberProfilePic = buffer.toString('base64');
+  }
 
   return ({
     ...memberObject,
@@ -660,7 +688,8 @@ const formatFamilyMemberToFront = (member: FamilyMember): FamilyMemberData => {
     spouses: JSON.parse(member?.spouses?.length > 0 ? member?.spouses : '[]'),
     parents: JSON.parse(member?.parents?.length > 0 ? member?.parents : '[]'),
     position: JSON.parse(member?.position || '{x: 0, y: 0}'),
-    connections: JSON.parse(member?.connections || '[]')
+    connections: JSON.parse(member?.connections || '[]'),
+    profile_url: memberProfilePic ? `data:image/png;base64,${memberProfilePic}` : undefined
   });
 }
 

@@ -93,12 +93,9 @@ const generateSessionId = (
  * @returns Session user data or null if not available
  */
 export const getSessionUser = (req: Request): Partial<APISessionUser> | null => {
-  try {
-    return req.session?.details || null;
-  } catch (error) {
-    logger.error('Failed to get session user', { error });
-    return null;
-  }
+  logger.info('SESSION ', req?.session);
+  
+  return req.session?.details || null;
 };
 
 /**

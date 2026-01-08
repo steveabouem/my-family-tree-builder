@@ -71,7 +71,8 @@ const theme = (season: ThemeSeasons) => createTheme({
     subtitle2: { // label
       ...defaultTypo,
       fontSize: ".9rem",
-      color: seasonalPaletteConfig.secondary[season]
+      color: seasonalPaletteConfig.secondary[season],
+      textTransform: 'capitalize'
     },
     caption: {
       ...defaultTypo,

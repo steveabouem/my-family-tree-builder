@@ -60,7 +60,7 @@ FamilyMember.init(
     spouses: { type: DataTypes.JSON },
     position: { type: DataTypes.JSON },
     connections: { type: DataTypes.JSON },
-    profile_url: { type: DataTypes.STRING },
+    profile_url: { type: DataTypes.BLOB('long') },
     description: { type: DataTypes.STRING },
     children: { type: DataTypes.JSON },
     siblings: { type: DataTypes.JSON },

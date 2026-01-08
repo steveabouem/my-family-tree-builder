@@ -32,13 +32,13 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
   const loginFormFields = [
     {
       fieldName: 'email',
-      label: 'Email',
+      label: <Trans>email</Trans>,
       type: 'email',
       required: true
     },
     {
       fieldName: 'password',
-      label: 'Password',
+      label: <Trans>password</Trans>,
       type: 'password',
       required: true
     },
@@ -48,40 +48,36 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
   const registrationFormFields: FormField[] = [
     {
       fieldName: 'first_name',
-      label: 'First Name',
+      label: <Trans>first_name</Trans>,
       required: true
     },
     {
       fieldName: 'last_name',
-      label: 'Last Name',
+      label: <Trans>last name</Trans>,
       required: true
     },
     {
       fieldName: 'email',
-      label: 'Email',
+      label: <Trans>email</Trans>,
       required: true
     },
     {
       fieldName: 'password',
-      label: 'Password',
+      label: <Trans>password</Trans>,
+      required: true,
+      type: 'password'
+    },
+    {
+      fieldName: 'confirm_password',
+      label: <Trans>confirm password</Trans>,
       required: true,
       type: 'password'
     },
     {
       fieldName: 'dob',
-      label: 'Age',
+      label: <Trans>age</Trans>,
       required: true,
       type: 'date'
-    },
-    {
-      fieldName: 'occupation',
-      label: 'Occupation',
-      required: true
-    },
-    {
-      fieldName: 'description',
-      label: 'Describe Yourself',
-      // required: true 
     },
   ];
 

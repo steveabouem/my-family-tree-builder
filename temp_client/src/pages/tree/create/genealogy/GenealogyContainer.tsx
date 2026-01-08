@@ -49,7 +49,7 @@ const GenealogyContainer: React.FC = () => {
                 } else {
                   updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_failed_modal</Trans></Typography>, type: 'error' });
                 }
-              }, 3000);
+              }, 1000);
             },
             onError: (error) => {
               console.error('Failed to add members:', error);

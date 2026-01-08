@@ -8,50 +8,71 @@ import { useFormikContext } from "formik";
 import { useContext, useState } from "react";
 import LocalSpinner from "components/common/progressIndicators/LocalSpinner";
 import GlobalContext from "contexts/creators/global";
+import { FileIcon, ImageIcon, LinkIcon, UploadIcon } from "utils/assets/icons";
 
 const ImageField = (fieldProps: any) => {
   const [preview, setPreview] = useState<string | undefined>();
   const [uploading, setUploading] = useState<boolean>(false);
+  const [imageType, setImageType] = useState<'link' | 'file'>('file');
   const { setFieldValue } = useFormikContext<any>();
-  const { updateModal } = useContext(GlobalContext)
+  const { updateModal } = useContext(GlobalContext);
+  const isUploading = imageType === 'file';
 
+  function togglImageType() {
+    setImageType((prev) => prev === 'file' ? 'link' : 'file');
+  }
   function handlePreview(e: any) {
-    const img = e.target.files?.[0];
+    if (isUploading) {
+      const img = e.target.files?.[0];
 
-    if (img) {
-      if ((img?.size / 1024) > 999) {
-        updateModal({
-          title: <Trans>image_too_large_modal_title</Trans>,
-          buttons: { cancel: true, confirm: false },
-          content: <Trans>image_too_large_text</Trans>,
-          type: 'warning',
-          hidden: false
-        });
+      if (img) {
+        if ((img?.size / 1024) > 999) {
+          updateModal({
+            title: <Trans>image_too_large_modal_title</Trans>,
+            buttons: { cancel: true, confirm: false },
+            content: <Trans>image_too_large_text</Trans>,
+            type: 'warning',
+            hidden: false
+          });
 
-        return;
+          return;
+        } else {
+          const reader = new FileReader();
+
+          reader.onloadstart = (() => {
+            setUploading(true);
+          });
+          reader.onloadend = (() => {
+            const encodedImg = reader.result as string;
+
+            setUploading(false);
+            setFieldValue(fieldProps.name, encodedImg);
+            setPreview(encodedImg);
+          });
+          reader.readAsDataURL(img);
+        }
       } else {
-        const reader = new FileReader();
-
-        reader.onloadstart = (() => {
-          setUploading(true);
-        });
-        reader.onloadend = (() => {
-          const encodedImg = reader.result as string;
-
-          setUploading(false);
-          setFieldValue(fieldProps.name, encodedImg);
-          setPreview(encodedImg);
-        });
-        reader.readAsDataURL(img);
+        setPreview(undefined);
       }
     } else {
-      setPreview(undefined);
+      setFieldValue(fieldProps.name, e.target.value);
+      setPreview(e.target.value);
     }
   }
 
+
   return (
-    <BoxColumn>
-      <input accept="image" type="file" onChange={handlePreview} />
+    <BoxColumn sx={{ width: '100%' }}>
+      <BoxRow sx={{ width: '100%' }}>
+        {isUploading ? (
+          <ImageUrlInput accept="image" type="file" onChange={handlePreview} />
+        ) : (
+          <ImageUrlInput type="text" onChange={handlePreview} />
+        )}
+        <Button variant="outlined" color="primary" onClick={togglImageType}>
+          {isUploading ? <LinkIcon color="grey" size={25} /> : <UploadIcon color="grey" size={25} />}
+        </Button>
+      </BoxRow>
       {uploading && <LocalSpinner loading={true} size={90} />}
       {preview && (
         <PreviewContainer>
@@ -68,7 +89,10 @@ const PreviewContainer = styled(BoxRow)`
   padding: 1em;
 `;
 const Preview = styled.img`
-height: 100px;
-width: 100px;
+  height: 100px;
+  width: 100px;
+`;
+const ImageUrlInput = styled.input`
+  width: 100%;
 `;
 export default ImageField;

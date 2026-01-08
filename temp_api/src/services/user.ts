@@ -22,7 +22,6 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
 
   const formattedValues = {
     ...userData,
-    related_to: [1],
     password: hashedPassword,
     role_id: defaultUserRole.id,
     created_at: new Date
@@ -43,7 +42,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
       response.code = 200;
       response.error = false;
       response.payload = { authenticated: true, userId: newUser.id, email: newUser.email,sessionId: null };
-
+logger.info('New USer returns to session ', {response});
       return response;
     } else {
       logger.error('! User.create !', 'User wasn\'t created, unable to save');
@@ -143,12 +142,6 @@ const validateUserFields = (values: APIUserDTO): boolean => {
     return false;
   }
 
-  if (!values.description) {
-    logger.info('missing description');
-    logger.error('! User.validateUserFields ! missing description');
-    return false;
-  }
-
   if (!values.first_name) {
     logger.info('missing first_name');
     logger.error('! User.validateUserFields ! missing first_name');
@@ -158,12 +151,6 @@ const validateUserFields = (values: APIUserDTO): boolean => {
   if (!values.gender) {
     logger.info('missing gender');
     logger.error('! User.validateUserFields ! missing gender');
-    return false;
-  }
-
-  if (values.is_parent === null || values.is_parent === undefined) {
-    logger.info('missing is_parent');
-    logger.error('! User.validateUserFields ! missing is_parent');
     return false;
   }
 

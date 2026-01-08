@@ -34,7 +34,6 @@ export const useGetCurrentSession = (id: string)  => {
   return useQuery({
     queryKey: ['sessions', id],
     queryFn: () => getCurrentSession(id),
-    staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };
 

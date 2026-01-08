@@ -14,17 +14,18 @@ const CreateFamilyTreePage = (): JSX.Element => {
   const { loading, toggleLoading } = useContext(GlobalContext);
   const { id } = useParams();
   const { data, isLoading: isUserTreeLoading, isSuccess } = useGetTreeById(id || '');
+  const {  isPending: isCreateTreePending } = useCreateFamilyTree();
   const dispatch = useZDispatch();
+  const isProcessing = isUserTreeLoading || loading || isCreateTreePending;
 
   useEffect(() => {
-    console.log({ data, isUserTreeLoading });
+    console.log({ data, isUserTreeLoading, isCreateTreePending });
     if (isSuccess && data.payload.members) {
       dispatch(populateTreeAction(data.payload));
       dispatch(changeformStepAction(0));
     }
 
-  }, [data, isSuccess, isUserTreeLoading]);
-  const isProcessing = isUserTreeLoading || loading;
+  }, [data, isSuccess, isUserTreeLoading, isCreateTreePending]);
 
   useEffect(() => {
     toggleLoading(false); // TODO: global context;s loading seems redundant

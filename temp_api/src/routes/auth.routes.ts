@@ -1,9 +1,9 @@
 import { Router, Request, Response } from "express";
 
-import { changePassword, login, register } from "../services/auth";
+import { updateUser, login, register } from "../services/auth";
 import { getUserById } from "../services/user";
 import { sendRouteHandlerResponse } from "./helpers";
-import { APILoginResponse, APIRegistrationResponse, LoginRequestPayload, PasswordChangeRequestPayload } from "../services/types"
+import { APILoginResponse, APIRegistrationResponse, LoginRequestPayload, UpdateUserRequestPayload } from "../services/types"
 
 const router = Router();
 
@@ -32,8 +32,9 @@ router.post('/logout', (req: Request<{}, {}, {}, {}>, res: Response) => {
   }
 });
 
-router.post('/password/change', (req: Request<{}, {}, PasswordChangeRequestPayload, {}>, res: Response) => {
-  sendRouteHandlerResponse<PasswordChangeRequestPayload, APILoginResponse>(req.body, changePassword, res, 'Login');
+router.post('/user/:id', (req: Request<{id: string}, {}, UpdateUserRequestPayload, {}>, res: Response) => {
+  const userId = parseInt(req.params.id);
+  sendRouteHandlerResponse<UpdateUserRequestPayload, APILoginResponse>({...req.body, userId}, updateUser, res, 'update user');
 });
 
 export default router;

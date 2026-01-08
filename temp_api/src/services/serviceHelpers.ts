@@ -31,3 +31,4 @@ export async function extractGroupDataValuesFrom(entity: any, bindings: any): Pr
   }
 
   return null;
+}

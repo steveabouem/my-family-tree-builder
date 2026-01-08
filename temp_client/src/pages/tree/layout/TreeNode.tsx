@@ -1,6 +1,8 @@
 import React, { memo, useState } from 'react';
 import { Box, Button, Typography, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
+// @ts-ignore
+import styled from 'styled-components';
 import Initials from 'components/common/Initials';
 import { Gendersenum } from 'types';
 import { BabyIcon, DeleteIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon, SettingsIcon } from 'utils/assets/icons';
@@ -36,18 +38,10 @@ export default memo(({ data }: any) => {
   }
 
   return (
-    <Box
-      sx={{
-        width: showDetails ? '250px' : '70px',
-        height: showDetails ? '120px' : '40px',
-        bgcolor: getNodeBG(),
-        ...mainContainerStyles
-      }}
-      // onMouseEnter={() => { setShowDetails(true) }} onMouseLeave={() => { setShowDetails(false) }}
-    >
+    <MainContainer expand={showDetails} bg={getNodeBG()}>
       <Box sx={headerContainerStyle}>
         {
-          !!data.profile_url?.length ? <img src={data.profile_url} /> :
+          !!data.profile_url?.length ? <MemberThumbnail src={data.profile_url} /> :
             <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
         }
         {/* <Handle
@@ -85,21 +79,23 @@ export default memo(({ data }: any) => {
         style={{ background: '#555' }}
         isConnectable={true}
       /> */}
-    </Box>
+    </MainContainer>
   );
 });
 
-const mainContainerStyles = {
-  padding: 1,
-  display: 'flex',
-  border: '.6px solid #8e6c75',
-  borderRadius: 2,
-  flexDirection: 'column',
-  gap: 1,
-  justifyContent: 'start',
-  alignItems: 'center',
-};
-
+const MainContainer = styled(Box)<{bg: string, expand: boolean}>`
+  padding: 1;
+  display: flex;
+  border: .6px solid #8e6c75;
+  border-radius: 2;
+  flex-direction: column;
+  gap: 1;
+  justify-content: start;
+  align-items: center;
+  width: ${(props: any) => props.expand ? '250px' : '70px'};
+  height: ${(props: any) => props.expand ? '120px' : '40px'};
+  background-color: ${(props: any) => props.bg};
+`; 
 const headerContainerStyle = {
   display: 'flex',
   justifyContent: 'space-between',
@@ -126,3 +122,9 @@ const nameAgeContainerStyle = {
   justifyContent: 'space-between',
   alignItems: 'center',
 };
+
+const MemberThumbnail = styled.img`
+  height: 40px;
+  border-radius: 80px;
+  width: 40px;
+`;

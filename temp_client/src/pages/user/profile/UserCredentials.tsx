@@ -15,17 +15,21 @@ const UserCredentials = ({ handleSubmit }: { handleSubmit: (values: ChangePasswo
   const [passwordFormMode, setPasswordFormMode] = useState<'write' | 'read'>('read');
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const changePasswordInitialValues = useMemo((): ChangePasswordValues => ({
+    first_name: currentUser?.firstName || '',
+    last_name: currentUser?.lastName || '',
     email: currentUser?.email || '',
     password: '',
-    newPassword: '',
-    repeatNewPassword: '',
+    new_password: '',
+    repeat_new_password: '',
     id: currentUser?.userId || 0
   }), [currentUser?.email, currentUser?.userId]);
   const changePassworFields: FormField[] = [
+    { fieldName: 'first_name', label: <Trans>first_name_form_label</Trans>, type: 'first_name' },
+    { fieldName: 'last_name', label: <Trans>last_name_form_label</Trans>, type: 'last_name' },
     { fieldName: 'email', label: <Trans>email_form_label</Trans>, type: 'email' },
     { fieldName: 'password', label: <Trans>password_form_label</Trans>, type: 'password' },
-    { fieldName: 'newPassword', label: <Trans>new_password_form_label</Trans>, type: 'password' },
-    { fieldName: 'repeatNewPassword', label: <Trans>repeat_new_password_form_label</Trans>, type: 'password' },
+    { fieldName: 'new_password', label: <Trans>new_password_form_label</Trans>, type: 'password' },
+    { fieldName: 'repeat_new_password', label: <Trans>repeat_new_password_form_label</Trans>, type: 'password' },
   ];
 
   function toggleMode() {
