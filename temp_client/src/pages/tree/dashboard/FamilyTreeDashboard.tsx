@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 // @ts-ignore TODO: install types once network is restored
 import styled from 'styled-components';
-import { populateTreeAction, saveTreeIdAction } from "app/slices/trees";
+import { populateTreeAction, resetAction, saveTreeIdAction } from "app/slices/trees";
 import { AddIcon, DeleteIcon, EyeIcon, FamilyTreeIcon } from "utils/assets/icons";
 import GlobalContext from "contexts/creators/global";
 import Page from "components/common/Page";
@@ -106,11 +106,16 @@ const FamilyTreeDashboard = () => {
       <PaperSection>
         {hasTrees ? (
           <>
-
             <BoxRow sx={{ justifyContent: 'end' }}>
-              <AddTreeButton variant="outlined" color={theme.palette.secondary.contrastText} elevation={0} onClick={() => navigate(PageUrlsEnum.newTree)} sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}>
+              <AddTreeButton variant="outlined" color={theme.palette.secondary.contrastText} elevation={0} 
+                onClick={() => {
+                  // dispatch(populateTreeAction());
+                  navigate(PageUrlsEnum.newTree);
+                }}
+                sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}
+              >
                 <Trans>add</Trans>
-                <AddIcon size={15} color={theme.palette.success.dark} />
+                <AddIcon size={15} color={theme.palette.success.dark} tooltip={{ active: true, text: 'Add new family tree' }} />
               </AddTreeButton>
             </BoxRow>
             <TreeDashboardContainer sx={{ border: 'none' }}>
@@ -133,8 +138,8 @@ const FamilyTreeDashboard = () => {
                       </Typography>
                     </Box>
                     <Box display="flex" gap={2} alignItems="center" justifyContent="end">
-                      <EyeIcon sx={{ cursor: 'pointer' }} onClick={() => selectTree(t)} />
-                      <DeleteIcon sx={{ cursor: 'pointer' }} onClick={() => { showDeleteTreeWarning(t) }} />
+                      <EyeIcon link sx={{ cursor: 'pointer' }} onClick={() => selectTree(t)} tooltip={{ active: true, text: 'View tree' }} />
+                      <DeleteIcon link sx={{ cursor: 'pointer' }} onClick={() => { showDeleteTreeWarning(t) }} tooltip={{ active: true, text: 'Delete tree' }} />
                     </Box>
                   </Box>
                 </TreeCard>
@@ -142,7 +147,10 @@ const FamilyTreeDashboard = () => {
               ))}
             </TreeDashboardContainer>
           </>
-        ) : <EmptyList handleAdd={() => navigate(PageUrlsEnum.newTree)} />}
+        ) : <EmptyList handleAdd={() => {
+          dispatch(resetAction());
+          navigate(PageUrlsEnum.newTree);
+        }} />}
       </PaperSection>
     </Page>
   );

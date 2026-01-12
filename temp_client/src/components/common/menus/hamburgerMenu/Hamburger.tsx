@@ -31,18 +31,19 @@ const Hamburger = () => {
     max-height: 20px;
   `;
   const MenuLink = styled(Link) <{ active: boolean }>`
-  text-decoration: none;
-  color: ${theme.palette.secondary.dark};
-  &.warn {
-    color: ${theme.palette.error.light};
-  }
-  &:hover {
-      text-decoration: underline;
-  }
+    text-decoration: none;
+    color: ${theme.palette.secondary.dark};
+    &.warn {
+      color: ${theme.palette.error.light};
+    }
+    &:hover {
+        text-decoration: underline;
+    }
   `;
+
   const menuIcon = useMemo(() => isOpened ?
     <ArrowUpIcon link onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} /> :
-    <ArrowDownIcon link onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} />, [isOpened]
+    <ArrowDownIcon link onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} tooltip={{ active: true, text: 'Open menu' }} />, [isOpened]
   );
   const isCurrentLocation = (path?: string) => {
     if (path) {
@@ -52,7 +53,7 @@ const Hamburger = () => {
     }
   };
   const authLink = currentUser?.userId ?
-    { addClass: 'warn', label: <BoxRow><Trans>logout</Trans><ExitIcon link /></BoxRow>, onClick: () => showLogoutWarning() }
+    { addClass: 'warn', label: <BoxRow><Trans>logout</Trans><ExitIcon link tooltip={{ active: true, text: 'Logout' }} /></BoxRow>, onClick: () => showLogoutWarning() }
     :
     { url: PageUrlsEnum.auth, label: <Trans>authentication_page_link</Trans> };
   const links: { label: string | ReactNode, onClick?: () => void, url?: string, addClass?: string }[] = [
@@ -102,6 +103,12 @@ const Hamburger = () => {
       },
     });
   }
+  function handleLinkClick(callback?: () => void) {
+    if (callback) {
+      callback();
+    }
+    toggleMenu();
+  }
 
   return (
     <Buns>
@@ -111,7 +118,7 @@ const Hamburger = () => {
           {links.map((l) => (
             <MenuLink
               to={l?.url || ''} isSelected={isCurrentLocation(l?.url)}
-              onClick={l?.onClick} className={l?.addClass || ''}
+              onClick={() => handleLinkClick(l?.onClick)} className={l?.addClass || ''}
             >
               {l.label}
             </MenuLink>
@@ -122,7 +129,7 @@ const Hamburger = () => {
   )
 };
 
-const menuStyles = {
+export const menuStyles = {
   position: 'absolute',
   width: '30vw',
   height: '25vh',

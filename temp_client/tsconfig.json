@@ -6,7 +6,7 @@
       "es2016",
       "dom"
     ],
-    "module": "es6",
+    "module": "es2020",
     "moduleResolution": "node",
     // "typeRoots": ["./*", "./src/*", "../*"],
     "baseUrl": "./src",

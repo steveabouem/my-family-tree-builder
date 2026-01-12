@@ -320,12 +320,22 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
   // prepare update of incoming basic attributes (positionning is done separately for now)
   for (const m of updateData.members) {
     if (tree.members.includes(m.node_id)) {
+       const memberProfileImage = m?.profile_url;
+      let formattedmemberProfileImage = null;
+
+      if (memberProfileImage) {
+        const memberImage = memberProfileImage.replace(/^data:image\/\w+;base64,/, '');
+        formattedmemberProfileImage = Buffer.from(memberImage, 'base64');
+        logger.info('Created Image buffer ', { formattedmemberProfileImage })
+      }
+
       existingMembersFormData.push({
         ...m,
         description: m?.description || '',
         // Don't stringify position here - it will be handled by positionFamilyMembers
         // Only stringify if position is explicitly provided, otherwise preserve existing
         position: m.position ? JSON.stringify(m.position) : undefined,
+        profile_url: formattedmemberProfileImage ? `data:image/png;base64,${formattedmemberProfileImage}` : undefined,
         connections: JSON.stringify(m.connections || []),
         parents: JSON.stringify(Array.isArray(m.parents) ? m.parents : (m.parents ? [m.parents] : [])),
         spouses: JSON.stringify(Array.isArray(m.spouses) ? m.spouses : (m.spouses ? [m.spouses] : [])),

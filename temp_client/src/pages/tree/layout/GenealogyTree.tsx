@@ -19,17 +19,23 @@ import { setStepsCountAction, changeModeAction, changeformStepAction } from 'app
 import { ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes, FamilyMemberDTO, FamilyTreeState, UserState, MemberPosition, DeleteMembersRequestPayload } from 'types';
 import DataProgress from 'components/common/progressIndicators/DataProgress';
 import { useChangeMemberPositions, useDeleteMembers } from 'services/v2';
-import { populateTreeAction } from 'app/slices/trees';
+import BoxColumn from 'components/common/containers/row/BoxColumn';
+import BoxRow from 'components/common/containers/column';
 
 const nodeTypes = {
   custom: CustomNode,
 };
-const treeBgUrl = 'https://images.pexels.com/photos/22821246/pexels-photo-22821246/free-photo-of-plants-leaves-in-black-and-white.jpeg';
+const bgUrls = {
+  leaves: 'https://images.pexels.com/photos/22821246/pexels-photo-22821246/free-photo-of-plants-leaves-in-black-and-white.jpeg',
+  branches: 'https://images.unsplash.com/photo-1622109874616-63c5ac24fe5a?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  roots: 'https://plus.unsplash.com/premium_photo-1674940593973-f520ef5054bc?q=80&w=718&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+};
 
 const GenealogyTree = memo(() => {
   const [nodesList, setNodesList, onNodesListChange] = useNodesState<any>([]);
   const [edgesList, setEdgesList, onEdgesListChange] = useEdgesState<any>([]);
   const [pendingPositions, setPositionsPending] = useState<MemberPosition[]>([]);
+  const [treeBg, setTreeBg] = useState<string>(bgUrls.leaves);
   const { setValues, setFieldValue } = useFormikContext<any>();
   const { updateModal, clearModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
@@ -193,19 +199,38 @@ const GenealogyTree = memo(() => {
     clearTimeout(nodeTimeout);
   }
 
+  function toggleBackground() {
+    switch (treeBg) {
+      case bgUrls.branches:
+        setTreeBg(bgUrls.leaves);
+        break;
+      case bgUrls.leaves:
+        setTreeBg(bgUrls.roots);
+        break;
+      case bgUrls.roots:
+        setTreeBg(bgUrls.branches);
+        break;
+      default:
+        setTreeBg(bgUrls.leaves);
+        break;
+    }
+  };
+
   if (!currentFamilyTree) {
     return <DataProgress
       msg={<Trans>fill_in_the_form_first</Trans>} />
   }
 
   return (
-    <>
-      {pendingPositions.length ? <Button variant='contained' color='info' sx={positionButonStyle} onClick={showCoordinatesChangeConfirm}>Save positions?</Button> : ''}
-
+    <BoxColumn sx={{ position: 'relative',height: '100%', width: '100%' }}>
+      <BoxRow sx={{position: 'absolute', top: '0', left: 0, justifyContent: 'space-between', width: '100%', gap: '1em'}}>
+        {pendingPositions.length ? <Button variant='text' color='secondary' sx={positionButonStyle} onClick={showCoordinatesChangeConfirm}><Trans>save_positions</Trans></Button> : ''}
+        <Button variant='text' color='secondary' onClick={toggleBackground} sx={{zIndex: 15}}><Trans>change_background</Trans></Button>
+      </BoxRow>
       <ReactFlow
         nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes} onNodeDrag={moveNode}
         onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange}
-        onNodeDragStop={showCoordinatesChangeWarning} 
+        onNodeDragStop={showCoordinatesChangeWarning}
       >
         <Background
           style={{
@@ -213,19 +238,21 @@ const GenealogyTree = memo(() => {
             backgroundBlendMode: 'overlay',
             backgroundRepeat: 'no-repeat',
             backgroundColor: theme.palette.grey['400'],
-            backgroundImage: `url(${treeBgUrl})`,
-            borderRadius: '5px'
+            backgroundImage: `url(${treeBg})`,
+            borderRadius: '5px',
+            height: '100%',
+            transition: '.6s'
           }} />
         {/* <MiniMap /> */}
         <Controls />
       </ReactFlow>
-    </>
+    </BoxColumn>
   );
 });
 
 const positionButonStyle = {
-  position: 'absolute',
-  zIndex: 150,
+  // position: 'absolute',
+  zIndex: 10,
   top: '20%'
 };
 

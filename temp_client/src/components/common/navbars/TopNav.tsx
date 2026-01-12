@@ -7,11 +7,11 @@ import ThemeSelector from "../ThemeSelector";
 import { useZSelector } from "app/hooks";
 import { UserState } from "types";
 import BoxRow from "../containers/column";
-import Hamburger from "../dropdowns/hamburgerMenu/Hamburger";
+import Hamburger from "../menus/hamburgerMenu/Hamburger";
+import LanguageSelector from "../LanguageSelector";
 
 const TopNav = () => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const theme = useTheme();
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const truncatedUserName = currentUser?.firstName?.split('')?.map((s, i) => { if (i > 5) { return '.' } return s })?.join('');
@@ -31,6 +31,7 @@ const TopNav = () => {
         <BoxRow sx={{ justifyContent: "end", gap: 2, flex: "0 60%" }}>
           <BoxRow sx={{ margin: '0 1em' }}>{currentUser?.firstName ? truncatedUserName : ''}</BoxRow>
           <BoxRow><Hamburger /></BoxRow>
+          <BoxRow><LanguageSelector /></BoxRow>
           <BoxRow><ThemeSelector /></BoxRow>
         </BoxRow>
       </BoxRow>

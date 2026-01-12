@@ -15,7 +15,14 @@ const theme = (season: ThemeSeasons) => createTheme({
     primary: { main: seasonalPaletteConfig.primary[season], dark: seasonalPaletteConfig.dark[season], contrastText: seasonalPaletteConfig.accentBg[season] },
     secondary: { main: seasonalPaletteConfig.light[season], dark: seasonalPaletteConfig.secondary[season], contrastText: seasonalPaletteConfig.dark[season] },
     error: { main: seasonalPaletteConfig.cancel[season] },
-    text: { primary: seasonalPaletteConfig.dark[season] },
+    text: { primary: seasonalPaletteConfig.dark[season], secondary:  seasonalPaletteConfig.secondary[season]},
+    // use for text color, inc buttons
+    action: {
+      hover: seasonalPaletteConfig.pillBg[season],
+      selected: '',
+      disabled: '',
+      disabledBackground: '',
+    },
     // warning: {main: seasonalPaletteConfig.[season]}
     // info: {main: seasonalPaletteConfig.cancel[season]}
     grey: { "400": seasonalPaletteConfig.accentBg[season] }, // used for tree layout bg, to contrast w bg image

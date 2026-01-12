@@ -14,6 +14,7 @@ import Footer from "./navbars/Footer";
 import FTLandingPage from "../FT.Landing";
 import PageUrlsEnum from "utils/urls/";
 import UserProfilePage from "pages/user/profile";
+import ThemingTest from "pages/ThemingTest";
 import FamilyTreeDashboard from "pages/tree/dashboard";
 import ViewFamilyTreeChartPage from "pages/tree";
 import AuthenticationPage from "pages/auth";
@@ -69,6 +70,7 @@ const AppContainer = (): JSX.Element => {
             <Route  path={PageUrlsEnum.trees} element={<FamilyTreeDashboard />} />
             <Route path={PageUrlsEnum.newTree} element={<CreateFamilyTreePage />} />
             <Route path={PageUrlsEnum.viewTree} element={<CreateFamilyTreePage />} />
+            <Route path={PageUrlsEnum.themeTest} element={<ThemingTest />} />
             <Route path="*" element={<FTLandingPage />} />
           </Routes>
         </Container>

@@ -17,9 +17,8 @@ const GenealogyContainer: React.FC = () => {
   // for instance, updating a member requires to rerender the form with only that member's fields.
   // the copy allows for the other existing members to remain rendered in the graph
   const [treeCopy, setTreeCopy] = useState({});
-  const [profileImages, setProfileImages] = useState<any[]>([]);
   const { stepTree = {}, mode } = useZSelector<StepFormState>(state => state.stepForm);
-  const { treeId } = useZSelector<FamilyTreeState>(state => state.tree);
+  const { currentFamilyTree } = useZSelector<FamilyTreeState>(state => state.tree);
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const dispatch = useZDispatch();
   const { updateModal } = React.useContext(GlobalContext);
@@ -32,12 +31,12 @@ const GenealogyContainer: React.FC = () => {
     
   }
   function handleSubmit(v: any) {
-    const formattedValues: FamilyTree = formatOutgoingValues(v, stepTree, userId, treeId);
+    const formattedValues: FamilyTree = formatOutgoingValues(v, stepTree, userId, currentFamilyTree?.id);
 
     try {
       if (mode === stepFormModes.edit) {
         addMembersMutation(
-          { ...formattedValues, id: treeId || 0, userId },
+          { ...formattedValues, id: currentFamilyTree?.id || 0, userId },
           {
             onSuccess: (response) => {
               setTimeout(() => {
@@ -109,6 +108,7 @@ const mainContainerStyle = {
   display: 'flex',
   flexDirection: 'column',
   gap: 2,
+  position: 'relative'
 };
 
 const gridContainerStyle = {

@@ -27,7 +27,7 @@ const ThemeSelector = () => {
 
   return (
     <Box position="relative" sx={{ cursor: 'pointer'}}>
-      <ThemeIcon link onClick={toggleTheme} />
+      <ThemeIcon link onClick={toggleTheme} tooltip={{ active: true, text: 'Change theme' }} />
     </Box>
   );
 }

@@ -1,17 +1,19 @@
 import React, { useMemo } from "react";
 import { Box, Button, Modal, Typography, useTheme } from "@mui/material";
 import { Trans } from "@lingui/macro";
-import { ModalProps } from "types";
-import GlobalContext from "contexts/creators/global/global.context";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import { TbFileSad } from "react-icons/tb";
 import { RiFileInfoLine } from "react-icons/ri";
 import { TbFileSmile } from "react-icons/tb";
+// @ts-ignore
+import styled from "styled-components";
+import { ModalProps } from "types";
+import GlobalContext from "contexts/creators/global/global.context";
 
 const BaseModal = ({ children, type = 'info', buttons }: ModalProps): JSX.Element => {
   const cancelText = buttons?.cancelText;
   const confirmText = buttons?.confirmText;
-  const { modal, updateModal, clearModal} = React.useContext(GlobalContext);
+  const { modal, clearModal} = React.useContext(GlobalContext);
   const seasonalTheme = useTheme();
   const headerIcon = useMemo(() => {
     switch (type) {
@@ -45,8 +47,8 @@ const BaseModal = ({ children, type = 'info', buttons }: ModalProps): JSX.Elemen
 
   return (
     <Modal open={!modal?.hidden} id={modal?.id || ''}>
-      <Box 
-        display="flex" flexDirection="column" gap={2} p={2} height="300px" width="30vw" m="15vh auto"
+      <ResponsiveModalContent 
+        display="flex" flexDirection="column" gap={2} p={2} height="300px" 
         justifyContent="space-between" className={type} borderRadius={2}
       >
         <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" borderBottom="1px solid #bec9b2">
@@ -62,9 +64,17 @@ const BaseModal = ({ children, type = 'info', buttons }: ModalProps): JSX.Elemen
           {modal?.buttons?.cancel ? <Button variant="outlined" color="error" onClick={() => handleCancel()} sx={{ marginLeft: 'auto' }}>{cancelText || <Trans>cancel</Trans>}</Button> : ''}
           {modal?.buttons?.confirm ? <Button variant="contained" color="success" onClick={() => handleConfirm()} sx={{ marginLeft: 'auto' }}>{confirmText || <Trans>confirm</Trans>}</Button> : ''}
         </Box>
-      </Box>
+      </ResponsiveModalContent>
     </Modal>
   );
-}
+};
+
+const ResponsiveModalContent = styled(Box)`
+  width: 30vw;
+  margin: 15vh auto;
+  @media (max-width: 768px) {
+    width: 60vw;
+  }
+`;
 
 export default BaseModal;

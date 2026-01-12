@@ -1,3 +1,6 @@
+import { icon } from "@fortawesome/fontawesome-svg-core";
+import { Button } from "@mui/material";
+import { link } from "fs";
 import React, { ReactElement, ReactNode } from "react";
 // I like all my types in one place. sue me.
 // ============================================================================
@@ -8,6 +11,10 @@ export interface ThemeState {
   season: ThemeSeasons;
 }
 
+export interface LanguageState {
+  current: LanguageEnum;
+}
+
 export enum ThemeSeasons {
   'fall' = 'fall',
   'winter' = 'winter',
@@ -16,40 +23,47 @@ export enum ThemeSeasons {
   'default' = 'default',
 }
 
+export enum LanguageEnum {
+  'english' = 'en',
+  'french' = 'fr',
+  'bafia' = 'bf'
+
+}
+
 export type seasonalCssVariable =
   | "cancel"
   | "confirm"
   | "dark"
   | "light"
-  | "primary"
+  | "primary" 
   | "accentBg"
   | "pillBg"
   | "pillBgInverse"
   | "secondary";
 
 export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeasons, string>> = {
-  primary: {
+  primary: { //page bg
     default: "#000000ff",
     fall: "#fff2f2ff",
     spring: "#e8fff4",
     summer: "#f2c94e",
     winter: "#ffff"
   },
-  secondary: {
+  secondary: { // headers, labels, icons, primary button color (invrs on hover)
     default: "#2692b9ff",
     fall: "#000",
     spring: "#e8fff4",
     summer: "#8f7c30",
     winter: "#0e8bb5"
   },
-  accentBg: {
+  accentBg: { // ??
     default: "#00628fff",
     fall: "#000",
     spring: "#e8fff4",
     summer: "#51400ba3",
     winter: "#4c5054"
   },
-  pillBg: {
+  pillBg: { //secondary header,  
     default: "#97d2ffe8",
     fall: "#ffffffe8",
     spring: "#ffffffe8",
