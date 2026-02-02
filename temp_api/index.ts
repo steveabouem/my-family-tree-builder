@@ -7,14 +7,13 @@ import userHandler from './src/routes/user.routes';
 import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';
 import sessionHandler from './src/routes/session.routes';
-import { isUserAuthenticated } from './src/routes/helpers';
+import { authCheck } from './src/routes/middlewares';
 
 declare module "express-session" {
   interface SessionData extends Session {
-    details: any, 
+    details: any,
     // TODO: reinstate line below
     // details: Partial<APISessionUser>,
-    sessionId: string,
   }
 }
 
@@ -50,7 +49,7 @@ app.use(cors({
   methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
 }
 ));
-app.use(bodyParser.json({limit: '5mb'}));
+app.use(bodyParser.json({ limit: '5mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
 const sessionConfig = {
   secret: `${process.env.JWT_KEY}`,
@@ -65,24 +64,6 @@ const sessionConfig = {
 
 app.use(session(sessionConfig) as any);
 
-app.use((req, res, next) => {
-  const publicUrls = ['/api/auth/login', '/api/auth/logout', '/api/auth/register'];
-  const userAuthenticated = isUserAuthenticated(req);
-  
-  // if (userAuthenticated || publicUrls.includes(req.originalUrl)) {
-  //   next();
-  // } else {
-  //   res.status(403);
-  //   res.json({ 
-  //     error: true, 
-  //     code: 403, 
-  //     message: 'Unauthenticated',
-  //     payload: null 
-  //   });
-  // }
-
-  next();
-});
 app.use('/api/users', userHandler);
 app.use('/api/sessions', sessionHandler);
 app.use('/api/auth', authHandler);

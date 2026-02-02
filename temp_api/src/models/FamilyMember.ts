@@ -26,7 +26,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare node_id: string;
   declare occupation?: string;
   declare parents:string; // node_id[]
-  declare profile_url?: string;
+  declare profile_url?: string | undefined;
   declare siblings: string; // node_id[]
   declare spouses: string; // node_id[]
   declare position?: string; //{x: number; y: number};

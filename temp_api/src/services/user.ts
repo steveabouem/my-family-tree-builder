@@ -4,16 +4,16 @@ import { QueryTypes } from "sequelize";
 import Role from "../models/Role";
 import logger from "../utils/logger";
 import User from "../models/User";
-import { APIUserDTO, ServiceResponseWithPayload, APIRegistrationResponse } from "./types";
+import { APIUserDTO, ServiceResponseWithPayload, APIAuthenticationResponse } from "./types";
 import { addSeasoning } from "../utils/toolkit";
 import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
 
-export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
+export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<APIAuthenticationResponse | null>> => {
   const hashedPassword = bcrypt.hashSync(userData.password, addSeasoning());
   const defaultUserRole = await Role.findOne({ where: { name: 'user' } });
   const payloadData = { authenticated: false, email: '', userId: 0 };
   // @ts-ignore
-  const response: ServiceResponseWithPayload<APIRegistrationResponse | null> = generateResponseData(payloadData);
+  const response: ServiceResponseWithPayload<APIAuthenticationResponse | null> = generateResponseData(payloadData);
 
   if (!defaultUserRole) {
     logger.error('Unable to create new user: no default role available');
@@ -37,12 +37,14 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
 
   if (fieldsValid) {
     const newUser = await User.create(formattedValues);
-    
+
     if (newUser) {
       response.code = 200;
       response.error = false;
-      response.payload = { authenticated: true, userId: newUser.id, email: newUser.email,sessionId: null };
-logger.info('New USer returns to session ', {response});
+      response.payload = { authenticated: true, userId: newUser.id, email: newUser.email };
+      response.addToSession = true;
+      logger.info('New USer returns to session ', { response });
+
       return response;
     } else {
       logger.error('! User.create !', 'User wasn\'t created, unable to save');
@@ -52,24 +54,23 @@ logger.info('New USer returns to session ', {response});
   return response; //unchaged from init
 }
 
-export const getUserById = async (id: number): Promise<ServiceResponseWithPayload<APIRegistrationResponse | null>> => {
-  const response: ServiceResponseWithPayload<APIRegistrationResponse | null> = generateResponseData({ authenticated: false, email: '', userId: 0, sessionId: null});
+export const getUserById = async (id: number): Promise<ServiceResponseWithPayload<APIAuthenticationResponse | null>> => {
+  const response: ServiceResponseWithPayload<APIAuthenticationResponse | null> = generateResponseData({ authenticated: false, email: '', userId: 0});
 
   try {
     const user = await User.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
-  
+
     if (user) {
       response.payload = {
         authenticated: true,
         email: user?.email,
         userId: user.id,
-        sessionId: ''
       }
     }
-  
+
     return response;
 
-  } catch(e) {
+  } catch (e) {
     logger.error('error ', e);
     return response;
   }

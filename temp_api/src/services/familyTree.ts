@@ -12,7 +12,7 @@ import {
 import logger from "../utils/logger";
 import User from "../models/User";
 import FamilyMember from "../models/FamilyMember";
-import { extractSingleDataValuesFrom } from "./serviceHelpers";
+import { extractSingleDataValuesFrom, processIncomingImage, processOutgoingImage } from "./serviceHelpers";
 import { KinshipEnum } from "./types";
 
 //#region getAllTrees
@@ -320,22 +320,13 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
   // prepare update of incoming basic attributes (positionning is done separately for now)
   for (const m of updateData.members) {
     if (tree.members.includes(m.node_id)) {
-       const memberProfileImage = m?.profile_url;
-      let formattedmemberProfileImage = null;
-
-      if (memberProfileImage) {
-        const memberImage = memberProfileImage.replace(/^data:image\/\w+;base64,/, '');
-        formattedmemberProfileImage = Buffer.from(memberImage, 'base64');
-        logger.info('Created Image buffer ', { formattedmemberProfileImage })
-      }
-
       existingMembersFormData.push({
         ...m,
         description: m?.description || '',
         // Don't stringify position here - it will be handled by positionFamilyMembers
         // Only stringify if position is explicitly provided, otherwise preserve existing
         position: m.position ? JSON.stringify(m.position) : undefined,
-        profile_url: formattedmemberProfileImage ? `data:image/png;base64,${formattedmemberProfileImage}` : undefined,
+        profile_url: processIncomingImage(m?.profile_url) || undefined,
         connections: JSON.stringify(m.connections || []),
         parents: JSON.stringify(Array.isArray(m.parents) ? m.parents : (m.parents ? [m.parents] : [])),
         spouses: JSON.stringify(Array.isArray(m.spouses) ? m.spouses : (m.spouses ? [m.spouses] : [])),
@@ -343,15 +334,6 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
         children: JSON.stringify(Array.isArray(m.children) ? m.children : (m.children ? [m.children] : [])),
       });
     } else {
-      const profileImage = m?.profile_url;
-      let formattedProfileImage = null;
-
-      if (profileImage) {
-        const memberImage = profileImage.replace(/^data:image\/\w+;base64,/, '');
-        formattedProfileImage = Buffer.from(memberImage, 'base64');
-        logger.info('Created Image buffer ', { formattedProfileImage })
-      }
-
       newMembersFormData.push({
         ...m,
         age: today.diff(dayjs(m.dob), 'years'),
@@ -363,8 +345,7 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
         spouses: JSON.stringify(Array.isArray(m.spouses) ? m.spouses : (m.spouses ? [m.spouses] : [])),
         siblings: JSON.stringify(Array.isArray(m.siblings) ? m.siblings : (m.siblings ? [m.siblings] : [])),
         children: JSON.stringify(Array.isArray(m.children) ? m.children : (m.children ? [m.children] : [])),
-        profile_url: formattedProfileImage ? `data:image/png;base64,${formattedProfileImage}` : undefined
-
+        profile_url: processIncomingImage(m?.profile_url) || undefined
       });
     }
 
@@ -566,14 +547,6 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
 
   for (const m of members) {
     const currentMemberIsDuplicate = !!duplicateRecords?.find((r: FamilyMember) => r.dataValues.node_id === m.node_id);
-    const profileImage = m?.profile_url;
-    let formattedProfileImage = null;
-
-    if (profileImage) {
-      const memberImage = profileImage.replace(/^data:image\/\w+;base64,/, '');
-      formattedProfileImage = Buffer.from(memberImage, 'base64');
-      logger.info('Created Image buffer ', { formattedProfileImage })
-    }
 
     logger.info('member in list ', m);
     if (currentMemberIsDuplicate) {
@@ -589,7 +562,7 @@ const generateTreeMembersRecords = async (members: FamilyMemberData[] = [], user
         spouses: JSON.stringify(m.spouses),
         siblings: JSON.stringify(m.siblings),
         children: JSON.stringify(m.children),
-        profile_url: formattedProfileImage
+        profile_url: processIncomingImage(m?.profile_url)
       });
     }
   };
@@ -678,17 +651,14 @@ const bulkUpdateRecordsPosition = async (
   return result;
 };
 //#endregion
-
+//#region formatFamilyMemberToFront
 const formatFamilyMemberToFront = (member: FamilyMember): FamilyMemberData => {
-  logger.info('formatFamilyMemberToFront: shape of a member', { member, pos: member.position, s: member.siblings });
   //! member could be coming from a create or update operation. sequelize returns with datavalues in one case, and the direct object in the other
   const memberObject = member?.dataValues || member;
-  let memberProfilePic;
-
-  if (member?.profile_url) {
-    const buffer = Buffer.from(member.profile_url);
-    memberProfilePic = buffer.toString('base64');
-  }
+  // Use processIncomingImage to handle legacy formats and ensure consistent output
+  // This will handle: external URLs, data URLs, and plain base64 strings (legacy)
+  const memberProfilePic = processOutgoingImage(member?.profile_url);
+  logger.info('Img after formatting ', { memberProfilePic });
 
   return ({
     ...memberObject,
@@ -699,9 +669,10 @@ const formatFamilyMemberToFront = (member: FamilyMember): FamilyMemberData => {
     parents: JSON.parse(member?.parents?.length > 0 ? member?.parents : '[]'),
     position: JSON.parse(member?.position || '{x: 0, y: 0}'),
     connections: JSON.parse(member?.connections || '[]'),
-    profile_url: memberProfilePic ? `data:image/png;base64,${memberProfilePic}` : undefined
+    profile_url: memberProfilePic || undefined
   });
-}
+};
+//#endregion
 
 /**
  * ? For each member of a family tree,
@@ -713,7 +684,6 @@ export const getAllRelativesData = async (treeRecord: FamilyTree | void): Promis
   const relativesData: FamilyMemberData[] = [];
 
   try {
-    logger.info('The Tree ', { treeRecord });
     if (treeRecord?.dataValues) {
       const nodeIds: string[] = JSON.parse(treeRecord.dataValues?.members || '[]');
       logger.info("current Tree's members", { treeMembers: nodeIds });

@@ -1,21 +1,13 @@
 import { Router, Request, Response } from "express";
-import logger from "../utils/logger";
 import { getUserById } from "../services/user";
-import { ServiceResponseWithPayload, APIRegistrationResponse } from "../services/types";
+import { sendRouteHandlerResponse } from "./helpers";
+import { authCheck } from "./middlewares";
 
 const router = Router();
 
-router.get('/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  getUserById(id)
-    .then((data: ServiceResponseWithPayload<APIRegistrationResponse | null>) => {
-      res.json(data);
-    })
-    .catch((e: unknown) => {
-      logger.error('error', e);
-      res.status(500);
-      res.json('failed');
-    });
+router.get('/:id', authCheck, (req: Request<{id: string}, {}, {}, {}>, res: Response) => {
+  const userId = Number(req.params.id);
+  sendRouteHandlerResponse<number, any | null>(userId, getUserById, res, 'Get user');
 });
 
 export default router;

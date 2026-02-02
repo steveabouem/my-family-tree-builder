@@ -1,5 +1,5 @@
-import FamilyMember from "@/models/FamilyMember";
-import FamilyTree from "@/models/FamilyTree";
+import FamilyMember from "../models/FamilyMember";
+import FamilyTree from "../models/FamilyTree";
 import { InferAttributes } from "sequelize";
 
 // #region CORE API TYPES
@@ -8,13 +8,12 @@ export interface ApiResponse<T = any> {
     code: number;
     message?: string;
     payload: T;
-    sessionId?: string;
 }
 export interface APIEndpointResponse {
-    sessionId?: string;
     error: boolean;
     code: number;
     message?: string;
+    addToSession?: boolean;
 }
 
 export interface APIRequestPayload<P> extends APIEndpointResponse {
@@ -28,7 +27,7 @@ export interface LoginRequestPayload {
     email: string;
     password: string;
 }
-export interface APILoginResponse {
+export interface APIAuthenticationResponse {
     authenticated: boolean;
     email?: string;
     firstName?: string;
@@ -50,17 +49,10 @@ export interface RegistrationRequestPayload {
     description: string,
 }
 
-export interface APIRegistrationResponse {
-    authenticated: boolean;
-    email: string;
-    sessionId: string | null;
-    userId?: number;
-    message?: string;
-}
-
 export interface APIGetSessionResponse {
     active: boolean;
     user: UserSession | null;
+    expires: string;
 }
 
 
@@ -243,7 +235,6 @@ export interface UserSession {
     email: string;
     firstName: string;
     lastName: string;
-    sessionId?: string;
 }
 
 /** ADMIN */
