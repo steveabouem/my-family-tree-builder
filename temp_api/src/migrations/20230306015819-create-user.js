@@ -13,6 +13,14 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
+      status: {
+        allowsNull: true,
+        type: Sequelize.INTEGER,
+        defaultValue: 1 // 1 active | 0 inactive
+      },
+      marital_status: {
+        type: Sequelize.STRING,
+      },
       last_name: {
         allowNull: false,
         type: Sequelize.STRING

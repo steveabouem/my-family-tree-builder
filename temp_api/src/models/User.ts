@@ -9,12 +9,14 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
+  declare status: number;
   declare first_name: string;
   declare last_name: string;
   declare age: number | null;
   declare dob: string;
   declare role_id: number;
   declare occupation: string;
+  declare marital_status: string;
   declare assigned_ips: string[]; //each User has one or more ip assigned to them. ips can be shared between multiple. model: FTIP"
   declare description: string;
   declare email: string;
@@ -35,6 +37,10 @@ User.init(
       autoIncrement: true,
       primaryKey: true
     },
+    status: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     age: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -46,6 +52,10 @@ User.init(
     assigned_ips: {
       type: DataTypes.JSON,
       allowNull: false
+    },
+    marital_status: {
+      type: DataTypes.STRING,
+      allowNull: true
     },
     description: {
       type: DataTypes.STRING,

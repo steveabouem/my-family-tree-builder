@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
-import { APIAuthenticationResponse, LoginRequestPayload, UpdateUserRequestPayload } from "./types";
+import { AuthenticationResponse, LoginRequestPayload, UpdateUserRequestPayload } from "./types";
 import { ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import { createUser } from "./user";
@@ -9,7 +9,7 @@ import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelp
 import User from "../models/User";
 import { addSeasoning } from "../utils/toolkit";
 
-export const register = async (userData: any): Promise<ServiceResponseWithPayload<APIAuthenticationResponse | null>> => {
+export const register = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
   let buffer = null;
   const ip = userData.ip;
   const userImage = userData.profile_url?.replace(/^data:image\/\w+;base64,/, '') || null;
@@ -17,10 +17,10 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
     buffer = Buffer.from(userImage, 'base64');
   }
   const formattedValues = { ...userData, assigned_ips: [ip], created_at: dayjs(), profile_url: buffer };
-  let response: ServiceResponseWithPayload<APIAuthenticationResponse | null> = {
+  let response: ServiceResponseWithPayload<AuthenticationResponse | null> = {
     error: true,
     code: 500,
-    payload: { authenticated: false, email: '', userId: 0}
+    payload: { email: '', userId: 0 }
   };
 
   const duplicate = await extractSingleDataValuesFrom(User, { where: { email: { [Op.eq]: userData.email } } });
@@ -33,6 +33,8 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
     return response;
   }
 
+  response.addToSession = true;
+
   const userResponse = await createUser(formattedValues);
   if (userResponse.code === 200) {
     logger.info('New user created ', userResponse);
@@ -43,9 +45,9 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
   return userResponse;
 };
 
-export const login = async ({ email, password }: LoginRequestPayload): Promise<ServiceResponseWithPayload<APIAuthenticationResponse>> => {
-  const payloadData = { authenticated: false, email: '', userId: 0 };
-  const response: ServiceResponseWithPayload<APIAuthenticationResponse> = generateResponseData(payloadData);
+export const login = async ({ email, password }: LoginRequestPayload): Promise<ServiceResponseWithPayload<AuthenticationResponse>> => {
+  const payloadData = { email: '', userId: 0 };
+  const response: ServiceResponseWithPayload<AuthenticationResponse> = generateResponseData(payloadData);
 
   try {
     const currentUser = await User.findOne({ where: { email: { [Op.eq]: email } } })
@@ -54,6 +56,7 @@ export const login = async ({ email, password }: LoginRequestPayload): Promise<S
       response.error = true;
       response.message = 'Unable to find user';
       logger.error('! login ! User not found');
+
       return response;
     }
     const passwordIsValid = bcrypt.compareSync(password, currentUser.password);
@@ -61,7 +64,6 @@ export const login = async ({ email, password }: LoginRequestPayload): Promise<S
       response.error = false;
       response.payload = {
         userId: currentUser.id,
-        authenticated: true,
         email: email,
         firstName: currentUser.first_name,
         lastName: currentUser.last_name,
@@ -79,11 +81,12 @@ export const login = async ({ email, password }: LoginRequestPayload): Promise<S
     logger.error('! login !', e);
     response.code = 400;
   }
+  
   return response;
 };
 
-export const updateUser = async (userData: UpdateUserRequestPayload): Promise<ServiceResponseWithPayload<APIAuthenticationResponse>> => {
-  const response: ServiceResponseWithPayload<APIAuthenticationResponse> = generateResponseData({ authenticated: false });
+export const updateUser = async (userData: UpdateUserRequestPayload): Promise<ServiceResponseWithPayload<AuthenticationResponse>> => {
+  const response: ServiceResponseWithPayload<AuthenticationResponse> = generateResponseData({});
 
   try {
     logger.info('RADY TO UPDAT UER')
@@ -126,7 +129,6 @@ export const updateUser = async (userData: UpdateUserRequestPayload): Promise<Se
 
     if (updatedUser) {
       response.payload = {
-        authenticated: true,
         email: updatedUser.email,
         firstName: updatedUser.first_name,
         lastName: updatedUser.last_name,

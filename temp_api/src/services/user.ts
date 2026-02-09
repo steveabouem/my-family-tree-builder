@@ -1,19 +1,22 @@
 import bcrypt from "bcryptjs";
 import { QueryTypes } from "sequelize";
+import { Op } from "sequelize";
 
 import Role from "../models/Role";
+import FamilyMember from "../models/FamilyMember";
+import FamilyTree from "../models/FamilyTree";
 import logger from "../utils/logger";
 import User from "../models/User";
-import { APIUserDTO, ServiceResponseWithPayload, APIAuthenticationResponse } from "./types";
+import { APIUserDTO, ServiceResponseWithPayload, AuthenticationResponse, ProfileDataResponse } from "./types";
 import { addSeasoning } from "../utils/toolkit";
 import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
 
-export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<APIAuthenticationResponse | null>> => {
+export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
   const hashedPassword = bcrypt.hashSync(userData.password, addSeasoning());
   const defaultUserRole = await Role.findOne({ where: { name: 'user' } });
-  const payloadData = { authenticated: false, email: '', userId: 0 };
+  const payloadData = { email: '', userId: 0 };
   // @ts-ignore
-  const response: ServiceResponseWithPayload<APIAuthenticationResponse | null> = generateResponseData(payloadData);
+  const response: ServiceResponseWithPayload<AuthenticationResponse | null> = generateResponseData(payloadData);
 
   if (!defaultUserRole) {
     logger.error('Unable to create new user: no default role available');
@@ -22,6 +25,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
 
   const formattedValues = {
     ...userData,
+    status: 1,
     password: hashedPassword,
     role_id: defaultUserRole.id,
     created_at: new Date
@@ -41,7 +45,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
     if (newUser) {
       response.code = 200;
       response.error = false;
-      response.payload = { authenticated: true, userId: newUser.id, email: newUser.email };
+      response.payload = { userId: newUser.id, email: newUser.email };
       response.addToSession = true;
       logger.info('New USer returns to session ', { response });
 
@@ -52,27 +56,56 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
   }
 
   return response; //unchaged from init
-}
+};
 
-export const getUserById = async (id: number): Promise<ServiceResponseWithPayload<APIAuthenticationResponse | null>> => {
-  const response: ServiceResponseWithPayload<APIAuthenticationResponse | null> = generateResponseData({ authenticated: false, email: '', userId: 0});
+export const getProfileDetailsByUserId = async (id: number): Promise<ServiceResponseWithPayload<ProfileDataResponse | null>> => {
+  let response: ServiceResponseWithPayload<ProfileDataResponse | null> | null = null;
 
   try {
-    const user = await User.findByPk(id, { attributes: { exclude: ['id', 'password'] } });
+    const user = await User.findByPk(id, { attributes: { exclude: ['password', 'updated_at'] } });
 
-    if (user) {
-      response.payload = {
-        authenticated: true,
-        email: user?.email,
-        userId: user.id,
-      }
+    if (user?.dataValues) {
+      const data = user.dataValues;
+      const membersRecordsCount = await FamilyMember.findAll({
+        where: {
+          email: { [Op.eq]: data.email }
+        }
+      });
+      const nodeIds = [...membersRecordsCount.map(m => m.node_id)];
+      const treesCount = await FamilyTree.count({
+        where: {
+          members: { [Op.like]: `%${data.email}%` }
+        }
+      });
+
+      logger.info('Retrieved user profile info', {treesCount, nodeIds, membersRecordsCount});
+
+      response = {
+        error: false,
+        code: 200,
+        payload: {
+          ...data,
+          membersRecordsCount: nodeIds.length,
+          treesCount
+        }
+      };
+    } else {
+      logger.error('User not found: ', { id });
+      response = {
+        error: true,
+        code: 500,
+        payload: null
+      };
     }
 
     return response;
-
   } catch (e) {
     logger.error('error ', e);
-    return response;
+    return {
+      error: true,
+      code: 500,
+      payload: null
+    };
   }
 };
 
@@ -184,18 +217,12 @@ const validateUserFields = (values: APIUserDTO): boolean => {
 
 const getRelatedFamilies = async (id: number): Promise<any> => {
   try {
-    const select = `
-        SELECT id, name
-        FROM Families 
-        WHERE JSON_CONTAINS(members, :id);
-      `;
-
-    const relatedFamilies = await User.sequelize?.query(select, {
-      type: QueryTypes.SELECT,
-      replacements: { id: `${id}` }
-    });
-
-    return relatedFamilies || [];
+    // const relatedFamilies = await FamilyTree.count({
+    //   where: {
+    //     members: 
+    //   }
+    // }) // familytree service has something already
+    // return relatedFamilies || [];
   } catch (e: unknown) {
     logger.error('Failed to get related families:', e);
     return [];
@@ -204,7 +231,7 @@ const getRelatedFamilies = async (id: number): Promise<any> => {
 
 const getExtendedFamiliesDetails = async (id: number): Promise<any> => {
   try {
-    const currentUser = await getUserById(id);
+    const currentUser = await getProfileDetailsByUserId(id);
     if (!currentUser) return [];
 
     const select = `

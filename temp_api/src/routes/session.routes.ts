@@ -7,7 +7,7 @@ import { getCurrentSession } from "../services/session";
 const router = Router();
 
 router.get('/', (req: Request<{}, {}, {}, {id: string}>, res: Response) => {
-  sendRouteHandlerResponse<string, APIGetSessionResponse>(req.query.id, getCurrentSession, res, 'Get Current Session');
+  // sendRouteHandlerResponse<Request, APIGetSessionResponse>(req, getCurrentSession, res, 'Get Current Session');
 });
 
 

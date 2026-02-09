@@ -1,6 +1,7 @@
 import FamilyMember from "../models/FamilyMember";
-import FamilyTree from "../models/FamilyTree";
 import { InferAttributes } from "sequelize";
+import User from "../models/User";
+import FamilyTree from "../models/FamilyTree";
 
 // #region CORE API TYPES
 export interface ApiResponse<T = any> {
@@ -27,8 +28,7 @@ export interface LoginRequestPayload {
     email: string;
     password: string;
 }
-export interface APIAuthenticationResponse {
-    authenticated: boolean;
+export interface AuthenticationResponse {
     email?: string;
     firstName?: string;
     lastName?: string;
@@ -57,7 +57,6 @@ export interface APIGetSessionResponse {
 
 
 export interface APILogoutResponse {
-    authenticated: boolean;
     email: string;
     userId?: number;
 }
@@ -73,6 +72,13 @@ export interface APIRegistrationFields { //registration form fields
     description: string;
     gender: string;
     profileUrl?: string;
+}
+
+export type ProfileDataResponse = Pick<User, 'age' | 'createdAt' | 'first_name' | 'id'
+    | 'marital_status' | 'updatedAt' | 'profile_url' | 'email' | 'last_name' | 'status'
+> & {
+    treesCount: number;
+    membersRecordsCount: number; // how many FamilyMember records use this same user ID
 }
 //#endregion
 // #region FAMILY TREE TYPES
@@ -207,7 +213,7 @@ export type FamilyMemberDetailedData = FamilyMemberRelativesData & Omit<InferAtt
         target: string;
     }[];
 };
-export interface User {
+export interface UserData {
     id?: number;
     first_name: string;
     last_name: string;
@@ -231,7 +237,6 @@ export interface User {
 
 export interface UserSession {
     userId: number;
-    authenticated: boolean;
     email: string;
     firstName: string;
     lastName: string;
@@ -285,7 +290,6 @@ export interface APIUserDTO {
 
 export interface APISessionUser {
     userId: number;
-    authenticated: boolean;
     ip?: string;
     ipIsValid?: number;
     email?: string;
