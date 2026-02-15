@@ -12,7 +12,6 @@ export function formatIncomingValues(data: APICreateFamilyResponse) {
 
 export function formatOutgoingValues(v: FamilyTreeFormData, stepsInStore: { [name: string]: FormField[] }, userId: number, treeId?: number): FamilyTree {
   let anchorAdded: boolean = false;
-  console.log('Original values sent', v);
   
   const mappedMembers = Object.keys(stepsInStore).reduce((acc: any, curr: string) => {
     const formatted: FamilyMemberDTO = cleanUpValuesPrefixes(curr, v);

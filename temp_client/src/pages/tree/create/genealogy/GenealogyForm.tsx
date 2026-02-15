@@ -1,29 +1,157 @@
 import React, { useContext, useEffect, useMemo } from "react";
-import { Box, Button, Paper, Typography } from "@mui/material";
-import { useFormikContext } from "formik";
+import { Box, Button, Chip, FormControl, MenuItem, Paper, Typography, useTheme } from "@mui/material";
+import { Field, FieldArray, useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
 import { v4 } from "uuid";
 import StepForm from "components/common/forms/stepform";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { clearFieldsByStepName, loaStepFormFieldsAction, setStepFieldsAction, setStepsCountAction, toggleStepFormUpdatingAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
+import { clearFieldsByStepName, goToNextStepAction, goToPrevStepAction, loaStepFormFieldsAction, setStepFieldsAction, setStepsCountAction, toggleStepFormUpdatingAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
 import FieldAndLabel from "components/common/forms/fieldAndlabel";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import GlobalContext from "contexts/creators/global";
-import { StepFormState, stepFormModes, genderOptions, maritalStatusOptions, relationOptions, NodeMenuActions, FormField, FamilyTreeFormData } from "types";
-import { useAddMembers, useChangeMemberPositions, useCreateFamilyTree } from "services/v2";
-
+import { StepFormState, stepFormModes, genderOptions, maritalStatusOptions, relationOptions, NodeMenuActions, FormField, FamilyTreeFormData, FieldsSection } from "types";
+import { useAddMembers, useChangeMemberPositions, useCreateFamilyTree } from "api";
+import BoxColumn from "components/common/containers/row/BoxColumn";
+import BoxRow from "components/common/containers/column";
+import CustomField from "components/common/forms/customField";
+import ImageField from "components/common/forms/imageField";
 
 // @ts-ignore
 const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
-  const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
+  // @ts-ignore
+  const { totalSteps, currentFormStep, currentFormStepDetails, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
   const { values, setFieldValue, setValues } = useFormikContext<FamilyTreeFormData>();
   const { modal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
+  const theme = useTheme();
   const { isPending: isCreateFamilyTreePending } = useCreateFamilyTree();
   const { isPending: isAddMembersPending } = useAddMembers();
   const { isPending: isChangePositionsPending } = useChangeMemberPositions();
   const isProcessing = isChangePositionsPending || isCreateFamilyTreePending || isAddMembersPending;
   const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
+  const sectionStyles = { border: `1px solid ${theme.palette.primary.contrastText}`, borderRadius: '5px', padding: '1rem', width: '100%' };
+  const formBody = useMemo(() => {
+    const fieldNamePrefix = currentFormStepDetails.name?.length ? currentFormStepDetails.name : 'anchor';
+    const sections: FieldsSection[] = [
+      {
+        title: <Trans>basic_identification</Trans>,
+        fields: [{
+          fieldName:
+            `${fieldNamePrefix}_firstName`, label: <Trans>firstName</Trans>, value: values?.[`${fieldNamePrefix}_firstName`] || ''
+        },
+        { fieldName: `${fieldNamePrefix}_lastName`, label: <Trans>lastName</Trans>, value: values?.[`${fieldNamePrefix}_lastName`] || '' },
+        { fieldName: `${fieldNamePrefix}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${fieldNamePrefix}_email`] || '' },
+        {
+          fieldName: `${fieldNamePrefix}_gender`, label: <Trans>gender</Trans>, subComponent: () => (
+            <BaseDropDown
+              options={genderOptions} id="gender-selection" name={`${fieldNamePrefix}_gender`}
+            />),
+          value: values?.[`${fieldNamePrefix}_gender`] || ''
+        },
+        ]
+      },
+      {
+        title: <Trans>personal_life</Trans>, fields: [
+          {
+            fieldName: `${fieldNamePrefix}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
+              <BaseDropDown
+                name={`${fieldNamePrefix}_marital_status`}
+                options={maritalStatusOptions}
+                id={`${fieldNamePrefix}_marital_status-selection`}
+                sx={{ height: '1rem' }}
+              />
+            ),
+            value: values?.[`${fieldNamePrefix}_marital_status`] || ''
+          },
+          { fieldName: `${fieldNamePrefix}_dob`, label: <Trans>dob</Trans>, type: "date", value: values?.[`${fieldNamePrefix}_dob`] || '' },
+          { fieldName: `${fieldNamePrefix}_dod`, label: <Trans>dod</Trans>, type: "date", value: values?.[`${fieldNamePrefix}_dod`] || '' },
+        ]
+      },
+      {
+        title: <Trans>others</Trans>, fields: [
+          { fieldName: `${fieldNamePrefix}_occupation`, label: <Trans>occupation</Trans>, value: values?.[`${fieldNamePrefix}_occupation`] || '' },
+          { fieldName: `${fieldNamePrefix}_description`, label: <Trans>description</Trans>, value: values?.[`${fieldNamePrefix}_description`] || '' },
+          { fieldName: `${fieldNamePrefix}_profile_url`, label: <Trans>picture</Trans>, type: 'image' },
+        ]
+      },
+    ];
+
+    const Body = () => {
+      return (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: '1rem', position: 'relative' }}>
+          <Box display="flex" justifyContent="space-between">
+            <Typography variant="body1">
+              <Trans>current_form_step</Trans>
+            </Typography>
+            {/* // stepTree starts at 0 in the store */}
+            <Chip label={currentFormStep + 1} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
+          </Box>
+          <Box display="flex" justifyContent="flex-start" gap={2} alignItems="center">
+            <Box display="flex" flexDirection="column" gap={2} justifyContent="center" width="100%">
+              <Typography variant="body1">{currentFormStepDetails?.title}</Typography>
+              <Typography variant="body1">{currentFormStepDetails?.subtitle}</Typography>
+            </Box>
+            <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
+              <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
+                <Trans>prev</Trans>
+              </Button>
+              <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps - 1}>
+                <Trans>next</Trans>
+              </Button>
+            </Box>
+          </Box>
+          <BoxColumn sx={{ justifyContent: 'space-evenly', width: '100%' }}>
+            {sections.map((s, i) => (
+              <BoxColumn sx={sectionStyles}>
+                <Typography variant="h5">{s.title}</Typography>
+                <BoxColumn sx={{ width: '100%' }}>
+                  {s.fields.map((f) => (
+                    <>
+                    <Typography variant="subtitle2">{f.label}</Typography>
+                      {f.subComponent ? (
+                        <CustomField id={f?.id || ''} name={f.fieldName} value={f.subComponent.displayValue}
+                          required={!!f.required} component={f.subComponent} key={`${f.fieldName}-custom`}  />
+                      ) : f.type === 'array' ? (
+                        <FieldArray name={f.fieldName} render={fields => f.subComponent} key={`${f.fieldName}-array`} /> // TODO: this is incorrect
+                      ) : f.type === 'select' ? (
+                        <FormControl aria-label="Default select example" key={`${f.fieldName}-select`} >
+                          {f?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`} >{o?.label || '_'}</MenuItem>)}
+                        </FormControl>
+                      ) : f.type === 'image' ? (
+                        <FormControl >
+                          <ImageField id={f?.id || ''} name={f.fieldName} required={!!f.required}
+                            key={`${f.fieldName}-image`} />
+                        </FormControl>
+                      ) : (
+                        <FormControl >
+
+                          <Field
+                            id={f?.id || ''} name={f.fieldName} value={values[f.fieldName]} 
+                            required={!!f.required} type={f?.type || 'text'} key={`${f.fieldName}-input`}
+                          />
+                        </FormControl>
+                      )}
+                      {/* <FieldAndLabel direction="column" fieldName={f.fieldName} label={f.label} sx={{ width: '100%' }} /> */}
+                    </>
+                  ))}
+                </BoxColumn>
+              </BoxColumn>
+            ))}
+          </BoxColumn>
+          <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
+            <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
+              <Trans>prev</Trans>
+            </Button>
+            <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps - 1}>
+              <Trans>next</Trans>
+            </Button>
+          </Box>
+        </Box>
+      )
+    };
+
+    return <Body />;
+  }, [currentFormStep, totalSteps, currentFormStepDetails?.name]);
 
   useEffect(() => {
     dispatch(toggleStepFormUpdatingAction(isProcessing));
@@ -44,32 +172,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
     }
   }, [modal?.transferData])
 
-  /*
-  * save each step of the form in redux store
-  */
-  function saveProgress() {
-    dispatch(updateGlobalValuesAction({ values }));
-  }
   function generateFieldsForRelative(stepNumber: number, reset: boolean) {
-    /*
-    * listener for user changing step in the form
-    * step change can only happen if step name has already been set through addRelative function
-    * 0 - find the index in the store that matches the step number provided
-    * 1 - check if fields have already been created for this step name, i.e if user had already generated this step in the past and is just currently coming back to it
-    * 2 - if existing fields, display them, no further actions
-    * 3 - if no existing fields, proceed with function execution
-    */
-
-    /* 
-    * this causes a problem because when you add a kin to a random node in the tree, it messes with the index.
-    * Thats because you remove all the indexes and use the selected node as an anchor, and add the new kin as the next step.
-    * in other words, if step 2 had previously existed in the slice, regardless of what kin youre trying to add, 
-    * it will match with whatever that step 2 was in the slice. adding id in the store dosnt change anything since you would need to know
-    * the id from within this component to check in the store what it refers to. 
-    * an alternative is to ave a state property that gets updated every time the next_of_kin value is confirmed,
-    * since when that happens the new kin is added as the last step you can then cross reference that object to determine the value of matchingSteNameInTree. 
-    * It should work as long as you make sure to update it when you go in edit mode (press confirm in the modal)
-    */
     //  @ts-ignore
     const matchingStepNameInTree = isEditMode ? treeCopy[stepNumber] : Object.keys(stepTree || {})
       .find(((key: string, index: number) => index === stepNumber));
@@ -141,36 +244,34 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
       setTreeCopy({ ...treeCopy, [`${totalSteps}`]: values.next_of_kin });
     }
   }
+
   // you are adding an extra empty array when selecting edit in the modal. That extra step currently doesnt get the fields loaded. 
   // If you fix that, you will be one step closer to fixing the issue of haveing a ghost member when submitting edit tree
   return (
-    <Paper sx={{ flexDirection: "column" }}>
+    <Paper sx={{ flexDirection: "column", border: 'none' }} elevation={0}>
+      <Typography variant="h5">about</Typography>
       <Typography variant="body2"><Trans>family_tree_building_explanation</Trans></Typography>
-      <Box sx={treeNameContainerStyle}>
-        <FieldAndLabel direction="row" fieldName="treeName" label={<Trans>name_your_tree</Trans>} sx={{ justifyContent: 'start', flex: '1 1 auto' }} fieldStyles={{ marginLeft: 'auto', width: '40%' }} />
-      </Box>
-      <Box sx={nextOfKinContainerStyle}>
-        <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
-        <BaseDropDown name="next_of_kin" options={relationOptions} sx={{ width: '40%', marginLeft: 'auto' }} />
-        <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
-      </Box>
-      <StepForm handleSave={saveProgress} duplicateBottomActions />
+      <BoxColumn sx={sectionStyles}>
+        <Typography variant="h5">form_management</Typography>
+        <BoxRow sx={{ width: '100%' }}>
+          <FieldAndLabel
+            direction="row" fieldName="treeName" label={<Trans>name_your_tree</Trans>}
+            sx={{ justifyContent: 'space-between', flex: '1', width: '100%' }}
+            fieldStyles={{ marginLeft: 'auto', width: '40%' }}
+          />
+        </BoxRow>
+        <BoxRow sx={{ width: '100%' }}>
+          <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
+          <BoxRow sx={{ flex: 1 }}>
+            <BaseDropDown name="next_of_kin" options={relationOptions} sx={{ width: '40%', marginLeft: 'auto' }} />
+            <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
+          </BoxRow>
+        </BoxRow>
+      </BoxColumn>
+      {/* <StepForm handleSave={() => { }} duplicateBottomActions /> */}
+      {formBody}
     </Paper>
   );
-};
-
-const treeNameContainerStyle = {
-  display: 'flex',
-  justifyContent: 'start',
-  alignItems: 'center',
-  gap: 2,
-};
-
-const nextOfKinContainerStyle = {
-  display: 'flex',
-  justifyContent: 'start',
-  alignItems: 'center',
-  gap: 2,
 };
 
 export default GenealogyForm;

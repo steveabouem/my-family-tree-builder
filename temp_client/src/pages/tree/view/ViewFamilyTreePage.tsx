@@ -1,39 +1,41 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Box, Grid2 } from "@mui/material";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Formik } from "formik";
 import Page from "components/common/Page";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { populateTreeAction } from "app/slices/trees";
+import { populateTreeAction, resetAction } from "app/slices/trees";
 import { FamilyTreeState } from "types";
 import { formatTreeMembers } from "../create/genealogy/utils";
 import GenealogyTree from 'pages/tree/layout/GenealogyTree';
 import PageUrlsEnum from "utils/urls";
-import { useGetTreeById } from "services/v2/familyTreeV2";
+import { useGetTreeById } from "api/familyTree";
 import PaperSection from "components/common/containers/PaperSection";
+import GlobalContext from "contexts/creators/global";
+import { Trans } from "@lingui/macro";
+import BoxColumn from "components/common/containers/row/BoxColumn";
 
 const ViewFamilyTreePage = () => {
+  const { loading, toggleLoading } = useContext(GlobalContext);
+  const { id } = useParams();
+  const { data, isLoading: isUserTreeLoading, isSuccess } = useGetTreeById(id || '', !!id);
   const dispatch = useZDispatch();
   const { list, currentFamilyTree } = useZSelector<FamilyTreeState>(state => state.tree);
-  const { id } = useParams();
-
-  // React Query hook for getting tree by ID
-  const { data: treeData, isLoading, error } = useGetTreeById(id || '', !!id && !currentFamilyTree);
+  const { data: treeData, isLoading, error } = useGetTreeById(id || '', true);
 
   useEffect(() => {
-    // handle reload or  params fetch
-    let currTree: any;
-
-    if (list.length && !currentFamilyTree) {
-      const target = list.find((tree: any) => tree.id == id);
-      const membersList: any = formatTreeMembers(JSON.parse(target?.members || '[]'));
-
-      currTree = membersList?.reduce((mappedNodeIds: any, member: any) => ({ ...mappedNodeIds, [member.node_id]: member }), {});
-      dispatch(populateTreeAction(currTree));
+    console.log({ data, isUserTreeLoading, id });
+    if (isSuccess && data.payload.members) {
+      dispatch(populateTreeAction(data.payload));
     }
-  }, [list]);
 
-  // Handle tree data from React Query
+  }, [data, isSuccess, isUserTreeLoading]);
+
+  useEffect(() => {
+    toggleLoading(false); // TODO: global context;s loading seems redundant
+    dispatch(resetAction(undefined))
+  }, []);
+
   useEffect(() => {
     if (treeData?.payload?.members) {
       const currTree = formatTreeMembers(JSON.parse(treeData.payload.members));
@@ -50,16 +52,12 @@ const ViewFamilyTreePage = () => {
     <Page subtitle="" title={`${currentFamilyTree?.name || ''}`} prevUrl={PageUrlsEnum.trees} loading={isLoading}>
       <Box sx={mainContainerStyle}>
         <PaperSection>
-        <Grid2 container spacing={2} height="100%">
-          <Grid2 size={4}>
-            Details/description/actions
-          </Grid2>
-          <Grid2 size={8}>
+          <BoxColumn>
+            <Trans>view_tree_page_title</Trans>
             <Formik initialValues={{}} onSubmit={() => { }}>
               {(props) => currentFamilyTree ? <GenealogyTree /> : null}
             </Formik>
-          </Grid2>
-        </Grid2>
+          </BoxColumn>
         </PaperSection>
       </Box>
     </Page>

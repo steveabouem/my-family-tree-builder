@@ -9,8 +9,8 @@ import { populateTreeAction, saveTreeIdAction } from 'app/slices/trees';
 import { changeformStepAction } from 'app/slices/forms/stepForm';
 import GlobalContext from 'contexts/creators/global';
 import { formatOutgoingValues } from 'pages/tree/create/genealogy/utils';
-import { useCreateFamilyTree, useAddMembers } from 'services/v2/familyTreeV2';
 import GenealogyTree from 'pages/tree/layout/GenealogyTree';
+import { useAddMembers, useCreateFamilyTree } from 'api';
 
 const GenealogyContainer: React.FC = () => {
   // treeCopy is used to keep copy of the tree through all events.

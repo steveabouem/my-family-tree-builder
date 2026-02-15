@@ -1,7 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
-// @ts-ignore
 import styled from "styled-components";
+import { Trans } from "@lingui/macro";
 import { ThemeSelectIcon } from "utils/assets/icons";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { ThemeState, ThemeSeasons } from "types";
@@ -27,7 +27,7 @@ const ThemeSelector = () => {
 
   return (
     <Box position="relative" sx={{ cursor: 'pointer'}}>
-      <ThemeIcon link onClick={toggleTheme} tooltip={{ active: true, text: 'Change theme' }} />
+      <ThemeIcon link onClick={toggleTheme} tooltip={<Trans>change theme</Trans>} />
     </Box>
   );
 }

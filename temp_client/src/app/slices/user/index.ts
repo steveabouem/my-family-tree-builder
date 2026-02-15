@@ -45,7 +45,6 @@ const resetUser = (state: UserState) => {
 };
 
 export const getCurrentUserFromStorage = (state: UserState) => {
-  console.log({ localStorage });
   const previousUser = localStorage.getItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`)
 
   state.updating = true;

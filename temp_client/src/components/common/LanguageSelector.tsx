@@ -1,7 +1,6 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import { Trans } from "@lingui/macro";
 import { Box, useTheme } from "@mui/material";
-// @ts-ignore
 import styled from "styled-components";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { LanguageEnum, LanguageState } from "types";
@@ -24,8 +23,10 @@ const LanguageSelector = () => {
   ];
   const LanguageMenu = styled(Box)`
     position: relative;
-    height: 20px;
+    height: 100%;
+    align-items: flex-end;
     max-height: 20px;
+    display: flex;
   `;
   const LanguageLink = styled(Box) <{ active: boolean }>`
     cursor: pointer;
@@ -38,6 +39,7 @@ const LanguageSelector = () => {
 
   function toggleLang(ln: LanguageEnum) {
     dispatch(switchLangAction(ln));
+    setIsOpened(false);
   }
 
   return (
@@ -45,7 +47,7 @@ const LanguageSelector = () => {
       <LanguageIcon 
         link 
         onClick={() => setIsOpened(!isOpened)} 
-        tooltip={{ active: true, text: 'Select language' }}
+        tooltip={<Trans>select_language</Trans>}
       />
       {isOpened && <BoxColumn sx={{ ...menuStyles, background: theme.palette.secondary.light }}>
         {menuOptions.map((l, i) => (

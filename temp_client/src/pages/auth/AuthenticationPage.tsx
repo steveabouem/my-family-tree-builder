@@ -4,14 +4,17 @@ import { t, Trans } from "@lingui/macro";
 import { Formik } from "formik";
 import { Box, Button, FormControl } from "@mui/material";
 import GlobalContext from "../../contexts/creators/global";
-import { APILoginResponse, APIEndpointResponse, LoginRequestPayload, RegistrationRequestPayload, FormField, AuthProps, maritalStatusOptions } from "types";
-import { useLogin, useRegister } from "../../services/v2/authV2";
+import {
+  APILoginResponse, APIEndpointResponse, LoginRequestPayload, RegistrationRequestPayload,
+  FormField, AuthProps, maritalStatusOptions, APIRegistrationResponse
+} from "types";
+import { useLogin, useRegister } from "../../api/auth";
 import PageUrlsEnum from "utils/urls/";
 import Page from "../../components/common/Page";
 import FormFieldsGenerator from "../../components/common/forms/FormFieldsGenerator";
 import GenderDropdown from "../../components/common/dropdowns/gender/GenderDropdown";
 import BaseDropDown from "../../components/common/dropdowns/BaseDropdown";
-import { updateUserAction } from "app/slices/user";
+import { setUserAction, updateUserAction } from "app/slices/user";
 import { useZDispatch } from "app/hooks";
 
 
@@ -22,7 +25,6 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
   const loginMutation = useLogin();
   const registerMutation = useRegister();
   const dispatch = useZDispatch();
-
 
   const mStatus = t({
     id: "marital.status",
@@ -45,7 +47,7 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
 
   ];
 
-  const registrationFormFields: FormField[] = [
+  const renderRegistrationFormFields: (v: any) => FormField[] = (v) => ([
     {
       fieldName: 'first_name',
       label: <Trans>first_name</Trans>,
@@ -55,6 +57,35 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
       fieldName: 'last_name',
       label: <Trans>last name</Trans>,
       required: true
+    },
+    {
+      fieldName: 'gender',
+      label: <Trans>gender</Trans>,
+      // @ts-ignore: fix and provide ability to accept login or registration fields types
+      value: v.gender,
+      required: true,
+      subComponent: () => (
+        <Box className="field-wrap base" sx={{ width: '100%' }}>
+          <GenderDropdown name="gender" sx={{}} />
+        </Box>
+      ),
+    },
+    {
+      fieldName: 'marital_status',
+      label: mStatus,
+      // @ts-ignore: fix and provide ability to accept login or registration fields types
+      value: v.marital_status,
+      id: 'marital-status-field',
+      subComponent: () => (
+        <FormControl fullWidth>
+          <BaseDropDown
+            name="marital_status"
+            options={maritalStatusOptions}
+            id="marital-status-dd"
+          />
+        </FormControl>
+      ),
+      required: true,
     },
     {
       fieldName: 'email',
@@ -73,20 +104,19 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
       required: true,
       type: 'password'
     },
-    {
-      fieldName: 'dob',
-      label: <Trans>age</Trans>,
-      required: true,
-      type: 'date'
-    },
-  ];
+    // {
+    //   fieldName: 'dob',
+    //   label: <Trans>age</Trans>,
+    //   required: true,
+    //   type: 'date'
+    // },
+  ]);
 
   const registerInitialValues: RegistrationRequestPayload = {
     firstName: '',
     lastName: '',
-    age: 1,
+    // age: 1,
     occupation: '',
-    marital_status: '',
     password: '',
     email: '',
     gender: 1,
@@ -117,11 +147,11 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
   const processLogin = async (values: LoginRequestPayload) => {
     loginMutation.mutate(values, {
       onSuccess: (response: APIEndpointResponse<APILoginResponse>) => {
-        const { payload, error } = response;
+        const { code, payload } = response;
+        console.log('Login REs ', response);
 
-        if (payload.authenticated && !error) {
-          localStorage.setItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`, JSON.stringify(payload));
-          dispatch(updateUserAction(payload));
+        if (code == 200) {
+          dispatch(setUserAction(payload));
           changeMode(undefined);
           navigate(PageUrlsEnum.user.replace(':id', `${payload.userId}`));
         } else {
@@ -149,22 +179,18 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
 
   const processRegister = async (values: RegistrationRequestPayload) => {
     registerMutation.mutate(values, {
-      onSuccess: (response) => {
-        const { payload } = response;
-        if (payload.authenticated) {
-          localStorage.setItem(`${process.env.REACT_APP_LOCALE_STORAGE_NAME}`, JSON.stringify(payload));
+      onSuccess: (response: APIEndpointResponse<APIRegistrationResponse>) => {
+        if (response.payload?.userId) {
           changeMode(undefined);
 
-          if (payload?.userId) {
-            updateUserAction(payload);
-            navigate(PageUrlsEnum.user.replace(':id', `${payload.userId}`));
-          }
+          setUserAction(response.payload);
+          navigate(PageUrlsEnum.user.replace(':id', `${response.payload.userId}`));
         } else {
           updateModal({
             ...modal,
             hidden: false,
-            title: <Trans>login_failure</Trans>,
-            content: <Trans>login_failure_msg {attempts}</Trans>,
+            title: <Trans>registration_failure</Trans>,
+            content: <Trans>registration_failure_msg {attempts}</Trans>,
           });
           console.error('Registration failure');
         }
@@ -174,8 +200,8 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
         updateModal({
           ...modal,
           hidden: false,
-          title: <Trans>login_failure</Trans>,
-          content: <Trans>login_failure_msg {attempts}</Trans>,
+          title: <Trans>registration_failure</Trans>,
+          content: <Trans>registration_failure_msg {attempts}</Trans>,
         });
       }
     });
@@ -210,38 +236,7 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
             <FormFieldsGenerator
               size="med"
               locked={registerMutation.isPending}
-              fields={[
-                ...registrationFormFields,
-                {
-                  fieldName: 'gender',
-                  label: <Trans>gender</Trans>,
-                  // @ts-ignore: fix and provide ability to accept login or registration fields types
-                  value: values.gender,
-                  required: true,
-                  subComponent: () => (
-                    <Box className="field-wrap base" sx={{ width: '100%' }}>
-                      <GenderDropdown name="gender" sx={{}}/>
-                    </Box>
-                  ),
-                },
-                {
-                  fieldName: 'marital_status',
-                  label: mStatus,
-                  // @ts-ignore: fix and provide ability to accept login or registration fields types
-                  value: values.marital_status,
-                  id: 'marital-status-field',
-                  subComponent: () => (
-                    <FormControl fullWidth>
-                      <BaseDropDown
-                        name="marital_status"
-                        options={maritalStatusOptions}
-                        id="marital-status-dd"
-                      />
-                    </FormControl>
-                  ),
-                  required: true,
-                }
-              ]}
+              fields={renderRegistrationFormFields(values)}
               handleSubmit={submitForm}
               handleFieldValueChange={(field: string, value: string | number) => setFieldValue(field, value)} />
           }

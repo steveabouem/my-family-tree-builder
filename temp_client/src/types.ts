@@ -35,7 +35,7 @@ export type seasonalCssVariable =
   | "confirm"
   | "dark"
   | "light"
-  | "primary" 
+  | "primary"
   | "accentBg"
   | "pillBg"
   | "pillBgInverse"
@@ -111,6 +111,15 @@ export enum themeEnum {
   green = 'DARK-GREEN',
   light = 'LIGHT',
   dark = 'DARK',
+}
+
+export interface IconProps {
+  link?: boolean;
+  sx?: { [key: string]: string | number };
+  color?: string;
+  size?: number;
+  tooltip?:  string | ReactNode,
+  onClick?: () => void;
 }
 
 export interface GlobalContextProps {
@@ -196,6 +205,7 @@ export interface FieldAndLabelProps {
 
 export interface EmptyListProps {
   handleAdd: () => void;
+  handleRefresh: () => void;
   message?: string;
   icon?: ReactNode;
 }
@@ -217,9 +227,15 @@ export interface FormField {
   options?: { label: string | ReactElement, value: any }[];
 }
 
+export interface FieldsSection {
+  title: ReactNode;
+  fields: FormField[];
+}
+
 export interface BaseFormProps {
   name?: string | ReactNode;
   withPaper?: boolean;
+  rows?: number;
   mode?: 'read' | 'write',
   title?: string | ReactNode;
   fields: FormField[];
@@ -229,6 +245,13 @@ export interface BaseFormProps {
   initialValues?: any;
   handleFieldValueChange?: (field: string, value: string | number) => void;
   validations?: any;
+}
+
+export interface StepFormSectionsProps {
+  sections: FieldsSection[];
+  mode?: string;
+  locked?: boolean;
+  duplicateBottomActions: boolean;
 }
 
 export type StepFormState = {
@@ -328,7 +351,6 @@ export interface User {
   created_at?: Date;
   updated_at?: Date;
 }
-
 export interface UserSession {
   userId: number;
   authenticated: boolean;
@@ -356,6 +378,8 @@ export interface UserRegistrationData {
   assigned_ips: string[];
   created_at: any;
 }
+
+export type APIGetProfileResponse = APIEndpointResponse<User & {membersRecordsCount: number, treesCount: number}>;
 
 // ============================================================================
 // FAMILY TREE & RELATIONSHIPS
@@ -753,7 +777,6 @@ export interface LoginRequestPayload {
 }
 
 export interface APILoginResponse {
-  authenticated: boolean;
   email?: string;
   firstName?: string;
   lastName?: string;
@@ -763,9 +786,7 @@ export interface APILoginResponse {
 export interface RegistrationRequestPayload {
   firstName: string,
   lastName: string,
-  age: number,
   occupation: string,
-  marital_status: string,
   password: string,
   email: string,
   gender: 0 | 1,
@@ -774,7 +795,6 @@ export interface RegistrationRequestPayload {
 }
 
 export interface APIRegistrationResponse {
-  authenticated: boolean;
   email: string;
   userId?: number;
   message?: string;
@@ -843,6 +863,12 @@ export type APICreateFamilyResponse = APIEndpointResponse<FamilyTreeRecord>;
 export interface ManageTreeRequestPayload {
   data: FamilyTreeDataPayload;
   userId: number
+}
+
+export type APIGetProfileDataResponse = Pick<User, 'age' | 'created_at' | 'firstName' | 'id' | 'marital_status' | 'updated_at' | 'profile_url' | 'email' | 'lastName'> & {
+  treesCount: number;
+  status: 'active' | 'inactive';
+  membersRecordsCount: number; // how many FamilyMember records use this same user ID
 }
 
 export type ManageTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTreeRecord[]> | null>;

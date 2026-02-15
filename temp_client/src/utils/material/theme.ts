@@ -1,4 +1,6 @@
 import { capitalize, createTheme } from "@mui/material";
+import { green } from "@mui/material/colors";
+import { Background } from "@xyflow/react";
 import { seasonalPaletteConfig, ThemeSeasons } from "types";
 
 const defaultTypo = {
@@ -15,7 +17,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     primary: { main: seasonalPaletteConfig.primary[season], dark: seasonalPaletteConfig.dark[season], contrastText: seasonalPaletteConfig.accentBg[season] },
     secondary: { main: seasonalPaletteConfig.light[season], dark: seasonalPaletteConfig.secondary[season], contrastText: seasonalPaletteConfig.dark[season] },
     error: { main: seasonalPaletteConfig.cancel[season] },
-    text: { primary: seasonalPaletteConfig.dark[season], secondary:  seasonalPaletteConfig.secondary[season]},
+    text: { primary: seasonalPaletteConfig.dark[season], secondary: seasonalPaletteConfig.secondary[season] },
     // use for text color, inc buttons
     action: {
       hover: seasonalPaletteConfig.pillBg[season],
@@ -105,13 +107,49 @@ const theme = (season: ThemeSeasons) => createTheme({
     }
   },
   components: {
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          width: '100%',
+          height: '35px',
+          border: '1px solid',
+          borderRadius: '5px',
+          input: {
+            borderRadius: '5px',
+            width: '100%',
+            border: 'none'
+          }
+        }
+      }
+    },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          width: '100%',
+          li: {
+            borderRadius: '5px', width: '100%'
+          }
+        }
+      }
+    },
+
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: ({ theme }) => ({
+          color: theme.palette.secondary.light,
+          background: theme.palette.secondary.dark,
+          borderRadius: '5px'
+        })
+      }
+    },
     MuiContainer: {
       styleOverrides: {
         root: ({ theme }) => ({
           transition: '.8s',
           background: theme.palette.primary.main,
           height: "100vh",
-          overflow: "hidden"
+          overflow: "hidden",
+          borderRadius: '5px'
         })
       }
     },
@@ -120,6 +158,7 @@ const theme = (season: ThemeSeasons) => createTheme({
         root: ({ theme }) => ({
           transition: '.8s',
           background: theme.palette.secondary.main,
+          borderRadius: '5px'
         })
       }
     },
@@ -131,7 +170,8 @@ const theme = (season: ThemeSeasons) => createTheme({
           padding: '1rem',
           display: "flex",
           gap: '1rem',
-          border: `.8px solid ${theme.palette.text.primary}`
+          border: `.8px solid ${theme.palette.text.primary}`,
+          borderRadius: '5px'
         })
       }
     },
@@ -139,6 +179,7 @@ const theme = (season: ThemeSeasons) => createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           transition: '.8s',
+          borderRadius: '5px',
           '.MuiBox-root': {
             background: theme.palette.background.paper,
             '&.info': {
@@ -164,6 +205,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     MuiButtonBase: {
       styleOverrides: {
         root: ({ theme }) => ({
+          borderRadius: '5px',
           transition: '.8s',
           fontSize: '.65rem!important',
           boxShadow: 'none!important',
@@ -196,7 +238,9 @@ const theme = (season: ThemeSeasons) => createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           transition: '.8s',
-          background: 'white'
+          background: 'white',
+          borderRadius: '5px',
+          height: '35px',
         })
       }
     }

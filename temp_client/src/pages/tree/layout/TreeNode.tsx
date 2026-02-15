@@ -5,7 +5,7 @@ import { Trans } from '@lingui/macro';
 import styled from 'styled-components';
 import Initials from 'components/common/Initials';
 import { Gendersenum } from 'types';
-import { BabyIcon, DeleteIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon, SettingsIcon } from 'utils/assets/icons';
+import { BabyIcon, DeleteIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon } from 'utils/assets/icons';
 
 // TODO: check types in reacflow docs and create validations for node and edge structures. if any prop doesnt match the type, there can be undetected errors
 // anchor doesnt have the ability to be dragged for some reason, because position is empty
@@ -87,7 +87,7 @@ const MainContainer = styled(Box)<{bg: string, expand: boolean}>`
   padding: 1;
   display: flex;
   border: .6px solid #8e6c75;
-  border-radius: 2;
+  border-radius: 5px;
   flex-direction: column;
   gap: 1;
   justify-content: start;

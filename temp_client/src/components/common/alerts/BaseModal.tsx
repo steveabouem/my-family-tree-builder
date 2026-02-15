@@ -5,7 +5,6 @@ import { IoCloseCircleSharp } from "react-icons/io5";
 import { TbFileSad } from "react-icons/tb";
 import { RiFileInfoLine } from "react-icons/ri";
 import { TbFileSmile } from "react-icons/tb";
-// @ts-ignore
 import styled from "styled-components";
 import { ModalProps } from "types";
 import GlobalContext from "contexts/creators/global/global.context";

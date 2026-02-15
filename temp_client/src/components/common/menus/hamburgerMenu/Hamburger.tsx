@@ -1,28 +1,27 @@
 import React, { ReactNode, useContext, useMemo, useState } from 'react';
-import { ExitIcon, IncognitoIcon, ArrowDownIcon, ArrowUpIcon } from 'utils/assets/icons';
-// @ts-ignore
+import { LogoutIcon, ArrowDownIcon, ArrowUpIcon } from 'utils/assets/icons';
 import styled from "styled-components";
 import BoxColumn from 'components/common/containers/row/BoxColumn';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import PageUrlsEnum from 'utils/urls';
-import { useZDispatch, useZSelector } from 'app/hooks';
-import { UserState } from 'types';
-import { useLogout } from 'services/v2';
-import { useLocation } from 'react-router';
+import { useZDispatch } from 'app/hooks';
+import { useLogout } from 'api';
+import { useLocation, useNavigate } from 'react-router';
 import GlobalContext from 'contexts/creators/global';
-import { resetUserAction } from 'app/slices/user';
+import { clearUserAction, resetUserAction } from 'app/slices/user';
 import { Link } from 'react-router-dom';
 import BoxRow from 'components/common/containers/column';
+import { persistor } from 'app/store';
 
 const Hamburger = () => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
   const { updateModal } = useContext(GlobalContext);
-  const { currentUser } = useZSelector<UserState>(state => state.user);
   const dispatch = useZDispatch();
   const { mutate: logoutMutation } = useLogout();
   const theme = useTheme();
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   // TODO: declare standard sizes, em's etc
   const Buns = styled(Box)`
@@ -43,7 +42,7 @@ const Hamburger = () => {
 
   const menuIcon = useMemo(() => isOpened ?
     <ArrowUpIcon link onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} /> :
-    <ArrowDownIcon link onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} tooltip={{ active: true, text: 'Open menu' }} />, [isOpened]
+    <ArrowDownIcon link onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} tooltip={<Trans>open_menu</Trans>} />, [isOpened]
   );
   const isCurrentLocation = (path?: string) => {
     if (path) {
@@ -52,15 +51,11 @@ const Hamburger = () => {
       return pathname === "/";
     }
   };
-  const authLink = currentUser?.userId ?
-    { addClass: 'warn', label: <BoxRow><Trans>logout</Trans><ExitIcon link tooltip={{ active: true, text: 'Logout' }} /></BoxRow>, onClick: () => showLogoutWarning() }
-    :
-    { url: PageUrlsEnum.auth, label: <Trans>authentication_page_link</Trans> };
   const links: { label: string | ReactNode, onClick?: () => void, url?: string, addClass?: string }[] = [
     { url: PageUrlsEnum.home, label: <Trans>home_page_link</Trans> },
-    { url: PageUrlsEnum.user.replace(':id', `${currentUser?.userId || 0}`), label: <Trans>profile_page_link</Trans> },
+    { url: PageUrlsEnum.user, label: <Trans>profile_page_link</Trans> },
     { url: PageUrlsEnum.trees, label: <Trans>trees_page_link</Trans> },
-    authLink
+    { addClass: 'warn', label: <BoxRow><Trans>logout</Trans><LogoutIcon link tooltip={<Trans>Logout</Trans>} /></BoxRow>, onClick: () => showLogoutWarning() }
   ];
 
 
@@ -82,6 +77,9 @@ const Hamburger = () => {
     });
   }
   function processLogout() {
+    toggleMenu();
+    dispatch(clearUserAction());
+    persistor.purge();
     logoutMutation(undefined, {
       onError: () => updateModal({
         buttons: { cancel: true, confirm: false, cancelText: <Trans>close</Trans> },
@@ -91,13 +89,12 @@ const Hamburger = () => {
         hidden: false
       }),
       onSuccess: () => {
-        localStorage.clear();
-        dispatch(resetUserAction());
         updateModal({
           buttons: { cancel: true, confirm: false, cancelText: <Trans>close</Trans> },
           title: <Trans>operation_success_title</Trans>,
           content: <Trans>operation_success_text</Trans>,
           type: 'success',
+          onConfirm: () => { navigate(PageUrlsEnum.auth) },
           hidden: false
         })
       },
@@ -117,8 +114,8 @@ const Hamburger = () => {
         <BoxColumn sx={{ ...menuStyles, background: theme.palette.secondary.light }}>
           {links.map((l) => (
             <MenuLink
-              to={l?.url || ''} isSelected={isCurrentLocation(l?.url)}
-              onClick={() => handleLinkClick(l?.onClick)} className={l?.addClass || ''}
+              to={l?.url || ''} active={isCurrentLocation(l?.url)}
+              onClick={() => handleLinkClick(l?.onClick || toggleMenu)} className={l?.addClass || ''}
             >
               {l.label}
             </MenuLink>

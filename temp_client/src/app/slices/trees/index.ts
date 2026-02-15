@@ -36,8 +36,12 @@ const saveTreeList = (state: FamilyTreeState, action: PayloadAction<any>) => {
 };
 const resetTree = (state: FamilyTreeState) => {
   state.updating = true;
-  state = {...initialState};
+  state.name = '';
+  state.treeId = 0;
+  state.list = [];
+  state.currentFamilyTree = undefined;
   state.updating = false;
+  
   return state;
 }
 /*

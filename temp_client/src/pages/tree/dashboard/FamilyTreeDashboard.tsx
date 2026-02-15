@@ -10,7 +10,7 @@ import { AddIcon, DeleteIcon, EyeIcon, FamilyTreeIcon } from "utils/assets/icons
 import GlobalContext from "contexts/creators/global";
 import Page from "components/common/Page";
 import PageUrlsEnum from "utils/urls";
-import { useDeleteTree, useGetAllForUser } from "services/v2";
+import { useDeleteTree, useGetAllForUser } from "api";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { UserState, FamilyTreeRecord } from "types";
 import EmptyList from "components/common/EmptyList";
@@ -107,7 +107,7 @@ const FamilyTreeDashboard = () => {
         {hasTrees ? (
           <>
             <BoxRow sx={{ justifyContent: 'end' }}>
-              <AddTreeButton variant="outlined" color={theme.palette.secondary.contrastText} elevation={0} 
+              <AddTreeButton variant="outlined" color={theme.palette.secondary.contrastText} elevation={0}
                 onClick={() => {
                   // dispatch(populateTreeAction());
                   navigate(PageUrlsEnum.newTree);
@@ -115,7 +115,7 @@ const FamilyTreeDashboard = () => {
                 sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}
               >
                 <Trans>add</Trans>
-                <AddIcon size={15} color={theme.palette.success.dark} tooltip={{ active: true, text: 'Add new family tree' }} />
+                <AddIcon size={15} color={theme.palette.success.dark} tooltip={<Trans>add new family tree</Trans>} />
               </AddTreeButton>
             </BoxRow>
             <TreeDashboardContainer sx={{ border: 'none' }}>
@@ -138,8 +138,8 @@ const FamilyTreeDashboard = () => {
                       </Typography>
                     </Box>
                     <Box display="flex" gap={2} alignItems="center" justifyContent="end">
-                      <EyeIcon link sx={{ cursor: 'pointer' }} onClick={() => selectTree(t)} tooltip={{ active: true, text: 'View tree' }} />
-                      <DeleteIcon link sx={{ cursor: 'pointer' }} onClick={() => { showDeleteTreeWarning(t) }} tooltip={{ active: true, text: 'Delete tree' }} />
+                      <EyeIcon link sx={{ cursor: 'pointer' }} onClick={() => selectTree(t)} tooltip={<Trans>view_tree</Trans>} />
+                      <DeleteIcon link sx={{ cursor: 'pointer' }} onClick={() => { showDeleteTreeWarning(t) }} tooltip={<Trans>delete_tree</Trans>} />
                     </Box>
                   </Box>
                 </TreeCard>
@@ -147,10 +147,12 @@ const FamilyTreeDashboard = () => {
               ))}
             </TreeDashboardContainer>
           </>
-        ) : <EmptyList handleAdd={() => {
-          dispatch(resetAction());
-          navigate(PageUrlsEnum.newTree);
-        }} />}
+        ) : <EmptyList
+          handleRefresh={refreshTreesList}
+          handleAdd={() => {
+            dispatch(resetAction());
+            navigate(PageUrlsEnum.newTree);
+          }} />}
       </PaperSection>
     </Page>
   );

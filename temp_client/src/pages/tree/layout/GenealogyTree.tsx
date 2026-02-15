@@ -16,11 +16,11 @@ import { useZDispatch, useZSelector } from 'app/hooks';
 import GlobalContext from 'contexts/creators/global';
 import NodeMenu from './NodeMenu';
 import { setStepsCountAction, changeModeAction, changeformStepAction } from 'app/slices/forms/stepForm';
-import { ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes, FamilyMemberDTO, FamilyTreeState, UserState, MemberPosition, DeleteMembersRequestPayload } from 'types';
+import { ReactFlowEdge, ReactFlowNode, NodeMenuActions, stepFormModes, FamilyMemberDTO, FamilyTreeState, UserState, MemberPosition } from 'types';
 import DataProgress from 'components/common/progressIndicators/DataProgress';
-import { useChangeMemberPositions, useDeleteMembers } from 'services/v2';
 import BoxColumn from 'components/common/containers/row/BoxColumn';
 import BoxRow from 'components/common/containers/column';
+import { useChangeMemberPositions, useDeleteMembers } from 'api';
 
 const nodeTypes = {
   custom: CustomNode,
@@ -229,7 +229,7 @@ const GenealogyTree = memo(() => {
       </BoxRow>
       <ReactFlow
         nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes} onNodeDrag={moveNode}
-        onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange}
+        onNodeDoubleClick={showEditModal} onNodesChange={onNodesListChange} connectOnClick
         onNodeDragStop={showCoordinatesChangeWarning}
       >
         <Background

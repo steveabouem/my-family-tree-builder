@@ -1,5 +1,5 @@
 import { Trans } from "@lingui/macro";
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 import BoxRow from "components/common/containers/column";
 import BoxColumn from "components/common/containers/row/BoxColumn";
 // @ts-ignore
@@ -70,7 +70,10 @@ const ImageField = (fieldProps: any) => {
           <ImageUrlInput type="text" onChange={handlePreview} />
         )}
         <Button variant="outlined" color="primary" onClick={togglImageType}>
-          {isUploading ? <LinkIcon color="grey" size={25} /> : <UploadIcon color="grey" size={25} />}
+          {isUploading ?
+            <LinkIcon tooltip={<Trans>upload_with_url</Trans>} link color="grey" size={25} /> :
+            <UploadIcon tooltip={<Trans>upload_file</Trans>} link color="grey" size={25} />
+          }
         </Button>
       </BoxRow>
       {uploading && <LocalSpinner loading={true} size={90} />}
