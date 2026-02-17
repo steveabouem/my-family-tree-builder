@@ -14,6 +14,7 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
   const ip = userData.ip;
   const userImage = userData.profile_url?.replace(/^data:image\/\w+;base64,/, '') || null;
   if (userImage) {
+    logger.info('Processing img at registration');
     buffer = Buffer.from(userImage, 'base64');
   }
   const formattedValues = { ...userData, assigned_ips: [ip], created_at: dayjs(), profile_url: buffer };

@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 
 const BoxColumn = ({sx, children}: any) => {
   return (
-    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'start', justifyContent: 'center', gap:1, ...sx}}>
+    <Box sx={{display: 'flex', flexDirection: 'column', alignItems: 'start', justifyContent: 'center', gap:1, width: '100%',...sx,}}>
       {children}
     </Box>
   );

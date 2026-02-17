@@ -8,14 +8,14 @@ const BoxRow = ({ sx, children, hasCustomStyles = false, styledProps }: any) => 
     const Comp = styled(Box)` ${styledProps}`;
 
     return (
-      <Comp sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1, ...sx }}>
+      <Comp sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1,width: '100%', ...sx }}>
         {children}
       </Comp>
     );
   }
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1, ...sx }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1, width: '100%', ...sx }}>
       {children}
     </Box>
   );

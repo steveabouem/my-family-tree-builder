@@ -26,6 +26,7 @@ const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, s
       <Select
         // @ts-ignore
         value={values[name]} required
+        variant="standard"
         placeholder={`${<Trans>select</Trans>}`}
         labelId=""
         id={id || ''}

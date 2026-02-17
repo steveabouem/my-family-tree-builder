@@ -1,23 +1,30 @@
-import React, { useContext, useEffect, useMemo } from "react";
-import { Box, Button, Chip, FormControl, MenuItem, Paper, Typography, useTheme } from "@mui/material";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import { Box, Button, Chip, Collapse, FormControl, List, ListItemButton, ListItemIcon, MenuItem, Paper, Typography, useTheme } from "@mui/material";
 import { Field, FieldArray, useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
 import { v4 } from "uuid";
-import StepForm from "components/common/forms/stepform";
+import styled from "styled-components";
 import { useZDispatch, useZSelector } from "app/hooks";
-import { clearFieldsByStepName, goToNextStepAction, goToPrevStepAction, loaStepFormFieldsAction, setStepFieldsAction, setStepsCountAction, toggleStepFormUpdatingAction, updateGlobalValuesAction } from "app/slices/forms/stepForm";
-import FieldAndLabel from "components/common/forms/fieldAndlabel";
+import {
+  clearFieldsByStepName, goToNextStepAction, goToPrevStepAction, loaStepFormFieldsAction, setStepFieldsAction,
+  setStepsCountAction, toggleStepFormUpdatingAction, updateGlobalValuesAction
+} from "app/slices/forms/stepForm";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import GlobalContext from "contexts/creators/global";
-import { StepFormState, stepFormModes, genderOptions, maritalStatusOptions, relationOptions, NodeMenuActions, FormField, FamilyTreeFormData, FieldsSection } from "types";
+import {
+  StepFormState, stepFormModes, genderOptions, maritalStatusOptions, relationOptions, NodeMenuActions,
+  FormField, FamilyTreeFormData, FieldsSection
+} from "types";
 import { useAddMembers, useChangeMemberPositions, useCreateFamilyTree } from "api";
 import BoxColumn from "components/common/containers/row/BoxColumn";
 import BoxRow from "components/common/containers/column";
 import CustomField from "components/common/forms/customField";
 import ImageField from "components/common/forms/imageField";
+import { CollapseIcon, ExpandIcon } from "utils/assets/icons";
 
 // @ts-ignore
 const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
+  const [collapsedSections, setCollapsedSections] = useState<{ [key: string]: boolean }>({ 0: false });
   // @ts-ignore
   const { totalSteps, currentFormStep, currentFormStepDetails, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
   const { values, setFieldValue, setValues } = useFormikContext<FamilyTreeFormData>();
@@ -29,7 +36,6 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
   const { isPending: isChangePositionsPending } = useChangeMemberPositions();
   const isProcessing = isChangePositionsPending || isCreateFamilyTreePending || isAddMembersPending;
   const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
-  const sectionStyles = { border: `1px solid ${theme.palette.primary.contrastText}`, borderRadius: '5px', padding: '1rem', width: '100%' };
   const formBody = useMemo(() => {
     const fieldNamePrefix = currentFormStepDetails.name?.length ? currentFormStepDetails.name : 'anchor';
     const sections: FieldsSection[] = [
@@ -77,65 +83,70 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
     ];
 
     const Body = () => {
+      // TODO: transition not working
       return (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: '1rem', position: 'relative' }}>
-          <Box display="flex" justifyContent="space-between">
-            <Typography variant="body1">
-              <Trans>current_form_step</Trans>
-            </Typography>
-            {/* // stepTree starts at 0 in the store */}
-            <Chip label={currentFormStep + 1} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
-          </Box>
-          <Box display="flex" justifyContent="flex-start" gap={2} alignItems="center">
-            <Box display="flex" flexDirection="column" gap={2} justifyContent="center" width="100%">
+        <BoxColumn>
+          <BoxColumn>
+            <BoxRow sx={{justifyContent: 'space-between'}}>
+              <Typography variant="body1">
+                <Trans>current_form_step</Trans>
+              </Typography>
+              {/* // stepTree starts at 0 in the store */}
+              <Chip label={currentFormStep + 1} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
+            </BoxRow>
               <Typography variant="body1">{currentFormStepDetails?.title}</Typography>
               <Typography variant="body1">{currentFormStepDetails?.subtitle}</Typography>
-            </Box>
-            <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
+            <BoxRow sx={{justifyContent:"flex-end"}} >
               <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
                 <Trans>prev</Trans>
               </Button>
               <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps - 1}>
                 <Trans>next</Trans>
               </Button>
-            </Box>
-          </Box>
-          <BoxColumn sx={{ justifyContent: 'space-evenly', width: '100%' }}>
-            {sections.map((s, i) => (
-              <BoxColumn sx={sectionStyles}>
-                <Typography variant="h5">{s.title}</Typography>
-                <BoxColumn sx={{ width: '100%' }}>
+            </BoxRow>
+          </BoxColumn>
+          <BoxColumn sx={{ justifyContent: 'space-evenly' }}>
+            {sections.map((s, sectionIndex) => (
+              <List sx={{background: `${theme.palette.info.light}`}}>
+                <BoxRow sx={{justifyContent: 'space-between', padding: '.5rem'}}>
+                  <Typography variant="h5">{s.title}</Typography>
+                  <ListItemIcon>
+                    {collapsedSections?.[sectionIndex] ?
+                      <CollapseIcon link onClick={() => toggleSection(sectionIndex)} /> :
+                      <ExpandIcon link onClick={() => toggleSection(sectionIndex)} />
+                    }
+                  </ListItemIcon>
+                </BoxRow>
+                <Collapse in={!!collapsedSections?.[sectionIndex]} sx={{padding: '.5rem'}}>
                   {s.fields.map((f) => (
-                    <>
-                    <Typography variant="subtitle2">{f.label}</Typography>
-                      {f.subComponent ? (
-                        <CustomField id={f?.id || ''} name={f.fieldName} value={f.subComponent.displayValue}
-                          required={!!f.required} component={f.subComponent} key={`${f.fieldName}-custom`}  />
-                      ) : f.type === 'array' ? (
-                        <FieldArray name={f.fieldName} render={fields => f.subComponent} key={`${f.fieldName}-array`} /> // TODO: this is incorrect
-                      ) : f.type === 'select' ? (
-                        <FormControl aria-label="Default select example" key={`${f.fieldName}-select`} >
-                          {f?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`} >{o?.label || '_'}</MenuItem>)}
-                        </FormControl>
-                      ) : f.type === 'image' ? (
-                        <FormControl >
+                    <BoxColumn>
+                      <BoxColumn>
+                        <Typography variant="subtitle2">{f.label}</Typography>
+                        {f.subComponent ? (
+                          <CustomField id={f?.id || ''} name={f.fieldName} value={f.subComponent.displayValue}
+                            required={!!f.required} component={f.subComponent} key={`${f.fieldName}-custom`} />
+                        ) : f.type === 'array' ? (
+                          <FieldArray name={f.fieldName} render={fields => f.subComponent} key={`${f.fieldName}-array`} /> // TODO: this is incorrect
+                        ) : f.type === 'select' ? (
+                          <FormControl aria-label="Default select example" key={`${f.fieldName}-select`} >
+                            {f?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`} >{o?.label || '_'}</MenuItem>)}
+                          </FormControl>
+                        ) : f.type === 'image' ? (
                           <ImageField id={f?.id || ''} name={f.fieldName} required={!!f.required}
                             key={`${f.fieldName}-image`} />
-                        </FormControl>
-                      ) : (
-                        <FormControl >
-
-                          <Field
-                            id={f?.id || ''} name={f.fieldName} value={values[f.fieldName]} 
-                            required={!!f.required} type={f?.type || 'text'} key={`${f.fieldName}-input`}
-                          />
-                        </FormControl>
-                      )}
-                      {/* <FieldAndLabel direction="column" fieldName={f.fieldName} label={f.label} sx={{ width: '100%' }} /> */}
-                    </>
+                        ) : (
+                          <FormControl >
+                            <Field
+                              id={f?.id || ''} name={f.fieldName} value={values[f.fieldName]}
+                              required={!!f.required} type={f?.type || 'text'} key={`${f.fieldName}-input`}
+                            />
+                          </FormControl>
+                        )}
+                      </BoxColumn>
+                    </BoxColumn>
                   ))}
-                </BoxColumn>
-              </BoxColumn>
+                </Collapse>
+              </List>
             ))}
           </BoxColumn>
           <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
@@ -146,12 +157,12 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
               <Trans>next</Trans>
             </Button>
           </Box>
-        </Box>
-      )
+        </BoxColumn>
+      );
     };
 
     return <Body />;
-  }, [currentFormStep, totalSteps, currentFormStepDetails?.name]);
+  }, [currentFormStep, totalSteps, currentFormStepDetails?.name, collapsedSections]);
 
   useEffect(() => {
     dispatch(toggleStepFormUpdatingAction(isProcessing));
@@ -172,6 +183,9 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
     }
   }, [modal?.transferData])
 
+  function toggleSection(sectionIndex: number) {
+    setCollapsedSections((prev: any) => ({ ...prev, [sectionIndex]: !prev?.[sectionIndex] }));
+  }
   function generateFieldsForRelative(stepNumber: number, reset: boolean) {
     //  @ts-ignore
     const matchingStepNameInTree = isEditMode ? treeCopy[stepNumber] : Object.keys(stepTree || {})
@@ -251,24 +265,20 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
     <Paper sx={{ flexDirection: "column", border: 'none' }} elevation={0}>
       <Typography variant="h5">about</Typography>
       <Typography variant="body2"><Trans>family_tree_building_explanation</Trans></Typography>
-      <BoxColumn sx={sectionStyles}>
-        <Typography variant="h5">form_management</Typography>
-        <BoxRow sx={{ width: '100%' }}>
-          <FieldAndLabel
-            direction="row" fieldName="treeName" label={<Trans>name_your_tree</Trans>}
-            sx={{ justifyContent: 'space-between', flex: '1', width: '100%' }}
-            fieldStyles={{ marginLeft: 'auto', width: '40%' }}
-          />
-        </BoxRow>
-        <BoxRow sx={{ width: '100%' }}>
-          <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
-          <BoxRow sx={{ flex: 1 }}>
-            <BaseDropDown name="next_of_kin" options={relationOptions} sx={{ width: '40%', marginLeft: 'auto' }} />
-            <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
-          </BoxRow>
+      <BoxColumn>
+        <Typography variant="h5">form_composition</Typography>
+        <Typography variant="subtitle2"><Trans>name_your_tree</Trans></Typography>
+        <FormControl>
+          <Field name="treeName" />
+        </FormControl>
+        <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
+        <BoxRow >
+          <FormControl>
+            <BaseDropDown name="next_of_kin" options={relationOptions} />
+          </FormControl>
+          <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
         </BoxRow>
       </BoxColumn>
-      {/* <StepForm handleSave={() => { }} duplicateBottomActions /> */}
       {formBody}
     </Paper>
   );

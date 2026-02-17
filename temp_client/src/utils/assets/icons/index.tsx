@@ -1,7 +1,7 @@
 import React from 'react';
 import { TfiReload, TfiWrite } from "react-icons/tfi";
 import { LuImagePlus } from "react-icons/lu";
-import { PiTreeStructure, PiBabyFill, PiNewspaperClippingDuotone, PiWarningDuotone } from 'react-icons/pi';
+import { PiTreeStructure, PiBabyFill, PiNewspaperClippingDuotone, PiWarningDuotone, PiArrowsOutLineVerticalLight, PiArrowsInLineVerticalLight } from 'react-icons/pi';
 import { IoWoman, IoMan, IoSettings, IoCaretBackOutline, IoImageOutline } from "react-icons/io5";
 import { FaCaretDown, FaCaretUp, FaChild, FaChildDress, FaDoorOpen, FaLanguage, FaLink, FaTriangleExclamation, FaUpload, FaUser, FaUsers } from "react-icons/fa6";
 import { RiAddCircleLine, RiDeleteBin5Fill } from "react-icons/ri";
@@ -319,6 +319,34 @@ export const ReloadIcon = ({ sx = {}, color = '', size = 17, onClick, link, tool
   const theme = useTheme();
 
   const DynamicIcon = generateIcon(TfiReload, theme);
+
+  return tooltip ? (
+    <Tooltip title={tooltip}>
+      <Box>
+        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+      </Box>
+    </Tooltip>
+  ) :
+    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+};
+export const ExpandIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
+  const theme = useTheme();
+
+  const DynamicIcon = generateIcon(PiArrowsOutLineVerticalLight, theme);
+
+  return tooltip ? (
+    <Tooltip title={tooltip}>
+      <Box>
+        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+      </Box>
+    </Tooltip>
+  ) :
+    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+};
+export const CollapseIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
+  const theme = useTheme();
+
+  const DynamicIcon = generateIcon(PiArrowsInLineVerticalLight , theme);
 
   return tooltip ? (
     <Tooltip title={tooltip}>

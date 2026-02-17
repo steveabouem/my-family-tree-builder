@@ -45,7 +45,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
     if (newUser) {
       response.code = 200;
       response.error = false;
-      response.payload = { userId: newUser.id, email: newUser.email };
+      response.payload = { userId: newUser.id, email: newUser.email, firstName: newUser.first_name, lastName: newUser.last_name  };
       response.addToSession = true;
       logger.info('New USer returns to session ', { response });
 
@@ -164,17 +164,17 @@ export const deleteUser = async (id: number): Promise<boolean> => {
 }
 
 const validateUserFields = (values: APIUserDTO): boolean => {
-  if (!values.dob) {
-    logger.info('missing dob');
-    logger.error('! User.validateUserFields ! missing dob');
-    return false;
-  }
+  // if (!values.dob) {
+  //   logger.info('missing dob');
+  //   logger.error('! User.validateUserFields ! missing dob');
+  //   return false;
+  // }
 
-  if (!values?.assigned_ips?.length || !values.assigned_ips) {
-    logger.info('missing assigned IPs');
-    logger.error('! User.validateUserFields ! missing assigned IPs.');
-    return false;
-  }
+  // if (!values?.assigned_ips?.length || !values.assigned_ips) {
+  //   logger.info('missing assigned IPs');
+  //   logger.error('! User.validateUserFields ! missing assigned IPs.');
+  //   return false;
+  // }
 
   if (!values.first_name) {
     logger.info('missing first_name');
@@ -200,11 +200,11 @@ const validateUserFields = (values: APIUserDTO): boolean => {
     return false;
   }
 
-  if (!values.marital_status) {
-    logger.info('missing marital_status');
-    logger.error('! User.validateUserFields ! missing marital_status');
-    return false;
-  }
+  // if (!values.marital_status) {
+  //   logger.info('missing marital_status');
+  //   logger.error('! User.validateUserFields ! missing marital_status');
+  //   return false;
+  // }
 
   if (!values.password) {
     logger.info('missing password');

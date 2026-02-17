@@ -39,15 +39,12 @@ User.init(
     },
     status: {
       type: DataTypes.INTEGER,
-      allowNull: true,
     },
     age: {
       type: DataTypes.INTEGER,
-      allowNull: true,
     },
     dob: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     assigned_ips: {
       type: DataTypes.JSON,
@@ -55,11 +52,9 @@ User.init(
     },
     marital_status: {
       type: DataTypes.STRING,
-      allowNull: true
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false,
     },
     first_name: {
       type: DataTypes.STRING,

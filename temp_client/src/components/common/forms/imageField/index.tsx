@@ -60,16 +60,15 @@ const ImageField = (fieldProps: any) => {
     }
   }
 
-
   return (
-    <BoxColumn sx={{ width: '100%' }}>
-      <BoxRow sx={{ width: '100%' }}>
+    <BoxColumn sx={{ width: '100%'}}>
+      <BoxRow sx={{ width: '100%'}}>
         {isUploading ? (
           <ImageUrlInput accept="image" type="file" onChange={handlePreview} />
         ) : (
           <ImageUrlInput type="text" onChange={handlePreview} />
         )}
-        <Button variant="outlined" color="primary" onClick={togglImageType}>
+        <Button variant="outlined" color="primary" onClick={togglImageType} sx={{height: '35px'}}>
           {isUploading ?
             <LinkIcon tooltip={<Trans>upload_with_url</Trans>} link color="grey" size={25} /> :
             <UploadIcon tooltip={<Trans>upload_file</Trans>} link color="grey" size={25} />
@@ -98,4 +97,5 @@ const Preview = styled.img`
 const ImageUrlInput = styled.input`
   width: 100%;
 `;
+
 export default ImageField;

@@ -112,12 +112,13 @@ const theme = (season: ThemeSeasons) => createTheme({
         root: {
           width: '100%',
           height: '35px',
-          border: '1px solid',
           borderRadius: '5px',
           input: {
             borderRadius: '5px',
+            border: '1px solid',
             width: '100%',
-            border: 'none'
+            height: '100%',
+            // border: 'none'
           }
         }
       }
@@ -241,6 +242,7 @@ const theme = (season: ThemeSeasons) => createTheme({
           background: 'white',
           borderRadius: '5px',
           height: '35px',
+          border: '1px solid'
         })
       }
     }

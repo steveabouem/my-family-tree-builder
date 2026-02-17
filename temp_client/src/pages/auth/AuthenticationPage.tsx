@@ -77,13 +77,11 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
       value: v.marital_status,
       id: 'marital-status-field',
       subComponent: () => (
-        <FormControl fullWidth>
-          <BaseDropDown
-            name="marital_status"
-            options={maritalStatusOptions}
-            id="marital-status-dd"
-          />
-        </FormControl>
+        <BaseDropDown
+          name="marital_status"
+          options={maritalStatusOptions}
+          id="marital-status-dd"
+        />
       ),
       required: true,
     },

@@ -14,7 +14,6 @@ module.exports = {
         type: Sequelize.STRING
       },
       status: {
-        allowsNull: true,
         type: Sequelize.INTEGER,
         defaultValue: 1 // 1 active | 0 inactive
       },
@@ -26,7 +25,6 @@ module.exports = {
         type: Sequelize.STRING
       },
       age: {
-        allowNull: true,
         type: Sequelize.INTEGER
       },
       dob: {
@@ -38,7 +36,6 @@ module.exports = {
         type: Sequelize.CHAR(255), // https://www.mindbaz.com/en/email-deliverability/what-is-the-maximum-size-of-an-mail-address/
       },
       occupation: {
-        allowNull: true,
         type: Sequelize.STRING
       },
       password: {
