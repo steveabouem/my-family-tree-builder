@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 
 const Initials = ({ firstName, lastName, size = 25, bg }: { firstName: string, lastName: string, bg?: string, size?: number }) => {
+  
   return (
     <Box height={size} display="flex" alignItems="center" justifyContent="center">
       <Box

@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const BoxRow = ({ sx, children, hasCustomStyles = false, styledProps }: any) => {
 
   if (hasCustomStyles) {
-    const Comp = styled(Box)` ${styledProps}`;
+    const Comp = renderStyled(styledProps);
 
     return (
       <Comp sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', gap: 1,width: '100%', ...sx }}>
@@ -19,6 +19,10 @@ const BoxRow = ({ sx, children, hasCustomStyles = false, styledProps }: any) => 
       {children}
     </Box>
   );
+};
+
+const renderStyled = (attr: string) => {
+  return styled(Box)` ${attr}`;
 };
 
 export default BoxRow;
