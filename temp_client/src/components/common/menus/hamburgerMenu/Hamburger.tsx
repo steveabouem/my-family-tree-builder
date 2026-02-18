@@ -9,20 +9,19 @@ import { useZDispatch } from 'app/hooks';
 import { useLogout } from 'api';
 import { useLocation, useNavigate } from 'react-router';
 import GlobalContext from 'contexts/creators/global';
-import { clearUserAction, resetUserAction } from 'app/slices/user';
+import { clearUserAction } from 'app/slices/user';
 import { Link } from 'react-router-dom';
 import BoxRow from 'components/common/containers/column';
 import { persistor } from 'app/store';
 
 const Hamburger = () => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
-  const { updateModal } = useContext(GlobalContext);
+  const { updateModal, clearModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
-  const { mutate: logoutMutation } = useLogout();
+  const { mutateAsync: logoutMutateAsync } = useLogout();
   const theme = useTheme();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-
   // TODO: declare standard sizes, em's etc
   const Buns = styled(Box)`
     position: relative;
@@ -58,7 +57,6 @@ const Hamburger = () => {
     { addClass: 'warn', label: <BoxRow><Trans>logout</Trans><LogoutIcon link tooltip={<Trans>Logout</Trans>} /></BoxRow>, onClick: () => showLogoutWarning() }
   ];
 
-
   function toggleMenu() {
     setIsOpened(!isOpened);
   }
@@ -76,29 +74,28 @@ const Hamburger = () => {
       hidden: false
     });
   }
-  function processLogout() {
-    toggleMenu();
-    dispatch(clearUserAction());
-    persistor.purge();
-    logoutMutation(undefined, {
-      onError: () => updateModal({
+  async function processLogout() {
+    try {
+      await logoutMutateAsync();
+      dispatch(clearUserAction());
+      await persistor.purge();
+      updateModal({
+        buttons: { cancel: false, confirm: true, confirmText: <Trans>close</Trans> },
+        title: <Trans>operation_success_title</Trans>,
+        content: <Trans>operation_success_text</Trans>,
+        type: 'success',
+        onConfirm: () => { navigate(PageUrlsEnum.auth); },
+        hidden: false
+      });
+    } catch {
+      updateModal({
         buttons: { cancel: true, confirm: false, cancelText: <Trans>close</Trans> },
         title: <Trans>operation_failure_title</Trans>,
         content: <Trans>operation_failure_text</Trans>,
         type: 'error',
         hidden: false
-      }),
-      onSuccess: () => {
-        updateModal({
-          buttons: { cancel: true, confirm: false, cancelText: <Trans>close</Trans> },
-          title: <Trans>operation_success_title</Trans>,
-          content: <Trans>operation_success_text</Trans>,
-          type: 'success',
-          onConfirm: () => { navigate(PageUrlsEnum.auth) },
-          hidden: false
-        })
-      },
-    });
+      });
+    }
   }
   function handleLinkClick(callback?: () => void) {
     if (callback) {

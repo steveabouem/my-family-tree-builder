@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Chip, Collapse, FormControl, List, ListItemButton, ListItemIcon, MenuItem, Paper, Typography, useTheme } from "@mui/material";
+import React, { useContext, useEffect, useMemo,  useState } from "react";
+import { Box, Button, Chip, Collapse, FormControl, List, ListItemIcon, MenuItem, Paper, Typography, useTheme } from "@mui/material";
 import { Field, FieldArray, useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
 import { v4 } from "uuid";
-import styled from "styled-components";
 import { useZDispatch, useZSelector } from "app/hooks";
 import {
   clearFieldsByStepName, goToNextStepAction, goToPrevStepAction, loaStepFormFieldsAction, setStepFieldsAction,
@@ -18,151 +17,64 @@ import {
 import { useAddMembers, useChangeMemberPositions, useCreateFamilyTree } from "api";
 import BoxColumn from "components/common/containers/row/BoxColumn";
 import BoxRow from "components/common/containers/column";
-import CustomField from "components/common/forms/customField";
-import ImageField from "components/common/forms/imageField";
-import { CollapseIcon, ExpandIcon } from "utils/assets/icons";
+import FieldSectionsGenerator from "components/common/forms/FieldSectionsGenerator";
 
 // @ts-ignore
 const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
-  const [collapsedSections, setCollapsedSections] = useState<{ [key: string]: boolean }>({ 0: false });
   // @ts-ignore
   const { totalSteps, currentFormStep, currentFormStepDetails, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
-  const { values, setFieldValue, setValues } = useFormikContext<FamilyTreeFormData>();
+  const { values, setFieldValue, setValues, submitForm } = useFormikContext<FamilyTreeFormData>();
   const { modal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
-  const theme = useTheme();
   const { isPending: isCreateFamilyTreePending } = useCreateFamilyTree();
   const { isPending: isAddMembersPending } = useAddMembers();
   const { isPending: isChangePositionsPending } = useChangeMemberPositions();
   const isProcessing = isChangePositionsPending || isCreateFamilyTreePending || isAddMembersPending;
   const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
-  const formBody = useMemo(() => {
-    const fieldNamePrefix = currentFormStepDetails.name?.length ? currentFormStepDetails.name : 'anchor';
-    const sections: FieldsSection[] = [
+  const fieldNamePrefix = currentFormStepDetails.name?.length ? currentFormStepDetails.name : 'anchor';
+  const sections: FieldsSection[] = [
+    {
+      title: <Trans>basic_identification</Trans>,
+      fields: [{
+        fieldName:
+          `${fieldNamePrefix}_firstName`, label: <Trans>firstName</Trans>, value: values?.[`${fieldNamePrefix}_firstName`] || ''
+      },
+      { fieldName: `${fieldNamePrefix}_lastName`, label: <Trans>lastName</Trans>, value: values?.[`${fieldNamePrefix}_lastName`] || '' },
+      { fieldName: `${fieldNamePrefix}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${fieldNamePrefix}_email`] || '' },
       {
-        title: <Trans>basic_identification</Trans>,
-        fields: [{
-          fieldName:
-            `${fieldNamePrefix}_firstName`, label: <Trans>firstName</Trans>, value: values?.[`${fieldNamePrefix}_firstName`] || ''
-        },
-        { fieldName: `${fieldNamePrefix}_lastName`, label: <Trans>lastName</Trans>, value: values?.[`${fieldNamePrefix}_lastName`] || '' },
-        { fieldName: `${fieldNamePrefix}_email`, label: <Trans>email</Trans>, type: "email", value: values?.[`${fieldNamePrefix}_email`] || '' },
+        fieldName: `${fieldNamePrefix}_gender`, label: <Trans>gender</Trans>, subComponent: () => (
+          <BaseDropDown
+            options={genderOptions} id="gender-selection" name={`${fieldNamePrefix}_gender`}
+          />),
+        value: values?.[`${fieldNamePrefix}_gender`] || ''
+      },
+      ]
+    },
+    {
+      title: <Trans>personal_life</Trans>, fields: [
         {
-          fieldName: `${fieldNamePrefix}_gender`, label: <Trans>gender</Trans>, subComponent: () => (
+          fieldName: `${fieldNamePrefix}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
             <BaseDropDown
-              options={genderOptions} id="gender-selection" name={`${fieldNamePrefix}_gender`}
-            />),
-          value: values?.[`${fieldNamePrefix}_gender`] || ''
+              name={`${fieldNamePrefix}_marital_status`}
+              options={maritalStatusOptions}
+              id={`${fieldNamePrefix}_marital_status-selection`}
+              sx={{ height: '1rem' }}
+            />
+          ),
+          value: values?.[`${fieldNamePrefix}_marital_status`] || ''
         },
-        ]
-      },
-      {
-        title: <Trans>personal_life</Trans>, fields: [
-          {
-            fieldName: `${fieldNamePrefix}_marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
-              <BaseDropDown
-                name={`${fieldNamePrefix}_marital_status`}
-                options={maritalStatusOptions}
-                id={`${fieldNamePrefix}_marital_status-selection`}
-                sx={{ height: '1rem' }}
-              />
-            ),
-            value: values?.[`${fieldNamePrefix}_marital_status`] || ''
-          },
-          { fieldName: `${fieldNamePrefix}_dob`, label: <Trans>dob</Trans>, type: "date", value: values?.[`${fieldNamePrefix}_dob`] || '' },
-          { fieldName: `${fieldNamePrefix}_dod`, label: <Trans>dod</Trans>, type: "date", value: values?.[`${fieldNamePrefix}_dod`] || '' },
-        ]
-      },
-      {
-        title: <Trans>others</Trans>, fields: [
-          { fieldName: `${fieldNamePrefix}_occupation`, label: <Trans>occupation</Trans>, value: values?.[`${fieldNamePrefix}_occupation`] || '' },
-          { fieldName: `${fieldNamePrefix}_description`, label: <Trans>description</Trans>, value: values?.[`${fieldNamePrefix}_description`] || '' },
-          { fieldName: `${fieldNamePrefix}_profile_url`, label: <Trans>picture</Trans>, type: 'image' },
-        ]
-      },
-    ];
-
-    const Body = () => {
-      // TODO: transition not working
-      return (
-        <BoxColumn>
-          <BoxColumn>
-            <BoxRow sx={{justifyContent: 'space-between'}}>
-              <Typography variant="body1">
-                <Trans>current_form_step</Trans>
-              </Typography>
-              {/* // stepTree starts at 0 in the store */}
-              <Chip label={currentFormStep + 1} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
-            </BoxRow>
-              <Typography variant="body1">{currentFormStepDetails?.title}</Typography>
-              <Typography variant="body1">{currentFormStepDetails?.subtitle}</Typography>
-            <BoxRow sx={{justifyContent:"flex-end"}} >
-              <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
-                <Trans>prev</Trans>
-              </Button>
-              <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps - 1}>
-                <Trans>next</Trans>
-              </Button>
-            </BoxRow>
-          </BoxColumn>
-          <BoxColumn sx={{ justifyContent: 'space-evenly' }}>
-            {sections.map((s, sectionIndex) => (
-              <List sx={{background: `${theme.palette.info.light}`}}>
-                <BoxRow sx={{justifyContent: 'space-between', padding: '.5rem'}}>
-                  <Typography variant="h5">{s.title}</Typography>
-                  <ListItemIcon>
-                    {collapsedSections?.[sectionIndex] ?
-                      <CollapseIcon link onClick={() => toggleSection(sectionIndex)} /> :
-                      <ExpandIcon link onClick={() => toggleSection(sectionIndex)} />
-                    }
-                  </ListItemIcon>
-                </BoxRow>
-                <Collapse in={!!collapsedSections?.[sectionIndex]} sx={{padding: '.5rem'}}>
-                  {s.fields.map((f) => (
-                    <BoxColumn>
-                      <BoxColumn>
-                        <Typography variant="subtitle2">{f.label}</Typography>
-                        {f.subComponent ? (
-                          <CustomField id={f?.id || ''} name={f.fieldName} value={f.subComponent.displayValue}
-                            required={!!f.required} component={f.subComponent} key={`${f.fieldName}-custom`} />
-                        ) : f.type === 'array' ? (
-                          <FieldArray name={f.fieldName} render={fields => f.subComponent} key={`${f.fieldName}-array`} /> // TODO: this is incorrect
-                        ) : f.type === 'select' ? (
-                          <FormControl aria-label="Default select example" key={`${f.fieldName}-select`} >
-                            {f?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`} >{o?.label || '_'}</MenuItem>)}
-                          </FormControl>
-                        ) : f.type === 'image' ? (
-                          <ImageField id={f?.id || ''} name={f.fieldName} required={!!f.required}
-                            key={`${f.fieldName}-image`} />
-                        ) : (
-                          <FormControl >
-                            <Field
-                              id={f?.id || ''} name={f.fieldName} value={values[f.fieldName]}
-                              required={!!f.required} type={f?.type || 'text'} key={`${f.fieldName}-input`}
-                            />
-                          </FormControl>
-                        )}
-                      </BoxColumn>
-                    </BoxColumn>
-                  ))}
-                </Collapse>
-              </List>
-            ))}
-          </BoxColumn>
-          <Box display="flex" justifyContent="flex-end" alignItems="center" gap={2}>
-            <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
-              <Trans>prev</Trans>
-            </Button>
-            <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps - 1}>
-              <Trans>next</Trans>
-            </Button>
-          </Box>
-        </BoxColumn>
-      );
-    };
-
-    return <Body />;
-  }, [currentFormStep, totalSteps, currentFormStepDetails?.name, collapsedSections]);
+        { fieldName: `${fieldNamePrefix}_dob`, label: <Trans>dob</Trans>, type: "date", value: values?.[`${fieldNamePrefix}_dob`] || '' },
+        { fieldName: `${fieldNamePrefix}_dod`, label: <Trans>dod</Trans>, type: "date", value: values?.[`${fieldNamePrefix}_dod`] || '' },
+      ]
+    },
+    {
+      title: <Trans>others</Trans>, fields: [
+        { fieldName: `${fieldNamePrefix}_occupation`, label: <Trans>occupation</Trans>, value: values?.[`${fieldNamePrefix}_occupation`] || '' },
+        { fieldName: `${fieldNamePrefix}_description`, label: <Trans>description</Trans>, value: values?.[`${fieldNamePrefix}_description`] || '' },
+        { fieldName: `${fieldNamePrefix}_profile_url`, label: <Trans>picture</Trans>, type: 'image' },
+      ]
+    },
+  ];
 
   useEffect(() => {
     dispatch(toggleStepFormUpdatingAction(isProcessing));
@@ -183,9 +95,6 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
     }
   }, [modal?.transferData])
 
-  function toggleSection(sectionIndex: number) {
-    setCollapsedSections((prev: any) => ({ ...prev, [sectionIndex]: !prev?.[sectionIndex] }));
-  }
   function generateFieldsForRelative(stepNumber: number, reset: boolean) {
     //  @ts-ignore
     const matchingStepNameInTree = isEditMode ? treeCopy[stepNumber] : Object.keys(stepTree || {})
@@ -279,7 +188,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
           <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
         </BoxRow>
       </BoxColumn>
-      {formBody}
+      <FieldSectionsGenerator sections={sections}/>
     </Paper>
   );
 };

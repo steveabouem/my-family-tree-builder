@@ -15,7 +15,7 @@ const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): J
         overflow="hidden scroll" mt="50px" ml={0} mr={0}
         sx={{ backgroundImage: `url(${bg || ''})`, backgroundSize: 'cover' }}
       >
-        <Box className="page-sections" width="75%" m="auto" sx={{position: 'relative'}}>
+        <Box className="page-sections" width="75%" m="0 calc(12.5% - 20px) 0 12.5%" sx={{position: 'relative'}}>
           {/* <Box className="section-top" /> use for gradient effect */}
           {/* {prevUrl && <Link to={`${prevUrl}`} style={{
             position: 'absolute',
@@ -25,7 +25,7 @@ const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): J
             height: '30px',
             width: '30px',
           }}><BackIcon color={seasonalTheme.palette.primary.contrastText} /> </Link>} */}
-          <Box className="section-main">
+          <Box>
             <Typography variant="h3">{title}</Typography>
             {subtitle ? <Typography variant="h4">{subtitle}</Typography> : ''}
             <Spinner loading={!!loading} />
