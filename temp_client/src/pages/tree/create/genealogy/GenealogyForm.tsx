@@ -26,6 +26,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
   const { values, setFieldValue, setValues, submitForm } = useFormikContext<FamilyTreeFormData>();
   const { modal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
+  const theme = useTheme();
   const { isPending: isCreateFamilyTreePending } = useCreateFamilyTree();
   const { isPending: isAddMembersPending } = useAddMembers();
   const { isPending: isChangePositionsPending } = useChangeMemberPositions();

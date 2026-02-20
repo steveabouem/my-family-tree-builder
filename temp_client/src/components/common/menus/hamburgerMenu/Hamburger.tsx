@@ -5,7 +5,7 @@ import BoxColumn from 'components/common/containers/row/BoxColumn';
 import { Box, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import PageUrlsEnum from 'utils/urls';
-import { useZDispatch } from 'app/hooks';
+import { useZDispatch, useZSelector } from 'app/hooks';
 import { useLogout } from 'api';
 import { useLocation, useNavigate } from 'react-router';
 import GlobalContext from 'contexts/creators/global';
@@ -13,11 +13,14 @@ import { clearUserAction } from 'app/slices/user';
 import { Link } from 'react-router-dom';
 import BoxRow from 'components/common/containers/column';
 import { persistor } from 'app/store';
+import { UserState } from 'types';
 
 const Hamburger = () => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
-  const { updateModal, clearModal } = useContext(GlobalContext);
+  const { updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
+  const {currentUser} = useZSelector<UserState>((state) => state.user);
+  const userLoggedIn = !!currentUser?.userId;
   const { mutateAsync: logoutMutateAsync } = useLogout();
   const theme = useTheme();
   const { pathname } = useLocation();
@@ -40,8 +43,8 @@ const Hamburger = () => {
   `;
 
   const menuIcon = useMemo(() => isOpened ?
-    <ArrowUpIcon link onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} /> :
-    <ArrowDownIcon link onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} tooltip={<Trans>open_menu</Trans>} />, [isOpened]
+    <ArrowUpIcon link color={theme.palette.primary.dark} onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} /> :
+    <ArrowDownIcon link color={theme.palette.primary.dark} onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} tooltip={<Trans>open_menu</Trans>} />, [isOpened]
   );
   const isCurrentLocation = (path?: string) => {
     if (path) {
@@ -52,8 +55,8 @@ const Hamburger = () => {
   };
   const links: { label: string | ReactNode, onClick?: () => void, url?: string, addClass?: string }[] = [
     { url: PageUrlsEnum.home, label: <Trans>home_page_link</Trans> },
-    { url: PageUrlsEnum.user, label: <Trans>profile_page_link</Trans> },
-    { url: PageUrlsEnum.trees, label: <Trans>trees_page_link</Trans> },
+    { url: userLoggedIn ? PageUrlsEnum.user : PageUrlsEnum.auth , label: <Trans>profile_page_link</Trans> },
+    { url: userLoggedIn ? PageUrlsEnum.trees : PageUrlsEnum.auth , label: <Trans>trees_page_link</Trans> },
     { addClass: 'warn', label: <BoxRow><Trans>logout</Trans><LogoutIcon link tooltip={<Trans>Logout</Trans>} /></BoxRow>, onClick: () => showLogoutWarning() }
   ];
 

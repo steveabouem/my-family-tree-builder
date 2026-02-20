@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Box, Button, Divider, Paper, Stack, Typography, useTheme } from "@mui/material";
 import { useZSelector } from "app/hooks";
 import { ThemeState } from "types";
+import Page from "components/common/Page";
 
 type ColorSwatchProps = {
   label: string;
@@ -123,7 +124,7 @@ const ThemingTest = () => {
   ];
 
   return (
-    <Box sx={{ mt: 8, p: 3, display: "flex", flexDirection: "column", gap: 3 }}>
+    <Page subtitle="" title="">
       <Typography variant="h2">Theming test</Typography>
       <Typography variant="subtitle1">Current season: {season}</Typography>
       <Typography variant="body2" sx={{ maxWidth: 720 }}>
@@ -171,7 +172,7 @@ const ThemingTest = () => {
           ))}
         </Stack>
       </Paper>
-    </Box>
+    </Page>
   );
 };
 

@@ -5,13 +5,8 @@ import { useZSelector } from 'app/hooks';
 import { ThemeSeasons, ThemeState } from 'types';
 
 const PaperSection = ({ children, elevation }: { children: ReactNode, elevation?: number }) => {
-  const { season } = useZSelector<ThemeState>(state => state.theme);
-  const contentStyles = {
-    border: season !== ThemeSeasons.default ? 'none' : '1px solid #005078'
-  };
-
-  return (
-    <ResponsivePaper sx={contentStyles} elevation={elevation || 0}>
+return (
+    <ResponsivePaper sx={{border: "none"}} elevation={elevation || 0}>
       {children}
     </ResponsivePaper>
   )

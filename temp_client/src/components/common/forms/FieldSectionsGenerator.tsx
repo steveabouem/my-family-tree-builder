@@ -55,7 +55,7 @@ export const FieldSectionsGenerator = memo(({ sections }: { sections: FieldsSect
                 }
               </ListItemIcon>
             </BoxRow>
-            <Collapse in={!!collapsed?.[sectionIndex]} sx={{ padding: '0 .5rem' }}>
+            <Collapse in={!!collapsed?.[sectionIndex]} sx={{ padding: '0 .5rem' }} >
               {s.fields.map((f) => (
                 <BoxColumn>
                   <BoxColumn>

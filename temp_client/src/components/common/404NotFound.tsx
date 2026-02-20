@@ -15,7 +15,7 @@ const NotFound = ({ handleReload }: { handleReload: () => void }) => {
         <BoxColumn sx={{ justifyContent: 'center', alignItems: 'center' }}>
             <WarningIcon size={40} color={theme.palette.warning.dark} />
             <Typography variant='h4' ><Trans>no_items_to_display_please_create</Trans></Typography>
-            <BoxRow>
+            <BoxRow sx={{justifyContent: 'center'}}>
                 <Button variant="contained" color="primary" onClick={() => handleReload()}>
                     <BoxRow>
                         <Trans>refresh</Trans>

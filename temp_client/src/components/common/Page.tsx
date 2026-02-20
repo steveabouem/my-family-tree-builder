@@ -4,18 +4,17 @@ import { PageProps } from "types";
 import Spinner from "./progressIndicators/Spinner";
 import BaseModal from "./alerts/BaseModal";
 import GlobalContext from "contexts/creators/global/global.context";
+import styled from "styled-components";
+import { keyframes } from "styled-components";
 
 const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): JSX.Element => {
   const { modal } = useContext(GlobalContext);
 
   return (
-    <React.Suspense fallback={<Spinner loading={true} />}>
-      <Box
-        height="calc(100vh - 90px)" width="100%" className="app-page"
-        overflow="hidden scroll" mt="50px" ml={0} mr={0}
+      <FadeInPage className="app-page"
         sx={{ backgroundImage: `url(${bg || ''})`, backgroundSize: 'cover' }}
       >
-        <Box className="page-sections" width="75%" m="0 calc(12.5% - 20px) 0 12.5%" sx={{position: 'relative'}}>
+        <Box className="page-sections" width="75%" m="0 calc(12.5% - 20px) 0 12.5%" sx={{ position: 'relative' }}>
           {/* <Box className="section-top" /> use for gradient effect */}
           {/* {prevUrl && <Link to={`${prevUrl}`} style={{
             position: 'absolute',
@@ -39,9 +38,26 @@ const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): J
           </Box>
           {/* <Box className="section-bottom" /> */}
         </Box>
-      </Box>
-    </React.Suspense>
+      </FadeInPage>
   );
 };
+
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
+
+const FadeInPage = styled(Box)`
+  animation: ${fadeIn} .4s ease;
+  height: calc(100% - 70px);
+  width: 100%;
+  overflow: hidden scroll;
+  margin: 60px 0 0 0;
+`;
+
 
 export default Page;

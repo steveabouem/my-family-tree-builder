@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Box, useTheme } from "@mui/material";
+import { Avatar, Box, Typography, useTheme } from "@mui/material";
 import logo from "utils/assets/images/logo.jpg";
 import PageUrlsEnum from "utils/urls";
 import ThemeSelector from "../ThemeSelector";
@@ -35,7 +35,7 @@ const TopNav = () => {
     <BoxRow hasCustomStyles styledProps={navStyles} >
       <BoxRow sx={{ width: "calc(75% - 8px)", margin: "0 calc(12.5% - 20px) 0 12.5%", justifyContent: "space-between" }}>
         <BoxRow>
-          <span>Zogh</span>
+          <Typography variant="h3" color={theme.palette.primary.dark} p={0}>Zogh</Typography>
           <Avatar
             src={logo} alt="app logo" sizes="40px 40px"
             variant="circular" sx={{ cursor: 'pointer' }}
@@ -43,7 +43,7 @@ const TopNav = () => {
           />
         </BoxRow>
         <BoxRow sx={{ justifyContent: "end", gap: 2 }}>
-          {currentUser?.firstName ? truncatedUserName : ''}
+          <Typography variant="body1" color={theme.palette.primary.dark}>{currentUser?.firstName ? truncatedUserName : ''}</Typography>
           <Hamburger />
           <LanguageSelector />
           <ThemeSelector />

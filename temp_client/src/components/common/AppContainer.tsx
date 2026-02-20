@@ -62,7 +62,7 @@ const AppContainer = (): JSX.Element => {
 };
 
 const mainContainerStyle = {
-  height: "100vh",
+  height: "calc(100vh - 70px)",
   width: "100vw",
   overflow: "hidden",
   padding: "0",

@@ -143,10 +143,9 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
   };
 
   const processLogin = async (values: LoginRequestPayload) => {
-    loginMutation.mutate(values, {
+    await loginMutation.mutateAsync(values, {
       onSuccess: (response: APIEndpointResponse<APILoginResponse>) => {
         const { code, payload } = response;
-        console.log('Login REs ', response);
 
         if (code == 200) {
           dispatch(setUserAction(payload));
@@ -176,12 +175,11 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
   }
 
   const processRegister = async (values: RegistrationRequestPayload) => {
-    registerMutation.mutate(values, {
+    await registerMutation.mutateAsync(values, {
       onSuccess: (response: APIEndpointResponse<APIRegistrationResponse>) => {
         if (response.payload?.userId) {
           changeMode(undefined);
-
-          setUserAction(response.payload);
+          dispatch(setUserAction(response.payload));
           navigate(PageUrlsEnum.user.replace(':id', `${response.payload.userId}`));
         } else {
           updateModal({

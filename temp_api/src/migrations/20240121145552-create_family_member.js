@@ -17,7 +17,7 @@ module.exports = {
       dob: { type: Sequelize.STRING},
       dod: { type: Sequelize.STRING },
       user_id: { type: Sequelize.INTEGER }, // not all members created an account
-      email: { type: Sequelize.STRING, allowNull: false },
+      email: { type: Sequelize.STRING },
       marital_status: { type: Sequelize.STRING },
       occupation: { type: Sequelize.STRING },
       age: { type: Sequelize.INTEGER },

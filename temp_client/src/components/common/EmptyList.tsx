@@ -12,7 +12,7 @@ const EmptyList = ({ message, icon, handleAdd, handleRefresh }: EmptyListProps) 
     <BoxColumn sx={{ ...messageBannerStyles, Background: theme.palette.background.default }}>
       {icon || <EmptyIcon size={40} color={theme.palette.warning.dark} />}
       <Typography variant='h4' >{message || <Trans>no_items_to_display_please_create</Trans>}</Typography>
-      <BoxRow>
+      <BoxRow sx={{justifyContent: 'center'}}>
         <Button variant="contained" color="primary" onClick={handleAdd}>
           <BoxRow>
             <Trans>create_new</Trans>
@@ -36,7 +36,6 @@ const messageBannerStyles = {
   height: '100%',
   padding: '2em',
   alignItems: 'center',
-  //Background:'${(props: {bg: string}) => props.bg}',
   textAlign: 'center',
 };
 

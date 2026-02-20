@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import styled from "styled-components";
 import { Trans } from "@lingui/macro";
 import { ThemeSelectIcon } from "utils/assets/icons";
@@ -10,6 +10,7 @@ import { switchThemeAction } from "app/slices/theme";
 const ThemeSelector = () => {
   const { season } = useZSelector<ThemeState>(state => state.theme);
   const dispatch = useZDispatch();
+  const theme = useTheme();
 
   function toggleTheme() {
     switch (season) {
@@ -27,7 +28,7 @@ const ThemeSelector = () => {
 
   return (
     <Box position="relative" sx={{ cursor: 'pointer'}}>
-      <ThemeIcon link onClick={toggleTheme} tooltip={<Trans>change theme</Trans>} />
+      <ThemeIcon color={theme.palette.primary.dark} link onClick={toggleTheme} tooltip={<Trans>change theme</Trans>} />
     </Box>
   );
 }

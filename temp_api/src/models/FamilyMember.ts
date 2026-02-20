@@ -17,7 +17,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare description: string;
   declare dob: string;
   declare dod: string | null;
-  declare email: string;
+  declare email: string | null;
   declare first_name: string;
   declare gender: number; //1:M, 2:F
   declare id: CreationOptional<number>;
@@ -53,7 +53,7 @@ FamilyMember.init(
     dod: { type: DataTypes.STRING },
     first_name: { type: DataTypes.STRING, allowNull: false },
     gender: { type: DataTypes.INTEGER, allowNull: false },
-    email: { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING },
     last_name: { type: DataTypes.STRING, allowNull: false },
     marital_status: { type: DataTypes.STRING },
     parents: { type: DataTypes.JSON },

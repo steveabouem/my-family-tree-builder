@@ -12,7 +12,7 @@ import { store } from 'app/store';
 import AppContainer from 'components/common/AppContainer';
 import ThemeGenerator from 'components/common/ThemeGenerator';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
+import('../src/components/common/styles.scss');
 i18n.load({
   en: baseEn.messages,
   fr: baseFr.messages,

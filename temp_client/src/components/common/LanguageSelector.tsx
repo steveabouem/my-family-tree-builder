@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useState } from "react";
 import { Trans } from "@lingui/macro";
 import { Box, useTheme } from "@mui/material";
 import styled from "styled-components";
@@ -6,7 +6,6 @@ import { useZDispatch, useZSelector } from "app/hooks";
 import { LanguageEnum, LanguageState } from "types";
 import { LanguageIcon } from "utils/assets/icons";
 import { switchLangAction } from "app/slices/lang";
-import { Link } from "react-router-dom";
 import BoxColumn from "./containers/row/BoxColumn";
 import { menuStyles } from "./menus/hamburgerMenu/Hamburger";
 
@@ -46,6 +45,7 @@ const LanguageSelector = () => {
     <LanguageMenu>
       <LanguageIcon 
         link 
+        color={theme.palette.primary.dark}
         onClick={() => setIsOpened(!isOpened)} 
         tooltip={<Trans>select_language</Trans>}
       />

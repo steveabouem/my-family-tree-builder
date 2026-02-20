@@ -6,6 +6,7 @@ import cors from 'cors';
 import userHandler from './src/routes/user.routes';
 import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';
+import sessionHandler from './src/routes/session.routes';
 
 declare module "express-session" {
   interface SessionData extends Session {
@@ -26,7 +27,6 @@ const options = {
   checkExpirationInterval: 30000,
   clearExpired: true,
   createDatabaseTable: false,
-  resave: false,
   schema: {
     tableName: 'Sessions',
     columnNames: {
@@ -37,39 +37,36 @@ const options = {
   }
 };
 const sessionStore = new MySQLStore(options);
-sessionStore.onReady().then(() => {
-	console.log('****************MYSQLSTORE READY*************');
-}).catch((error: unknown) => {
-	console.error(error);
-});
+
 /**
  MIDDLEWARES
  **/
 app.use(cors({
   credentials: true,
   optionsSuccessStatus: 200,
-  origin: process.env.REACT_APP_URL,
+  origin: 'http://localhost:3000',
   methods: ['POST', 'PUT', 'GET', 'OPTIONS', 'HEAD'],
 }
 ));
 app.use(bodyParser.json({ limit: '5mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
 const sessionConfig = {
+  name: process.env.COOKIE_NAME || 'connect.sid',
   secret: `${process.env.JWT_KEY}`,
   saveUninitialized: true,
   resave: false, // Don't save session if unmodified
-  clearExpired: true,
   cookie: {
     sameSite: false,
     secure: false, //TODO: change to true for PROD
     maxAge: 24 * 60 * 60 * 1000,
-    httpOnly: false, // Prevent client-side JavaScript from accessing the cookie
+    httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
   },
   store: sessionStore,
 };
 
 app.use(session(sessionConfig) as any);
 app.use('/api/users', userHandler);
+app.use('/api/sessions', sessionHandler);
 app.use('/api/auth', authHandler);
 app.use('/api/trees', familyTreeHandler);
 /** END */

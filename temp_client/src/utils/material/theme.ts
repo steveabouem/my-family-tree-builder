@@ -133,7 +133,6 @@ const theme = (season: ThemeSeasons) => createTheme({
         }
       }
     },
-
     MuiTooltip: {
       styleOverrides: {
         tooltip: ({ theme }) => ({
@@ -230,6 +229,12 @@ const theme = (season: ThemeSeasons) => createTheme({
                 background: theme.palette.secondary.dark,
                 color: theme.palette.secondary.light,
               }
+            }
+          },
+          '&.MuiRadio-root': {
+            '&.Mui-checked': {
+              color: theme.palette.secondary.dark,
+              borderColor: theme.palette.secondary.dark,
             }
           },
         })

@@ -3,11 +3,11 @@ import { TfiReload, TfiWrite } from "react-icons/tfi";
 import { LuImagePlus } from "react-icons/lu";
 import { PiTreeStructure, PiBabyFill, PiNewspaperClippingDuotone, PiWarningDuotone, PiArrowsOutLineVerticalLight, PiArrowsInLineVerticalLight } from 'react-icons/pi';
 import { IoWoman, IoMan, IoSettings, IoCaretBackOutline, IoImageOutline } from "react-icons/io5";
-import { FaCaretDown, FaCaretUp, FaChild, FaChildDress, FaDoorOpen, FaLanguage, FaLink, FaTriangleExclamation, FaUpload, FaUser, FaUsers } from "react-icons/fa6";
-import { RiAddCircleLine, RiDeleteBin5Fill } from "react-icons/ri";
+import { FaCaretDown, FaCaretUp, FaChild, FaChildDress, FaLanguage, FaLink, FaTriangleExclamation, FaUpload, FaUser, FaUsers } from "react-icons/fa6";
+import { RiAddCircleLine, RiDeleteBin5Fill, RiArrowUpFill, RiArrowDownFill } from "react-icons/ri";
 import { GiEntryDoor, GiExitDoor, GiFamilyTree } from "react-icons/gi";
 import { HiColorSwatch } from "react-icons/hi";
-import { CiCircleList, CiFileOn, CiSun } from "react-icons/ci";
+import {  CiFileOn, CiSun } from "react-icons/ci";
 import { FaSnowman, FaEye } from "react-icons/fa";
 import { TbLeaf } from "react-icons/tb";
 import { LuFlower2 } from "react-icons/lu";
@@ -332,7 +332,7 @@ export const ReloadIcon = ({ sx = {}, color = '', size = 17, onClick, link, tool
 export const ExpandIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(PiArrowsOutLineVerticalLight, theme);
+  const DynamicIcon = generateIcon(RiArrowDownFill, theme);
 
   return tooltip ? (
     <Tooltip title={tooltip}>
@@ -346,7 +346,7 @@ export const ExpandIcon = ({ sx = {}, color = '', size = 17, onClick, link, tool
 export const CollapseIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(PiArrowsInLineVerticalLight , theme);
+  const DynamicIcon = generateIcon(RiArrowUpFill , theme);
 
   return tooltip ? (
     <Tooltip title={tooltip}>

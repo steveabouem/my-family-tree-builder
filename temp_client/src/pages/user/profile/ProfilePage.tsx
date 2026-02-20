@@ -57,28 +57,18 @@ const UserProfilePage = (): JSX.Element => {
       });
   }
   function reloadProfile() {
-    refetch()
-    .then((data) => {
-      console.log('GOOD ', data);
-      
-    })
-    .catch((e: unknown) => {
-      console.log('FAILD ', e);;
-      
-    })
+    refetch();
   }
 
   return (
     <Page loading={isProcessing} subtitle={<Trans>profile_page_subtitle</Trans>} title={<Trans>profile_management_label {currentUser?.firstName || ''}</Trans>}>
-      <PaperSection>
-        {profileData ? (
-          <PaperSection>
-            <UserCredentials handleSubmit={showUpdateProfileConfirm} profileInfo={profileData} />
-          </PaperSection>
-        ) : (
-          <NotFound handleReload={reloadProfile} />
-        )}
-      </PaperSection>
+      {profileData ? (
+        <PaperSection>
+          <UserCredentials handleSubmit={showUpdateProfileConfirm} profileInfo={profileData} />
+        </PaperSection>
+      ) : (
+        <NotFound handleReload={reloadProfile} />
+      )}
     </Page>
   );
 };
