@@ -3,7 +3,7 @@ import { ModalProps, themeEnum } from 'types';
 import GlobalContext from 'contexts/creators/global/global.context';
 
 const GlobalContextProvider = ({ children }: { children: ReactNode }) => {
-  const [theme, setTheme] = React.useState<themeEnum>(themeEnum.dark);
+  const [theme, setTheme] = React.useState<themeEnum>(themeEnum.sunny);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [modalContent, setModalContent] = React.useState<Partial<ModalProps>>({ hidden: true });
 

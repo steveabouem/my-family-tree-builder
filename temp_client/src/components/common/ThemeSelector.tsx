@@ -14,14 +14,14 @@ const ThemeSelector = () => {
 
   function toggleTheme() {
     switch (season) {
-      case ThemeSeasons.summer:
+      case ThemeSeasons.sunny:
         dispatch(switchThemeAction(ThemeSeasons.winter));
         break;
       case ThemeSeasons.winter:
         dispatch(switchThemeAction(ThemeSeasons.default));
         break;
       default:
-        dispatch(switchThemeAction(ThemeSeasons.summer));
+        dispatch(switchThemeAction(ThemeSeasons.sunny));
         break;
     }
   }

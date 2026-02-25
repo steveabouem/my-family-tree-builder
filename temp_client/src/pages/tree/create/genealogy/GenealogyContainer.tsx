@@ -51,7 +51,7 @@ const GenealogyContainer: React.FC = () => {
               }, 1000);
             },
             onError: (error) => {
-              console.error('Failed to add members:', error);
+              console.log('Failed to add members:', error);
               updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_update_failed_modal</Trans></Typography>, type: 'error' });
             }
           }
@@ -71,7 +71,7 @@ const GenealogyContainer: React.FC = () => {
               }
             },
             onError: (error) => {
-              console.error('Failed to create tree:', error);
+              console.log('Failed to create tree:', error);
               updateModal({ hidden: false, content: <Typography variant='body2'><Trans>family_tree_save_failed_modal</Trans></Typography>, type: 'error' });
             }
           }

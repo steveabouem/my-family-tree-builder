@@ -16,10 +16,8 @@ export interface LanguageState {
 }
 
 export enum ThemeSeasons {
-  'fall' = 'fall',
   'winter' = 'winter',
-  'spring' = 'spring',
-  'summer' = 'summer',
+  'sunny' = 'sunny',
   'default' = 'default',
 }
 
@@ -42,75 +40,57 @@ export type seasonalCssVariable =
   | "secondary";
 
 export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeasons, string>> = {
-  primary: { //page bg
-    default: "#000000ff",
-    fall: "#fff2f2ff",
-    spring: "#e8fff4",
-    summer: "#f2c94e",
+  primary: {
+    default: "#1b1322",
+    sunny: "#f2c94e",
     winter: "#ffff"
   },
-  secondary: { // headers, labels, icons, primary button color (invrs on hover)
-    default: "#2692b9ff",
-    fall: "#000",
-    spring: "#e8fff4",
-    summer: "#8f7c30",
+  secondary: {
+    default: "#ae64b1",
+    sunny: "#8f7c30",
     winter: "#0e8bb5"
   },
-  accentBg: { // ??
-    default: "#00628fff",
-    fall: "#000",
-    spring: "#e8fff4",
-    summer: "#51400ba3",
+  accentBg: {
+    default: "#3f4360",
+    sunny: "#51400ba3",
     winter: "#4c5054"
   },
-  pillBg: { //secondary header,  
+  pillBg: {
     default: "#97d2ffe8",
-    fall: "#ffffffe8",
-    spring: "#ffffffe8",
-    summer: "#ffffffe8",
+    sunny: "##9f8451e8",
     winter: "#83b2c7e8"
   },
   pillBgInverse: {
-    default: "#00449ee8",
-    fall: "#ffffffe8",
-    spring: "#ffffffe8",
-    summer: "#ffffffe8",
+    default: "#2c2450e8",
+    sunny: "##9f8451e8",
     winter: "#684f73e8"
   },
   cancel: {
     default: "#ff6b6bff",
-    fall: "#000",
-    spring: "#e8fff4",
-    summer: "#f47d1d",
+    sunny: "#f47d1d",
     winter: "#ea4c89"
   },
   confirm: {
     default: "#85ffa8ff",
-    fall: "#000",
-    spring: "#e8fff4",
-    summer: "#85c370",
+    sunny: "#85c370",
     winter: "#b6ebff"
   },
   dark: {
     default: "#ffffffff",
-    fall: "#000",
-    spring: "#2a3c2b",
-    summer: "#000000",
+    sunny: "#000000",
     winter: "#0e2232"
   },
   light: {
     default: "#000000ff",
-    fall: "#000",
-    spring: "#2a3c2b",
-    summer: "#faeecb",
+    sunny: "#faeecb",
     winter: "#f3f5f7"
   }
 };
 
 export enum themeEnum {
-  green = 'DARK-GREEN',
-  light = 'LIGHT',
-  dark = 'DARK',
+  default =  'default',
+  winter =  'winter',
+  sunny =  'sunny',
 }
 
 export interface IconProps {

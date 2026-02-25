@@ -2,7 +2,7 @@ import { createContext } from "react";
 import { GlobalContextProps, themeEnum } from "types";
 
 const GlobalContext = createContext<GlobalContextProps>({
-  theme: themeEnum.green,
+  theme: themeEnum.default,
   session: undefined,
   loading: true,
   modal: {

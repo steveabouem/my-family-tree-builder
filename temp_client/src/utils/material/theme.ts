@@ -1,11 +1,19 @@
-import { capitalize, createTheme } from "@mui/material";
-import { green } from "@mui/material/colors";
-import { Background } from "@xyflow/react";
+import { createTheme } from "@mui/material";
 import { seasonalPaletteConfig, ThemeSeasons } from "types";
 
 const defaultTypo = {
   fontSize: ".9rem",
 };
+function genBG(s: ThemeSeasons) {
+  switch (s) {
+    case ThemeSeasons.winter:
+      return 'linear-gradient(70deg, rgb(244 253 255 / 85%) 39%, rgb(255 255 255) 69%, rgb(205 253 255 / 32%) 100%)';
+    case ThemeSeasons.sunny:
+      return 'linear-gradient(70deg, rgb(255 236 160 / 85%) 39%, rgb(255 204 0 / 88%) 69%, rgb(255 149 4 / 46%) 100%)';
+    default:
+      return 'linear-gradient(70deg, rgb(2 22 26 / 85%) 39%, rgb(136 102 255) 69%, rgb(17 236 245 / 32%) 100%)';
+  }
+}
 
 /*
 * Theme are following the seasons. the config object maps the color codes to the key names used in the palette values below
@@ -32,7 +40,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     success: { main: seasonalPaletteConfig.confirm[season], contrastText: seasonalPaletteConfig.dark[season] },
     background: {
       default: seasonalPaletteConfig.primary[season],
-      paper: seasonalPaletteConfig.light[season]
+      paper: seasonalPaletteConfig.primary[season]
     },
     info: {
       main: seasonalPaletteConfig.pillBg[season],
@@ -40,6 +48,12 @@ const theme = (season: ThemeSeasons) => createTheme({
     }
   },
   typography: {
+    fontFamily: [
+      'Montserrat Alternates',
+       'Dosis',
+      'Gruppo',
+      'Lato',
+    ].join(','),
     h1: {
       ...defaultTypo,
       textTransform: "capitalize",
@@ -65,7 +79,7 @@ const theme = (season: ThemeSeasons) => createTheme({
       ...defaultTypo,
       textTransform: "capitalize",
       fontSize: "1.1rem",
-      color: seasonalPaletteConfig.pillBg[season],
+      color: seasonalPaletteConfig.dark[season],
       padding: ".8rem 0"
     },
     body1: {
@@ -80,7 +94,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     subtitle2: { // label
       ...defaultTypo,
       fontSize: ".9rem",
-      color: seasonalPaletteConfig.secondary[season],
+      color: seasonalPaletteConfig.dark[season],
       textTransform: 'capitalize'
     },
     caption: {
@@ -107,30 +121,60 @@ const theme = (season: ThemeSeasons) => createTheme({
     }
   },
   components: {
+    MuiInputBase: {
+      styleOverrides: {
+        root: ({theme}) => ({
+          padding: '1rem',
+          color: `${theme.palette.primary.contrastText}`,
+        })
+      }
+    },
     MuiFormControl: {
       styleOverrides: {
-        root: {
+        root: ({theme}) => ({
           width: '100%',
           height: '35px',
           borderRadius: '5px',
+          color: `${theme.palette.primary.contrastText}`,
           input: {
+            color: `${theme.palette.primary.contrastText}`,
             borderRadius: '5px',
+            padding: '1rem',
             border: '1px solid',
             width: '100%',
             height: '100%',
-            // border: 'none'
           }
-        }
+        })
+      }
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: ({ theme }) => ({
+          background: `${theme.palette.info.contrastText}`,
+          padding: 0
+        })
       }
     },
     MuiList: {
       styleOverrides: {
-        root: {
+        root: ({ theme }) => ({
           width: '100%',
+          background: `${theme.palette.info.contrastText}!important`,
+          'MuiBox-root': {
+            padding: '0 .5rem'
+          },
           li: {
-            borderRadius: '5px', width: '100%'
+            // borderRadius: '5px', width: '100%',
+            color: `${theme.palette.secondary.contrastText}`
           }
-        }
+        })
+      }
+    },
+    MuiCollapse: {
+      styleOverrides: {
+        wrapperInner: ({ theme }) => ({
+          padding: '1rem .5rem',
+        })
       }
     },
     MuiTooltip: {
@@ -146,10 +190,8 @@ const theme = (season: ThemeSeasons) => createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           transition: '.8s',
-          background: theme.palette.primary.main,
-          height: "100vh",
-          overflow: "hidden",
-          borderRadius: '5px'
+          background: genBG(season),
+          backgroundSize: '100%'
         })
       }
     },
@@ -247,8 +289,11 @@ const theme = (season: ThemeSeasons) => createTheme({
           background: 'white',
           borderRadius: '5px',
           height: '35px',
-          border: '1px solid'
-        })
+          border: '1px solid',
+          '&.MuiInputBase':  {
+             padding: '1rem',
+          }
+        }),
       }
     }
   }

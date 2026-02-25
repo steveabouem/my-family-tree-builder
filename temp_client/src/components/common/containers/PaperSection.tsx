@@ -1,19 +1,18 @@
 import React, { ReactNode } from 'react';
-import { Paper } from '@mui/material';
+import { Paper, useTheme } from '@mui/material';
 import styled from 'styled-components';
-import { useZSelector } from 'app/hooks';
-import { ThemeSeasons, ThemeState } from 'types';
 
 const PaperSection = ({ children, elevation }: { children: ReactNode, elevation?: number }) => {
+  const theme = useTheme();
 return (
-    <ResponsivePaper sx={{border: "none"}} elevation={elevation || 0}>
+    <ResponsivePaper sx={{border: "none", background: theme.palette.secondary.main}} elevation={elevation || 0} className='respo-paper'>
       {children}
     </ResponsivePaper>
   )
 };
 
 const ResponsivePaper = styled(Paper) <{ fullWidth: boolean }>`
-  padding: 1rem;
+  padding: 0;
   display: flex;
   flex-direction: column;
   width: 100%;

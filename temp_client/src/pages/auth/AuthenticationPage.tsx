@@ -162,7 +162,6 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
         }
       },
       onError: (error) => {
-        console.error('Error logging in', error);
         setAttempts((prev) => prev + 1);
         updateModal({
           ...modal,
@@ -188,11 +187,9 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
             title: <Trans>registration_failure</Trans>,
             content: <Trans>registration_failure_msg {attempts}</Trans>,
           });
-          console.error('Registration failure');
         }
       },
       onError: (error) => {
-        console.error('Registration failed:', error);
         updateModal({
           ...modal,
           hidden: false,

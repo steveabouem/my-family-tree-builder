@@ -1,8 +1,8 @@
 import React, { memo, useState } from 'react'
-import BoxColumn from '../containers/row/BoxColumn';
-import BoxRow from '../containers/column';
 import { Box, Button, Chip, Collapse, FormControl, List, ListItemIcon, MenuItem, Typography, useTheme } from '@mui/material';
 import { Trans } from '@lingui/macro';
+import BoxColumn from '../containers/row/BoxColumn';
+import BoxRow from '../containers/column';
 import { CollapseIcon, ExpandIcon } from 'utils/assets/icons';
 import CustomField from './customField';
 import { Field, FieldArray, useFormikContext } from 'formik';
@@ -17,7 +17,6 @@ export const FieldSectionsGenerator = memo(({ sections }: { sections: FieldsSect
   const dispatch = useZDispatch();
   const theme = useTheme();
   const { values, submitForm } = useFormikContext<any>();
-  
 
   function toggleSection(sectionIndex: number) {
     setCollapsed((prev: any) => ({ ...prev, [sectionIndex]: !prev?.[sectionIndex] }));
@@ -55,7 +54,7 @@ export const FieldSectionsGenerator = memo(({ sections }: { sections: FieldsSect
                 }
               </ListItemIcon>
             </BoxRow>
-            <Collapse in={!!collapsed?.[sectionIndex]} sx={{ padding: '0 .5rem' }} >
+            <Collapse in={!!collapsed?.[sectionIndex]} >
               {s.fields.map((f) => (
                 <BoxColumn>
                   <BoxColumn>

@@ -6,7 +6,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 const previousTheme = localStorage.getItem('ZTheme');
 const initialState: ThemeState = {
   // @ts-ignore
-  season: previousTheme || ThemeSeasons.spring,
+  season: previousTheme || ThemeSeasons.default,
 };
 
 /*

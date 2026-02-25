@@ -44,15 +44,13 @@ const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): J
 
 const fadeIn = keyframes`
   from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+    opacity: .5;
+    background: radial-gradient(circle, rgb(255 255 255 / 0%) 28%, rgba(217, 217, 217, 0.39) 85%);
+    width: 200vw;
   }
 `;
-
 const FadeInPage = styled(Box)`
-  animation: ${fadeIn} .4s ease;
+  animation: ${fadeIn} .5s ease;
   height: calc(100% - 70px);
   width: 100%;
   overflow: hidden scroll;

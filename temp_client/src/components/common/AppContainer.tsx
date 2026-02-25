@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import styled from "styled-components";
 import { DeepPartial } from "redux";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { PersistGate } from "redux-persist/integration/react";
 import TopNav from "./navbars/TopNav";
 import Footer from "./navbars/Footer";
 import FTLandingPage from "../FT.Landing";
@@ -13,7 +15,6 @@ import FamilyTreeDashboard from "pages/tree/dashboard";
 import AuthenticationPage from "pages/auth";
 import CreateFamilyTreePage from "pages/tree/create";
 import { DAuthMode, User } from "types";
-import { PersistGate } from "redux-persist/integration/react";
 import { persistor } from "app/store";
 
 const AppContainer = (): JSX.Element => {
@@ -36,7 +37,7 @@ const AppContainer = (): JSX.Element => {
       <PersistGate loading={null} persistor={persistor}>
         <>
           <TopNav />
-          <Container maxWidth="xl" sx={mainContainerStyle} className="main-container-app">
+          <StyledContainer maxWidth="xl" className="main-container-app">
             <Routes>
               <Route path={PageUrlsEnum.home} element={<FTLandingPage />} />
               <Route path={PageUrlsEnum.auth} element={
@@ -53,7 +54,7 @@ const AppContainer = (): JSX.Element => {
               <Route path={PageUrlsEnum.themeTest} element={<ThemingTest />} />
               <Route path="*" element={<FTLandingPage />} />
             </Routes>
-          </Container>
+          </StyledContainer>
           <Footer />
         </>
       </PersistGate>
@@ -61,13 +62,11 @@ const AppContainer = (): JSX.Element => {
   );
 };
 
-const mainContainerStyle = {
-  height: "calc(100vh - 70px)",
-  width: "100vw",
-  overflow: "hidden",
-  padding: "0",
-  paddingRight: "0!important",
-  paddingLeft: "0!important",
-};
+const StyledContainer = styled(Container)`
+  position: relative;
+  height: calc(100vh - 70px);
+  width: 100vw;
+  overflow: hidden;
+`;
 
 export default AppContainer;
