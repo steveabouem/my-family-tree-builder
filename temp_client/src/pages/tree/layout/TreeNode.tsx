@@ -9,7 +9,15 @@ import BoxColumn from 'components/common/containers/row/BoxColumn';
 // TODO: check types in reacflow docs and create validations for node and edge structures. if any prop doesnt match the type, there can be undetected errors
 export default memo(({ data }: any) => {
   const theme = useTheme();
-
+  const MemberName = styled(Typography)`
+    margin: 0;
+    padding: .2rem;
+    
+    background-color: hsl(from  ${theme.palette.info.contrastText} h s l / 0.5);
+    border: .5px solid ${theme.palette.info.main};
+    padding: .2rem;
+    border-radius: 5px;
+  `;
   function getInitialsBG() {
     return data.gender === Gendersenum.female ? theme.palette.info.contrastText : theme.palette.info.main;
   }
@@ -33,12 +41,12 @@ export default memo(({ data }: any) => {
 
   return (
     <BoxColumn sx={{ alignItems: 'center' }}>
-      {renderNodeIcon()}
+      {/* {renderNodeIcon()} */}
       {
         !!data.profile_url?.length ? <MemberThumbnail src={data.profile_url} /> :
           <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
       }
-        <Typography variant='body1' color={theme.palette.primary.dark} sx={{background: theme.palette.info.main, padding: '.2rem', borderRadius: '5px'}}>{data.first_name} {data.last_name}</Typography>
+      <MemberName variant='body1' color={theme.palette.primary.dark} >{data.first_name} {data.last_name}</MemberName>
       {/* <Handle
         type="source"
           id='top'
@@ -46,7 +54,7 @@ export default memo(({ data }: any) => {
           style={{ background: '#555' }}
           isConnectable={true}
         /> */}
-        {/* <Button size='small' sx={{ minWidth: '15px' }} >
+      {/* <Button size='small' sx={{ minWidth: '15px' }} >
             <SettingsIcon color="#5d576b" size={15} />
           </Button>
           <Button size='small' sx={{ minWidth: '15px' }}>

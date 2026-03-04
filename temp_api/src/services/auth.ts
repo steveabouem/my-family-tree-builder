@@ -57,7 +57,7 @@ export const login = async ({ email, password }: LoginRequestPayload): Promise<S
       response.error = true;
       response.message = 'Unable to find user';
       logger.error('! login ! User not found');
-
+      response.code = 400;
       return response;
     }
     const passwordIsValid = bcrypt.compareSync(password, currentUser.password);

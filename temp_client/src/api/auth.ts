@@ -13,10 +13,6 @@ const login = async (values: LoginRequestPayload): Promise<APIEndpointResponse<A
     body: JSON.stringify(values),
   });
 
-  if (!response.ok) {
-    throw new Error(`Login failed: ${response.statusText}`);
-  }
-
   return response.json();
 };
 
@@ -29,10 +25,6 @@ const register = async (values: Partial<User>): Promise<any> => {
     },
     body: JSON.stringify(values),
   });
-
-  if (!response.ok) {
-    throw new Error(`Registration failed: ${response.statusText}`);
-  }
 
   return response.json();
 };

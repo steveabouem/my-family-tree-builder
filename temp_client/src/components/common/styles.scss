@@ -1,37 +1,3 @@
-// // +++++=>ANIMATIONS<=+++++
-// @keyframes drop {
-//   0% {
-//     opacity: 0;
-//     transform: rotateY(x);
-//   }
-// }
-
-// @keyframes spin {
-//   0% {
-//     transform: rotate(0);
-//   }
-
-//   25% {
-//     opacity: .25;
-//     transform: rotate(45deg);
-//   }
-
-//   50% {
-//     opacity: .5;
-//     transform: rotate(90deg);
-//   }
-
-//   75% {
-//     opacity: .75;
-//     transform: rotate(180deg);
-//   }
-
-//   100% {
-//     opacity: 1;
-//     transform: rotate(270deg);
-//   }
-// }
-
 * {
 
   /* width */
@@ -85,5 +51,10 @@
       -moz-appearance: textfield;
       border-radius: 5px;
     }
+  }
+  #root {
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
   }
 }

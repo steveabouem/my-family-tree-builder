@@ -11,7 +11,7 @@ function genBG(s: ThemeSeasons) {
     case ThemeSeasons.sunny:
       return 'linear-gradient(70deg, rgb(255 236 160 / 85%) 39%, rgb(255 204 0 / 88%) 69%, rgb(255 149 4 / 46%) 100%)';
     default:
-      return 'linear-gradient(70deg, rgb(2 22 26 / 85%) 39%, rgb(136 102 255) 69%, rgb(17 236 245 / 32%) 100%)';
+      return 'linear-gradient(70deg, rgb(2 11 26) 56%, rgb(78 47 183 / 92%) 75%, rgb(95 6 59) 103%)';
   }
 }
 
@@ -49,10 +49,10 @@ const theme = (season: ThemeSeasons) => createTheme({
   },
   typography: {
     fontFamily: [
-      'Montserrat Alternates',
-       'Dosis',
+      'Dosis',
       'Gruppo',
       'Lato',
+      'Montserrat Alternates',
     ].join(','),
     h1: {
       ...defaultTypo,
@@ -123,7 +123,7 @@ const theme = (season: ThemeSeasons) => createTheme({
   components: {
     MuiInputBase: {
       styleOverrides: {
-        root: ({theme}) => ({
+        root: ({ theme }) => ({
           padding: '1rem',
           color: `${theme.palette.primary.contrastText}`,
         })
@@ -131,7 +131,7 @@ const theme = (season: ThemeSeasons) => createTheme({
     },
     MuiFormControl: {
       styleOverrides: {
-        root: ({theme}) => ({
+        root: ({ theme }) => ({
           width: '100%',
           height: '35px',
           borderRadius: '5px',
@@ -254,24 +254,80 @@ const theme = (season: ThemeSeasons) => createTheme({
           '&:hover': {
             boxShadow: '1px 1px 4px 0px grey !important'
           },
-          '&.MuiButton-colorPrimary': {
-            color: theme.palette.primary.dark,
-            background: theme.palette.primary.main,
-            '&.MuiButton-outlined': {
-              background: 'transparent'
-            }
+          '&.Mui-disabled': {
+            color: '#e3e3e3!important',
+            background: 'grey!important'
           },
-          '&.MuiButton-colorSecondary': {
-            background: theme.palette.secondary.dark,
-            color: theme.palette.secondary.light,
+          /* PRIMARY BUTTONS */
+          '&.MuiButton-colorPrimary': {
+            '&.MuiButton-contained': {
+              color: theme.palette.primary.main,
+              background: theme.palette.primary.dark,
+              '&:hover': {
+                background: theme.palette.primary.main,
+                color: theme.palette.primary.dark,
+              },
+            },
             '&.MuiButton-outlined': {
               background: 'transparent',
-              color: theme.palette.secondary.dark,
+              color: theme.palette.primary.dark,
+              borderColor: theme.palette.primary.dark,
               '&:hover': {
-                background: theme.palette.secondary.dark,
-                color: theme.palette.secondary.light,
+                color: theme.palette.secondary.dark,
+              },
+            },
+            '&.MuiButton-text': {
+              background: 'transparent',
+              color: theme.palette.secondary.dark,
+              border: 'none',
+              '&:hover': {
+                border: 'none',
+                boxShadow: 'none!important',
+                color: theme.palette.primary.dark,
               }
             }
+          },
+          /* SECONDARY BUTTONS */
+          '&.MuiButton-colorSecondary': {
+            '&.MuiButton-contained': {
+              color: theme.palette.primary.main,
+              background: theme.palette.info.main,
+              '&:hover': {
+                background: theme.palette.primary.main,
+                color: theme.palette.info.main,
+              },
+            },
+            '&.MuiButton-outlined': {
+              color: theme.palette.info.main,
+              borderColor: theme.palette.info.main,
+              background: 'transparent',
+              '&:hover': {
+                color: theme.palette.info.main,
+              },
+            },
+            '&.MuiButton-text': {
+              background: 'transparent',
+              color: theme.palette.info.main,
+              border: 'none',
+              '&:hover': {
+                boxShadow: 'none!important',
+                color: theme.palette.primary.dark,
+              }
+            }
+          },/* SUCCESS BUTTONS */
+          '&.MuiButton-colorSuccess': {
+            '&.MuiButton-contained': {
+              color: theme.palette.primary.contrastText,
+              background: theme.palette.success.main,
+              '&:hover': {
+                color: 'white'
+              },
+            },
+            '&.MuiButton-outlined': {
+              background: 'transparent',
+              borderColor: theme.palette.success.main,
+              color: theme.palette.success.main,
+            },
           },
           '&.MuiRadio-root': {
             '&.Mui-checked': {
@@ -290,8 +346,8 @@ const theme = (season: ThemeSeasons) => createTheme({
           borderRadius: '5px',
           height: '35px',
           border: '1px solid',
-          '&.MuiInputBase':  {
-             padding: '1rem',
+          '&.MuiInputBase': {
+            padding: '1rem',
           }
         }),
       }
@@ -300,4 +356,3 @@ const theme = (season: ThemeSeasons) => createTheme({
 });
 
 export default theme;
-

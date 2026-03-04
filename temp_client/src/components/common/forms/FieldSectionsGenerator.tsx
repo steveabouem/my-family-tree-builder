@@ -12,7 +12,7 @@ import { useZDispatch, useZSelector } from 'app/hooks';
 import { goToNextStepAction, goToPrevStepAction } from 'app/slices/forms/stepForm';
 
 export const FieldSectionsGenerator = memo(({ sections }: { sections: FieldsSection[] }) => {
-  const [collapsed, setCollapsed] = useState<{ [key: string]: boolean }>({ 0: false });
+  const [collapsed, setCollapsed] = useState<{ [key: string]: boolean }>({ 0: true });
   const { totalSteps, currentFormStep, currentFormStepDetails, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
   const dispatch = useZDispatch();
   const theme = useTheme();
@@ -46,11 +46,15 @@ export const FieldSectionsGenerator = memo(({ sections }: { sections: FieldsSect
         {sections.map((s, sectionIndex) => (
           <List sx={{ background: `${theme.palette.primary.contrastText}`, borderRadius: '5px' }}>
             <BoxRow sx={{ justifyContent: 'space-between', padding: '.5rem' }}>
+              <BoxRow>
+
               <Typography variant="h5">{s.title}</Typography>
+              <Typography color={theme.palette.error.light}>{s?.required ? '*' : ''}</Typography>
+              </BoxRow>
               <ListItemIcon sx={{ justifyContent: 'end' }}>
                 {collapsed?.[sectionIndex] ?
-                  <CollapseIcon link onClick={() => toggleSection(sectionIndex)} color={theme.palette.background.default} /> :
-                  <ExpandIcon link onClick={() => toggleSection(sectionIndex)} color={theme.palette.background.default} />
+                  <CollapseIcon  link onClick={() => toggleSection(sectionIndex)} color={theme.palette.background.default} /> :
+                  <ExpandIcon  link onClick={() => toggleSection(sectionIndex)} color={theme.palette.background.default} />
                 }
               </ListItemIcon>
             </BoxRow>

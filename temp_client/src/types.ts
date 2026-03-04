@@ -46,7 +46,7 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
     winter: "#ffff"
   },
   secondary: {
-    default: "#ae64b1",
+    default: "#ffd9a8",
     sunny: "#8f7c30",
     winter: "#0e8bb5"
   },
@@ -57,12 +57,12 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
   },
   pillBg: {
     default: "#97d2ffe8",
-    sunny: "##9f8451e8",
+    sunny: "#9f8451e8",
     winter: "#83b2c7e8"
   },
   pillBgInverse: {
     default: "#2c2450e8",
-    sunny: "##9f8451e8",
+    sunny: "#9f8451e8",
     winter: "#684f73e8"
   },
   cancel: {
@@ -72,8 +72,8 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
   },
   confirm: {
     default: "#85ffa8ff",
-    sunny: "#85c370",
-    winter: "#b6ebff"
+    sunny: "#5e8720",
+    winter: "#10ce99"
   },
   dark: {
     default: "#ffffffff",
@@ -125,6 +125,7 @@ export interface PageProps {
   loading?: boolean;
   bg?: string;
   prevUrl?: string;
+  error?: boolean;
 }
 
 export interface NavigationLink {
@@ -210,6 +211,7 @@ export interface FormField {
 export interface FieldsSection {
   title: ReactNode;
   fields: FormField[];
+  required?: boolean;
 }
 
 export interface BaseFormProps {

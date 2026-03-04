@@ -1,26 +1,28 @@
-import React, { useEffect } from 'react';
-import { Box, Typography } from '@mui/material';
+import React from 'react';
+import { Box, Tooltip, Typography, useTheme } from '@mui/material';
+import styled from 'styled-components';
+import { Trans } from '@lingui/macro';
 
 const Initials = ({ firstName, lastName, size = 25, bg }: { firstName: string, lastName: string, bg?: string, size?: number }) => {
-  
+  const theme = useTheme();
+  const MemberInitials = styled(Box)`
+    align-items: center;
+    background-color: hsl(from  ${theme.palette.info.contrastText} h s l / 0.5);
+    border-radius: 50%;
+    border: .5px solid ${theme.palette.info.main};
+    color: ${theme.palette.info.main};
+    display: flex;
+    font-size: ${size / 2};
+    justify-content: center;
+    padding: .5em;
+  `;
+
   return (
-    <Box height={size} display="flex" alignItems="center" justifyContent="center">
-      <Box
-        sx={{
-          display: 'flex',
-          padding: '.5em',
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: bg || 'white',
-          borderRadius: '50%',
-          border: '1px solid #8c7272',
-          fontSize: size / 2,
-          color: '#8c7272'
-        }}
-      >
+    <Tooltip title={<Trans>double_click_for_more</Trans>}>
+      <MemberInitials>
         <Typography variant='body2'>{firstName?.charAt(0)?.toUpperCase()}{lastName?.charAt(0)?.toUpperCase()}</Typography>
-      </Box>
-    </Box>
+      </MemberInitials>
+    </Tooltip>
   );
 }
 

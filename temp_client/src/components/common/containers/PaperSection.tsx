@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const PaperSection = ({ children, elevation }: { children: ReactNode, elevation?: number }) => {
   const theme = useTheme();
 return (
-    <ResponsivePaper sx={{border: "none", background: theme.palette.secondary.main}} elevation={elevation || 0} className='respo-paper'>
+    <ResponsivePaper sx={{border: "none", background: theme.palette.primary.main}} elevation={elevation || 0} className='respo-paper'>
       {children}
     </ResponsivePaper>
   )

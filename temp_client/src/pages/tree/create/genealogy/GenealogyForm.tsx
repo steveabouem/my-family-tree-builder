@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo,  useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Box, Button, Chip, Collapse, FormControl, List, ListItemIcon, MenuItem, Paper, Typography, useTheme } from "@mui/material";
 import { Field, FieldArray, useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
@@ -36,6 +36,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
   const sections: FieldsSection[] = [
     {
       title: <Trans>basic_identification</Trans>,
+      required: true,
       fields: [{
         fieldName:
           `${fieldNamePrefix}_firstName`, label: <Trans>firstName</Trans>, value: values?.[`${fieldNamePrefix}_firstName`] || ''
@@ -189,7 +190,7 @@ const GenealogyForm = ({ setTreeCopy, treeCopy, storeImg }) => {
           <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
         </BoxRow>
       </BoxColumn>
-      <FieldSectionsGenerator sections={sections}/>
+      <FieldSectionsGenerator sections={sections} />
     </Paper>
   );
 };

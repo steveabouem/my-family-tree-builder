@@ -1,29 +1,33 @@
 import React, { useContext } from "react";
 import { Box, Typography } from '@mui/material';
+import styled from "styled-components";
 import { PageProps } from "types";
 import Spinner from "./progressIndicators/Spinner";
 import BaseModal from "./alerts/BaseModal";
 import GlobalContext from "contexts/creators/global/global.context";
-import styled from "styled-components";
 import { keyframes } from "styled-components";
 
-const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): JSX.Element => {
+const Page = ({ title, subtitle, children, loading, error }: PageProps): JSX.Element => {
   const { modal } = useContext(GlobalContext);
+  const bgStyles = {
+    position: 'absolute',
+    height: '100vh',
+    width: '100vw',
+    left: '0px',
+    backgroundSize: 'cover',
+    backgroundBlendMode: 'overlay',
+    backgroundPosition: '22% 22%',
+  };
+
+  if (error) {
+    return <div>ERROR</div>;
+  }
 
   return (
-      <FadeInPage className="app-page"
-        sx={{ backgroundImage: `url(${bg || ''})`, backgroundSize: 'cover' }}
-      >
-        <Box className="page-sections" width="75%" m="0 calc(12.5% - 20px) 0 12.5%" sx={{ position: 'relative' }}>
-          {/* <Box className="section-top" /> use for gradient effect */}
-          {/* {prevUrl && <Link to={`${prevUrl}`} style={{
-            position: 'absolute',
-            top: '10px',
-            left: '22px',
-            display: 'flex',
-            height: '30px',
-            width: '30px',
-          }}><BackIcon color={seasonalTheme.palette.primary.contrastText} /> </Link>} */}
+    <>
+      <Box sx={bgStyles} />
+      <FadeInPage className="app-page">
+        <Section className="page-sections">
           <Box>
             <Typography variant="h3">{title}</Typography>
             {subtitle ? <Typography variant="h4">{subtitle}</Typography> : ''}
@@ -36,26 +40,26 @@ const Page = ({ title, subtitle, children, loading, bg, prevUrl }: PageProps): J
               buttons={{ cancel: modal?.buttons?.cancel || false, confirm: modal?.buttons?.confirm || false }}
             />
           </Box>
-          {/* <Box className="section-bottom" /> */}
-        </Box>
+        </Section>
       </FadeInPage>
+    </>
   );
 };
 
 const fadeIn = keyframes`
   from {
     opacity: .5;
-    background: radial-gradient(circle, rgb(255 255 255 / 0%) 28%, rgba(217, 217, 217, 0.39) 85%);
+    background: black;
     width: 200vw;
   }
 `;
 const FadeInPage = styled(Box)`
   animation: ${fadeIn} .5s ease;
-  height: calc(100% - 70px);
   width: 100%;
-  overflow: hidden scroll;
-  margin: 60px 0 0 0;
 `;
-
-
+const Section = styled(Box)`
+  width: 75%;
+  margin: 0 calc(12.5% - 20px) 0 12.5%;
+  position: relative;
+`;
 export default Page;

@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
-import Page from "./common/Page";
+import React from "react";
+import Page from "../components/common/Page";
 import { Trans } from "@lingui/macro";
 
-const FTLandingPage = (): JSX.Element => {
+const LandingPage = (): JSX.Element => {
   return (
     <Page
       title={<Trans>main_welcome_header</Trans>}
       subtitle={<Trans>main_welcome_subheader</Trans>}
     />
   );
-}
+};
 
-export default FTLandingPage;
+export default LandingPage;

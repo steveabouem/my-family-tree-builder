@@ -360,11 +360,9 @@ export const CollapseIcon = ({ sx = {}, color = '', size = 17, onClick, link, to
 
 const generateIcon = (icon: any, theme: any) => {
   const DynamicIcon = styled(icon)`
+    transition: .4s;
     &:hover {
-      transition: .4s;
-      &:hover {
-        color: ${theme.palette.action.hover};
-      }
+      color: ${theme.palette.action.hover};
     }
   `;
 

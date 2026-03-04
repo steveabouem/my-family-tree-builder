@@ -8,6 +8,7 @@ enum PageUrlsEnum {
   themeTest = "/theming-test",
   quizzes = "/quizzes",
   quizz = "/quizzes/:treeId",
+  viewMember = "/family-members/view/:id",
 };
 
 export default PageUrlsEnum;

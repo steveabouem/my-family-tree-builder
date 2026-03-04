@@ -25,17 +25,10 @@ import { useChangeMemberPositions, useDeleteMembers } from 'api';
 const nodeTypes = {
   custom: CustomNode,
 };
-const bgUrls = {
-  leaves: 'https://images.pexels.com/photos/22821246/pexels-photo-22821246/free-photo-of-plants-leaves-in-black-and-white.jpeg',
-  branches: 'https://images.unsplash.com/photo-1622109874616-63c5ac24fe5a?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-  roots: 'https://plus.unsplash.com/premium_photo-1674940593973-f520ef5054bc?q=80&w=718&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-};
-
 const GenealogyTree = memo(() => {
   const [nodesList, setNodesList, onNodesListChange] = useNodesState<any>([]);
   const [edgesList, setEdgesList, onEdgesListChange] = useEdgesState<any>([]);
   const [pendingPositions, setPositionsPending] = useState<MemberPosition[]>([]);
-  const [treeBg, setTreeBg] = useState<string>(bgUrls.leaves);
   const { setValues, setFieldValue } = useFormikContext<any>();
   const { updateModal, clearModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
@@ -199,33 +192,16 @@ const GenealogyTree = memo(() => {
     clearTimeout(nodeTimeout);
   }
 
-  function toggleBackground() {
-    switch (treeBg) {
-      case bgUrls.branches:
-        setTreeBg(bgUrls.leaves);
-        break;
-      case bgUrls.leaves:
-        setTreeBg(bgUrls.roots);
-        break;
-      case bgUrls.roots:
-        setTreeBg(bgUrls.branches);
-        break;
-      default:
-        setTreeBg(bgUrls.leaves);
-        break;
-    }
-  };
-
   if (!currentFamilyTree) {
     return <DataProgress
       msg={<Trans>fill_in_the_form_first</Trans>} />
   }
 
   return (
-    <BoxColumn sx={{ position: 'relative',height: '100%', width: '100%' }}>
-      <BoxRow sx={{position: 'absolute', top: '0', left: 0, justifyContent: 'space-between', width: '100%', gap: '1em'}}>
-        {pendingPositions.length ? <Button variant='text' color='secondary' sx={positionButonStyle} onClick={showCoordinatesChangeConfirm}><Trans>save_positions</Trans></Button> : ''}
-        <Button variant='text' color='secondary' onClick={toggleBackground} sx={{zIndex: 15}}><Trans>change_background</Trans></Button>
+    <BoxColumn sx={{ position: 'relative', height: '100%', width: '100%' }}>
+      <BoxRow sx={{ position: 'absolute', top: '0', left: 0, justifyContent: 'space-between', width: '100%', gap: '1em', padding: '.5rem' }}>
+        {/* <Button variant='contained' color='secondary' onClick={toggleBackground} sx={{ zIndex: 15 }}><Trans>change_background</Trans></Button> */}
+        {pendingPositions.length ? <Button variant='contained' color='secondary' sx={positionButonStyle} onClick={showCoordinatesChangeConfirm}><Trans>save_positions</Trans></Button> : ''}
       </BoxRow>
       <ReactFlow
         nodes={nodesList} edges={edgesList} nodeTypes={nodeTypes} onNodeDrag={moveNode}
@@ -237,8 +213,7 @@ const GenealogyTree = memo(() => {
             backgroundSize: '100% 100%',
             backgroundBlendMode: 'overlay',
             backgroundRepeat: 'no-repeat',
-            backgroundColor: theme.palette.grey['400'],
-            backgroundImage: `url(${treeBg})`,
+            background: `radial-gradient(circle, ${theme.palette.secondary.main} 44%, ${theme.palette.primary.main} 80%)`,
             borderRadius: '5px',
             height: '100%',
             transition: '.6s'
@@ -251,7 +226,6 @@ const GenealogyTree = memo(() => {
 });
 
 const positionButonStyle = {
-  // position: 'absolute',
   zIndex: 10,
   top: '20%'
 };

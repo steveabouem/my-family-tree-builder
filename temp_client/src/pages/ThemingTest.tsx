@@ -115,12 +115,20 @@ const ThemingTest = () => {
   const buttonVariants = [
     { label: "Primary contained", variant: "contained" as const, color: "primary" as const },
     { label: "Primary outlined", variant: "outlined" as const, color: "primary" as const },
+    { label: "Primary text", variant: "text" as const, color: "primary" as const },
     { label: "Secondary contained", variant: "contained" as const, color: "secondary" as const },
     { label: "Secondary outlined", variant: "outlined" as const, color: "secondary" as const },
+    { label: "Secondary text", variant: "text" as const, color: "secondary" as const },
     { label: "Success contained", variant: "contained" as const, color: "success" as const },
+    { label: "Success outlined", variant: "outlined" as const, color: "success" as const },
+    { label: "Success text", variant: "text" as const, color: "success" as const },
     { label: "Error contained", variant: "contained" as const, color: "error" as const },
+    { label: "Error outlined", variant: "outlined" as const, color: "error" as const },
+    { label: "Error text", variant: "text" as const, color: "error" as const },
     { label: "Info contained", variant: "contained" as const, color: "info" as const },
-    { label: "Text (inherit)", variant: "text" as const, color: "inherit" as const },
+    { label: "Info outlined", variant: "outlined" as const, color: "info" as const },
+    { label: "Info text", variant: "text" as const, color: "info" as const },
+    { label: "Disabled", variant: "outlined" as const, color: "primary" as const, disabled: true },
   ];
 
   return (
@@ -137,7 +145,7 @@ const ThemingTest = () => {
         <Stack spacing={1.5}>
           {buttonVariants.map((config) => (
             <LabeledRow key={config.label} label={config.label}>
-              <Button variant={config.variant} color={config.color}>
+              <Button variant={config.variant} color={config.color} disabled={!!config?.disabled}>
                 {config.label}
               </Button>
             </LabeledRow>
