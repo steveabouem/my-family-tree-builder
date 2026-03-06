@@ -11,7 +11,9 @@ function genBG(s: ThemeSeasons) {
     case ThemeSeasons.sunny:
       return 'linear-gradient(70deg, rgb(255 236 160 / 85%) 39%, rgb(255 204 0 / 88%) 69%, rgb(255 149 4 / 46%) 100%)';
     default:
-      return 'linear-gradient(70deg, rgb(2 11 26) 56%, rgb(78 47 183 / 92%) 75%, rgb(95 6 59) 103%)';
+    // default:
+    //   return 'linear-gradient(70deg, rgb(2 11 26) 56%, rgb(78 47 183 / 92%) 75%, rgb(95 6 59) 103%)';
+      return 'radial-gradient(circle, rgba(192, 167, 209, 1) 0%, rgba(115, 50, 72, 1) 41%, rgba(23, 2, 26, 1) 100%)';
   }
 }
 

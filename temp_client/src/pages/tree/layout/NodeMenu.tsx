@@ -1,20 +1,25 @@
 import React, { useContext, useState } from 'react';
-import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography } from '@mui/material'
+import { Box, FormControl, FormControlLabel, Radio, RadioGroup, Typography, useTheme } from '@mui/material'
 import { Trans } from '@lingui/macro';
 import GlobalContext from 'contexts/creators/global';
 import { NodeMenuActions, ReactFlowNode } from 'types';
+import { Link } from 'react-router-dom';
+import PageUrlsEnum from 'utils/urls';
+import BoxColumn from 'components/common/containers/row/BoxColumn';
+import styled from 'styled-components';
 
 const NodeMenu = ({ data }: { data: Pick<ReactFlowNode, 'data'> }) => {
   const [selectedAction, setSelectedAction] = useState<'edit' | 'delete' | 'expand'>("expand");
-  const {updateModal, modal} = useContext(GlobalContext);
+  const { updateModal, modal, clearModal } = useContext(GlobalContext);
+  const theme = useTheme();
 
   function selectOption(e: any) {
     setSelectedAction(e.target.value);
-    updateModal({...modal, transferData: e.target.value});
+    updateModal({ ...modal, transferData: e.target.value });
   }
 
   return (
-    <Box sx={menuContainerStyle}>
+    <BoxColumn>
       <FormControl>
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
@@ -40,16 +45,17 @@ const NodeMenu = ({ data }: { data: Pick<ReactFlowNode, 'data'> }) => {
             }
           />
         </RadioGroup>
+        <LinkToMember to={PageUrlsEnum.viewMember.replace(':id', `${data.data.id}`)} onClick={() => clearModal()}>
+          <Typography variant='body2' color={theme.palette.info.main}><Trans>go_to_member_page</Trans></Typography>
+        </LinkToMember>
       </FormControl>
-    </Box>
+    </BoxColumn>
   );
 };
 
-const menuContainerStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'start',
-  gap: 2,
-};
+const LinkToMember = styled(Link)`
+  text-decoration: none;
+  margin-left: auto;
+`;
 
 export default NodeMenu;

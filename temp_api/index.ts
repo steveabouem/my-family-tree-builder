@@ -6,7 +6,7 @@ import cors from 'cors';
 import userHandler from './src/routes/user.routes';
 import authHandler from './src/routes/auth.routes';
 import familyTreeHandler from './src/routes/familyTree.routes';
-import sessionHandler from './src/routes/session.routes';
+import familyMemberHandler from './src/routes/familyMember.routes';
 
 declare module "express-session" {
   interface SessionData extends Session {
@@ -66,7 +66,7 @@ const sessionConfig = {
 
 app.use(session(sessionConfig) as any);
 app.use('/api/users', userHandler);
-app.use('/api/sessions', sessionHandler);
+app.use('/api/members', familyMemberHandler);
 app.use('/api/auth', authHandler);
 app.use('/api/trees', familyTreeHandler);
 /** END */

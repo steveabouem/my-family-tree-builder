@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 import { DeepPartial } from "redux";
-import { Box, Container } from "@mui/material";
+import { Container } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { PersistGate } from "redux-persist/integration/react";
 import TopNav from "./navbars/TopNav";
@@ -69,6 +69,7 @@ const StyledContainer = styled(Container)`
   height: calc(100vh - 100px);
   margin-top: 55px;
   width: 100%;
+  min-width: 100%;
   overflow: hidden scroll;
 `;
 

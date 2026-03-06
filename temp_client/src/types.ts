@@ -126,6 +126,7 @@ export interface PageProps {
   bg?: string;
   prevUrl?: string;
   error?: boolean;
+  reload?: () => void;
 }
 
 export interface NavigationLink {
@@ -852,6 +853,8 @@ export type APIGetProfileDataResponse = Pick<User, 'age' | 'created_at' | 'first
   status: 'active' | 'inactive';
   membersRecordsCount: number; // how many FamilyMember records use this same user ID
 }
+
+export type APIGetMemberDataResponse = Partial<FamilyMemberDTO> & {relatives: any};
 
 export type ManageTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTreeRecord[]> | null>;
 export type APIDeleteTreeResponse = Promise<APIEndpointResponse<void> | null>;
