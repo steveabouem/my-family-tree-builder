@@ -1,0 +1,80 @@
+@keyframes goAway {
+  0% {
+    opacity: 0;
+    transform: translateY(-13px);
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+* {
+  transition: .4s ease;
+  font-family: 'Dosis',
+    sans-serif;
+  font-family: 'Gruppo',
+    sans-serif;
+  font-family: 'Lato',
+    sans-serif;
+  font-family: 'Montserrat Alternates',
+    sans-serif;
+  position: relative;
+  padding: 0;
+  margin: 0;
+}
+
+
+.dd-trigger {
+  position: relative;
+  border: 2.5px solid;
+  padding: 5px;
+  height: 35px;
+  display: flex;
+  border-radius: 5px;
+  border: 1px solid;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: white;
+
+  svg {
+    background: black;
+    padding: 5px;
+    border-radius: 50px;
+    color: white;
+    transition: 1s ease;
+  }
+}
+.dd-options-container {
+  position: absolute;
+  width: 100%;
+  top: 35px;
+  z-index: 1;
+  max-height: 150px;
+  overflow: hidden scroll;
+  .dd-options {
+    animation: goAway .5s ease;
+    border-bottom: 2px solid;
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    height: 35px;
+    cursor: pointer;
+  
+    &:hover {
+      background: #d3a9ba9c;
+      color: #8c6d6d;
+    }
+  
+    /* background: #eae8e8; */
+    .dd-option-inner {
+      cursor: pointer;
+  
+    }
+  
+    &.selected {
+      background: #d39a4930;
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "target": "es6",
+    "lib": [
+      "es2016",
+      "dom"
+    ],
+    "module": "es2020",
+    "moduleResolution": "node",
+    // "typeRoots": ["./*", "./src/*", "../*"],
+    "baseUrl": "./src",
+    "paths": {
+      "assets/*": ["./assets/*"],
+      "components/*": ["./components/*"],
+      "context/*": ["./context/*"],
+      "contexts/*": ["./contexts/*"],
+      "locales/*": ["./locales/*"],
+      "pages/*": ["./pages/*"],
+      "services/*": ["./services/*"],
+      "utils/*": ["./utils/*"],
+      "app/*": ["./app/*"],
+      // "shared/*": ["../shared/*"] // forget it for now. monorepo setup will be improved later
+    },
+    "allowArbitraryExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "skipLibCheck": true
+  },
+  "include": [
+    "src", 
+    "shared",
+    "../shared/*",
+    "react-app-env.d.ts"
+  ]
+}

@@ -1,0 +1,556 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2024-01-18 10:51-0500\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: bf\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/components/common/dropdowns/BaseDropdown.tsx:30
+msgid "{label}"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:84
+msgid "active"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:145
+#~ msgid "added_spouse_fields"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:105
+#~ msgid "age_of_sibling {0}"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:134
+#~ msgid "age_of_spouse"
+#~ msgstr ""
+
+#: src/pages/auth/AuthenticationPage.tsx:191
+msgid "auth_page_subtitle"
+msgstr ""
+
+#: src/pages/auth/AuthenticationPage.tsx:190
+msgid "auth_page_title"
+msgstr ""
+
+#: src/components/common/alerts/BaseModal.tsx:62
+#: src/pages/user/profile/UserCredentials.tsx:58
+msgid "cancel"
+msgstr ""
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:27
+#~ msgid "change_mode"
+#~ msgstr ""
+
+#: src/pages/tree/layout/TreeLayout.tsx:68
+#~ msgid "choose_node_action_title"
+#~ msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:71
+msgid "choose_node_action_title {0}"
+msgstr ""
+
+#: src/components/common/alerts/BaseModal.tsx:63
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:148
+msgid "confirm"
+msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:79
+msgid "Connect"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:64
+msgid "create_new_tree"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:125
+msgid "create_your_first_tree"
+msgstr ""
+
+#: src/components/common/forms/stepform/StepForm.tsx:24
+msgid "current_form_step"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:80
+msgid "date_created"
+msgstr ""
+
+#: src/pages/tree/layout/NodeMenu.tsx:38
+msgid "delete"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:52
+msgid "delete_tree_warning_msg"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:51
+msgid "delete_tree_warning_title?"
+msgstr ""
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:40
+msgid "describe_your_family"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:107
+msgid "description"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:97
+msgid "dob"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:98
+msgid "dod"
+msgstr ""
+
+#: src/pages/user/profile/UserCredentials.tsx:52
+msgid "edit"
+msgstr ""
+
+#: src/pages/tree/layout/NodeMenu.tsx:29
+msgid "edit_node"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:106
+msgid "email"
+msgstr ""
+
+#: src/pages/user/profile/UserCredentials.tsx:25
+msgid "email_form_label"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:99
+#~ msgid "email_of_sibling {0}"
+#~ msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:54
+msgid "error_modal_message"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:55
+msgid "error_modal_title"
+msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:47
+#~ msgid "Families"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:141
+msgid "family_tree_building_explanation"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:68
+#~ msgid "family_tree_name_label"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:72
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:77
+msgid "family_tree_save_failed_modal"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:68
+msgid "family_tree_save_success_modal"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:51
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:57
+msgid "family_tree_update_failed_modal"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:46
+msgid "family_tree_update_success_modal"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:55
+#~ msgid "father_age"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:43
+#~ msgid "father_first_name"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:49
+#~ msgid "father_last_name"
+#~ msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:197
+msgid "fill_in_the_form_first"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:92
+#~ msgid "first_name"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:86
+#~ msgid "first_name_of_sibling {0}"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:122
+#~ msgid "first_name_of_spouse"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:82
+msgid "firstName"
+msgstr ""
+
+#: src/pages/auth/AuthenticationPage.tsx:221
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:100
+msgid "gender"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:218
+#: src/pages/tree/create/charting/ChartingForm.tsx:226
+#~ msgid "gender_female"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:218
+#: src/pages/tree/create/charting/ChartingForm.tsx:226
+#~ msgid "gender_male"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:110
+#~ msgid "gender_of_sibling {0}"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:216
+#~ msgid "gender_of_spouse"
+#~ msgstr ""
+
+#: src/components/common/forms/customField/CustomField.tsx:21
+msgid "generic_field_error"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:122
+#~ msgid "go_check_my_tree"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:89
+msgid "graph_mode_tree_intro"
+msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:55
+msgid "Home"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:195
+#~ msgid "how_many_siblings"
+#~ msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:84
+msgid "inactive"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:100
+#~ msgid "info_on_{lcName}"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:100
+#~ msgid "info_on_node {lcName}"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:72
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:121
+msgid "info_on_node {nameOfStep}"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:101
+#~ msgid "info_on_node {prefix}"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:94
+#~ msgid "last_name"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:93
+#~ msgid "last_name_of_sibling {0}"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:128
+#~ msgid "last_name_of_spouse"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:84
+msgid "lastName"
+msgstr ""
+
+#: src/components/common/menus/UserMenu.jsx:23
+msgid "login"
+msgstr ""
+
+#: src/components/auth/Authentication.tsx:159
+#~ msgid "login failure"
+#~ msgstr ""
+
+#: src/pages/auth/AuthenticationPage.tsx:136
+#: src/pages/auth/AuthenticationPage.tsx:147
+#: src/pages/auth/AuthenticationPage.tsx:170
+#: src/pages/auth/AuthenticationPage.tsx:181
+msgid "login_failure"
+msgstr ""
+
+#: src/pages/auth/AuthenticationPage.tsx:137
+#: src/pages/auth/AuthenticationPage.tsx:148
+#: src/pages/auth/AuthenticationPage.tsx:171
+#: src/pages/auth/AuthenticationPage.tsx:182
+msgid "login_failure_msg {attempts}"
+msgstr ""
+
+#: src/components/auth/Authentication.tsx:166
+#~ msgid "login_failure_msg, {loginAttempts}"
+#~ msgstr ""
+
+#: src/components/auth/Authentication.tsx:282
+#~ msgid "login.failure"
+#~ msgstr ""
+
+#: src/components/auth/Authentication.tsx:164
+#~ msgid "loginfailure"
+#~ msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:89
+msgid "logout"
+msgstr "Logout"
+
+#: src/components/FT.Landing.tsx:8
+msgid "main_welcome_header"
+msgstr ""
+
+#: src/components/FT.Landing.tsx:9
+msgid "main_welcome_subheader"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:61
+#~ msgid "make_tree_private"
+#~ msgstr ""
+
+#. js-lingui-explicit-id
+#: src/pages/auth/AuthenticationPage.tsx:27
+msgid "marital.status"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:86
+msgid "marital_status"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:190
+#~ msgid "marital_status_question_label"
+#~ msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:103
+msgid "modal_no_continue"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:37
+#~ msgid "mother_age"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:25
+#~ msgid "mother_first_name"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:31
+#~ msgid "mother_last_name"
+#~ msgstr ""
+
+#: src/pages/tree/create/CreateFamilyTreePage.tsx:40
+msgid "my_tree_page_title"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:73
+msgid "name"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:143
+msgid "name_your_tree"
+msgstr ""
+
+#: src/pages/user/profile/UserCredentials.tsx:27
+msgid "new_password_form_label"
+msgstr ""
+
+#: src/components/common/forms/stepform/StepForm.tsx:39
+#: src/components/common/forms/stepform/StepForm.tsx:57
+msgid "next"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:192
+#~ msgid "no"
+#~ msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:99
+#~ msgid "no_continue"
+#~ msgstr ""
+
+#: src/components/common/menus/UserMenu.jsx:18
+msgid "notifications"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:77
+msgid "number_of_kin"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:96
+msgid "occupation"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:81
+msgid "operation_failure_text"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:82
+msgid "operation_failure_title"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:69
+msgid "operation_success_text"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:70
+msgid "operation_success_title"
+msgstr ""
+
+#: src/pages/user/profile/UserCredentials.tsx:26
+msgid "password_form_label"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:187
+#~ msgid "preliminary_build_tree_questions_title"
+#~ msgstr ""
+
+#: src/components/common/forms/stepform/StepForm.tsx:36
+#: src/components/common/forms/stepform/StepForm.tsx:54
+msgid "prev"
+msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:63
+msgid "Profile"
+msgstr ""
+
+#: src/pages/user/profile/UserCredentials.tsx:43
+msgid "profile_management_label"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:134
+msgid "profile_not_found"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:92
+msgid "profile_page_subtitle"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:92
+msgid "profile_page_title {0}"
+msgstr ""
+
+#: src/pages/user/profile/UserCredentials.tsx:28
+msgid "repeat_new_password_form_label"
+msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:105
+msgid "save"
+msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:133
+msgid "save_position_confirm_msg"
+msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:132
+msgid "save_position_confirm_title?"
+msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:109
+msgid "save_position_or_continue_msg"
+msgstr ""
+
+#: src/pages/tree/layout/GenealogyTree.tsx:108
+msgid "save_position_or_continue_title {0}?"
+msgstr ""
+
+#: src/components/common/dropdowns/BaseDropdown.tsx:27
+msgid "select"
+msgstr ""
+
+#: src/components/common/menus/UserMenu.jsx:19
+msgid "settings"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:84
+msgid "status"
+msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyContainer.tsx:10
+#~ msgid "story_mode_tree_intro"
+#~ msgstr ""
+
+#: src/components/common/forms/FormFieldsGenerator.tsx:48
+msgid "submit"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:201
+#~ msgid "tell_me_more_about_your_family_title"
+#~ msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:63
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:67
+msgid "tree_dashboard_lists_title"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingContainer.tsx:10
+#~ msgid "tree_dashboard_page_subtitle"
+#~ msgstr ""
+
+#: src/pages/tree/create/charting/ChartingContainer.tsx:10
+#~ msgid "tree_dashboard_page_title"
+#~ msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:61
+msgid "tree_dashboard_subtitle"
+msgstr ""
+
+#: src/pages/tree/dashboard/FamilyTreeDashboard.tsx:61
+msgid "tree_dashboard_title"
+msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:96
+msgid "tree_management_label"
+msgstr ""
+
+#: src/components/common/navbars/TopNav.tsx:72
+msgid "Trees"
+msgstr ""
+
+#: src/components/auth/Authentication.tsx:282
+#~ msgid "Wallah PAPA"
+#~ msgstr ""
+
+#: src/pages/tree/create/genealogy/GenealogyForm.tsx:146
+msgid "whos_next?"
+msgstr ""
+
+#: src/pages/tree/layout/TreeNode.tsx:74
+msgid "years_old"
+msgstr ""
+
+#: src/pages/tree/create/charting/ChartingForm.tsx:191
+#~ msgid "yes"
+#~ msgstr "yes"
+
+#: src/components/user/Profile.tsx:37
+#~ msgid "your_families_title"
+#~ msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:101
+#~ msgid "your_tree_title"
+#~ msgstr ""
+
+#: src/pages/user/profile/ProfilePage.tsx:101
+msgid "your_trees_title"
+msgstr ""

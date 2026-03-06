@@ -1,0 +1,21 @@
+{
+  "name": "black_box_tracker",
+  "version": "1",
+  "main": "index.js",
+  "repository": "git@github.com:steveabouem/my-family-tree-builder.git",
+  "author": "steveabouem <celoswebs@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "api": "cd ~/perso/household/temp_api && yarn dev --trace-warnings",
+    "client": "cd ~/perso/household/temp_client && yarn start",
+    "db": "cd ~/perso/household/temp_api && mysql -u root -p",
+    "build_api": "cd ~/perso/household/temp_api && yarn build",
+    "sl": "cd ~/perso/household/temp_api/src && npx sequelize-cli -- command",
+    "shared:build": "cd ~/perso/household/shared && npm run build",
+    "shared:dev": "cd ~/perso/household/shared && npm run dev",
+    "dev:all": "concurrently \"npm run shared:dev\" \"npm run api\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
