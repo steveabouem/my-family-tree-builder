@@ -63,3 +63,7 @@ react_nodejs/express_backend/dist/src/services/FT/session/FT.session.service.js
 react_nodejs/express_backend/dist/src/services/FT/tree/FT.tree.service.js
 react_nodejs/express_backend/dist/src/services/FT/user/FT.user.service.js
 react_nodejs/express_backend/src/services/FT/user/FT.user.service.ts
+node_modules
+dist
+temp_api/node_modules
+temp_client/.env.local
