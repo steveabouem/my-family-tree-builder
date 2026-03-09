@@ -1,7 +1,11 @@
 import {
-  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional} from 'sequelize';
+  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional,
+  ForeignKey
+} from 'sequelize';
 
 import db from "../../db";
+import User from './User';
+import FamilyTree from './FamilyTree';
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAttributes<FamilyMember>> {
@@ -10,30 +14,33 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
    * */
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
+  declare id: CreationOptional<number>;
+  declare invite_status: 'pending' | 'accepted' | 'revoked';
+  declare verified_by_user: boolean;
   declare age: number | null;
   declare children: string; // node_id[]
-  declare created_at: CreationOptional<Date>;
-  declare created_by: number; //User
   declare description: string;
   declare dob: string;
   declare dod: string | null;
-  declare email: string | null;
+  declare deceased: boolean;
   declare first_name: string;
-  declare gender: number; //1:M, 2:F
-  declare id: CreationOptional<number>;
+  declare gender: 'male' | 'female' | 'other';
+  declare role: 'owner' | 'editor' | 'viewer';
   declare last_name: string;
   declare marital_status: string;
   declare node_id: string;
   declare occupation?: string;
-  declare parents:string; // node_id[]
+  declare parents: string;
   declare profile_url?: string | undefined;
-  declare siblings: string; // node_id[]
-  declare spouses: string; // node_id[]
+  declare siblings: string;
+  declare spouses: string;
   declare position?: string; //{x: number; y: number};
   declare connections?: string; // {id: string; source: string; target: string}[];
-  declare tree_ids: string | null;
+  declare tree_id: ForeignKey<FamilyTree['id']> | null;
+  declare user_id: ForeignKey<User['id']> | null;
+  declare created_at: CreationOptional<Date>;
+  declare created_by: ForeignKey<User['id']>;
   declare updated_at: CreationOptional<Date>;
-  declare user_id: number | null;
 }
 
 FamilyMember.init(
@@ -44,16 +51,22 @@ FamilyMember.init(
       primaryKey: true
     },
     node_id: { type: DataTypes.STRING, allowNull: false },
-    tree_ids: { type: DataTypes.JSON },
-    // allowNull defaults to true
-    user_id: { type: DataTypes.INTEGER},
+    tree_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    deceased: { type: DataTypes.BOOLEAN, allowNull: false },
+    verified_by_user: { type: DataTypes.BOOLEAN, allowNull: false },
+    role: {
+      type: DataTypes.ENUM('owner', 'editor', 'viewer'),
+      allowNull: false,
+      defaultValue: 'viewer',
+    },
+    invite_status: {type: DataTypes.ENUM('pending', 'accepted', 'revoked')},
+    user_id: { type: DataTypes.INTEGER },
     age: { type: DataTypes.INTEGER },
     occupation: { type: DataTypes.STRING },
     dob: { type: DataTypes.STRING },
     dod: { type: DataTypes.STRING },
     first_name: { type: DataTypes.STRING, allowNull: false },
     gender: { type: DataTypes.INTEGER, allowNull: false },
-    email: { type: DataTypes.STRING },
     last_name: { type: DataTypes.STRING, allowNull: false },
     marital_status: { type: DataTypes.STRING },
     parents: { type: DataTypes.JSON },

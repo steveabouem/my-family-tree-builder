@@ -1,5 +1,8 @@
+import { Op } from "sequelize";
+import FamilyMember from "../models/FamilyMember";
 import logger from "../utils/logger";
 import { ServiceResponseWithPayload } from "./types";
+import Relationship from "../models/Relationship";
 
 export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> => {
   return {

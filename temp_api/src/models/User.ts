@@ -1,7 +1,11 @@
 import {
-  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional} from 'sequelize';
+  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional,
+  NonAttribute,
+  Association} from 'sequelize';
 
 import db from "../../db";
+import FamilyTree from './FamilyTree';
+import FamilyMember from './FamilyMember';
 
 
 // order of InferAttributes & InferCreationAttributes is important.
@@ -14,26 +18,31 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare last_name: string;
   declare age: number | null;
   declare dob: string;
-  declare role_id: number;
   declare occupation: string;
   declare marital_status: string;
-  declare assigned_ips: string[]; //each User has one or more ip assigned to them. ips can be shared between multiple. model: FTIP"
   declare description: string;
   declare email: string;
   declare gender: number; // 1:m 2:f"
-  declare has_ipa: CreationOptional<number>; //has authority to update authorized ips"
   declare profile_url: CreationOptional<string>;
   declare password: string;
   declare createdAt: CreationOptional<Date>;
   declare updatedAt: CreationOptional<Date>;
-  // declare leadership: number[];
-  // declare teams: number[];
+
+   // associations
+  declare trees?: NonAttribute<FamilyTree[]>;
+  declare members?: NonAttribute<FamilyMember[]>;
+
+  static associations: {
+    trees: Association<User, FamilyTree>;
+    members: Association<User, FamilyMember>;
+  };
+
 }
 
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true
     },
@@ -45,10 +54,6 @@ User.init(
     },
     dob: {
       type: DataTypes.STRING,
-    },
-    assigned_ips: {
-      type: DataTypes.JSON,
-      allowNull: false
     },
     marital_status: {
       type: DataTypes.STRING,
@@ -63,9 +68,6 @@ User.init(
     gender: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
-    has_ipa: {
-      type: DataTypes.INTEGER,
     },
     email: {
       type: DataTypes.STRING,
@@ -85,10 +87,6 @@ User.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    role_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
     },
     createdAt: {
       type: DataTypes.DATE,

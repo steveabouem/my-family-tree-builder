@@ -1,9 +1,12 @@
 import {
-  DataTypes, Model, InferAttributes, InferCreationAttributes,CreationOptional, NonAttribute
+  DataTypes, Model, InferAttributes, InferCreationAttributes,CreationOptional, NonAttribute,
+  ForeignKey,
+  Association
 } from 'sequelize';
 
 import db from "../../db";
 import FamilyMember from "./FamilyMember";
+import User from './User';
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttributes<FamilyTree>> {
@@ -13,29 +16,31 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare authorized_ips: string;
-  declare public: number;
+  declare visibility: 'public' | 'private' | 'invite_only';
   declare name: string;
   declare active: number;
-  declare members: string; // Store as JSON in DB, but expose as string[], list of node_ids
-  declare emails: string; // email[]
-  declare created_by: number; //User
+  declare default_gen_depth: number;
+  declare default_anchor_id: ForeignKey<FamilyMember['id']>;
+  declare created_by: number;
+  declare updated_by: ForeignKey<User['id']>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
+
+   // associations
+  declare members?: NonAttribute<FamilyMember[]>;
+
+  static associations: {
+    members: Association<FamilyTree, FamilyMember>;
+  };
+
 }
 
 FamilyTree.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true
-    },
-    authorized_ips: {
-      type: DataTypes.JSON
-    },
-     members: {
-      type: DataTypes.JSON
     },
     created_at: {
       type: DataTypes.DATE,
@@ -49,13 +54,16 @@ FamilyTree.init(
       type: DataTypes.STRING,
       allowNull: false
     },
-    emails: {
-      type: DataTypes.JSON,
-      allowNull: false
+    visibility: {
+      type: DataTypes.ENUM('public', 'private', 'invite_only'),
+      allowNull: false,
+      defaultValue: 'private',
     },
-    public: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+    default_gen_depth: {
+      type: DataTypes.INTEGER
+    },
+    default_anchor_id: {
+      type: DataTypes.INTEGER
     },
     updated_at: {
       type: DataTypes.DATE
