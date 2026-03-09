@@ -15,13 +15,13 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       source_family_member_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: true,
         references: { model: 'family_members', key: 'id' },
         onDelete: 'CASCADE'
       },
       target_family_member_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         references: { model: 'family_members', key: 'id' },
         onDelete: 'CASCADE'

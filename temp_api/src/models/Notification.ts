@@ -15,7 +15,7 @@ class Notification extends Model<
   InferCreationAttributes<Notification>
 > {
   declare id: CreationOptional<number>;
-  declare userId: ForeignKey<User['id']>;
+  declare user_id: ForeignKey<User['id']>;
   declare type: string;
   declare payload: object;
   declare read_at: Date | null;
@@ -26,7 +26,7 @@ class Notification extends Model<
 Notification.init(
   {
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
-    userId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    user_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     type: { type: DataTypes.STRING, allowNull: false },
     payload: { type: DataTypes.JSON || DataTypes.JSON, allowNull: false },
     read_at: { type: DataTypes.DATE, allowNull: true },

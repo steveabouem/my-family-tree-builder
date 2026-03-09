@@ -30,7 +30,6 @@ module.exports = {
       dob: {
         type: Sequelize.STRING,
       },
-      role_id: {type: Sequelize.INTEGER},
       email: {
         allowNull: false,
         type: Sequelize.CHAR(255), // https://www.mindbaz.com/en/email-deliverability/what-is-the-maximum-size-of-an-mail-address/

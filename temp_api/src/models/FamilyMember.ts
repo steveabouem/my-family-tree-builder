@@ -19,6 +19,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare verified_by_user: boolean;
   declare age: number | null;
   declare children: string; // node_id[]
+  declare email: string;
   declare description: string;
   declare dob: string;
   declare dod: string | null;
@@ -26,6 +27,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare first_name: string;
   declare gender: 'male' | 'female' | 'other';
   declare role: 'owner' | 'editor' | 'viewer';
+  declare visibility: 'public' | 'family_only' | 'private';
   declare last_name: string;
   declare marital_status: string;
   declare node_id: string;
@@ -39,7 +41,7 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare tree_id: ForeignKey<FamilyTree['id']> | null;
   declare user_id: ForeignKey<User['id']> | null;
   declare created_at: CreationOptional<Date>;
-  declare created_by: ForeignKey<User['id']>;
+  declare created_by_id: ForeignKey<User['id']>;
   declare updated_at: CreationOptional<Date>;
 }
 
@@ -50,6 +52,7 @@ FamilyMember.init(
       autoIncrement: true,
       primaryKey: true
     },
+    email: { type: DataTypes.STRING, allowNull: false },
     node_id: { type: DataTypes.STRING, allowNull: false },
     tree_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     deceased: { type: DataTypes.BOOLEAN, allowNull: false },
@@ -66,7 +69,7 @@ FamilyMember.init(
     dob: { type: DataTypes.STRING },
     dod: { type: DataTypes.STRING },
     first_name: { type: DataTypes.STRING, allowNull: false },
-    gender: { type: DataTypes.INTEGER, allowNull: false },
+    gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
     last_name: { type: DataTypes.STRING, allowNull: false },
     marital_status: { type: DataTypes.STRING },
     parents: { type: DataTypes.JSON },
@@ -74,10 +77,11 @@ FamilyMember.init(
     position: { type: DataTypes.JSON },
     connections: { type: DataTypes.JSON },
     profile_url: { type: DataTypes.BLOB('long') },
-    description: { type: DataTypes.STRING },
+    description: { type: DataTypes.TEXT },
     children: { type: DataTypes.JSON },
     siblings: { type: DataTypes.JSON },
-    created_by: {
+    visibility: {type: DataTypes.ENUM( 'public' , 'family_only' , 'private')},
+    created_by_id: {
       type: DataTypes.INTEGER
     },
     created_at: {

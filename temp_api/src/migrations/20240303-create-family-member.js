@@ -44,8 +44,8 @@ module.exports = {
       marital_status: Sequelize.STRING,
       occupation: Sequelize.STRING,
       description: Sequelize.TEXT,
-      profile_url: Sequelize.STRING,
-      isDeceased: {
+      profile_url: Sequelize.BLOB('long'),
+      deceased: {
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },

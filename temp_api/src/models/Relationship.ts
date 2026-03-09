@@ -16,8 +16,8 @@ class Relationship extends Model<
 > {
   declare id: CreationOptional<number>;
   declare tree_id: ForeignKey<FamilyTree['id']>;
-  declare source_member_id: ForeignKey<FamilyMember['id']>;
-  declare target_member_id: ForeignKey<FamilyMember['id']>;
+  declare source_family_member_id: ForeignKey<FamilyMember['id']>;
+  declare target_family_member_id: ForeignKey<FamilyMember['id']>;
   declare type: 'parent' | 'child' | 'spouse' | 'sibling';
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
@@ -27,8 +27,8 @@ Relationship.init(
   {
     id: { type: DataTypes.INTEGER.UNSIGNED, autoIncrement: true, primaryKey: true },
     tree_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
-    source_member_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
-    target_member_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    source_family_member_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    target_family_member_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     type: {
       type: DataTypes.ENUM('parent', 'child', 'spouse', 'sibling'),
       allowNull: false,

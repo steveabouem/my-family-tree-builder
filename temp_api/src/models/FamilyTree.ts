@@ -18,10 +18,10 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   declare id: CreationOptional<number>;
   declare visibility: 'public' | 'private' | 'invite_only';
   declare name: string;
-  declare active: number;
-  declare default_gen_depth: number;
-  declare default_anchor_id: ForeignKey<FamilyMember['id']>;
-  declare created_by: number;
+  declare active: boolean;
+  declare default_generation_depth: number;
+  declare default_anchor_family_member_id: ForeignKey<FamilyMember['id']>;
+  declare created_by_id: number;
   declare updated_by: ForeignKey<User['id']>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
@@ -47,7 +47,7 @@ FamilyTree.init(
       allowNull: false,
       defaultValue: new Date
     },
-    created_by: {
+    created_by_id: {
       type: DataTypes.INTEGER,
     },
     name: {
@@ -59,17 +59,17 @@ FamilyTree.init(
       allowNull: false,
       defaultValue: 'private',
     },
-    default_gen_depth: {
+    default_generation_depth: {
       type: DataTypes.INTEGER
     },
-    default_anchor_id: {
+    default_anchor_family_member_id: {
       type: DataTypes.INTEGER
     },
     updated_at: {
       type: DataTypes.DATE
     },
     active: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BOOLEAN,
       allowNull: false
     }
   },

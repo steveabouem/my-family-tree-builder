@@ -25,8 +25,8 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare gender: number; // 1:m 2:f"
   declare profile_url: CreationOptional<string>;
   declare password: string;
-  declare createdAt: CreationOptional<Date>;
-  declare updatedAt: CreationOptional<Date>;
+  declare created_at: CreationOptional<Date>;
+  declare updated_at: CreationOptional<Date>;
 
    // associations
   declare trees?: NonAttribute<FamilyTree[]>;
@@ -88,12 +88,12 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: new Date
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.DATE,
     },
   },
