@@ -7,9 +7,8 @@ import {
   CreationOptional,
   ForeignKey,
 } from 'sequelize';
-import db from "../../db";
-import FamilyTree from './FamilyTree';
-import User from './User';
+import sequelize from "../../db";
+import {FamilyTree, User} from './';
 
 class Invite extends Model<
   InferAttributes<Invite>,
@@ -42,7 +41,7 @@ Invite.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize: db, tableName: 'invites', timestamps: false }
+  { sequelize, tableName: 'invites', timestamps: false }
 );
 
 export default Invite;

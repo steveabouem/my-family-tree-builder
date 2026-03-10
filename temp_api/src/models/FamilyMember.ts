@@ -3,7 +3,7 @@ import {
   ForeignKey
 } from 'sequelize';
 
-import db from "../../db";
+import sequelize from "../../db";
 import User from './User';
 import FamilyTree from './FamilyTree';
 
@@ -94,7 +94,7 @@ FamilyMember.init(
   {
     timestamps: false,
     tableName: 'family_members',
-    sequelize: db // passing the `sequelize` instance is required
+    sequelize // passing the `sequelize` instance is required
   }
 );
 

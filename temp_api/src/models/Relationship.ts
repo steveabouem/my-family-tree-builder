@@ -6,7 +6,7 @@ import {
   CreationOptional,
   ForeignKey,
 } from 'sequelize';
-import db from "../../db";
+import sequelize from "../../db";
 import FamilyTree from './FamilyTree';
 import FamilyMember  from './FamilyMember';
 
@@ -36,7 +36,7 @@ Relationship.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize: db, tableName: 'relationships', timestamps: false }
+  { sequelize, tableName: 'relationships', timestamps: false }
 );
 
 export default Relationship;

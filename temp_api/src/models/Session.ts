@@ -3,7 +3,7 @@ import {
   CreationOptional,
 } from 'sequelize';
 
-import db from "../../db";
+import sequelize from "../../db";
 
 // order of InferAttributes & InferCreationAttributes is important.
 class Session extends Model<InferAttributes<Session>, InferCreationAttributes<Session>> {
@@ -35,7 +35,7 @@ Session.init(
   {
     timestamps: false,
     tableName: 'Sessions', // using the default session table. 
-    sequelize: db // passing the `sequelize` instance is required
+    sequelize // passing the `sequelize` instance is required
   }
 );
 

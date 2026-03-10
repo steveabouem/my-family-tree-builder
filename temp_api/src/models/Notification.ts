@@ -7,7 +7,7 @@ import {
   CreationOptional,
   ForeignKey,
 } from 'sequelize';
-import db from '../../db';
+import sequelize from '../../db';
 import User from './User';
 
 class Notification extends Model<
@@ -33,7 +33,7 @@ Notification.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize: db, tableName: 'notifications', timestamps: false }
+  { sequelize, tableName: 'notifications', timestamps: false }
 );
 
 export default Notification;

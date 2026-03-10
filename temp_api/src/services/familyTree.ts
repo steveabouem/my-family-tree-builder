@@ -10,13 +10,13 @@ import {
   DeleteTreeRequestPayload
 } from "./types";
 import logger from "../utils/logger";
-import User from "../models/User";
-import FamilyMember from "../models/FamilyMember";
+import {User, Collaborator , FamilyMember} from "../models";
 import { extractSingleDataValuesFrom, processIncomingImage, processOutgoingImage } from "./serviceHelpers";
 import { KinshipEnum } from "./types";
 
 //#region getAllTrees
 export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPayload<FamilyTree[]>> => {
+  logger.info('ID PARAM: ', {userId})
   const id = Number(userId);
   let response: APIRequestPayload<FamilyTree[]> = { code: 500, error: true, payload: [] };
   let treeList: FamilyTree[] = [];
@@ -26,24 +26,45 @@ export const getAllTrees = async (userId: string): Promise<ServiceResponseWithPa
     logger.info('Curr user ', { userRecord: userRecord?.email });
 
     if (userRecord) {
+      logger.info('TREE ASSOCIATIONS ', {list: FamilyTree.associations})
       treeList = await FamilyTree.findAll({
         where: {
-          [Op.or]: {
-            emails: {
-              [Op.like]: `%${userRecord.email}%`
-            },
-            created_by: {
-              [Op.eq]: id
-            }
-          }
+          created_by_id: id
         },
+        include: [
+          {
+            model: User,
+            as: 'creator',
+            where: { id },
+            required: false 
+          },
+          {
+            model: Collaborator,
+            as: 'collaborators',
+            where: { userId: id },
+            required: false
+          },
+          {
+            model: FamilyMember,
+            as: 'members',
+            where: {
+              [Op.or]: [
+                { userId: id },
+                { email: userRecord.email }
+              ]
+            },
+            required: false
+          }
+        ],
+        subQuery: false //? avoid dupes
       });
+
+      logger.info('Trees ', { treeList });
       await Promise.all(treeList.map(async (t: FamilyTree) => {
         const memberRecords: FamilyMember[] = await FamilyMember.findAll({ where: { node_id: { [Op.in]: JSON.parse(t.members) } } });
         // @ts-ignore: I dont feel like fixing this. Its a simple fix, but I dont feel like it rn
         t.members = memberRecords?.map(m => formatFamilyMemberToFront(m));
       }));
-      logger.info('Trees ', { treeList });
       response.payload = treeList;
       response.code = 200;
       response.error = false;

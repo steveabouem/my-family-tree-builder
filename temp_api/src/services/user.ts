@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import { QueryTypes } from "sequelize";
 import { Op } from "sequelize";
 
-import Role from "../models/Role";
 import FamilyMember from "../models/FamilyMember";
 import FamilyTree from "../models/FamilyTree";
 import logger from "../utils/logger";
@@ -13,21 +12,14 @@ import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelp
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
   const hashedPassword = bcrypt.hashSync(userData.password, addSeasoning());
-  const defaultUserRole = await Role.findOne({ where: { name: 'user' } });
   const payloadData = { email: '', userId: 0 };
   // @ts-ignore
   const response: ServiceResponseWithPayload<AuthenticationResponse | null> = generateResponseData(payloadData);
-
-  if (!defaultUserRole) {
-    logger.error('Unable to create new user: no default role available');
-    return response;
-  }
 
   const formattedValues = {
     ...userData,
     status: 1,
     password: hashedPassword,
-    role_id: defaultUserRole.id,
     created_at: new Date
   };
 

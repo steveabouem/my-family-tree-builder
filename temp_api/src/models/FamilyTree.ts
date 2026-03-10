@@ -4,7 +4,7 @@ import {
   Association
 } from 'sequelize';
 
-import db from "../../db";
+import sequelize from "../../db";
 import FamilyMember from "./FamilyMember";
 import User from './User';
 
@@ -76,7 +76,7 @@ FamilyTree.init(
   {
     timestamps: false,
     tableName: 'family_trees',
-    sequelize: db // passing the `sequelize` instance is required
+    sequelize// passing the `sequelize` instance is required
   }
 );
 

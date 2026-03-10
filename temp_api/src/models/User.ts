@@ -3,7 +3,7 @@ import {
   NonAttribute,
   Association} from 'sequelize';
 
-import db from "../../db";
+import sequelize from "../../db";
 import FamilyTree from './FamilyTree';
 import FamilyMember from './FamilyMember';
 
@@ -100,7 +100,7 @@ User.init(
   {
     timestamps: false,
     tableName: 'users',
-    sequelize: db, // passing the `sequelize` instance is required
+    sequelize // passing the `sequelize` instance is required
   }
 );
 

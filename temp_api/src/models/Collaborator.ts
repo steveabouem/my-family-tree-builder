@@ -6,7 +6,7 @@ import {
   Model, DataTypes, InferAttributes, InferCreationAttributes,
   CreationOptional, ForeignKey
 } from 'sequelize';
-import db from '../../db';
+import sequelize from '../../db';
 import FamilyTree from './FamilyTree';
 import User from './User';
 
@@ -42,7 +42,7 @@ Collaborator.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize: db, tableName: 'collaborators' }
+  { sequelize, tableName: 'collaborators' }
 );
 
 export default Collaborator;

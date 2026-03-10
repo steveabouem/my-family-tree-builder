@@ -7,11 +7,11 @@ export async function getParents(memberId: number, treeId: number): Promise<Fami
     where: {
       tree_id: treeId,
       type: 'child',
-      target_member_id: memberId,
+      target_family_member_id: memberId,
     },
   });
 
-  const parentIds = rels.map(r => r.source_member_id);
+  const parentIds = rels.map(r => r.source_family_member_id);
   if (!parentIds.length) return [];
 
   return FamilyMember.findAll({ where: { id: { [Op.in]: parentIds }, tree_id: treeId } });
@@ -22,11 +22,11 @@ export async function getChildren(memberId: number, treeId: number): Promise<Fam
     where: {
       tree_id: treeId,
       type: 'child',
-      source_member_id: memberId,
+      source_family_member_id: memberId,
     },
   });
 
-  const childIds = rels.map(r => r.target_member_id);
+  const childIds = rels.map(r => r.target_family_member_id);
   if (!childIds.length) return [];
 
   return FamilyMember.findAll({ where: { id: { [Op.in]: childIds }, tree_id: treeId } });
@@ -38,14 +38,14 @@ export async function getSpouses(memberId: number, treeId: number): Promise<Fami
       tree_id: treeId,
       type: 'spouse',
       [Op.or]: [
-        { source_member_id: memberId },
-        { target_member_id: memberId },
+        { source_family_member_id: memberId },
+        { target_family_member_id: memberId },
       ],
     },
   });
 
   const spouseIds = rels.map(r =>
-    r.source_member_id === memberId ? r.target_member_id : r.source_member_id
+    r.source_family_member_id === memberId ? r.target_family_member_id : r.source_family_member_id
   );
   if (!spouseIds.length) return [];
 

@@ -11,13 +11,12 @@ import { addSeasoning } from "../utils/toolkit";
 
 export const register = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
   let buffer = null;
-  const ip = userData.ip;
   const userImage = userData.profile_url?.replace(/^data:image\/\w+;base64,/, '') || null;
   if (userImage) {
     logger.info('Processing img at registration');
     buffer = Buffer.from(userImage, 'base64');
   }
-  const formattedValues = { ...userData, assigned_ips: [ip], created_at: dayjs(), profile_url: buffer };
+  const formattedValues = { ...userData, created_at: dayjs(), profile_url: buffer };
   let response: ServiceResponseWithPayload<AuthenticationResponse | null> = {
     error: true,
     code: 500,
