@@ -6,6 +6,7 @@ import {
 import sequelize from "../../db";
 import User from './User';
 import FamilyTree from './FamilyTree';
+import { Gender, MemberVisibility } from '../services/types';
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAttributes<FamilyMember>> {
@@ -17,28 +18,20 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare id: CreationOptional<number>;
   declare invite_status: 'pending' | 'accepted' | 'revoked';
   declare verified_by_user: boolean;
-  declare age: number | null;
-  declare children: string; // node_id[]
   declare email: string;
   declare description: string;
   declare dob: string;
   declare dod: string | null;
   declare deceased: boolean;
   declare first_name: string;
-  declare gender: 'male' | 'female' | 'other';
-  declare role: 'owner' | 'editor' | 'viewer';
-  declare visibility: 'public' | 'family_only' | 'private';
   declare last_name: string;
+  declare gender: Gender;
+  declare visibility: MemberVisibility;
   declare marital_status: string;
   declare node_id: string;
   declare occupation?: string;
-  declare parents: string;
   declare profile_url?: string | undefined;
-  declare siblings: string;
-  declare spouses: string;
-  declare position?: string; //{x: number; y: number};
-  declare connections?: string; // {id: string; source: string; target: string}[];
-  declare tree_id: ForeignKey<FamilyTree['id']> | null;
+  declare tree_id: ForeignKey<FamilyTree['id']>;
   declare user_id: ForeignKey<User['id']> | null;
   declare created_at: CreationOptional<Date>;
   declare created_by_id: ForeignKey<User['id']>;
@@ -56,15 +49,9 @@ FamilyMember.init(
     node_id: { type: DataTypes.STRING, allowNull: false },
     tree_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     deceased: { type: DataTypes.BOOLEAN, allowNull: false },
-    verified_by_user: { type: DataTypes.BOOLEAN, allowNull: false },
-    role: {
-      type: DataTypes.ENUM('owner', 'editor', 'viewer'),
-      allowNull: false,
-      defaultValue: 'viewer',
-    },
-    invite_status: {type: DataTypes.ENUM('pending', 'accepted', 'revoked')},
+    verified_by_user: { type: DataTypes.BOOLEAN, allowNull: false },// i.e. has the person confirmed the filiation?
+    invite_status: { type: DataTypes.ENUM('pending', 'accepted', 'revoked') },
     user_id: { type: DataTypes.INTEGER },
-    age: { type: DataTypes.INTEGER },
     occupation: { type: DataTypes.STRING },
     dob: { type: DataTypes.STRING },
     dod: { type: DataTypes.STRING },
@@ -72,27 +59,15 @@ FamilyMember.init(
     gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
     last_name: { type: DataTypes.STRING, allowNull: false },
     marital_status: { type: DataTypes.STRING },
-    parents: { type: DataTypes.JSON },
-    spouses: { type: DataTypes.JSON },
-    position: { type: DataTypes.JSON },
-    connections: { type: DataTypes.JSON },
     profile_url: { type: DataTypes.BLOB('long') },
     description: { type: DataTypes.TEXT },
-    children: { type: DataTypes.JSON },
-    siblings: { type: DataTypes.JSON },
-    visibility: {type: DataTypes.ENUM( 'public' , 'family_only' , 'private')},
-    created_by_id: {
-      type: DataTypes.INTEGER
-    },
-    created_at: {
-      type: DataTypes.DATE
-    },
-    updated_at: {
-      type: DataTypes.DATE
-    },
+    visibility: { type: DataTypes.ENUM('public', 'family_only', 'private') },
+    created_by_id: { type: DataTypes.INTEGER },
+    created_at: { type: DataTypes.DATE },
+    updated_at: { type: DataTypes.DATE },
   },
   {
-    timestamps: false,
+    timestamps: true,
     tableName: 'family_members',
     sequelize // passing the `sequelize` instance is required
   }

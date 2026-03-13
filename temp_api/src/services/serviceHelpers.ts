@@ -1,8 +1,6 @@
-import { Op } from "sequelize";
-import FamilyMember from "../models/FamilyMember";
 import logger from "../utils/logger";
 import { ServiceResponseWithPayload } from "./types";
-import Relationship from "../models/Relationship";
+import bcrypt from "bcryptjs";
 
 export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> => {
   return {
@@ -106,4 +104,14 @@ export function processOutgoingImage(img?: any): string | null {
       return null;
     }
   }
+}
+
+/**
+* Use for hashing accross all services.
+* Putting here in case I need to apply more rules to the hashing in the future (complexity, pattern, etc...)
+* @param val: string 
+* @returns hash
+**/
+export function scramble(val: string): string {
+   return bcrypt.hashSync(val);
 }

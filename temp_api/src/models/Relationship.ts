@@ -36,7 +36,7 @@ Relationship.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize, tableName: 'relationships', timestamps: false }
+  { sequelize, tableName: 'relationships', timestamps: true }
 );
 
 export default Relationship;

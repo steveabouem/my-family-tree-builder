@@ -7,11 +7,11 @@ import FamilyTree from "../models/FamilyTree";
 import logger from "../utils/logger";
 import User from "../models/User";
 import { APIUserDTO, ServiceResponseWithPayload, AuthenticationResponse, ProfileDataResponse } from "./types";
-import { addSeasoning } from "../utils/toolkit";
+import { scramble } from "../utils/toolkit";
 import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
-  const hashedPassword = bcrypt.hashSync(userData.password, addSeasoning());
+  const hashedPassword = bcrypt.hashSync(userData.password, scramble());
   const payloadData = { email: '', userId: 0 };
   // @ts-ignore
   const response: ServiceResponseWithPayload<AuthenticationResponse | null> = generateResponseData(payloadData);
@@ -50,56 +50,56 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
   return response; //unchaged from init
 };
 
-export const getProfileDetailsByUserId = async (id: number): Promise<ServiceResponseWithPayload<ProfileDataResponse | null>> => {
-  let response: ServiceResponseWithPayload<ProfileDataResponse | null> | null = null;
+// export const getProfileDetailsByUserId = async (id: number): Promise<ServiceResponseWithPayload<ProfileDataResponse | null>> => {
+//   let response: ServiceResponseWithPayload<ProfileDataResponse | null> | null = null;
 
-  try {
-    const user = await User.findByPk(id, { attributes: { exclude: ['password', 'updated_at'] } });
+//   try {
+//     const user = await User.findByPk(id, { attributes: { exclude: ['password', 'updated_at'] } });
 
-    if (user?.dataValues) {
-      const data = user.dataValues;
-      const membersRecordsCount = await FamilyMember.findAll({
-        where: {
-          email: { [Op.eq]: data.email }
-        }
-      });
-      const nodeIds = [...membersRecordsCount.map(m => m.node_id)];
-      const treesCount = await FamilyTree.count({
-        where: {
-          members: { [Op.like]: `%${data.email}%` }
-        }
-      });
+//     if (user?.dataValues) {
+//       const data = user.dataValues;
+//       const membersRecordsCount = await FamilyMember.findAll({
+//         where: {
+//           email: { [Op.eq]: data.email }
+//         }
+//       });
+//       const nodeIds = [...membersRecordsCount.map(m => m.node_id)];
+//       const treesCount = await FamilyTree.count({
+//         where: {
+//           members: { [Op.like]: `%${data.email}%` }
+//         }
+//       });
 
-      logger.info('Retrieved user profile info', {treesCount, nodeIds, membersRecordsCount});
+//       logger.info('Retrieved user profile info', {treesCount, nodeIds, membersRecordsCount});
 
-      response = {
-        error: false,
-        code: 200,
-        payload: {
-          ...data,
-          membersRecordsCount: nodeIds.length,
-          treesCount
-        }
-      };
-    } else {
-      logger.error('User not found: ', { id });
-      response = {
-        error: true,
-        code: 500,
-        payload: null
-      };
-    }
+//       response = {
+//         error: false,
+//         code: 200,
+//         payload: {
+//           ...data,
+//           membersRecordsCount: nodeIds.length,
+//           treesCount
+//         }
+//       };
+//     } else {
+//       logger.error('User not found: ', { id });
+//       response = {
+//         error: true,
+//         code: 500,
+//         payload: null
+//       };
+//     }
 
-    return response;
-  } catch (e) {
-    logger.error('error ', e);
-    return {
-      error: true,
-      code: 500,
-      payload: null
-    };
-  }
-};
+//     return response;
+//   } catch (e) {
+//     logger.error('error ', e);
+//     return {
+//       error: true,
+//       code: 500,
+//       payload: null
+//     };
+//   }
+// };
 
 export const updateUser = async (id: number, updateData: any): Promise<User | null> => {
   try {
@@ -128,7 +128,7 @@ export const updatePassword = async (passwordData: any): Promise<User | null> =>
 
     if (passwordIsValid && newPasswordIsVerified && newPasswordIsUnused) {
       const updatedUser = await currentUser.update({
-        password: bcrypt.hashSync(passwordData.newPassword, addSeasoning())
+        password: bcrypt.hashSync(passwordData.newPassword, scramble())
       });
       logger.info('password changed: ', updatedUser);
       return updatedUser;
@@ -221,25 +221,25 @@ const getRelatedFamilies = async (id: number): Promise<any> => {
   }
 }
 
-const getExtendedFamiliesDetails = async (id: number): Promise<any> => {
-  try {
-    const currentUser = await getProfileDetailsByUserId(id);
-    if (!currentUser) return [];
+// const getExtendedFamiliesDetails = async (id: number): Promise<any> => {
+//   try {
+//     const currentUser = await getProfileDetailsByUserId(id);
+//     if (!currentUser) return [];
 
-    const select = `
-        SELECT * 
-        FROM Users user 
-        JOIN Families family ON family.id = user.imm_family 
-        WHERE JSON_CONTAINS(family.members, :partner) ;
-      `;
+//     const select = `
+//         SELECT * 
+//         FROM Users user 
+//         JOIN Families family ON family.id = user.imm_family 
+//         WHERE JSON_CONTAINS(family.members, :partner) ;
+//       `;
 
-    const extendedFamilies = await User.sequelize?.query(select, {
-      type: QueryTypes.SELECT,
-    });
+//     const extendedFamilies = await User.sequelize?.query(select, {
+//       type: QueryTypes.SELECT,
+//     });
 
-    return extendedFamilies || [];
-  } catch (e: unknown) {
-    logger.error('Failed to get extended families details:', e);
-    return [];
-  }
-};
+//     return extendedFamilies || [];
+//   } catch (e: unknown) {
+//     logger.error('Failed to get extended families details:', e);
+//     return [];
+//   }
+// };

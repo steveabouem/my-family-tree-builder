@@ -98,7 +98,7 @@ User.init(
     },
   },
   {
-    timestamps: false,
+    timestamps: true,
     tableName: 'users',
     sequelize // passing the `sequelize` instance is required
   }

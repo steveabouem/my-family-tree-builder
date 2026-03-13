@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { authCheck } from "./middlewares";
 import { getSessionUser, sendRouteHandlerResponse } from "./helpers";
-import { getMemberByNodeId } from "../services/familyMember";
+// import { getMemberByNodeId } from "../services/familyMember";
 
 const router = Router();
 
@@ -13,13 +13,13 @@ router.get(
     const sessionUser = getSessionUser(req);
     const userId = sessionUser?.userId;
 
-    sendRouteHandlerResponse<{ memberId: number; userId?: number }, any>(
-      { memberId: id, userId },
-      getMemberByNodeId,
-      res,
-      "getMember",
-      req
-    );
+    // sendRouteHandlerResponse<{ memberId: number; userId?: number }, any>(
+    //   { memberId: id, userId },
+    //   getMemberByNodeId,
+    //   res,
+    //   "getMember",
+    //   req
+    // );
   }
 );
 

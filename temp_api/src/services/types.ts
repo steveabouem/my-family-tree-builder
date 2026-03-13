@@ -2,6 +2,7 @@ import FamilyMember from "../models/FamilyMember";
 import { InferAttributes } from "sequelize";
 import User from "../models/User";
 import FamilyTree from "../models/FamilyTree";
+import { Relationship } from "@/models";
 
 // #region CORE API TYPES
 export interface ApiResponse<T = any> {
@@ -73,8 +74,8 @@ export interface APIRegistrationFields { //registration form fields
     gender: string;
     profileUrl?: string;
 }
-
-export type ProfileDataResponse = Pick<User, 'age' | 'createdAt' | 'first_name' | 'id'
+// @ts-ignore
+export type ProfileDataResponse = Pick<User, 'age' | 'created_at' | 'first_name' | 'id'
     | 'marital_status' | 'updatedAt' | 'profile_url' | 'email' | 'last_name' | 'status'
 > & {
     treesCount: number;
@@ -371,28 +372,6 @@ export interface UpdateTeamRequestPayload {
     userId: number;
 }
 
-export interface APIProjectResponse {
-    id: number;
-    goal: string;
-    budget: number;
-    expenses: Expense[];
-    projectLead: number;
-    teams: number[];
-    status: number;
-    createdAt: Date;
-    updatedAt?: Date;
-}
-
-export interface APITeamResponse {
-    id: number;
-    name: string;
-    members: number[];
-    lead: number;
-    description: string;
-    createdAt: Date;
-    updatedAt?: Date;
-}
-
 export interface ChangePasswordRequestPayload {
     email: string;
     password: string;
@@ -400,6 +379,56 @@ export interface ChangePasswordRequestPayload {
     repeatNewPassword: string;
     id: number;
 };
+
+//#region new Tree schema
+export type FamilyMemberFormValuesV2 = Pick<FamilyMember,
+    'email' |
+    'node_id' |
+    'tree_id' |
+    'deceased' |
+    'verified_by_user' |
+    'invite_status' |
+    'user_id' |
+    'occupation' |
+    'dob' |
+    'dod' |
+    'node_id' | //generated in front
+    'first_name' |
+    'gender' |
+    'last_name' |
+    'marital_status' |
+    'profile_url' |
+    'description' |
+    'visibility'> & {
+        parents?: string[];
+        siblings?: string[];
+        spouses?: string[];
+        children?: string[];
+    };
+export interface CreateTreeRequestV2 {
+    tree: Pick<FamilyTree,
+        'created_by_id' |
+        'name' |
+        'visibility' |
+        'active' |
+        'default_generation_depth'
+    >;
+    members: FamilyMemberFormValuesV2[];
+}
+
+export interface RelationshipMapping {
+    type: Kinship;
+    tree_id: number;
+    sourceNodeId: string;
+    targetNodeId: string;
+}
+
+export interface CreateTreeResponseV2 {
+    tree: FamilyTree | null;
+    members: FamilyMember[];
+    connections: Relationship[];
+}
+//#endregion
 
 // #region COMMON UTILITY TYPES & ENUMS
 export interface PaginationParams {
@@ -429,8 +458,9 @@ export interface ValidationResult {
 }
 
 export enum Gender {
-    Male = 1,
-    Female = 2
+    Male = 'male',
+    Female = 'female',
+    Other = 'other'
 }
 
 export enum MaritalStatus {
@@ -441,9 +471,15 @@ export enum MaritalStatus {
     Separated = 'separated'
 }
 
-export enum KinshipEnum {
+export enum Kinship {
     'sibling' = 'sibling',
     'parent' = 'parent',
     'spouse' = 'spouse',
     'child' = 'child'
-} 
+}
+
+export enum MemberVisibility {
+    public = 'public',
+    family_only = 'family_only',
+    private = 'private'
+}

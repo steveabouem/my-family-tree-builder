@@ -20,7 +20,7 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   declare name: string;
   declare active: boolean;
   declare default_generation_depth: number;
-  declare default_anchor_family_member_id: ForeignKey<FamilyMember['id']>;
+  declare default_anchor_family_member_id: ForeignKey<FamilyMember['id']> | null;
   declare created_by_id: number;
   declare updated_by: ForeignKey<User['id']>;
   declare created_at: CreationOptional<Date>;
@@ -74,7 +74,7 @@ FamilyTree.init(
     }
   },
   {
-    timestamps: false,
+    timestamps: true,
     tableName: 'family_trees',
     sequelize// passing the `sequelize` instance is required
   }

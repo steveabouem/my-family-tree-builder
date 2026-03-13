@@ -42,7 +42,7 @@ Collaborator.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize, tableName: 'collaborators' }
+  { sequelize, tableName: 'collaborators', timestamps: true }
 );
 
 export default Collaborator;

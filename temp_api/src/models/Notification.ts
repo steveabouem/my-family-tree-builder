@@ -33,7 +33,7 @@ Notification.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize, tableName: 'notifications', timestamps: false }
+  { sequelize, tableName: 'notifications', timestamps: true }
 );
 
 export default Notification;

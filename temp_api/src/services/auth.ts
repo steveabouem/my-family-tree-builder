@@ -5,9 +5,8 @@ import { AuthenticationResponse, LoginRequestPayload, UpdateUserRequestPayload }
 import { ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import { createUser } from "./user";
-import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
+import { extractSingleDataValuesFrom, generateResponseData, scramble } from "./serviceHelpers";
 import User from "../models/User";
-import { addSeasoning } from "../utils/toolkit";
 
 export const register = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
   let buffer = null;
@@ -109,7 +108,7 @@ export const updateUser = async (userData: UpdateUserRequestPayload): Promise<Se
       const newPasswordIsUnused = new_password !== password;
       logger.info('PASSWORD CHECK: ', { passwordIsValid, newPasswordIsVerified, newPasswordIsUnused })
       if (passwordIsValid && newPasswordIsVerified && newPasswordIsUnused) {
-        updateData.password = bcrypt.hashSync(new_password, addSeasoning());
+        updateData.password = scramble(new_password);
         logger.info('AFTER DATA UPDATE ', { updateData });
       } else {
         logger.error('Reset Password. Passwords not matching');
