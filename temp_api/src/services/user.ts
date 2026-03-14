@@ -7,11 +7,10 @@ import FamilyTree from "../models/FamilyTree";
 import logger from "../utils/logger";
 import User from "../models/User";
 import { APIUserDTO, ServiceResponseWithPayload, AuthenticationResponse, ProfileDataResponse } from "./types";
-import { scramble } from "../utils/toolkit";
-import { extractSingleDataValuesFrom, generateResponseData } from "./serviceHelpers";
+import { extractSingleDataValuesFrom, generateResponseData, scramble } from "./serviceHelpers";
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
-  const hashedPassword = bcrypt.hashSync(userData.password, scramble());
+  const hashedPassword = scramble(userData.password);
   const payloadData = { email: '', userId: 0 };
   // @ts-ignore
   const response: ServiceResponseWithPayload<AuthenticationResponse | null> = generateResponseData(payloadData);
@@ -128,7 +127,7 @@ export const updatePassword = async (passwordData: any): Promise<User | null> =>
 
     if (passwordIsValid && newPasswordIsVerified && newPasswordIsUnused) {
       const updatedUser = await currentUser.update({
-        password: bcrypt.hashSync(passwordData.newPassword, scramble())
+        password: scramble(passwordData.newPassword)
       });
       logger.info('password changed: ', updatedUser);
       return updatedUser;

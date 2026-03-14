@@ -483,3 +483,9 @@ export enum MemberVisibility {
     family_only = 'family_only',
     private = 'private'
 }
+
+export enum CollaboratorInvite {
+    pending = 'pending',
+    accepted = 'accepted',
+    revoked = 'revoked'
+}

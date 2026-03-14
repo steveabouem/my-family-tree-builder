@@ -16,10 +16,10 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare invite_status: 'pending' | 'accepted' | 'revoked';
+  declare invite_status: 'pending' | 'accepted' | 'revoked' | null;
   declare verified_by_user: boolean;
-  declare email: string;
-  declare description: string;
+  declare email: string | null;
+  declare description: string | null;
   declare dob: string;
   declare dod: string | null;
   declare deceased: boolean;
@@ -27,10 +27,10 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare last_name: string;
   declare gender: Gender;
   declare visibility: MemberVisibility;
-  declare marital_status: string;
+  declare marital_status: string | null;
   declare node_id: string;
-  declare occupation?: string;
-  declare profile_url?: string | undefined;
+  declare occupation: string | null;
+  declare profile_url: string | null;
   declare tree_id: ForeignKey<FamilyTree['id']>;
   declare user_id: ForeignKey<User['id']> | null;
   declare created_at: CreationOptional<Date>;

@@ -9,6 +9,7 @@ import {
 import sequelize from "../../db";
 import FamilyTree from './FamilyTree';
 import FamilyMember  from './FamilyMember';
+import { Kinship } from '..auth/services/types';
 
 class Relationship extends Model<
   InferAttributes<Relationship>,
@@ -18,7 +19,7 @@ class Relationship extends Model<
   declare tree_id: ForeignKey<FamilyTree['id']>;
   declare source_family_member_id: ForeignKey<FamilyMember['id']>;
   declare target_family_member_id: ForeignKey<FamilyMember['id']>;
-  declare type: 'parent' | 'child' | 'spouse' | 'sibling';
+  declare type: Kinship;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 }
