@@ -405,17 +405,17 @@ export type FamilyMemberFormValuesV2 = Pick<FamilyMember,
         spouses?: string[];
         children?: string[];
     };
-export interface CreateTreeRequestV2 {
-    tree: Pick<FamilyTree,
+export type CreateTreeRequestV2 = Pick<FamilyTree,
         'created_by_id' |
         'name' |
         'visibility' |
         'active' |
         'default_generation_depth'
-    >;
-    members: FamilyMemberFormValuesV2[];
-}
+    > & {members: FamilyMemberFormValuesV2[];}
 
+export interface RegistrationRequestV2 {
+    
+}
 export interface RelationshipMapping {
     type: Kinship;
     tree_id: number;
@@ -468,7 +468,8 @@ export enum MaritalStatus {
     Married = 'married',
     Divorced = 'divorced',
     Widowed = 'widowed',
-    Separated = 'separated'
+    Separated = 'separated',
+    other = 'other'
 }
 
 export enum Kinship {
@@ -482,6 +483,12 @@ export enum MemberVisibility {
     public = 'public',
     family_only = 'family_only',
     private = 'private'
+}
+
+export enum TreeVisibility {
+    public = 'public',
+    private = 'private',
+    invite_only = 'invite_only',
 }
 
 export enum CollaboratorInvite {

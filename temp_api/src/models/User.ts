@@ -6,6 +6,7 @@ import {
 import sequelize from "../../db";
 import FamilyTree from './FamilyTree';
 import FamilyMember from './FamilyMember';
+import { Gender } from '../services/types';
 
 
 // order of InferAttributes & InferCreationAttributes is important.
@@ -22,7 +23,7 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare marital_status: string;
   declare description: string;
   declare email: string;
-  declare gender: number; // 1:m 2:f"
+  declare gender: Gender;
   declare profile_url: CreationOptional<string>;
   declare password: string;
   declare created_at: CreationOptional<Date>;
@@ -66,7 +67,7 @@ User.init(
       allowNull: false,
     },
     gender: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.ENUM('male', 'female', 'other'),
       allowNull: false,
     },
     email: {
@@ -98,7 +99,7 @@ User.init(
     },
   },
   {
-    timestamps: true,
+    timestamps: false,
     tableName: 'users',
     sequelize // passing the `sequelize` instance is required
   }

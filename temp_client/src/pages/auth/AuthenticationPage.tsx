@@ -6,7 +6,10 @@ import { Box, Button, FormControl } from "@mui/material";
 import GlobalContext from "../../contexts/creators/global";
 import {
   APILoginResponse, APIEndpointResponse, LoginRequestPayload, RegistrationRequestPayload,
-  FormField, AuthProps, maritalStatusOptions, APIRegistrationResponse
+  FormField, AuthProps, maritalStatusOptions, APIRegistrationResponse,
+  InputType,
+  Gender,
+  RegistrationRequestV2
 } from "types";
 import { useLogin, useRegister } from "../../api/auth";
 import PageUrlsEnum from "utils/urls/";
@@ -25,29 +28,23 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
   const loginMutation = useLogin();
   const registerMutation = useRegister();
   const dispatch = useZDispatch();
-
-  const mStatus = t({
-    id: "marital.status",
-    message: `Marital Status`,
-  });
-
   const loginFormFields = [
     {
       fieldName: 'email',
       label: <Trans>email</Trans>,
-      type: 'email',
+      type: InputType.email,
       required: true
     },
     {
       fieldName: 'password',
       label: <Trans>password</Trans>,
-      type: 'password',
+      type: InputType.password,
       required: true
     },
 
   ];
 
-  const renderRegistrationFormFields: (v: any) => FormField[] = (v) => ([
+  const renderRegistrationFormFields: (v: RegistrationRequestV2 | LoginRequestPayload) => FormField[] = (v) => ([
     {
       fieldName: 'first_name',
       label: <Trans>first_name</Trans>,
@@ -70,20 +67,11 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
         </Box>
       ),
     },
-    {
-      fieldName: 'marital_status',
-      label: mStatus,
-      // @ts-ignore: fix and provide ability to accept login or registration fields types
-      value: v.marital_status,
-      id: 'marital-status-field',
-      subComponent: () => (
-        <BaseDropDown
-          name="marital_status"
-          options={maritalStatusOptions}
-          id="marital-status-dd"
-        />
-      ),
+     {
+      fieldName: 'dob',
+      label: <Trans>age</Trans>,
       required: true,
+      type: InputType.date
     },
     {
       fieldName: 'email',
@@ -94,32 +82,24 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
       fieldName: 'password',
       label: <Trans>password</Trans>,
       required: true,
-      type: 'password'
+      type: InputType.password
     },
     {
       fieldName: 'confirm_password',
       label: <Trans>confirm password</Trans>,
       required: true,
-      type: 'password'
-    },
-    // {
-    //   fieldName: 'dob',
-    //   label: <Trans>age</Trans>,
-    //   required: true,
-    //   type: 'date'
-    // },
+      type: InputType.password
+    }
   ]);
 
-  const registerInitialValues: RegistrationRequestPayload = {
-    firstName: '',
-    lastName: '',
-    // age: 1,
-    occupation: '',
+  const registerInitialValues: RegistrationRequestV2 = {
+    first_name: '',
+    last_name: '',
     password: '',
+    confirm_password: '',
     email: '',
-    gender: 1,
-    profile_url: '',
-    description: '',
+    gender: Gender.Female,
+    dob: ''
   };
 
   const loginInitialValues: LoginRequestPayload = {
@@ -127,10 +107,10 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
     email: '',
   };
 
-  React.useEffect(() => {
-    updateModal({ hidden: true })
-    toggleLoading(false);
-  }, []);
+  // React.useEffect(() => {
+  //   updateModal({ hidden: true })
+  //   toggleLoading(false);
+  // }, []);
 
   const proceedToFormSubmission = async (values: LoginRequestPayload | RegistrationRequestPayload) => {
     if (mode === 'login') {

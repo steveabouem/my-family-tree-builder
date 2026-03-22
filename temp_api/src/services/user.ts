@@ -155,18 +155,6 @@ export const deleteUser = async (id: number): Promise<boolean> => {
 }
 
 const validateUserFields = (values: APIUserDTO): boolean => {
-  // if (!values.dob) {
-  //   logger.info('missing dob');
-  //   logger.error('! User.validateUserFields ! missing dob');
-  //   return false;
-  // }
-
-  // if (!values?.assigned_ips?.length || !values.assigned_ips) {
-  //   logger.info('missing assigned IPs');
-  //   logger.error('! User.validateUserFields ! missing assigned IPs.');
-  //   return false;
-  // }
-
   if (!values.first_name) {
     logger.info('missing first_name');
     logger.error('! User.validateUserFields ! missing first_name');
@@ -190,12 +178,6 @@ const validateUserFields = (values: APIUserDTO): boolean => {
     logger.error('! User.validateUserFields ! missing last_name');
     return false;
   }
-
-  // if (!values.marital_status) {
-  //   logger.info('missing marital_status');
-  //   logger.error('! User.validateUserFields ! missing marital_status');
-  //   return false;
-  // }
 
   if (!values.password) {
     logger.info('missing password');

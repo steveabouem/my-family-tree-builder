@@ -43,7 +43,7 @@ module.exports = {
       },
       gender: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.ENUM('male','female','other')
       },
       profile_url: { type: Sequelize.STRING },
       description: { type: Sequelize.STRING },

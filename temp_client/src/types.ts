@@ -1,7 +1,4 @@
 import React, { ReactElement, ReactNode } from "react";
-import { icon } from "@fortawesome/fontawesome-svg-core";
-import { Button } from "@mui/material";
-import { link } from "fs";
 // I like all my types in one place. sue me.
 // ============================================================================
 // THEME & STYLING
@@ -73,7 +70,7 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
   confirm: {
     default: "#85ffa8ff",
     sunny: "#5e8720",
-    winter: "#10ce99"
+    winter: "#b1ff41"
   },
   dark: {
     default: "#ffffffff",
@@ -88,9 +85,9 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
 };
 
 export enum themeEnum {
-  default =  'default',
-  winter =  'winter',
-  sunny =  'sunny',
+  default = 'default',
+  winter = 'winter',
+  sunny = 'sunny',
 }
 
 export interface IconProps {
@@ -98,7 +95,7 @@ export interface IconProps {
   sx?: { [key: string]: string | number };
   color?: string;
   size?: number;
-  tooltip?:  string | ReactNode,
+  tooltip?: string | ReactNode,
   onClick?: () => void;
 }
 
@@ -202,7 +199,7 @@ export interface FormField {
   id?: string;
   value?: string | number | ReactNode;
   required?: boolean;
-  type?: string;
+  type?: InputType;
   subComponent?: any;
   updateValue?: () => void;
   callback?: (value: string | number) => void;
@@ -244,7 +241,7 @@ export type StepFormState = {
   globalValues: any;
   totalSteps: number;
   files?: FormImageInfo[];
-  stepTree?: { [name: string]: FormField[] };
+  stepTree?: { [name: string]: Omit<StepDetails, 'name'>};
   mode?: string;
 }
 
@@ -255,7 +252,9 @@ export interface FormImageInfo {
 
 export interface StepDetails {
   name: string;
-  fields: FormField[];
+  step: number;
+  fields?: FormField[];
+  sections?: FieldsSection[];
   title?: ReactNode;
   subtitle?: ReactNode;
 }
@@ -362,7 +361,7 @@ export interface UserRegistrationData {
   created_at: any;
 }
 
-export type APIGetProfileResponse = APIEndpointResponse<User & {membersRecordsCount: number, treesCount: number}>;
+export type APIGetProfileResponse = APIEndpointResponse<User & { membersRecordsCount: number, treesCount: number }>;
 
 // ============================================================================
 // FAMILY TREE & RELATIONSHIPS
@@ -399,21 +398,21 @@ export interface FamilyTree {
   userId?: number;
 }
 
-export interface FamilyTreeFormData {
-  // Base anchor fields (always present)
-  anchor_node_id?: string;
-  treeName?: string;
-  anchor_firstName?: string;
-  anchor_lastName?: string;
-  anchor_marital_status?: string;
-  anchor_occupation?: string;
-  anchor_dob?: string;
-  anchor_gender?: '1' | '2';
-  anchor_email?: string;
-  anchor_description?: string;
-  next_of_kin?: string;
-  [key: string]: string | undefined | '1' | '2';
-}
+// export interface FamilyTreeFormData {
+//   // Base anchor fields (always present)
+//   anchor_node_id?: string;
+//   treeName?: string;
+//   anchor_firstName?: string;
+//   anchor_lastName?: string;
+//   anchor_marital_status?: string;
+//   anchor_occupation?: string;
+//   anchor_dob?: string;
+//   anchor_gender?: Gender;
+//   anchor_email?: string;
+//   anchor_description?: string;
+//   next_of_kin?: string;
+//   [key: string]: string | undefined | '1' | '2';
+// }
 
 export interface FamilyTreeRecord {
   created_at: string,
@@ -600,119 +599,10 @@ export enum NodeMenuActions {
 // ENUMS & CONSTANTS
 // ============================================================================
 
-export enum Gendersenum {
-  male = 1,
-  female = 2,
-}
-
 export enum BoolEnum {
   true = 1,
   false = 0
 }
-
-// ============================================================================
-// DROPDOWN OPTIONS
-// ============================================================================
-
-export const genderOptions: DropdownOption[] = [
-  {
-    label: 'male',
-    value: Gendersenum.male,
-  },
-  {
-    label: 'female',
-    value: Gendersenum.female,
-  },
-];
-
-export const parentOptions: DropdownOption[] = [
-  {
-    label: 'yes',
-    value: 1,
-    id: 'is-parent-option',
-  },
-  {
-    label: 'no',
-    value: 0,
-    id: 'not-parent-option',
-  },
-];
-
-export const relationOptions: DropdownOption[] = [
-  {
-    label: 'brother',
-    value: 'brother',
-    id: 'is-brother-option',
-  },
-  {
-    label: 'father',
-    value: 'father',
-    id: 'is-father-option',
-  },
-  {
-    label: 'husband',
-    value: 'husband',
-    id: 'is-husband-option',
-  },
-  {
-    label: 'mother',
-    value: 'mother',
-    id: 'is-mother-option',
-  },
-  {
-    label: 'sister',
-    value: 'sister',
-    id: 'is-sister-option',
-  },
-  {
-    label: 'wife',
-    value: 'wife',
-    id: 'is-wife-option',
-  },
-  {
-    label: 'son',
-    value: 'son',
-    id: 'is-son-option',
-  },
-  {
-    label: 'daughter',
-    value: 'daughter',
-    id: 'is-daughter-option',
-  },
-];
-
-export const maritalStatusOptions: DropdownOption[] = [
-  {
-    label: 'single',
-    value: 'Single',
-    id: 'single-option',
-  },
-  {
-    label: 'married',
-    value: 'Married',
-    id: 'married-option',
-  },
-  {
-    label: 'divorced',
-    value: 'Divorced',
-    id: 'Divorced-option',
-  },
-  {
-    label: 'separated',
-    value: 'Separated',
-    id: 'separated-option',
-  },
-  {
-    label: 'widowed',
-    value: 'Widowed',
-    id: 'widowed-option',
-  },
-  {
-    label: 'not telling',
-    value: 'Not telling',
-    id: 'not-telling-option',
-  },
-];
 
 // ============================================================================
 // PROJECTS & TEAMS
@@ -854,8 +744,7 @@ export type APIGetProfileDataResponse = Pick<User, 'age' | 'created_at' | 'first
   membersRecordsCount: number; // how many FamilyMember records use this same user ID
 }
 
-export type APIGetMemberDataResponse = Partial<FamilyMemberDTO> & {relatives: any};
-
+export type APIGetMemberDataResponse = Partial<FamilyMemberDTO> & { relatives: any };
 export type ManageTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTreeRecord[]> | null>;
 export type APIDeleteTreeResponse = Promise<APIEndpointResponse<void> | null>;
 export type GetTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTree | null>>;
@@ -864,53 +753,283 @@ export interface DeleteMembersRequestPayload {
   nodeId: string;
   treeId: number;
 }
-// Project & Team API
-export interface CreateProjectRequestPayload {
-  data: ProjectData;
-  userId: number;
-}
 
-export interface UpdateProjectRequestPayload {
-  projectId: number;
-  data: Partial<ProjectData>;
-  userId: number;
-}
 
-export interface AssignTeamToProjectRequestPayload {
-  projectId: number;
-  teamId: number;
-  userId: number;
-}
+//#region V2 PROD TYPES
+/*
+* DAO(sent by front)
+*/
 
-export interface CreateTeamRequestPayload {
-  data: TeamData;
-  userId: number;
-}
+export type FamilyMemberDAOV2 = Pick<FamilyMemberDTOV2,
+  'deceased' |
+  'description' |
+  'dob' |
+  'dod' |
+  'email' |
+  'first_name' |
+  'gender' |
+  'last_name' |
+  'marital_status' |
+  'node_id' |
+  'occupation' |
+  'profile_url' |
+  'visibility'> & {
+    is_anchor: boolean;
+    step_number: number;
+    send_invite: boolean;
+    parents?: string[];
+    siblings?: string[];
+    spouses?: string[];
+    children?: string[];
+  };
 
-export interface UpdateTeamRequestPayload {
-  teamId: number;
-  data: Partial<TeamData>;
-  userId: number;
-}
+export type FamilyTreeDAOV2 = Pick<FamilyTreeDTOV2,//? family tree form data
+  // 'created_by_id' | set in the back, based on server's request session user
+  'active' |
+  'default_generation_depth' |
+  'name' |
+  'visibility'
+>
+  & {members: {
+    [key: string]: FamilyMemberDAOV2; // node_id key
+  }};
 
-export interface APIProjectResponse {
+
+/*
+* DTO returned by api (close match to db model)
+*/
+export interface RelationshipDTOV2 {
   id: number;
-  goal: string;
-  budget: number;
-  expenses: Expense[];
-  projectLead: number;
-  teams: number[];
-  status: number;
-  createdAt: Date;
-  updatedAt?: Date;
+  tree_id: number;
+  source_family_member_id: number;
+  target_family_member_id: number;
+  type: Kinship;
+  created_at: string;
+  updated_at: string | null;
 }
 
-export interface APITeamResponse {
+export interface FamilyMemberDTOV2 {
   id: number;
+  invite_status: CollaboratorInvite | null;
+  verified_by_user: boolean;
+  email: string | null;
+  description: string | null;
+  dob: string | null;
+  dod: string | null;
+  deceased: boolean;
+  first_name: string;
+  last_name: string;
+  gender: Gender | null;
+  visibility: MemberVisibility;
+  marital_status: string | null;
+  node_id: string;
+  occupation: string | null;
+  profile_url: string | null;
+  tree_id: number;
+  user_id: number | null;
+  created_at: string;
+  created_by_id: number;
+  updated_at: string | null;
+}
+
+export interface FamilyTreeDTOV2 {
+  id: number;
+  visibility: TreeVisibility;
   name: string;
-  members: number[];
-  lead: number;
-  description: string;
-  createdAt: Date;
-  updatedAt?: Date;
+  active: boolean;
+  default_generation_depth: number;
+  default_anchor_family_member_id: number | null;
+  created_by_id: number;
+  updated_by: number | null;
+  created_at: string;
+  updated_at: string;
 }
+
+export interface CreateTreeRequestPayloadV2 {
+  tree: FamilyTreeDAOV2;
+  members: FamilyMemberDAOV2[];
+}
+
+
+/*
+* Wrapped API responses
+*/
+
+export type CreateTreeResponseV2 = APIEndpointResponse<{
+  tree: FamilyTreeDTOV2 | null;
+  members: FamilyMemberDTOV2[];
+  connections: RelationshipDTOV2[];
+}>;
+/*
+* Enums
+*/
+export enum InputType {
+  array = 'array',
+  select = 'select',
+  radio = 'radio',
+  checkbox = 'checkbox',
+  image = 'image',
+  password = 'password',
+  email = 'email',
+  date = 'date',
+}
+
+export enum MemberVisibility {
+  public = 'public',
+  family_only = 'family_only',
+  private = 'private'
+}
+
+export enum TreeVisibility {
+  public = 'public',
+  private = 'private',
+  invite_only = 'invite_only',
+}
+
+export enum CollaboratorInvite {
+  pending = 'pending',
+  accepted = 'accepted',
+  revoked = 'revoked'
+}
+
+export enum Gender {
+  Male = 'male',
+  Female = 'female',
+  Other = 'other'
+}
+
+export enum Kinship {
+  'sibling' = 'sibling',
+  'parent' = 'parent',
+  'spouse' = 'spouse',
+  'child' = 'child'
+}
+
+export enum MaritalStatus {
+    Single = 'single',
+    Married = 'married',
+    Divorced = 'divorced',
+    Widowed = 'widowed',
+    Separated = 'separated',
+    other = 'other'
+}
+
+export interface RegistrationRequestV2 {
+  first_name: string;
+  last_name: string;
+  password: string;
+  confirm_password: string;
+  gender: Gender;
+  email: string;
+  dob?: string;
+}
+//#endregion
+
+
+
+//#region DROPDOWN OPTIONS
+
+
+export const genderOptions: DropdownOption[] = [
+  {
+    label: 'male',
+    value: Gender.Male,
+  },
+  {
+    label: 'female',
+    value: Gender.Female,
+  },
+  {
+    label: 'other',
+    value: Gender.Other,
+  },
+];
+
+export const parentOptions: DropdownOption[] = [
+  {
+    label: 'yes',
+    value: 1,
+    id: 'is-parent-option',
+  },
+  {
+    label: 'no',
+    value: 0,
+    id: 'not-parent-option',
+  },
+];
+
+export const relationOptions: DropdownOption[] = [
+  {
+    label: 'brother',
+    value: 'brother',
+    id: 'is-brother-option',
+  },
+  {
+    label: 'father',
+    value: 'father',
+    id: 'is-father-option',
+  },
+  {
+    label: 'husband',
+    value: 'husband',
+    id: 'is-husband-option',
+  },
+  {
+    label: 'mother',
+    value: 'mother',
+    id: 'is-mother-option',
+  },
+  {
+    label: 'sister',
+    value: 'sister',
+    id: 'is-sister-option',
+  },
+  {
+    label: 'wife',
+    value: 'wife',
+    id: 'is-wife-option',
+  },
+  {
+    label: 'son',
+    value: 'son',
+    id: 'is-son-option',
+  },
+  {
+    label: 'daughter',
+    value: 'daughter',
+    id: 'is-daughter-option',
+  },
+];
+
+export const maritalStatusOptions: DropdownOption[] = [
+  {
+    label: 'single',
+    value: 'Single',
+    id: 'single-option',
+  },
+  {
+    label: 'married',
+    value: 'Married',
+    id: 'married-option',
+  },
+  {
+    label: 'divorced',
+    value: 'Divorced',
+    id: 'Divorced-option',
+  },
+  {
+    label: 'separated',
+    value: 'Separated',
+    id: 'separated-option',
+  },
+  {
+    label: 'widowed',
+    value: 'Widowed',
+    id: 'widowed-option',
+  },
+  {
+    label: 'not telling',
+    value: 'Not telling',
+    id: 'not-telling-option',
+  },
+];

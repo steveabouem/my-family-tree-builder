@@ -7,13 +7,16 @@ const defaultTypo = {
 function genBG(s: ThemeSeasons) {
   switch (s) {
     case ThemeSeasons.winter:
-      return 'linear-gradient(70deg, rgb(244 253 255 / 85%) 39%, rgb(255 255 255) 69%, rgb(205 253 255 / 32%) 100%)';
+      // return 'linear-gradient(70deg, rgb(244 253 255 / 85%) 39%, rgb(255 255 255) 69%, rgb(205 253 255 / 32%) 100%)';
+      // return 'linear-gradient(323deg, #f3f5f7 39%, rgb(255 253 208 / 50%) 69%, rgb(229 159 0 / 30%) 100%)';
+      return 'linear-gradient(323deg, #f3f5f7 39%, rgb(243 245 247) 69%, rgb(229 159 0 / 30%) 100%)';
     case ThemeSeasons.sunny:
       return 'linear-gradient(70deg, rgb(255 236 160 / 85%) 39%, rgb(255 204 0 / 88%) 69%, rgb(255 149 4 / 46%) 100%)';
     default:
     // default:
     //   return 'linear-gradient(70deg, rgb(2 11 26) 56%, rgb(78 47 183 / 92%) 75%, rgb(95 6 59) 103%)';
-      return 'radial-gradient(circle, rgba(192, 167, 209, 1) 0%, rgba(115, 50, 72, 1) 41%, rgba(23, 2, 26, 1) 100%)';
+      return 'radial-gradient(circle, rgb(205 97 97) 0%, #733248 41%, rgba(23, 2, 26, 1) 100%)';
+      // return 'radial-gradient(circle, rgba(192, 167, 209, 1) 0%, #733248 41%, rgba(23, 2, 26, 1) 100%)';
   }
 }
 
@@ -161,7 +164,7 @@ const theme = (season: ThemeSeasons) => createTheme({
       styleOverrides: {
         root: ({ theme }) => ({
           width: '100%',
-          background: `${theme.palette.info.contrastText}!important`,
+          background: `${theme.palette.secondary.main}`,
           'MuiBox-root': {
             padding: '0 .5rem'
           },
