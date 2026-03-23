@@ -41,7 +41,7 @@ Invite.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize, tableName: 'invites', timestamps: true }
+  { sequelize, tableName: 'invites', timestamps: false }
 );
 
 export default Invite;

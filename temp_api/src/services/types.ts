@@ -387,7 +387,6 @@ export type FamilyMemberFormValuesV2 = Pick<FamilyMember,
     'tree_id' |
     'deceased' |
     'verified_by_user' |
-    'invite_status' |
     'user_id' |
     'occupation' |
     'dob' |
@@ -406,15 +405,29 @@ export type FamilyMemberFormValuesV2 = Pick<FamilyMember,
         children?: string[];
     };
 export type CreateTreeRequestV2 = Pick<FamilyTree,
-        'created_by_id' |
-        'name' |
-        'visibility' |
-        'active' |
-        'default_generation_depth'
-    > & {members: FamilyMemberFormValuesV2[];}
+    'created_by_id' |
+    'name' |
+    'visibility' |
+    'active' |
+    'default_generation_depth'
+> & { members: FamilyMemberFormValuesV2[]; }
 
 export interface RegistrationRequestV2 {
-    
+    first_name: string;
+    last_name: string;
+    password: string;
+    confirm_password: string;
+    gender: Gender;
+    email: string;
+    dob?: string;
+}
+
+export type ProfileDataResponseV2 = Pick<User, 'age' | 'created_at' | 'first_name' | 'id'
+    | 'marital_status' | 'profile_url' | 'email' | 'last_name' | 'status'
+> & {
+    userTrees: FamilyTree[];
+    membersRecords: FamilyMember[]; // how many FamilyMember records use this same user ID // TODO: make sure to return details on user's family member profiles' invite status
+    // settings: User.settings // todo (notifications and other privacy settings. to be polished further soone)
 }
 export interface RelationshipMapping {
     type: Kinship;

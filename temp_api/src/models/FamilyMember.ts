@@ -16,7 +16,6 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare invite_status: 'pending' | 'accepted' | 'revoked' | null;
   declare verified_by_user: boolean;
   declare email: string | null;
   declare description: string | null;
@@ -50,7 +49,6 @@ FamilyMember.init(
     tree_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     deceased: { type: DataTypes.BOOLEAN, allowNull: false },
     verified_by_user: { type: DataTypes.BOOLEAN, allowNull: false },// i.e. has the person confirmed the filiation?
-    invite_status: { type: DataTypes.ENUM('pending', 'accepted', 'revoked') },
     user_id: { type: DataTypes.INTEGER },
     occupation: { type: DataTypes.STRING },
     dob: { type: DataTypes.STRING },
@@ -67,7 +65,7 @@ FamilyMember.init(
     updated_at: { type: DataTypes.DATE },
   },
   {
-    timestamps: true,
+    timestamps: false,
     tableName: 'family_members',
     sequelize // passing the `sequelize` instance is required
   }

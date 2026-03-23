@@ -1,21 +1,13 @@
-import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
-import { AuthenticationResponse, LoginRequestPayload, UpdateUserRequestPayload } from "./types";
+import { AuthenticationResponse, LoginRequestPayload, RegistrationRequestV2, UpdateUserRequestPayload } from "./types";
 import { ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import { createUser } from "./user";
 import { extractSingleDataValuesFrom, generateResponseData, scramble } from "./serviceHelpers";
 import User from "../models/User";
 
-export const register = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
-  let buffer = null;
-  const userImage = userData.profile_url?.replace(/^data:image\/\w+;base64,/, '') || null;
-  if (userImage) {
-    logger.info('Processing img at registration');
-    buffer = Buffer.from(userImage, 'base64');
-  }
-  const formattedValues = { ...userData, created_at: dayjs(), profile_url: buffer };
+export const register = async (userData: RegistrationRequestV2): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
   let response: ServiceResponseWithPayload<AuthenticationResponse | null> = {
     error: true,
     code: 500,
@@ -34,7 +26,7 @@ export const register = async (userData: any): Promise<ServiceResponseWithPayloa
 
   response.addToSession = true;
 
-  const userResponse = await createUser(formattedValues);
+  const userResponse = await createUser(userData);
   if (userResponse.code === 200) {
     logger.info('New user created ', userResponse);
   } else {

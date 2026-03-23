@@ -1,5 +1,5 @@
 import {
-  DataTypes, Model, InferAttributes, InferCreationAttributes,CreationOptional, NonAttribute,
+  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute,
   ForeignKey,
   Association
 } from 'sequelize';
@@ -7,6 +7,7 @@ import {
 import sequelize from "../../db";
 import FamilyMember from "./FamilyMember";
 import User from './User';
+import { TreeVisibility } from '@/services/types';
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttributes<FamilyTree>> {
@@ -16,7 +17,7 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare visibility: 'public' | 'private' | 'invite_only';
+  declare visibility: any;
   declare name: string;
   declare active: boolean;
   declare default_generation_depth: number;
@@ -26,7 +27,7 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
 
-   // associations
+  // associations
   declare members?: NonAttribute<FamilyMember[]>;
 
   static associations: {
@@ -74,7 +75,7 @@ FamilyTree.init(
     }
   },
   {
-    timestamps: true,
+    timestamps: false,
     tableName: 'family_trees',
     sequelize// passing the `sequelize` instance is required
   }

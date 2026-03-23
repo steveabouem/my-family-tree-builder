@@ -1,13 +1,10 @@
 import bcrypt from "bcryptjs";
-import { QueryTypes } from "sequelize";
 import { Op } from "sequelize";
 
-import FamilyMember from "../models/FamilyMember";
-import FamilyTree from "../models/FamilyTree";
 import logger from "../utils/logger";
-import User from "../models/User";
-import { APIUserDTO, ServiceResponseWithPayload, AuthenticationResponse, ProfileDataResponse } from "./types";
+import { APIUserDTO, ServiceResponseWithPayload, AuthenticationResponse, ProfileDataResponseV2 } from "./types";
 import { extractSingleDataValuesFrom, generateResponseData, scramble } from "./serviceHelpers";
+import { Collaborator, FamilyTree, User, FamilyMember } from "../models";
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
   const hashedPassword = scramble(userData.password);
@@ -36,7 +33,7 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
     if (newUser) {
       response.code = 200;
       response.error = false;
-      response.payload = { userId: newUser.id, email: newUser.email, firstName: newUser.first_name, lastName: newUser.last_name  };
+      response.payload = { userId: newUser.id, email: newUser.email, firstName: newUser.first_name, lastName: newUser.last_name };
       response.addToSession = true;
       logger.info('New USer returns to session ', { response });
 
@@ -49,56 +46,68 @@ export const createUser = async (userData: any): Promise<ServiceResponseWithPayl
   return response; //unchaged from init
 };
 
-// export const getProfileDetailsByUserId = async (id: number): Promise<ServiceResponseWithPayload<ProfileDataResponse | null>> => {
-//   let response: ServiceResponseWithPayload<ProfileDataResponse | null> | null = null;
+export const getProfileDetailsByUserId = async (id: number): Promise<ServiceResponseWithPayload<ProfileDataResponseV2 | null>> => {
+  let response: ServiceResponseWithPayload<ProfileDataResponseV2 | null> | null = null;
 
-//   try {
-//     const user = await User.findByPk(id, { attributes: { exclude: ['password', 'updated_at'] } });
+  try {
+    const user = await User.findByPk(id, { attributes: { exclude: ['password', 'updated_at'] } });
 
-//     if (user?.dataValues) {
-//       const data = user.dataValues;
-//       const membersRecordsCount = await FamilyMember.findAll({
-//         where: {
-//           email: { [Op.eq]: data.email }
-//         }
-//       });
-//       const nodeIds = [...membersRecordsCount.map(m => m.node_id)];
-//       const treesCount = await FamilyTree.count({
-//         where: {
-//           members: { [Op.like]: `%${data.email}%` }
-//         }
-//       });
+    if (user?.dataValues) {
+      const data = user.dataValues;
+      const membersRecords = await FamilyMember.findAll({
+        where: {
+          [Op.or]: [
+            {email: { [Op.eq]: data.email }},// user might have been invited and not have confirmed yet
+            {user_id: { [Op.eq]: data.id}},
+          ]
+        }
+      });
+      const userTrees = await FamilyTree.findAll({
+       where: {created_by_id: {[Op.eq]:  data.id}},
+        include: [
+          { model: Collaborator, as: 'collaborators', where: { user_id: data.id }, required: false },
+          {
+            model: FamilyMember, as: 'members', where: {
+              [Op.or]: [
+                { user_id: data.id },
+                { email: data.email || 'N/A' }, //email not always available
+              ]
+            }, required: false
+          },
+        ],
+        subQuery: false
+      });
 
-//       logger.info('Retrieved user profile info', {treesCount, nodeIds, membersRecordsCount});
+      logger.info('Retrieved user profile info', { userTrees, membersRecordsCount: membersRecords });
 
-//       response = {
-//         error: false,
-//         code: 200,
-//         payload: {
-//           ...data,
-//           membersRecordsCount: nodeIds.length,
-//           treesCount
-//         }
-//       };
-//     } else {
-//       logger.error('User not found: ', { id });
-//       response = {
-//         error: true,
-//         code: 500,
-//         payload: null
-//       };
-//     }
+      response = {
+        error: false,
+        code: 200,
+        payload: {
+          ...data,
+          membersRecords,
+          userTrees
+        }
+      };
+    } else {
+      logger.error('User not found: ', { id });
+      response = {
+        error: true,
+        code: 500,
+        payload: null
+      };
+    }
 
-//     return response;
-//   } catch (e) {
-//     logger.error('error ', e);
-//     return {
-//       error: true,
-//       code: 500,
-//       payload: null
-//     };
-//   }
-// };
+    return response;
+  } catch (e) {
+    logger.error('error ', e);
+    return {
+      error: true,
+      code: 500,
+      payload: null
+    };
+  }
+};
 
 export const updateUser = async (id: number, updateData: any): Promise<User | null> => {
   try {
@@ -201,26 +210,3 @@ const getRelatedFamilies = async (id: number): Promise<any> => {
     return [];
   }
 }
-
-// const getExtendedFamiliesDetails = async (id: number): Promise<any> => {
-//   try {
-//     const currentUser = await getProfileDetailsByUserId(id);
-//     if (!currentUser) return [];
-
-//     const select = `
-//         SELECT * 
-//         FROM Users user 
-//         JOIN Families family ON family.id = user.imm_family 
-//         WHERE JSON_CONTAINS(family.members, :partner) ;
-//       `;
-
-//     const extendedFamilies = await User.sequelize?.query(select, {
-//       type: QueryTypes.SELECT,
-//     });
-
-//     return extendedFamilies || [];
-//   } catch (e: unknown) {
-//     logger.error('Failed to get extended families details:', e);
-//     return [];
-//   }
-// };

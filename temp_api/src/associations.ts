@@ -7,10 +7,12 @@ import Collaborator from './models/Collaborator';
 import Relationship from './models/Relationship';
 import Invite from './models/Invite';
 import Notification from './models/Notification';
+import { Association } from 'sequelize';
 
 /* -------------------------------------------------------
    USER ↔ TREE (creator)
-------------------------------------------------------- */
+------------------------------------------------------- */ 
+// these 2 are unused since I removed this Association. leaving it here because I will most likely revert that change
 User.hasMany(FamilyTree, {
   foreignKey: 'created_by_id',
   as: 'createdTrees'

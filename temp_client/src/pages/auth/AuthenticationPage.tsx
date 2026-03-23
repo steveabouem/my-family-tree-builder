@@ -107,10 +107,9 @@ const AuthenticationPage = ({ mode, changeMode }: AuthProps): JSX.Element => {
     email: '',
   };
 
-  // React.useEffect(() => {
-  //   updateModal({ hidden: true })
-  //   toggleLoading(false);
-  // }, []);
+  React.useEffect(() => {
+    toggleLoading(false);
+  }, []);
 
   const proceedToFormSubmission = async (values: LoginRequestPayload | RegistrationRequestPayload) => {
     if (mode === 'login') {

@@ -9,7 +9,7 @@ import {
 import sequelize from "../../db";
 import FamilyTree from './FamilyTree';
 import FamilyMember  from './FamilyMember';
-import { Kinship } from '..auth/services/types';
+import { Kinship } from '../services/types';
 
 class Relationship extends Model<
   InferAttributes<Relationship>,
@@ -37,7 +37,7 @@ Relationship.init(
     created_at: DataTypes.DATE,
     updated_at: DataTypes.DATE,
   },
-  { sequelize, tableName: 'relationships', timestamps: true }
+  { sequelize, tableName: 'relationships', timestamps: false }
 );
 
 export default Relationship;
