@@ -2,9 +2,10 @@ import { Router, Request, Response } from "express";
 
 import FamilyTree from "../models/FamilyTree";
 import { APIGetFamilyTreeResponse, ManageTreeRequestPayload, ManageMembersRequestPayload, DeleteMembersRequestPayload, DeleteTreeRequestPayload, CreateTreeRequestV2, CreateTreeResponseV2 } from "../services/types";
-import { sendRouteHandlerResponse } from "./helpers";
-import { createTree, createTreeV2, deleteTree, deleteTreeMember, getAllTrees, getTreeById, updateMemberPositions, updateTree } from "../services/familyTree";
+import { getSessionUser, sendRouteHandlerResponse } from "./helpers";
+import { createTreeV2, deleteTree, deleteTreeMember, getAllTrees, getTreeById, updateMemberPositions, updateTree } from "../services/familyTree";
 import { authCheck } from "./middlewares";
+import logger from "../utils/logger";
 
 const router = Router();
 
@@ -45,8 +46,16 @@ const router = Router();
 /*
 * V2
 */
+router.get('/index', authCheck, (req: Request, res: Response) => {
+      const currentUSer = getSessionUser(req) ||{userId: 1};
+   logger.info('CURR USER ', {currentUSer});
+  sendRouteHandlerResponse<number, FamilyTree[] | null>(currentUSer.userId, getAllTrees, res, 'Get all trees');
+});
 
-router.post('/new', (req, res) => {
-   sendRouteHandlerResponse<CreateTreeRequestV2, CreateTreeResponseV2 | null>(req.body, createTreeV2, res, 'New tree create flow')
-})
+router.post('/new', authCheck, (req, res) => {
+   const currentUSer = getSessionUser(req) ||{userId: 1};
+   logger.info('CURR USER ', {currentUSer})
+   sendRouteHandlerResponse<CreateTreeRequestV2, CreateTreeResponseV2 | null>({...req.body, created_by_id: currentUSer?.userId}, createTreeV2, res, 'New tree create flow')
+});
+
 export default router;

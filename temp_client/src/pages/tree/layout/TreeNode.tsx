@@ -2,24 +2,16 @@ import React, { memo } from 'react';
 import { Typography, useTheme } from '@mui/material';
 import styled from 'styled-components';
 import Initials from 'components/common/Initials';
-import { Gendersenum } from 'types';
 import { BabyIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon } from 'utils/assets/icons';
 import BoxColumn from 'components/common/containers/row/BoxColumn';
+import { Gender } from 'types';
 
 // TODO: check types in reacflow docs and create validations for node and edge structures. if any prop doesnt match the type, there can be undetected errors
 export default memo(({ data }: any) => {
   const theme = useTheme();
-  const MemberName = styled(Typography)`
-    margin: 0;
-    padding: .2rem;
-    
-    background-color: hsl(from  ${theme.palette.info.contrastText} h s l / 0.5);
-    border: .5px solid ${theme.palette.info.main};
-    padding: .2rem;
-    border-radius: 5px;
-  `;
+
   function getInitialsBG() {
-    return data.gender === Gendersenum.female ? theme.palette.info.contrastText : theme.palette.info.main;
+    return data.gender === Gender.Female ? theme.palette.info.contrastText : theme.palette.info.main;
   }
   function renderNodeIcon() {
     const isAdult = data.age > 15;
@@ -27,13 +19,13 @@ export default memo(({ data }: any) => {
     const isInfant = data.age > 3 && data.age <= 15;
 
     if (isAdult) {
-      return data.gender === Gendersenum.female ? <FemaleIcon color={theme.palette.action.hover} size={20} /> : <MaleIcon color={theme.palette.action.hover} size={20} />;
+      return data.gender === Gender.Female ? <FemaleIcon color={theme.palette.action.hover} size={20} /> : <MaleIcon color={theme.palette.action.hover} size={20} />;
     }
     if (isBaby) {
       return <BabyIcon color="#5d576b" size={20} />;
     }
     if (isInfant) {
-      return data.gender === Gendersenum.female ? <FeMaleChildIcon color="#5d576b" size={20} /> : <MaleChildIcon color="#5d576b" size={20} />;
+      return data.gender === Gender.Female ? <FeMaleChildIcon color="#5d576b" size={20} /> : <MaleChildIcon color="#5d576b" size={20} />;
     }
 
     return <MaleIcon />;
@@ -64,6 +56,15 @@ export default memo(({ data }: any) => {
   );
 });
 
+const MemberName = styled(Typography)<{theme: any}>`
+  margin: 0;
+  padding: .2rem;
+  
+  background-color: ${(props: any) => 'hsl(from ' + props.theme.palette.info.contrastText + ' h s l / 0.5)'};
+  border: ${(props: any) => '.5px solid ' + props.theme.palette.info.main};
+  padding: .2rem;
+  border-radius: 5px;
+`;
 const MemberThumbnail = styled.img`
   height: 40px;
   border-radius: 80px;

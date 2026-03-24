@@ -48,7 +48,7 @@ export const sendRouteHandlerResponse = <RequestPayload, ResponseType>(
  * @param req - Express request object
  * @returns Session user data or null if not available
  */
-export const getSessionUser = (req: Request): Partial<APISessionUser> | null => {
+export const getSessionUser = (req: Request): APISessionUser | null => {
   logger.info('SESSION ', req?.session);
 
   return req.session?.details || null;

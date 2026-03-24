@@ -399,6 +399,7 @@ export type FamilyMemberFormValuesV2 = Pick<FamilyMember,
     'profile_url' |
     'description' |
     'visibility'> & {
+        is_anchor: boolean;
         parents?: string[];
         siblings?: string[];
         spouses?: string[];

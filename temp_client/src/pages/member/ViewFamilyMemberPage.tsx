@@ -1,22 +1,18 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Box, Chip, Grid, Typography } from "@mui/material";
 import { Trans } from "@lingui/macro";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Page from "components/common/Page";
 import PaperSection from "components/common/containers/PaperSection";
-import GlobalContext from "contexts/creators/global";
 import PageUrlsEnum from "utils/urls";
 import { useGetMemberDetails } from "api/familyMember";
 
 const ViewFamilyMemberPage = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { loading } = useContext(GlobalContext);
-
-  const { data, isLoading, error,refetch } = useGetMemberDetails(id || "", !!id);
+  const { data, isLoading, error, refetch } = useGetMemberDetails(id || "", !!id);
   const member = data?.payload;
-  const isProcessing = loading || isLoading;
 
   const handleRelativeClick = (relativeId: string) => {
     navigate(PageUrlsEnum.viewMember.replace(":id", relativeId));
@@ -24,7 +20,7 @@ const ViewFamilyMemberPage = (): JSX.Element => {
 
   return (
     <Page
-      loading={isProcessing} error={!!error || data?.code === 500}
+      loading={isLoading} error={!!error || data?.code === 403}
       prevUrl={PageUrlsEnum.trees} reload={refetch}
       title={member ? `${member.firstName} ${member.lastName}` : <Trans>member_details_title</Trans>}
       subtitle={<Trans>member_details_subtitle</Trans>}

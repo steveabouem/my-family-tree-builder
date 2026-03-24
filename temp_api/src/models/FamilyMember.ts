@@ -19,8 +19,8 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
   declare verified_by_user: boolean;
   declare email: string | null;
   declare description: string | null;
-  declare dob: string;
-  declare dod: string | null;
+  declare dob: string | null;
+  declare dod: string | null | null;
   declare deceased: boolean;
   declare first_name: string;
   declare last_name: string;
@@ -44,7 +44,7 @@ FamilyMember.init(
       autoIncrement: true,
       primaryKey: true
     },
-    email: { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING },
     node_id: { type: DataTypes.STRING, allowNull: false },
     tree_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
     deceased: { type: DataTypes.BOOLEAN, allowNull: false },

@@ -43,7 +43,7 @@ const StepForm = <V,>({ sx, handleNext, handlePrev, handleSave, duplicateBottomA
       </Box>
       <Box>
         <FormFieldsGenerator
-          fields={currentFormStepDetails.fields.flat()} handleSubmit={submitForm}
+          fields={currentFormStepDetails?.fields?.flat() || []} handleSubmit={submitForm}
           initialValues={{}} withPaper={false} locked={false}
         />
       </Box>

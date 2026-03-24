@@ -45,7 +45,7 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
   secondary: {
     default: "#ffd9a8",
     sunny: "#8f7c30",
-    winter: "#0e8bb5"
+    winter: "#9ea88c"
   },
   accentBg: {
     default: "#3f4360",
@@ -60,12 +60,14 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
   pillBgInverse: {
     default: "#2c2450e8",
     sunny: "#9f8451e8",
-    winter: "#684f73e8"
+    winter: "#f3ec00e8"
+    // winter: "#684f73e8"
   },
   cancel: {
     default: "#ff6b6bff",
     sunny: "#f47d1d",
-    winter: "#ea4c89"
+    winter: "#ff9c9c"
+    // winter: "#ea4c89"
   },
   confirm: {
     default: "#85ffa8ff",
@@ -75,7 +77,8 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
   dark: {
     default: "#ffffffff",
     sunny: "#000000",
-    winter: "#0e2232"
+    winter: "#9e9d98"
+    // winter: "#0e2232"
   },
   light: {
     default: "#000000ff",

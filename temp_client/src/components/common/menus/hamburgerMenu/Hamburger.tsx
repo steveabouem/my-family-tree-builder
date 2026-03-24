@@ -19,29 +19,12 @@ const Hamburger = () => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
   const { updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
-  const {currentUser} = useZSelector<UserState>((state) => state.user);
+  const { currentUser } = useZSelector<UserState>((state) => state.user);
   const userLoggedIn = !!currentUser?.userId;
   const { mutateAsync: logoutMutateAsync } = useLogout();
   const theme = useTheme();
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  // TODO: declare standard sizes, em's etc
-  const Buns = styled(Box)`
-    position: relative;
-    height: 20px;
-    max-height: 20px;
-  `;
-  const MenuLink = styled(Link) <{ active: boolean }>`
-    text-decoration: none;
-    color: ${theme.palette.secondary.dark};
-    &.warn {
-      color: ${theme.palette.error.light};
-    }
-    &:hover {
-        text-decoration: underline;
-    }
-  `;
-
   const menuIcon = useMemo(() => isOpened ?
     <ArrowUpIcon link color={theme.palette.primary.dark} onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} /> :
     <ArrowDownIcon link color={theme.palette.primary.dark} onClick={toggleMenu} sx={{ position: 'absolute', top: 0, right: 0 }} tooltip={<Trans>open_menu</Trans>} />, [isOpened]
@@ -55,8 +38,8 @@ const Hamburger = () => {
   };
   const links: { label: string | ReactNode, onClick?: () => void, url?: string, addClass?: string }[] = [
     { url: PageUrlsEnum.home, label: <Trans>home_page_link</Trans> },
-    { url: userLoggedIn ? PageUrlsEnum.user : PageUrlsEnum.auth , label: <Trans>profile_page_link</Trans> },
-    { url: userLoggedIn ? PageUrlsEnum.trees : PageUrlsEnum.auth , label: <Trans>trees_page_link</Trans> },
+    { url: userLoggedIn ? PageUrlsEnum.user : PageUrlsEnum.auth, label: <Trans>profile_page_link</Trans> },
+    { url: userLoggedIn ? PageUrlsEnum.trees : PageUrlsEnum.auth, label: <Trans>trees_page_link</Trans> },
     { addClass: 'warn', label: <BoxRow><Trans>logout</Trans><LogoutIcon link tooltip={<Trans>Logout</Trans>} /></BoxRow>, onClick: () => showLogoutWarning() }
   ];
 
@@ -113,7 +96,7 @@ const Hamburger = () => {
       {isOpened ? (
         <BoxColumn sx={{ ...menuStyles, background: theme.palette.secondary.light }}>
           {links.map((l) => (
-            <MenuLink
+            <MenuLink theme={theme}
               to={l?.url || ''} active={isCurrentLocation(l?.url)}
               onClick={() => handleLinkClick(l?.onClick || toggleMenu)} className={l?.addClass || ''}
             >
@@ -126,6 +109,22 @@ const Hamburger = () => {
   )
 };
 
+// TODO: declare standard sizes, em's etc
+const Buns = styled(Box)`
+  position: relative;
+  height: 20px;
+  max-height: 20px;
+`;
+const MenuLink = styled(Link) <{theme: any }>`
+  text-decoration: none;
+  color: ${(props: any) => props.theme.palette.secondary.dark};
+  &.warn {
+    color: ${(props: any) => props.theme.palette.error.light};
+  }
+  &:hover {
+      text-decoration: underline;
+  }
+`;
 export const menuStyles = {
   position: 'absolute',
   width: '30vw',

@@ -7,7 +7,7 @@ import { FaCaretDown, FaCaretUp, FaChild, FaChildDress, FaLanguage, FaLink, FaTr
 import { RiAddCircleLine, RiDeleteBin5Fill, RiArrowUpFill, RiArrowDownFill } from "react-icons/ri";
 import { GiEntryDoor, GiExitDoor, GiFamilyTree } from "react-icons/gi";
 import { HiColorSwatch } from "react-icons/hi";
-import {  CiFileOn, CiSun } from "react-icons/ci";
+import { CiFileOn, CiSun } from "react-icons/ci";
 import { FaSnowman, FaEye } from "react-icons/fa";
 import { TbLeaf } from "react-icons/tb";
 import { LuFlower2 } from "react-icons/lu";
@@ -19,352 +19,524 @@ import { IconProps } from '../../../types';
 export const TreeStructureIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(PiTreeStructure, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledPiTreeStructure theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledPiTreeStructure = styled(PiTreeStructure) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
 export const WritingIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(TfiWrite, theme);
 
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledTfiWrite theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledTfiWrite = styled(TfiWrite) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const NeedNewImageIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(LuImagePlus, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledLuImagePlus theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledLuImagePlus = styled(LuImagePlus) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const MaleIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(IoMan, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledIoMan theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledIoMan = styled(IoMan) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const FemaleIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(IoWoman, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledIoWoman theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledIoWoman = styled(IoWoman) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const BabyIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(PiBabyFill, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledPiBabyFill theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledPiBabyFill = styled(PiBabyFill) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const MaleChildIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaChild, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledFaChild theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaChild = styled(FaChild) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const FeMaleChildIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaChildDress, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledFaChildDress theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaChildDress = styled(FaChildDress) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const SettingsIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(IoSettings, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledIoSettings theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledIoSettings = styled(IoSettings) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const DeleteIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(RiDeleteBin5Fill, theme);
 
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledRiDeleteBin5Fill theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledRiDeleteBin5Fill theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledRiDeleteBin5Fill = styled(RiDeleteBin5Fill) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const AddIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(RiAddCircleLine, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledRiAddCircleLine theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledRiAddCircleLine theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledRiAddCircleLine = styled(RiAddCircleLine) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const ThemeSelectIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(HiColorSwatch, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledHiColorSwatch theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledHiColorSwatch theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+
+const StyledHiColorSwatch = styled(HiColorSwatch) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const SunIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(CiSun, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledCiSun theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledCiSun = styled(CiSun) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const FlowerIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(LuFlower2, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledLuFlower2 theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledLuFlower2 = styled(LuFlower2) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const AutumnIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(TbLeaf, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledTbLeaf theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledTbLeaf = styled(TbLeaf) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const SnowmanIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaSnowman, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledFaSnowman theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaSnowman = styled(FaSnowman) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const FamilyTreeIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(GiFamilyTree, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledGiFamilyTree theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledGiFamilyTree = styled(GiFamilyTree) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const BackIcon = ({ sx = {}, color = '', size = 30, onClick }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(IoCaretBackOutline, theme);
-
-  return <DynamicIcon style={sx} color={color} size={size} onClick={onClick} />;
+  return <StyledIoCaretBackOutline style={sx} color={color} size={size} onClick={onClick} />;
 };
+const StyledIoCaretBackOutline = styled(IoCaretBackOutline) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const EyeIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaEye, theme);
 
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledFaEye theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledFaEye theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaEye = styled(FaEye) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const GroupIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaUsers, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledFaUsers theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaUsers = styled(FaUsers) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const EmptyIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(PiNewspaperClippingDuotone , theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledPiNewspaperClippingDuotone theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledPiNewspaperClippingDuotone = styled(PiNewspaperClippingDuotone) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const FileIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(CiFileOn, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledCiFileOn theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledCiFileOn = styled(CiFileOn) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const ImageIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(IoImageOutline, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledIoImageOutline theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledIoImageOutline = styled(IoImageOutline) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const LinkIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaLink, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledFaLink theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaLink = styled(FaLink) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const UploadIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaUpload, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledFaUpload theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaUpload = styled(FaUpload) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const LogoutIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(GiExitDoor, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledGiExitDoor theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledGiExitDoor theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledGiExitDoor = styled(GiExitDoor) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const LoginIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(GiEntryDoor, theme);
-  
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledGiEntryDoor theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledGiEntryDoor theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledGiEntryDoor = styled(GiEntryDoor) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const UserIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaUser, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledFaUser theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaUser = styled(FaUser) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const IncognitoIcon = ({ sx = {}, color = '', size = 17, onClick, link }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(LiaUserSecretSolid, theme);
-
-  return <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+  return <StyledLiaUserSecretSolid theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledLiaUserSecretSolid = styled(LiaUserSecretSolid) <{ theme: any }>`
+  transition: .4s;
+  &:hover {
+    color: ${(props: any) => props.theme.palette.action.hover};
+  }
+`;
+
 export const ArrowDownIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaCaretDown, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip || 'what?'}>
-      <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+      <StyledFaCaretDown theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledFaCaretDown theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaCaretDown = styled(FaCaretDown) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const ArrowUpIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaCaretUp, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledFaCaretUp theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledFaCaretUp theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledFaCaretUp = styled(FaCaretUp) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const LanguageIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(FaLanguage, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledFaLanguage theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledFaLanguage theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+
+const StyledFaLanguage = styled(FaLanguage) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const WarningIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(PiWarningDuotone, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledPiWarningDuotone theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledPiWarningDuotone theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledPiWarningDuotone = styled(PiWarningDuotone) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const ReloadIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(TfiReload, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledTfiReload theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledTfiReload theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledTfiReload = styled(TfiReload) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const ExpandIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(RiArrowDownFill, theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledRiArrowDownFill theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledRiArrowDownFill theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
+const StyledRiArrowDownFill = styled(RiArrowDownFill) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
 export const CollapseIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
   const theme = useTheme();
 
-  const DynamicIcon = generateIcon(RiArrowUpFill , theme);
-
   return tooltip ? (
     <Tooltip title={tooltip}>
       <Box>
-        <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+        <StyledRiArrowUpFill theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
       </Box>
     </Tooltip>
   ) :
-    <DynamicIcon style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+    <StyledRiArrowUpFill theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
-
-const generateIcon = (icon: any, theme: any) => {
-  const DynamicIcon = styled(icon)`
+const StyledRiArrowUpFill = styled(RiArrowUpFill) <{ theme: any }>`
     transition: .4s;
     &:hover {
-      color: ${theme.palette.action.hover};
+      color: ${(props: any) => props.theme.palette.action.hover};
     }
-  `;
-
-  return DynamicIcon;
-}
+`;

@@ -9,7 +9,8 @@ function genBG(s: ThemeSeasons) {
     case ThemeSeasons.winter:
       // return 'linear-gradient(70deg, rgb(244 253 255 / 85%) 39%, rgb(255 255 255) 69%, rgb(205 253 255 / 32%) 100%)';
       // return 'linear-gradient(323deg, #f3f5f7 39%, rgb(255 253 208 / 50%) 69%, rgb(229 159 0 / 30%) 100%)';
-      return 'linear-gradient(323deg, #f3f5f7 39%, rgb(243 245 247) 69%, rgb(229 159 0 / 30%) 100%)';
+      // return 'linear-gradient(323deg, #f3f5f7 39%, rgb(243 245 247) 69%, rgb(229 159 0 / 30%) 100%)';
+      return 'radial-gradient(circle at top, #f6f6ef 39%, rgb(254 255 244) 69%, rgb(255 137 0 / 11%) 100%)';
     case ThemeSeasons.sunny:
       return 'linear-gradient(70deg, rgb(255 236 160 / 85%) 39%, rgb(255 204 0 / 88%) 69%, rgb(255 149 4 / 46%) 100%)';
     default:

@@ -14,27 +14,11 @@ const LanguageSelector = () => {
   const { current } = useZSelector<LanguageState>(state => state.language);
   const dispatch = useZDispatch();
   const theme = useTheme();
-
   const menuOptions: { label: ReactNode, value: LanguageEnum }[] = [
     { label: <Trans>french</Trans>, value: LanguageEnum.french },
     { label: <Trans>english</Trans>, value: LanguageEnum.english },
     { label: <Trans>bafia</Trans>, value: LanguageEnum.bafia },
   ];
-  const LanguageMenu = styled(Box)`
-    position: relative;
-    height: 100%;
-    align-items: flex-end;
-    max-height: 20px;
-    display: flex;
-  `;
-  const LanguageLink = styled(Box) <{ active: boolean }>`
-    cursor: pointer;
-    text-decoration: none;
-    color: ${theme.palette.secondary.dark};
-    &:hover {
-        text-decoration: underline;
-    }
-  `;
 
   function toggleLang(ln: LanguageEnum) {
     dispatch(switchLangAction(ln));
@@ -43,10 +27,10 @@ const LanguageSelector = () => {
 
   return (
     <LanguageMenu>
-      <LanguageIcon 
-        link 
+      <LanguageIcon
+        link
         color={theme.palette.primary.dark}
-        onClick={() => setIsOpened(!isOpened)} 
+        onClick={() => setIsOpened(!isOpened)}
         tooltip={<Trans>select_language</Trans>}
       />
       {isOpened && <BoxColumn sx={{ ...menuStyles, background: theme.palette.secondary.light }}>
@@ -59,5 +43,21 @@ const LanguageSelector = () => {
     </LanguageMenu>
   );
 };
+
+const LanguageMenu = styled(Box)`
+  position: relative;
+  height: 100%;
+  align-items: flex-end;
+  max-height: 20px;
+  display: flex;
+`;
+const LanguageLink = styled(Box) <{ active: boolean, theme: any }>`
+  cursor: pointer;
+  text-decoration: none;
+  color: ${(props: any) => props.theme.palette.secondary.dark};
+  &:hover {
+      text-decoration: underline;
+  }
+`;
 
 export default LanguageSelector;

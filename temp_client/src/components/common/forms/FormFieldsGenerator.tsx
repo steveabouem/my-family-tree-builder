@@ -1,23 +1,25 @@
 import React from "react";
 import { Field, FieldArray, useFormikContext } from "formik";
 import { PiAsteriskSimpleFill } from 'react-icons/pi';
-import { Box, Typography, Paper, Button, FormControl, MenuItem } from "@mui/material";
+import { Box, Typography, Paper, Button, FormControl, MenuItem, RadioGroup, FormControlLabel, Radio, Checkbox } from "@mui/material";
 import { Trans, t } from "@lingui/macro";
-import { BaseFormProps, FormField } from "types";
+import { BaseFormProps, FormField, InputType } from "types";
 import CustomField from "./customField/CustomField";
 import ImageField from "./imageField";
+import BoxRow from "../containers/column";
 
 const FormFieldsGenerator = ({
   fields, handleSubmit, withPaper = true, name = 'form',
   size, handleFieldValueChange, title, mode = 'write', locked,
 }: BaseFormProps): JSX.Element => {
-  const { submitForm, values } = useFormikContext<any>();
+  const { submitForm, values, setFieldValue } = useFormikContext<any>();
 
   return (
     <Paper elevation={withPaper ? 1 : 0} sx={{ width: '100%', padding: '1rem', display: "flex", flexDirection: "column", gap: "1rem", border: 'none' }}>
       {title ? <Typography variant="h4">{title}</Typography> : null}
       {fields.map((field: FormField, i: number) => {
-        const readValue = field.type === 'password' ? '****************' : values?.[field.fieldName] || '';
+        const readValue = field?.type === InputType.password ? '****************' : values?.[field.fieldName] || '';
+        console.log({field});
         
         return (
           <Box display="flex" flexDirection="column" gap={2} key={`${name}-fields-wrapper-${i}`}>
@@ -29,13 +31,34 @@ const FormFieldsGenerator = ({
                 {field.subComponent ? (
                   <CustomField id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
                     required={!!field.required} component={field.subComponent} key={`${field.fieldName}-custom`} />
-                ) : field.type === 'array' ? (
+                ) : field?.type === InputType.array ? (
                   <FieldArray name={field.fieldName} render={fields => field.subComponent} key={`${field.fieldName}-array`} /> // TODO: this is incorrect
-                ) : field.type === 'select' ? (
+                ) : field?.type === InputType.select ? (
                   <FormControl aria-label="Default select example" key={`${field.fieldName}-select`}>
                     {field?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</MenuItem>)}
                   </FormControl>
-                ) : field.type === 'image' ? (
+                ): field?.type === InputType.radio ? (
+                  <FormControl  key={`${field.fieldName}-radio`}>
+                    <BoxRow sx={{justifyContent: 'flex-start'}} >
+                      {field?.options?.map((o, i) => {
+                          console.log('OPTION', o);
+                          return (
+
+                            <FormControlLabel 
+                              aria-valuenow={o.value} control={<Radio checked={values[field.fieldName]}
+                              onClick={() => {setFieldValue(field.fieldName, o.value)}}/>} 
+                              label={o?.label || ''} key={`radio-option-${o?.label || ''}-${i}`} 
+                            />
+                          );   
+                      })}
+                    </BoxRow>
+                  </FormControl>
+                ): field?.type === InputType.checkbox ? (
+                    <FormControlLabel control={<Checkbox checked={!!values[field.fieldName]}
+                      onClick={() => {setFieldValue(field.fieldName, !values[field.fieldName])}}/>} 
+                      label={field.label || ''}
+                    />
+                ) : field?.type === InputType.image ? (
                   <FormControl>
                     <ImageField id={field?.id || ''} name={field.fieldName} required={!!field.required}
                       key={`${field.fieldName}-image`} />
@@ -106,7 +129,7 @@ export default FormFieldsGenerator;
 //   function renderFieldRows() {
 //     const list = fieldRows.map((f: any) => {
 //       let result = f.map((field: FormField, i: number) => {
-//         const readValue = field.type === 'password' ? '****************' : values?.[field.fieldName] || '';
+//         const readValue = field?.type === 'password' ? '****************' : values?.[field.fieldName] || '';
   
 //         return (
 //           <BoxColumn key={`${name}-fields-column-${i}`}>
@@ -120,13 +143,13 @@ export default FormFieldsGenerator;
 //                 {field.subComponent ? (
 //                   <CustomField id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
 //                     required={!!field.required} component={field.subComponent} key={`${field.fieldName}-custom`} />
-//                 ) : field.type === 'array' ? (
+//                 ) : field?.type === 'array' ? (
 //                   <FieldArray name={field.fieldName} render={fields => field.subComponent} key={`${field.fieldName}-array`} /> // TODO: this is incorrect
-//                 ) : field.type === 'select' ? (
+//                 ) : field?.type === 'select' ? (
 //                   <FormControl aria-label="Default select example" key={`${field.fieldName}-select`}>
 //                     {field?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`}>{o?.label || '_'}</MenuItem>)}
 //                   </FormControl>
-//                 ) : field.type === 'image' ? (
+//                 ) : field?.type === 'image' ? (
 //                   <FormControl>
 //                     <ImageField id={field?.id || ''} name={field.fieldName} required={!!field.required}
 //                       key={`${field.fieldName}-image`} />

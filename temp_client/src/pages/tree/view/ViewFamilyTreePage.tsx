@@ -6,8 +6,6 @@ import Page from "components/common/Page";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { populateTreeAction, resetAction } from "app/slices/trees";
 import { FamilyTreeState } from "types";
-import { formatTreeMembers } from "../create/genealogy/utils";
-import GenealogyTree from 'pages/tree/layout/GenealogyTree';
 import PageUrlsEnum from "utils/urls";
 import { useGetTreeById } from "api/familyTree";
 import PaperSection from "components/common/containers/PaperSection";
@@ -36,12 +34,12 @@ const ViewFamilyTreePage = () => {
     dispatch(resetAction(undefined))
   }, []);
 
-  useEffect(() => {
-    if (treeData?.payload?.members) {
-      const currTree = formatTreeMembers(JSON.parse(treeData.payload.members));
-      dispatch(populateTreeAction(currTree));
-    }
-  }, [treeData, dispatch]);
+  // useEffect(() => {
+  //   if (treeData?.payload?.members) {
+  //     const currTree = formatTreeMembers(JSON.parse(treeData.payload.members));
+  //     dispatch(populateTreeAction(currTree));
+  //   }
+  // }, [treeData, dispatch]);
 
 
   if (error) {
@@ -55,7 +53,7 @@ const ViewFamilyTreePage = () => {
           <BoxColumn>
             <Trans>view_tree_page_title</Trans>
             <Formik initialValues={{}} onSubmit={() => { }}>
-              {(props) => currentFamilyTree ? <GenealogyTree /> : null}
+              {/* {(props) => currentFamilyTree ? <GenealogyTree /> : null} */}
             </Formik>
           </BoxColumn>
         </PaperSection>

@@ -3,6 +3,7 @@ import { useFormikContext } from "formik";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import { Trans } from "@lingui/macro";
 import { BaseDropDownProps, DropdownOption } from "types";
+import { traverse } from "utils/parsingAndFormatting";
 
 const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, sx, selectedOption }: BaseDropDownProps): JSX.Element => {
   const [currentOption, setCurrentOption] = useState<string | undefined>();
@@ -45,7 +46,7 @@ const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, s
               key={`${id || ''}-dropdown-option-${i}`}
               selected={isSelected}
             >
-              {option.label}
+              <Trans>{option.label}</Trans>
             </MenuItem>
           );
         })}

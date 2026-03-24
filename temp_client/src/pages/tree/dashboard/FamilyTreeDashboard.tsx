@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 // @ts-ignore TODO: install types once network is restored
 import styled from 'styled-components';
 import { populateTreeAction, resetAction, saveTreeIdAction } from "app/slices/trees";
-import { AddIcon, DeleteIcon, EyeIcon, FamilyTreeIcon } from "utils/assets/icons";
+import { AddIcon, DeleteIcon, EyeIcon } from "utils/assets/icons";
 import GlobalContext from "contexts/creators/global";
 import Page from "components/common/Page";
 import PageUrlsEnum from "utils/urls";
@@ -20,7 +20,7 @@ import BoxRow from "components/common/containers/column";
 const FamilyTreeDashboard = () => {
   const { updateModal, clearModal } = useContext(GlobalContext);
   const { currentUser } = useZSelector<UserState>(state => state.user);
-  const { data, isFetching, isLoading, refetch: refreshTreesList } = useGetAllForUser(currentUser?.userId);
+  const { data, isFetching, isLoading, refetch: refreshTreesList, error: getTreesError } = useGetAllForUser(currentUser?.userId);
   const { mutate: deleteTreeMutation, isSuccess: deletionSuccessful, isError: deletionFailed } = useDeleteTree();
   const dispatch = useZDispatch();
   const navigate = useNavigate();
@@ -101,8 +101,12 @@ const FamilyTreeDashboard = () => {
   }
 
   return (
-    <Page title={<Trans>tree_dashboard_title</Trans>} subtitle={<Trans>tree_dashboard_lists_title</Trans>} loading={isFetching || isLoading}>
-      {/* <Trans>tree_dashboard_lists_title</Trans> */}
+    <Page 
+      error={!!getTreesError || data?.code === 403} reload={refreshTreesList}
+      title={<Trans>tree_dashboard_title</Trans>}
+      subtitle={<Trans>tree_dashboard_lists_title</Trans>}
+      loading={isFetching || isLoading}
+    >
       <PaperSection>
         {hasTrees ? (
           <>

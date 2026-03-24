@@ -1,7 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { Trans } from '@lingui/macro';
 import { useLocation, useParams } from 'react-router';
-import GenealogyContainer from './genealogy';
 import GlobalContext from 'contexts/creators/global';
 import Page from 'components/common/Page';
 import { useCreateFamilyTree, useGetTreeById } from 'api';
@@ -10,11 +9,12 @@ import { populateTreeAction, resetAction } from 'app/slices/trees';
 import PaperSection from 'components/common/containers/PaperSection';
 import { changeformStepAction } from 'app/slices/forms/stepForm';
 import NotFound from 'components/common/404NotFound';
+import { FamilyTreeBuilderContainer } from './builder/FamilyTreeBuilderContainer';
 
 const CreateFamilyTreePage = (): JSX.Element => {
   const { loading, toggleLoading } = useContext(GlobalContext);
   const { id } = useParams();
-  const { data, isLoading: isUserTreeLoading, isSuccess, isError, refetch } = useGetTreeById(id || '', !!id); // TODO: use vw page instead of playing with the enabled prop
+  const { data, isLoading: isUserTreeLoading, isSuccess, isError, refetch } = useGetTreeById(id || '', !!id); // TODO: use view page instead of playing with the enabled prop
   const {  isPending: isCreateTreePending } = useCreateFamilyTree();
   const dispatch = useZDispatch();
   const location = useLocation();
@@ -39,7 +39,7 @@ const CreateFamilyTreePage = (): JSX.Element => {
       prevUrl='family-trees'
     >
       <PaperSection>
-        {notFoud ? <NotFound handleReload={() => {refetch()}} /> : <GenealogyContainer />}
+        {notFoud ? <NotFound handleReload={() => {refetch()}} /> : <FamilyTreeBuilderContainer />}
       </PaperSection>
     </Page>
   );

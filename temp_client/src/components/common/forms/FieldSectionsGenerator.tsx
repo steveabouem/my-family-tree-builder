@@ -1,5 +1,8 @@
-import React, { memo, useState } from 'react'
-import { Box, Button, Chip, Collapse, FormControl, List, ListItemIcon, MenuItem, Typography, useTheme } from '@mui/material';
+import React, { useState } from 'react'
+import {
+  Box, Button, Checkbox, Chip, Collapse, FormControl, FormControlLabel, List, ListItemIcon,
+  MenuItem, Radio, RadioGroup, Typography, useTheme
+} from '@mui/material';
 import { Trans } from '@lingui/macro';
 import BoxColumn from '../containers/row/BoxColumn';
 import BoxRow from '../containers/column';
@@ -7,19 +10,23 @@ import { CollapseIcon, ExpandIcon } from 'utils/assets/icons';
 import CustomField from './customField';
 import { Field, FieldArray, useFormikContext } from 'formik';
 import ImageField from './imageField';
-import { FieldsSection, StepFormState } from 'types';
+import { InputType, StepFormState } from 'types';
 import { useZDispatch, useZSelector } from 'app/hooks';
 import { goToNextStepAction, goToPrevStepAction } from 'app/slices/forms/stepForm';
+import { traverse } from 'utils/parsingAndFormatting';
 
-export const FieldSectionsGenerator = memo(({ sections }: { sections: FieldsSection[] }) => {
+export const FieldSectionsGenerator = () => {
   const [collapsed, setCollapsed] = useState<{ [key: string]: boolean }>({ 0: true });
-  const { totalSteps, currentFormStep, currentFormStepDetails, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
+  const { totalSteps, currentFormStep, currentFormStepDetails } = useZSelector<StepFormState>(state => state.stepForm);
   const dispatch = useZDispatch();
   const theme = useTheme();
-  const { values, submitForm } = useFormikContext<any>();
+  const { values, submitForm, setFieldValue } = useFormikContext<any>();
 
   function toggleSection(sectionIndex: number) {
     setCollapsed((prev: any) => ({ ...prev, [sectionIndex]: !prev?.[sectionIndex] }));
+  }
+  function handleFieldValueChange(e: React.ChangeEvent<HTMLInputElement>, name: string) {
+    setFieldValue(name, e.target.value);
   }
 
   return (
@@ -29,72 +36,102 @@ export const FieldSectionsGenerator = memo(({ sections }: { sections: FieldsSect
           <Typography variant="body1">
             <Trans>current_form_step</Trans>
           </Typography>
-          <Chip label={currentFormStep + 1} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
+          <Chip label={currentFormStep} variant="filled" color="primary" size="small" sx={{ padding: '.5rem', borderRadius: '0.4rem' }} />
         </BoxRow>
         <Typography variant="body1">{currentFormStepDetails?.title}</Typography>
         <Typography variant="body1">{currentFormStepDetails?.subtitle}</Typography>
         <BoxRow sx={{ justifyContent: "flex-end" }} >
-          <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
+          <Button variant="contained" disabled={currentFormStep === 1} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
             <Trans>prev</Trans>
           </Button>
-          <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps - 1}>
+          <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps}>
             <Trans>next</Trans>
           </Button>
         </BoxRow>
       </BoxColumn>
-      <BoxColumn sx={{ justifyContent: 'space-evenly' }}>
-        {sections.map((s, sectionIndex) => (
-          <List sx={{ background: `${theme.palette.primary.contrastText}`, borderRadius: '5px' }}>
-            <BoxRow sx={{ justifyContent: 'space-between', padding: '.5rem' }}>
-              <BoxRow>
-
-              <Typography variant="h5">{s.title}</Typography>
-              <Typography color={theme.palette.error.light}>{s?.required ? '*' : ''}</Typography>
+      <BoxColumn sx={{ justifyContent: 'space-evenly', gap: '1rem', paddingY: '1rem' }}>
+        {currentFormStepDetails?.sections?.map((s, sectionIndex) => {
+          return (
+            <List sx={{ borderRadius: '5px' }} >
+              <BoxRow sx={{ justifyContent: 'space-between', padding: '.5rem' }}>
+                <BoxRow>
+                  <Typography variant="h5">{s.title}</Typography>
+                  <Typography color={theme.palette.error.light}>{s?.required ? '*' : ''}</Typography>
+                </BoxRow>
+                <ListItemIcon sx={{ justifyContent: 'end' }}>
+                  {collapsed?.[sectionIndex] ?
+                    <ExpandIcon link onClick={() => toggleSection(sectionIndex)} color={theme.palette.primary.contrastText} />
+                    :
+                    <CollapseIcon link onClick={() => toggleSection(sectionIndex)} color={theme.palette.primary.contrastText} /> 
+                  }
+                </ListItemIcon>
               </BoxRow>
-              <ListItemIcon sx={{ justifyContent: 'end' }}>
-                {collapsed?.[sectionIndex] ?
-                  <CollapseIcon  link onClick={() => toggleSection(sectionIndex)} color={theme.palette.background.default} /> :
-                  <ExpandIcon  link onClick={() => toggleSection(sectionIndex)} color={theme.palette.background.default} />
-                }
-              </ListItemIcon>
-            </BoxRow>
-            <Collapse in={!!collapsed?.[sectionIndex]} >
-              {s.fields.map((f) => (
-                <BoxColumn>
-                  <BoxColumn>
-                    <Typography variant="subtitle2">{f.label}</Typography>
-                    {f.subComponent ? (
-                      <CustomField id={f?.id || ''} name={f.fieldName} value={f.subComponent.displayValue}
-                        required={!!f.required} component={f.subComponent} key={`${f.fieldName}-custom`} />
-                    ) : f.type === 'array' ? (
-                      <FieldArray name={f.fieldName} render={fields => f.subComponent} key={`${f.fieldName}-array`} /> // TODO: this is incorrect
-                    ) : f.type === 'select' ? (
-                      <FormControl aria-label="Default select example" key={`${f.fieldName}-select`} >
-                        {f?.options?.map((o, i) => <MenuItem value={o?.value} key={`select-option-${o?.label || ''}-${i}`} >{o?.label || '_'}</MenuItem>)}
-                      </FormControl>
-                    ) : f.type === 'image' ? (
-                      <ImageField id={f?.id || ''} name={f.fieldName} required={!!f.required}
-                        key={`${f.fieldName}-image`} />
-                    ) : (
-                      <FormControl >
-                        <Field
-                          id={f?.id || ''} name={f.fieldName} value={values[f.fieldName]}
-                          required={!!f.required} type={f?.type || 'text'} key={`${f.fieldName}-input`}
-                        />
-                      </FormControl>
-                    )}
-                  </BoxColumn>
+              <Collapse in={!!collapsed?.[sectionIndex]} sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <BoxColumn sx={{ gap: '1rem' }}>
+                  {s.fields.map((field) => {
+                    const fieldVal = traverse(values, field.fieldName)
+                    console.log('VALUE OF ',field.fieldName, {val: fieldVal, values});
+                    
+                    return (
+                      <BoxColumn sx={{ gap: '.5rem' }} >
+                        <Typography variant="subtitle2">{field.label}</Typography>
+                        <BoxColumn sx={{ width: '100%' }}>
+                          <BoxRow sx={{ justifyContent: 'end' }}>
+                            {field.subComponent ? (
+                              <CustomField id={field?.id || ''} name={field.fieldName} value={field.subComponent.displayValue}
+                                required={!!field.required} component={field.subComponent} />
+                            ) : field?.type === InputType.array ? (
+                              <FieldArray name={field.fieldName} render={fields => field.subComponent} /> // TODO: this is incorrect
+                            ) : field?.type === InputType.select ? (
+                              <FormControl aria-label={`select-for-${field.fieldName}`} >
+                                {field?.options?.map((o, i) => <MenuItem value={o?.value} selected={fieldVal === o.value}>{o?.label || '_'}</MenuItem>)}
+                              </FormControl>
+                            ) : field?.type === InputType.radio ? (
+                              <FormControl >
+                                <RadioGroup value={fieldVal} onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFieldValueChange(e, field.fieldName)}>
+                                  <BoxRow sx={{ justifyContent: 'flex-end' }} >
+                                    {field?.options?.map((o, i) => (
+                                      <FormControlLabel aria-valuenow={i + 1} value={o.value} label={o?.label || ''}
+                                        control={<Radio />} />
+                                    ))}
+                                  </BoxRow>
+                                </RadioGroup>
+                              </FormControl>
+                            ) : field?.type === InputType.checkbox ? (
+                              <FormControlLabel control={<Checkbox checked={fieldVal as boolean}
+                                onClick={() => { setFieldValue(field.fieldName, !fieldVal) }} />}
+                                label={field.label || ''}
+                              />
+                            ) : field?.type === InputType.image ? (
+                              <FormControl>
+                                <ImageField id={field?.id || ''} name={field.fieldName} required={!!field.required}
+                                />
+                              </FormControl>
+                            ) : (
+                              <FormControl>
+                                <Field
+                                  id={field?.id || ''} name={field.fieldName} value={fieldVal}
+                                  required={!!field.required} type={field?.type || 'text'}
+                                />
+                              </FormControl>
+                            )}
+                          </BoxRow>
+                        </BoxColumn>
+                      </BoxColumn>
+                    )
+                  })}
                 </BoxColumn>
-              ))}
-            </Collapse>
-          </List>
-        ))}
+              </Collapse>
+            </List>
+          )
+        }
+        )}
       </BoxColumn>
       <BoxRow sx={{ justifyContent: "flex-end", alignItems: "center" }}>
-        <Button variant="contained" disabled={currentFormStep === 0} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
+        <Button variant="contained" disabled={currentFormStep === 1} color="primary" onClick={() => dispatch(goToPrevStepAction())}>
           <Trans>prev</Trans>
         </Button>
-        <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps - 1}>
+        <Button variant="contained" color="primary" onClick={() => dispatch(goToNextStepAction())} disabled={currentFormStep === totalSteps}>
           <Trans>next</Trans>
         </Button>
       </BoxRow>
@@ -105,6 +142,6 @@ export const FieldSectionsGenerator = memo(({ sections }: { sections: FieldsSect
       </BoxRow>
     </BoxColumn>
   );
-});
+};
 
 export default FieldSectionsGenerator;

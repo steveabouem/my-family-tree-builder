@@ -2,7 +2,8 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   APICreateFamilyResponse, APIEndpointResponse, FamilyTree,
   FormField, MembersPositions, FamilyMember, FamilyTreeRecord,
-  DeleteMembersRequestPayload
+  DeleteMembersRequestPayload,
+  FamilyTreeDAOV2
 } from "types";
 import { baseUrl } from "./index";
 
@@ -31,8 +32,8 @@ const getTreeById = async (treeId: string) => {
   return response.json();
 };
 
-const createFamilyTree = async (values: FamilyTree): Promise<APICreateFamilyResponse> => {
-  const response = await fetch(`${baseUrl}/trees/create`, {
+const createFamilyTree = async (values: FamilyTreeDAOV2): Promise<APICreateFamilyResponse> => {
+  const response = await fetch(`${baseUrl}/trees/new`, {
     method: 'POST',
     credentials: 'include',
     headers: {
