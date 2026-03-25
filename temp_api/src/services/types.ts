@@ -411,7 +411,7 @@ export type CreateTreeRequestV2 = Pick<FamilyTree,
     'visibility' |
     'active' |
     'default_generation_depth'
-> & { members: FamilyMemberFormValuesV2[]; }
+> & { members:{ [key: string]: FamilyMemberFormValuesV2}; }
 
 export interface RegistrationRequestV2 {
     first_name: string;

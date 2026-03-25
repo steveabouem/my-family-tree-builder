@@ -55,7 +55,8 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
   pillBg: {
     default: "#97d2ffe8",
     sunny: "#9f8451e8",
-    winter: "#83b2c7e8"
+    winter: "#f59d19ab"
+    // winter: "#83b2c7e8"
   },
   pillBgInverse: {
     default: "#2c2450e8",
@@ -84,6 +85,7 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
     default: "#000000ff",
     sunny: "#faeecb",
     winter: "#f3f5f7"
+    // winter: "#f3f5f7"
   }
 };
 

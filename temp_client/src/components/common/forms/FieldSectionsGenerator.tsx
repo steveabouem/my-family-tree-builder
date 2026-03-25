@@ -66,7 +66,7 @@ export const FieldSectionsGenerator = () => {
                   }
                 </ListItemIcon>
               </BoxRow>
-              <Collapse in={!!collapsed?.[sectionIndex]} sx={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <Collapse in={!!collapsed?.[sectionIndex]} sx={{ display: 'flex', flexDirection: 'column', gap: '1rem', background: theme.palette.secondary.main }}>
                 <BoxColumn sx={{ gap: '1rem' }}>
                   {s.fields.map((field) => {
                     const fieldVal = traverse(values, field.fieldName)

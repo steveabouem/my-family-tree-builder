@@ -9,13 +9,15 @@ import {
   CreateTreeRequestV2,
   FamilyMemberFormValuesV2,
   CreateTreeResponseV2,
-  RelationshipMapping
+  RelationshipMapping,
+  MemberVisibility
 } from "./types";
 import logger from "../utils/logger";
 import { User, Collaborator, FamilyMember, Relationship } from "../models";
 import { extractSingleDataValuesFrom, processIncomingImage, processOutgoingImage } from "./serviceHelpers";
 import { Kinship } from "./types";
 import db from '../../db'
+import { InferAttributes, InferCreationAttributes, Optional } from "sequelize";
 
 //#region getAllTrees
 export const getAllTrees = async (id: Number): Promise<ServiceResponseWithPayload<FamilyTree[]>> => {
@@ -162,160 +164,164 @@ export const getAllTrees = async (id: Number): Promise<ServiceResponseWithPayloa
 
 export const createTreeV2 = async (createData: CreateTreeRequestV2): Promise<ServiceResponseWithPayload<CreateTreeResponseV2 | null>> => {
   logger.info("START TREE GENERATION ", createData);
+  const incomingListOfMembers = Object.values(createData.members);
   const response: APIRequestPayload<CreateTreeResponseV2> = {
-    code: 500, error: true, payload: {
-      tree: null,
-      connections: [],
-      members: []
-    }
-  };
-  const newRelationsMapping: { parents: RelationshipMapping[], siblings: RelationshipMapping[], children: RelationshipMapping[], spouses: RelationshipMapping[] } = {
-    // the data here is structured so that there is only one bulk action per relationship type
-    parents: [],
-    siblings: [],
-    spouses: [],
-    children: [],
+    code: 500,
+    error: true,
+    payload: { tree: null, members: [], connections: [] }
   };
 
   try {
-    //? I Generate a FamlilyTree record
-    //find which member is identified as anchor. Only one can be used. keep in memmory to u
-    const selectedAnchor = createData.members.find(m => !!m?.is_anchor);
-    const newTree = await FamilyTree.create({ ...createData, default_anchor_family_member_id: null });
-    logger.info('Step I: Created new tree, with no members', { newTree });
-    response.payload.tree = newTree;
-    if (newTree?.id) {
-
-      //? II Generate a FamlilyMember record for each member submitted  and assign it the new tree id
-      await db.transaction(async (t) => {
-        //several models are involved. using transaction to ensure the operation is contained, and entirely reverted in case of error
-        const newTreeMembersData = createData.members.map((m: FamilyMemberFormValuesV2) => {
-          //? gather all the relations provided by front so we can generate the appropriate records later on
-          logger.info('checkin m', { m });
-
-          if (m?.parents?.length) {
-            newRelationsMapping.parents.push(...m.parents.map((nid: string) => ({
-              type: Kinship.parent,
-              tree_id: newTree.id,
-              sourceNodeId: m.node_id,
-              targetNodeId: nid // will be used to map to family member record after its created
-            })));
-          }
-          if (m?.siblings?.length) {
-            newRelationsMapping.siblings.push(...m.siblings.map((nid: string) => ({
-              type: Kinship.sibling,
-              tree_id: newTree.id,
-              sourceNodeId: m.node_id,
-              targetNodeId: nid
-            })));
-          }
-          if (m?.spouses?.length) {
-            newRelationsMapping.spouses.push(...m.spouses.map((nid: string) => ({
-              type: Kinship.spouse,
-              tree_id: newTree.id,
-              sourceNodeId: m.node_id,
-              targetNodeId: nid
-            })));
-          }
-          if (m?.children?.length) {
-            newRelationsMapping.children.push(...m.children.map((nid: string) => ({
-              type: Kinship.parent,
-              tree_id: newTree.id,
-              sourceNodeId: nid,
-              targetNodeId: m.node_id
-            })));
-          }
-
-          logger.info('Stored relations for bulk create ', { newRelationsMapping });
-
-          return ({
-            deceased: m?.deceased || false,
-            description: m?.description || null,
-            dob: m?.dob || null,
-            dod: m?.dod || null,
-            email: m?.email || null,
-            first_name: m.first_name,
-            gender: m?.gender || null,
-            last_name: m.last_name,
-            marital_status: m.marital_status,
-            node_id: m.node_id,
-            occupation: m?.occupation || null,
-            profile_url: m.profile_url,
-            tree_id: 1,
-            // tree_id: newTree.id,
-            //? Although user id is only added by invitation, current user profil will soon automatically add current user to the form.
-            user_id: m?.user_id || null,
-            verified_by_user: false,
-            visibility: m.visibility,
-          });
-        });
-
-        const membersRecords = await FamilyMember.bulkCreate(newTreeMembersData, { transaction: t, returning: true })
-          .catch((e: unknown) => {
-            logger.error('members creation failed ', { e })
-          });
-
-        if (membersRecords?.length) {
-          //? front should ensure 1 and only 1 anchor is sent
-          const selectedAnchorDBRecord = membersRecords.find(m => m.node_id === selectedAnchor?.node_id);
-          if (!!selectedAnchorDBRecord) {
-            await newTree.update({default_anchor_family_member_id: selectedAnchorDBRecord.id})
-            .catch(e => {
-              logger.error('Failed to add anchor to tree', {msg: e});
-            });
-          } else {
-            throw new Error("No anchor provided");
-
-          }
-          response.payload.members = membersRecords;
-          logger.info('Step II: Members created ', { records: membersRecords, raw: newTreeMembersData });
-        }
-
-        //? start bulk create with all the relations already mapped
-        const newParentToChildRelationshipData: Pick<Relationship, 'tree_id' | 'source_family_member_id' | 'target_family_member_id' | 'type'>[] = newRelationsMapping.parents.map((r: RelationshipMapping) => {
-          return ({
-            tree_id: r.tree_id,
-            source_family_member_id: membersRecords?.find((m: FamilyMember) => m.node_id === r.sourceNodeId)?.id as any, //TODO: remove any. effectively a foreign key. not sure why linting complains here.
-            target_family_member_id: membersRecords?.find((m: FamilyMember) => m.node_id === r.targetNodeId)?.id as any,
-            type: Kinship.parent
-          })
-        });
-        const newSiblingRelationshipData: Pick<Relationship, 'tree_id' | 'source_family_member_id' | 'target_family_member_id' | 'type'>[] = newRelationsMapping.siblings.map((r: RelationshipMapping) => {
-          return ({
-            tree_id: r.tree_id,
-            source_family_member_id: membersRecords?.find((m: FamilyMember) => m.node_id === r.sourceNodeId)?.id as any,
-            target_family_member_id: membersRecords?.find((m: FamilyMember) => m.node_id === r.targetNodeId)?.id as any,
-            type: Kinship.sibling
-          })
-        });
-        const newSpouseRelationshipData: Pick<Relationship, 'tree_id' | 'source_family_member_id' | 'target_family_member_id' | 'type'>[] = newRelationsMapping.spouses.map((r: RelationshipMapping) => {
-          return ({
-            tree_id: r.tree_id,
-            source_family_member_id: membersRecords?.find((m: FamilyMember) => m.node_id === r.sourceNodeId)?.id as any,
-            target_family_member_id: membersRecords?.find((m: FamilyMember) => m.node_id === r.targetNodeId)?.id as any,
-            type: Kinship.spouse
-          })
-        });
-        logger.info('Relationships ready for bulk ', { newParentToChildRelationshipData })
-
-        //? III Generate a Relationship records from the now populated relationships mapped arrays
-        const relationshipRecords = await Relationship.bulkCreate([...newParentToChildRelationshipData, ...newSiblingRelationshipData, ...newSpouseRelationshipData], { transaction: t, returning: true }).catch((e: unknown) => {
-          logger.error('Unable to bulk create relationships ', { error: e });
-        });
-
-        if (relationshipRecords?.length) {
-          response.payload.connections.push(...relationshipRecords);
-          logger.info('Step III: Relations created ', { records: relationshipRecords });
-        }
-
-        response.code = 200;
-        response.error = false;
+    /** -----------------------------------------------
+    *? 1. Create the tree (fast, single insert)
+    * -----------------------------------------------
+    */
+    const selectedAnchor = incomingListOfMembers.find(m => m.is_anchor);
+    const newTree = await FamilyTree.create({
+      ...createData,
+      default_anchor_family_member_id: null
+    })
+      .catch((e: unknown) => {
+        logger.error('Failed? ', { e })
       });
-    } else {
-     throw new Error(('No tree available to work on'));
+
+    if (!newTree?.id) {
+      throw new Error('Tree creation failed');
     }
-  } catch (e: unknown) {
-    logger.error('Failed to create tree', { error: e });
+
+    response.payload.tree = newTree;
+
+    /** -----------------------------------------------
+    *? 2. Preprocess members + relationship mappings (OUTSIDE transaction)
+    * -----------------------------------------------
+    */
+    const relationBuckets = {
+      parents: [] as RelationshipMapping[],
+      siblings: [] as RelationshipMapping[],
+      spouses: [] as RelationshipMapping[]
+    };
+
+    const memberPayloads = incomingListOfMembers.map(m => {
+      // Collect relationship mappings
+      if (m.parents?.length) {
+        relationBuckets.parents.push(
+          ...m.parents.map(pid => ({
+            type: Kinship.parent,
+            tree_id: newTree.id,
+            sourceNodeId: m.node_id,
+            targetNodeId: pid
+          }))
+        );
+      }
+
+      if (m.siblings?.length) {
+        relationBuckets.siblings.push(
+          ...m.siblings.map(sid => ({
+            type: Kinship.sibling,
+            tree_id: newTree.id,
+            sourceNodeId: m.node_id,
+            targetNodeId: sid
+          }))
+        );
+      }
+
+      if (m.spouses?.length) {
+        relationBuckets.spouses.push(
+          ...m.spouses.map(sid => ({
+            type: Kinship.spouse,
+            tree_id: newTree.id,
+            sourceNodeId: m.node_id,
+            targetNodeId: sid
+          }))
+        );
+      }
+
+      // Build FamilyMember payload
+      return {
+        tree_id: newTree.id,
+        node_id: m.node_id,
+        first_name: m.first_name,
+        last_name: m.last_name,
+        gender: m.gender,
+        dob: m.dob,
+        email: m.email || null,
+        user_id: m.user_id || null,
+        verified_by_user: false,
+        created_by_id: createData.created_by_id,
+        description: m?.description || null,
+        deceased: !!m?.deceased,
+        dod: m?.dod || null,
+        visibility: m?.visibility || MemberVisibility.family_only,
+        occupation: m?.occupation || null,
+        marital_status: m?.marital_status || null,
+        profile_url: m?.profile_url || null
+      };
+    });
+
+    /** -----------------------------------------------
+    *? 3. Transaction: bulk insert members + relationships. 
+    * -----------------------------------------------
+    */
+    await db.transaction(async (t) => {
+      const membersRecords = await FamilyMember.bulkCreate(memberPayloads, {
+        transaction: t,
+        returning: true
+      });
+      response.payload.members = membersRecords;
+
+      //? Using Map here for improved performance. 
+      //? array.map was used previously, and took over 10 secs to fulfill
+      const idMap = new Map(
+        membersRecords.map(m => [m.node_id, m.id])
+      );
+
+
+      const relationshipPayloads: Array<{
+        tree_id: number;
+        source_family_member_id: number;
+        target_family_member_id: number;
+        type: Kinship;
+      }> = [];
+
+      const pushMapped = (bucket: RelationshipMapping[], type: Kinship) => {
+        for (const r of bucket) {
+          relationshipPayloads.push({
+            tree_id: r.tree_id,
+            source_family_member_id: idMap.get(r.sourceNodeId)!,
+            target_family_member_id: idMap.get(r.targetNodeId)!,
+            type
+          });
+        }
+      };
+
+      pushMapped(relationBuckets.parents, Kinship.parent);
+      pushMapped(relationBuckets.siblings, Kinship.sibling);
+      pushMapped(relationBuckets.spouses, Kinship.spouse);
+
+      if (relationshipPayloads.length > 0) {
+        const relationshipRecords = await Relationship.bulkCreate(relationshipPayloads, {
+          transaction: t
+        });
+
+        response.payload.connections = relationshipRecords;
+      }
+
+
+      if (selectedAnchor) {
+        const anchorId = idMap.get(selectedAnchor.node_id);
+        if (anchorId) {
+          await newTree.update(
+            { default_anchor_family_member_id: anchorId },
+            { transaction: t }
+          );
+        }
+      }
+
+      response.code = 200;
+      response.error = false;
+    });
+  } catch (e) {
+    logger.error('Failed to create tree', { e });
   }
 
   return response;
@@ -333,7 +339,7 @@ export const getTreeById = async (id: string): Promise<ServiceResponseWithPayloa
     //   response.message = 'Family tree not found';
     //   response.payload = null;
     // } else {
-    //   const memberRecords: FamilyMember[] = await FamilyMember.findAll({ where: { node_id: { [Op.in]: JSON.parse(tree.members) } } });
+    //   const idMap: FamilyMember[] = await FamilyMember.findAll({ where: { node_id: { [Op.in]: JSON.parse(tree.members) } } });
     //   // @ts-ignore: I dont feel like fixing this. Its a simple fix, but I dont feel like it rn
     //   tree.members = memberRecords?.map(m => formatFamilyMemberToFront(m));
     //   response.code = 200;
