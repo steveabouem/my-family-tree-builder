@@ -19,7 +19,6 @@ const FormFieldsGenerator = ({
       {title ? <Typography variant="h4">{title}</Typography> : null}
       {fields.map((field: FormField, i: number) => {
         const readValue = field?.type === InputType.password ? '****************' : values?.[field.fieldName] || '';
-        console.log({field});
         
         return (
           <Box display="flex" flexDirection="column" gap={2} key={`${name}-fields-wrapper-${i}`}>
@@ -41,7 +40,6 @@ const FormFieldsGenerator = ({
                   <FormControl  key={`${field.fieldName}-radio`}>
                     <BoxRow sx={{justifyContent: 'flex-start'}} >
                       {field?.options?.map((o, i) => {
-                          console.log('OPTION', o);
                           return (
 
                             <FormControlLabel 

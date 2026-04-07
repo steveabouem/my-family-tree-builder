@@ -13,17 +13,22 @@ const router = Router();
 //   sendRouteHandlerResponse<string, FamilyTree[] | null>(req.query.user, getAllTrees, res, 'Get all trees');
 // });
 
-// router.get('/details', authCheck, (req: Request<{}, {}, {}, { id: string }>, res: Response) => {
-//   sendRouteHandlerResponse<string, FamilyTree | null>(req.query.id, getTreeById, res, 'Get tree details');
-// });
+router.get('/details', authCheck, (req: Request<{}, {}, {}, { id: string }>, res: Response) => {
+  const treeId = Number(req.query.id);
+  if (!Number.isFinite(treeId) || treeId <= 0) {
+    res.status(400).json({ error: true, code: 400, message: 'Invalid tree id', payload: null });
+    return;
+  }
+  sendRouteHandlerResponse<number, CreateTreeResponseV2 | null>(treeId, getTreeById, res, 'Get tree details');
+});
 
 // router.post('/create', authCheck, (req: Request<{}, {}, ManageTreeRequestPayload, {}>, res: Response) => {
 //   sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, createTree, res, 'Create family tree');
 // });
 
-// router.post('/delete', authCheck, (req: Request<{}, {}, DeleteTreeRequestPayload, {}>, res: Response) => {
-//   sendRouteHandlerResponse<DeleteTreeRequestPayload, null>(req.body, deleteTree, res, 'Delete tree');
-// });
+router.post('/delete', authCheck, (req: Request<{}, {}, DeleteTreeRequestPayload, {}>, res: Response) => {
+   sendRouteHandlerResponse<DeleteTreeRequestPayload, null>(req.body, deleteTree, res, 'Delete tree');
+});
 
 // router.get('/members', authCheck, (req: Request<{ }, {}, {}, {id: string}>, res: Response) => {
 //   const treeId = parseInt(req.query.id);
@@ -47,15 +52,13 @@ const router = Router();
 * V2
 */
 router.get('/index', authCheck, (req: Request, res: Response) => {
-      const currentUSer = getSessionUser(req) ||{userId: 1};
-   logger.info('CURR USER ', {currentUSer});
-  sendRouteHandlerResponse<number, FamilyTree[] | null>(currentUSer.userId, getAllTrees, res, 'Get all trees');
+   const currentUSer = getSessionUser(req) || { userId: 1 };
+   sendRouteHandlerResponse<number, FamilyTree[] | null>(currentUSer.userId, getAllTrees, res, 'Get all trees');
 });
 
 router.post('/new', authCheck, (req, res) => {
-   const currentUSer = getSessionUser(req) ||{userId: 1};
-   logger.info('CURR USER ', {currentUSer})
-   sendRouteHandlerResponse<CreateTreeRequestV2, CreateTreeResponseV2 | null>({...req.body, created_by_id: currentUSer?.userId}, createTreeV2, res, 'New tree create flow')
+   const currentUSer = getSessionUser(req) || { userId: 1 };
+   sendRouteHandlerResponse<CreateTreeRequestV2, CreateTreeResponseV2 | null>({ ...req.body, created_by_id: currentUSer?.userId }, createTreeV2, res, 'New tree create flow')
 });
 
 export default router;

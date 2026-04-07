@@ -70,7 +70,6 @@ export const FieldSectionsGenerator = () => {
                 <BoxColumn sx={{ gap: '1rem' }}>
                   {s.fields.map((field) => {
                     const fieldVal = traverse(values, field.fieldName)
-                    console.log('VALUE OF ',field.fieldName, {val: fieldVal, values});
                     
                     return (
                       <BoxColumn sx={{ gap: '.5rem' }} >

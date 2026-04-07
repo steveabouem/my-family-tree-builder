@@ -16,7 +16,8 @@ function genBG(s: ThemeSeasons) {
     default:
     // default:
     //   return 'linear-gradient(70deg, rgb(2 11 26) 56%, rgb(78 47 183 / 92%) 75%, rgb(95 6 59) 103%)';
-      return 'radial-gradient(circle, rgb(205 97 97) 0%, #733248 41%, rgba(23, 2, 26, 1) 100%)';
+      // return 'radial-gradient(circle, rgb(205 97 97) 0%, #733248 41%, rgba(23, 2, 26, 1) 100%)'; //pruple and orangey
+      return 'radial-gradient(circle, rgb(0 0 0) 0%, #3f294c 41%, rgb(0 0 0) 100%)'; //purple
       // return 'radial-gradient(circle, rgba(192, 167, 209, 1) 0%, #733248 41%, rgba(23, 2, 26, 1) 100%)';
   }
 }

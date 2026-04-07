@@ -7,10 +7,11 @@ import BaseModal from "./alerts/BaseModal";
 import GlobalContext from "contexts/creators/global/global.context";
 import { keyframes } from "styled-components";
 import NotFound from "./404NotFound";
-import BoxColumn from "./containers/row/BoxColumn";
+import NotAllowed from "./NotAllowed";
 
-const Page = ({ title, subtitle, children, loading, error, reload }: PageProps): JSX.Element => {
+const Page = ({ title, subtitle, children, loading, code, error, reload }: PageProps): JSX.Element => {
   const { modal } = useContext(GlobalContext);
+  const contentNotAllowed = code === 403;
 
   return (
     <FadeInPage className="app-page">
@@ -18,7 +19,9 @@ const Page = ({ title, subtitle, children, loading, error, reload }: PageProps):
         <Box>
           <Typography variant="h3">{title}</Typography>
           {subtitle ? <Typography variant="h4">{subtitle}</Typography> : ''}
-          {error ? (
+          {contentNotAllowed ? (
+            <NotAllowed />
+          ) : error ? (
             <Paper sx={{ width: '70%', margin: 'auto' }}>
               <NotFound handleReload={() => { reload?.() }} />
             </Paper>

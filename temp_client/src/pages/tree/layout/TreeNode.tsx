@@ -5,9 +5,10 @@ import Initials from 'components/common/Initials';
 import { BabyIcon, FeMaleChildIcon, FemaleIcon, MaleChildIcon, MaleIcon } from 'utils/assets/icons';
 import BoxColumn from 'components/common/containers/row/BoxColumn';
 import { Gender } from 'types';
+import { Background, Handle, Position } from '@xyflow/react';
 
 // TODO: check types in reacflow docs and create validations for node and edge structures. if any prop doesnt match the type, there can be undetected errors
-export default memo(({ data }: any) => {
+const TreeNode = memo(({ data }: any) => {
   const theme = useTheme();
 
   function getInitialsBG() {
@@ -32,36 +33,37 @@ export default memo(({ data }: any) => {
   }
 
   return (
-    <BoxColumn sx={{ alignItems: 'center' }}>
-      {/* {renderNodeIcon()} */}
-      {
-        !!data.profile_url?.length ? <MemberThumbnail src={data.profile_url} /> :
-          <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
-      }
-      <MemberName variant='body1' color={theme.palette.primary.dark} >{data.first_name} {data.last_name}</MemberName>
-      {/* <Handle
+    <>
+      <Handle
         type="source"
-          id='top'
-          position={Position.Top}
-          style={{ background: '#555' }}
-          isConnectable={true}
-        /> */}
-      {/* <Button size='small' sx={{ minWidth: '15px' }} >
-            <SettingsIcon color="#5d576b" size={15} />
-          </Button>
-          <Button size='small' sx={{ minWidth: '15px' }}>
-            <DeleteIcon color="#5d576b" size={15} />
-          </Button> */}
-    </BoxColumn>
+        id={`${data.id}-source`}
+        position={Position.Bottom}
+        style={{ background: '#555' }}
+        isConnectable={true}
+      />
+      <BoxColumn sx={{ alignItems: 'center', background: theme.palette.background.default, padding: '1rem' }}>
+        {
+          !!data.profile_url?.length ? <MemberThumbnail src={data.profile_url} /> :
+            <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
+        }
+        <MemberName variant='body1' color={theme.palette.primary.dark} sx={{
+          backgroundColor: `hsl(from ${theme.palette.info.contrastText} h s l / 0.5)`
+        }} >{data.first_name} {data.last_name}</MemberName>
+      </BoxColumn>
+      <Handle
+        type="target"
+        id={`${data.id}-target`}
+        position={Position.Bottom}
+        style={{ background: '#555' }}
+        isConnectable={true}
+      />
+    </>
   );
 });
 
-const MemberName = styled(Typography)<{theme: any}>`
+const MemberName = styled(Typography)`
   margin: 0;
   padding: .2rem;
-  
-  background-color: ${(props: any) => 'hsl(from ' + props.theme.palette.info.contrastText + ' h s l / 0.5)'};
-  border: ${(props: any) => '.5px solid ' + props.theme.palette.info.main};
   padding: .2rem;
   border-radius: 5px;
 `;
@@ -70,3 +72,5 @@ const MemberThumbnail = styled.img`
   border-radius: 80px;
   width: 40px;
 `;
+
+export default TreeNode;

@@ -18,7 +18,16 @@ import { useAddMembers, useChangeMemberPositions, useCreateFamilyTree } from "ap
 import BoxColumn from "components/common/containers/row/BoxColumn";
 import BoxRow from "components/common/containers/column";
 import FieldSectionsGenerator from "components/common/forms/FieldSectionsGenerator";
-
+/*
+ * 
+  * ISSUES: 
+  * 1 - typing of create tree payload must have members as array, not object (Easy)
+  * 2 - in order to have each member hold an array of their relations, we need to either
+  *    a) update the form  so that when you add a new step, the field names map to the relevant array for the current one.
+  *       Adding a father from step 3  should add the values to either current_step.parents, OR first_step.anchor.
+  *       UX needs to be reviewed here to see which one is better, or if user should be given choice for both when updating the settings
+  *    b) reinstate the formatting function to use the key value pairs as we did for V1
+ */
 export const FamilyTreeBuilderForm = ({ setTreeCopy, treeCopy, storeImg }: any) => {
   const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
   const { values, setFieldValue, setValues } = useFormikContext<any>();

@@ -43,17 +43,20 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
     winter: "#ffff"
   },
   secondary: {
-    default: "#ffd9a8",
+    default: "#a97cd2",
+    // default: "#ffd9a8",
     sunny: "#8f7c30",
     winter: "#9ea88c"
   },
   accentBg: {
-    default: "#3f4360",
+    default: "#55445c",
+    // default: "#3f4360",
     sunny: "#51400ba3",
     winter: "#4c5054"
   },
   pillBg: {
-    default: "#97d2ffe8",
+    default: "#c497ffe8",
+    // default: "#97d2ffe8", blue
     sunny: "#9f8451e8",
     winter: "#f59d19ab"
     // winter: "#83b2c7e8"
@@ -71,7 +74,8 @@ export const seasonalPaletteConfig: Record<seasonalCssVariable, Record<ThemeSeas
     // winter: "#ea4c89"
   },
   confirm: {
-    default: "#85ffa8ff",
+    default: "#a0dfb2",
+    // default: "#85ffa8ff",
     sunny: "#5e8720",
     winter: "#b1ff41"
   },
@@ -128,6 +132,7 @@ export interface PageProps {
   bg?: string;
   prevUrl?: string;
   error?: boolean;
+  code?: number;
   reload?: () => void;
 }
 
@@ -246,7 +251,7 @@ export type StepFormState = {
   globalValues: any;
   totalSteps: number;
   files?: FormImageInfo[];
-  stepTree?: { [name: string]: Omit<StepDetails, 'name'>};
+  stepTree?: { [name: string]: Omit<StepDetails, 'name'> };
   mode?: string;
 }
 
@@ -795,9 +800,11 @@ export type FamilyTreeDAOV2 = Pick<FamilyTreeDTOV2,//? family tree form data
   'name' |
   'visibility'
 >
-  & {members: {
-    [key: string]: FamilyMemberDAOV2; // node_id key
-  }};
+  & {
+    members: {
+      [key: string]: FamilyMemberDAOV2; // node_id key
+    }
+  };
 
 
 /*
@@ -855,6 +862,10 @@ export interface CreateTreeRequestPayloadV2 {
   members: FamilyMemberDAOV2[];
 }
 
+export type ViewTreeResponseV2 = CreateTreeRequestPayloadV2 & {
+  connections: RelationshipDTOV2[];
+}
+
 
 /*
 * Wrapped API responses
@@ -864,6 +875,7 @@ export type CreateTreeResponseV2 = APIEndpointResponse<{
   tree: FamilyTreeDTOV2 | null;
   members: FamilyMemberDTOV2[];
   connections: RelationshipDTOV2[];
+  collaborators?: Record<string, unknown>[];
 }>;
 /*
 * Enums
@@ -911,12 +923,17 @@ export enum Kinship {
 }
 
 export enum MaritalStatus {
-    Single = 'single',
-    Married = 'married',
-    Divorced = 'divorced',
-    Widowed = 'widowed',
-    Separated = 'separated',
-    other = 'other'
+  Single = 'single',
+  Married = 'married',
+  Divorced = 'divorced',
+  Widowed = 'widowed',
+  Separated = 'separated',
+  other = 'other'
+}
+
+export enum FlowComponentTypes {
+  customNode = 'customNode',
+  customEdge = 'customEdge',
 }
 
 export interface RegistrationRequestV2 {

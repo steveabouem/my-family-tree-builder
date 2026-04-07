@@ -3,7 +3,8 @@ import {
   APICreateFamilyResponse, APIEndpointResponse, FamilyTree,
   FormField, MembersPositions, FamilyMember, FamilyTreeRecord,
   DeleteMembersRequestPayload,
-  FamilyTreeDAOV2
+  FamilyTreeDAOV2,
+  CreateTreeResponseV2
 } from "types";
 import { baseUrl } from "./index";
 
@@ -13,7 +14,7 @@ const getAllTreesForUser = async (userId?: number): Promise<APIEndpointResponse<
     throw new Error('Invalid parameter');
   }
 
-  const response = await fetch(`${baseUrl}/trees/index?user=${userId}`, {credentials: 'include'});
+  const response = await fetch(`${baseUrl}/trees/index?user=${userId}`, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to get trees for user: ${response.statusText}`);
@@ -23,7 +24,7 @@ const getAllTreesForUser = async (userId?: number): Promise<APIEndpointResponse<
 };
 // #endregion
 const getTreeById = async (treeId: string) => {
-  const response = await fetch(`${baseUrl}/trees/details?id=${treeId}`, {credentials: 'include'});
+  const response = await fetch(`${baseUrl}/trees/details?id=${treeId}`, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to get tree by ID: ${response.statusText}`);
@@ -32,7 +33,7 @@ const getTreeById = async (treeId: string) => {
   return response.json();
 };
 
-const createFamilyTree = async (values: FamilyTreeDAOV2): Promise<APICreateFamilyResponse> => {
+const createFamilyTree = async (values: FamilyTreeDAOV2): Promise<CreateTreeResponseV2> => {
   const response = await fetch(`${baseUrl}/trees/new`, {
     method: 'POST',
     credentials: 'include',
@@ -67,7 +68,7 @@ const deleteTree = async (data: { id: number, userId: number }): Promise<void> =
 };
 
 const getMembers = async (treeId: number) => {
-  const response = await fetch(`${baseUrl}/trees/members?id=${treeId}`, {credentials: 'include'});
+  const response = await fetch(`${baseUrl}/trees/members?id=${treeId}`, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to get members: ${response.statusText}`);
@@ -127,11 +128,11 @@ const deleteMember = async (info: DeleteMembersRequestPayload): Promise<APIEndpo
   return response.json();
 };
 
-const getGenealogyFormFieldsForStep = async (step: number): Promise<FormField[]> => {
-  const response = await fetch(`${baseUrl}/trees/narration-fields?step=${step}`, {credentials: 'include'});
+const deleteAllTree = async (): Promise<APIEndpointResponse<{payload: {}}>> => {
+  const response = await fetch(`${baseUrl}/trees/flush`, { credentials: 'include' });
 
   if (!response.ok) {
-    throw new Error(`Failed to get genealogy form fields: ${response.statusText}`);
+    throw new Error(`Failed to flush the trees: ${response.statusText}`);
   }
 
   return response.json();
@@ -195,10 +196,9 @@ export const useDeleteTree = () => {
   });
 };
 
-export const useGetGenealogyFormFieldsForStep = (step: number, enabled: boolean = true) => {
-  return useQuery({
-    queryKey: ['genealogyFormFields', 'step', step],
-    queryFn: () => getGenealogyFormFieldsForStep(step),
+export const useDeleteAllTree = () => {
+  return useMutation({
+    mutationFn: deleteAllTree
   });
 };
 //#endregion
@@ -211,6 +211,6 @@ export {
   createFamilyTree,
   getMembers,
   addMembers,
-  getGenealogyFormFieldsForStep
+  deleteAllTree
 };
 //#endregion 

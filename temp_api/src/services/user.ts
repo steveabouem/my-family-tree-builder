@@ -5,6 +5,7 @@ import logger from "../utils/logger";
 import { APIUserDTO, ServiceResponseWithPayload, AuthenticationResponse, ProfileDataResponseV2 } from "./types";
 import { extractSingleDataValuesFrom, generateResponseData, scramble } from "./serviceHelpers";
 import { Collaborator, FamilyTree, User, FamilyMember } from "../models";
+import { associationAliases } from "../associations";
 
 export const createUser = async (userData: any): Promise<ServiceResponseWithPayload<AuthenticationResponse | null>> => {
   const hashedPassword = scramble(userData.password);
@@ -65,12 +66,12 @@ export const getProfileDetailsByUserId = async (id: number): Promise<ServiceResp
       const userTrees = await FamilyTree.findAll({
        where: {created_by_id: {[Op.eq]:  data.id}},
         include: [
-          { model: Collaborator, as: 'collaborators', where: { user_id: data.id }, required: false },
+          { model: Collaborator, as: associationAliases.treeCollaborators, where: { user_id: data.id }, required: false },
           {
-            model: FamilyMember, as: 'members', where: {
+            model: FamilyMember, as: associationAliases.treeMembers, where: {
               [Op.or]: [
                 { user_id: data.id },
-                { email: data.email || 'N/A' }, //email not always available
+                { email: data?.email || 'N/A' }, //email not always available
               ]
             }, required: false
           },

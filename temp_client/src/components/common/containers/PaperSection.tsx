@@ -16,6 +16,7 @@ const ResponsivePaper = styled(Paper) <{ fullWidth: boolean }>`
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
   gap: 1rem;
   margin: auto;
 `;

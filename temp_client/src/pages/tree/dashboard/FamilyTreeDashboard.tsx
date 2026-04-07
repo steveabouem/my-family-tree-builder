@@ -3,14 +3,13 @@ import { Trans } from "@lingui/macro";
 import { Box, Typography, useTheme, Divider, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-// @ts-ignore TODO: install types once network is restored
 import styled from 'styled-components';
 import { populateTreeAction, resetAction, saveTreeIdAction } from "app/slices/trees";
 import { AddIcon, DeleteIcon, EyeIcon } from "utils/assets/icons";
 import GlobalContext from "contexts/creators/global";
 import Page from "components/common/Page";
 import PageUrlsEnum from "utils/urls";
-import { useDeleteTree, useGetAllForUser } from "api";
+import { useDeleteAllTree, useDeleteTree, useGetAllForUser } from "api";
 import { useZDispatch, useZSelector } from "app/hooks";
 import { UserState, FamilyTreeRecord } from "types";
 import EmptyList from "components/common/EmptyList";
@@ -22,6 +21,7 @@ const FamilyTreeDashboard = () => {
   const { currentUser } = useZSelector<UserState>(state => state.user);
   const { data, isFetching, isLoading, refetch: refreshTreesList, error: getTreesError } = useGetAllForUser(currentUser?.userId);
   const { mutate: deleteTreeMutation, isSuccess: deletionSuccessful, isError: deletionFailed } = useDeleteTree();
+  const { mutate: deleteAllMutation, isSuccess: deleteAllSuccessful, isError: deleteAllFailed } = useDeleteAllTree();
   const dispatch = useZDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -29,7 +29,6 @@ const FamilyTreeDashboard = () => {
 
   useEffect(() => {
     if (deletionSuccessful) {
-      // dispatch(resetAction());
       refreshTreesList();
       showDeleteTreeSuccess();
     }
@@ -38,6 +37,16 @@ const FamilyTreeDashboard = () => {
       showDeleteTreerror();
     }
   }, [deletionSuccessful, deletionFailed]);
+  useEffect(() => {
+    if (deleteAllSuccessful) {
+      refreshTreesList();
+      showDeleteAllSuccess();
+    }
+
+    if (deleteAllFailed) {
+      showDeleteAllrror();
+    }
+  }, [deleteAllSuccessful, deletionFailed]);
 
   function selectTree(t: FamilyTreeRecord) {
     dispatch(populateTreeAction(t));
@@ -54,7 +63,6 @@ const FamilyTreeDashboard = () => {
         confirm: true,
       },
       type: 'warning',
-      // @ts-ignore
       title: <Trans>delete_tree_warning_title?</Trans>,
       content: <Trans>delete_tree_warning_msg</Trans>,
       onConfirm: () => {
@@ -73,7 +81,6 @@ const FamilyTreeDashboard = () => {
         confirmText: <Trans>ok</Trans>
       },
       type: 'success',
-      // @ts-ignore
       title: <Trans>delete_tree_success_title?</Trans>,
       content: <Trans>delete_tree_success_msg</Trans>,
       onConfirm: () => {
@@ -91,7 +98,56 @@ const FamilyTreeDashboard = () => {
         confirmText: <Trans>ok</Trans>
       },
       type: 'error',
-      // @ts-ignore
+      title: <Trans>delete_tree_error_title?</Trans>,
+      content: <Trans>delete_tree_error_msg</Trans>,
+      onConfirm: () => {
+        clearModal();
+      },
+    });
+  }
+
+  function showDeleteAllWarning() {
+    updateModal({
+      hidden: false,
+      buttons: {
+        cancel: true,
+        confirm: true,
+      },
+      type: 'warning',
+      title: <Trans>delete_tree_warning_title?</Trans>,
+      content: <Trans>delete_tree_warning_msg</Trans>,
+      onConfirm: () => {
+        deleteAllMutation();
+      },
+    });
+  }
+
+  function showDeleteAllSuccess() {
+    updateModal({
+      hidden: false,
+      buttons: {
+        cancel: false,
+        confirm: true,
+        confirmText: <Trans>ok</Trans>
+      },
+      type: 'success',
+      title: <Trans>delete_tree_success_title?</Trans>,
+      content: <Trans>delete_tree_success_msg</Trans>,
+      onConfirm: () => {
+        clearModal();
+      },
+    });
+  }
+
+  function showDeleteAllrror() {
+    updateModal({
+      hidden: false,
+      buttons: {
+        cancel: false,
+        confirm: true,
+        confirmText: <Trans>ok</Trans>
+      },
+      type: 'error',
       title: <Trans>delete_tree_error_title?</Trans>,
       content: <Trans>delete_tree_error_msg</Trans>,
       onConfirm: () => {
@@ -102,7 +158,7 @@ const FamilyTreeDashboard = () => {
 
   return (
     <Page 
-      error={!!getTreesError || data?.code === 403} reload={refreshTreesList}
+      error={!!getTreesError} code={data?.code} reload={refreshTreesList}
       title={<Trans>tree_dashboard_title</Trans>}
       subtitle={<Trans>tree_dashboard_lists_title</Trans>}
       loading={isFetching || isLoading}
@@ -113,13 +169,19 @@ const FamilyTreeDashboard = () => {
             <BoxRow sx={{ justifyContent: 'end' }}>
               <AddTreeButton variant="outlined" color={theme.palette.secondary.contrastText} elevation={0}
                 onClick={() => {
-                  // dispatch(populateTreeAction());
                   navigate(PageUrlsEnum.newTree);
                 }}
                 sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}
               >
                 <Trans>add</Trans>
                 <AddIcon size={15} color={theme.palette.success.dark} tooltip={<Trans>add new family tree</Trans>} />
+              </AddTreeButton>
+              <AddTreeButton variant="outlined" color={theme.palette.error.light} elevation={0}
+                onClick={() => {showDeleteAllWarning()}}
+                sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}
+              >
+                <Trans>delete_all</Trans>
+                <DeleteIcon size={15} color={theme.palette.error.dark} tooltip={<Trans>delete_all_trees</Trans>} />
               </AddTreeButton>
             </BoxRow>
             <TreeDashboardContainer sx={{ border: 'none' }}>

@@ -7,20 +7,47 @@ import Collaborator from './models/Collaborator';
 import Relationship from './models/Relationship';
 import Invite from './models/Invite';
 import Notification from './models/Notification';
-import { Association } from 'sequelize';
+
+export enum associationAliases {
+  treeMembers = 'tree_members',
+  treeCollaborators = 'tree_collaborators',
+  userTrees = 'user_trees',
+  treeUser = 'tree_user',
+  treeInvites = 'tree_invites',
+  memberTree = 'member_tree',
+  userFamilyMembers = 'user_family_members',
+  familyMemberUser = 'family_member_user',
+  collaboratorTree = 'collaborator_tree',
+  userCollaborator = 'user_collaborator',
+  collaboratorUser = 'collaborator_user',
+  userCollaboratorInvite = 'user_collaborator_invite',
+  collaboratorInvitedBy = 'collaborator_invited_by',
+  treeRelationships = 'tree_relationships',
+  relationshipTree = 'relationship_tree',
+  outgoingRelationships = 'outgoing_relationships',
+  incomingRelationships = 'incoming_relationships',
+  relationshipFamilyMemberAsSource = 'relationship_family_member_as_source',
+  relationshipFamilyMemberAsTarget = 'relationship_family_member_as_target',
+  familyTreeInvite = 'family_tree_invite',
+  inviteFamilyTree = 'invite_family_tree',
+  hasManyInvite = 'has_many_invite',
+  inviteUser = 'invite_user',
+  hasManyNotification = 'has_many_notification',
+  notificationUser = 'notification_user',
+}
 
 /* -------------------------------------------------------
    USER ↔ TREE (creator)
-------------------------------------------------------- */ 
+------------------------------------------------------- */
 // these 2 are unused since I removed this Association. leaving it here because I will most likely revert that change
 User.hasMany(FamilyTree, {
   foreignKey: 'created_by_id',
-  as: 'createdTrees'
+  as: associationAliases.userTrees
 });
 
 FamilyTree.belongsTo(User, {
   foreignKey: 'created_by_id',
-  as: 'creator'
+  as: associationAliases.treeUser
 });
 
 /* -------------------------------------------------------
@@ -28,12 +55,12 @@ FamilyTree.belongsTo(User, {
 ------------------------------------------------------- */
 FamilyTree.hasMany(FamilyMember, {
   foreignKey: 'tree_id',
-  as: 'members'
+  as: associationAliases.treeMembers
 });
 
 FamilyMember.belongsTo(FamilyTree, {
   foreignKey: 'tree_id',
-  as: 'tree'
+  as: associationAliases.memberTree
 });
 
 /* -------------------------------------------------------
@@ -41,12 +68,12 @@ FamilyMember.belongsTo(FamilyTree, {
 ------------------------------------------------------- */
 User.hasMany(FamilyMember, {
   foreignKey: 'user_id',
-  as: 'familyMembers'
+  as: associationAliases.userFamilyMembers
 });
 
 FamilyMember.belongsTo(User, {
   foreignKey: 'user_id',
-  as: 'user'
+  as: associationAliases.familyMemberUser
 });
 
 /* -------------------------------------------------------
@@ -54,12 +81,12 @@ FamilyMember.belongsTo(User, {
 ------------------------------------------------------- */
 FamilyTree.hasMany(Collaborator, {
   foreignKey: 'tree_id',
-  as: 'collaborators'
+  as: associationAliases.treeCollaborators
 });
 
 Collaborator.belongsTo(FamilyTree, {
   foreignKey: 'tree_id',
-  as: 'tree'
+  as: associationAliases.collaboratorTree
 });
 
 /* -------------------------------------------------------
@@ -67,12 +94,12 @@ Collaborator.belongsTo(FamilyTree, {
 ------------------------------------------------------- */
 User.hasMany(Collaborator, {
   foreignKey: 'user_id',
-  as: 'collaborations'
+  as: associationAliases.userCollaborator
 });
 
 Collaborator.belongsTo(User, {
   foreignKey: 'user_id',
-  as: 'user'
+  as: associationAliases.collaboratorUser
 });
 
 /* -------------------------------------------------------
@@ -80,12 +107,12 @@ Collaborator.belongsTo(User, {
 ------------------------------------------------------- */
 User.hasMany(Collaborator, {
   foreignKey: 'invited_by_user_id',
-  as: 'sentCollaboratorInvites'
+  as: associationAliases.userCollaboratorInvite
 });
 
 Collaborator.belongsTo(User, {
   foreignKey: 'invited_by_user_id',
-  as: 'inviter'
+  as: associationAliases.collaboratorInvitedBy
 });
 
 /* -------------------------------------------------------
@@ -93,12 +120,12 @@ Collaborator.belongsTo(User, {
 ------------------------------------------------------- */
 FamilyTree.hasMany(Relationship, {
   foreignKey: 'tree_id',
-  as: 'relationships'
+  as: associationAliases.treeRelationships
 });
 
 Relationship.belongsTo(FamilyTree, {
   foreignKey: 'tree_id',
-  as: 'tree'
+  as: associationAliases.relationshipTree
 });
 
 /* -------------------------------------------------------
@@ -106,22 +133,22 @@ Relationship.belongsTo(FamilyTree, {
 ------------------------------------------------------- */
 FamilyMember.hasMany(Relationship, {
   foreignKey: 'source_family_member_id',
-  as: 'outgoingRelationships'
+  as: associationAliases.outgoingRelationships
 });
 
 FamilyMember.hasMany(Relationship, {
   foreignKey: 'target_family_member_id',
-  as: 'incomingRelationships'
+  as: associationAliases.incomingRelationships
 });
 
 Relationship.belongsTo(FamilyMember, {
   foreignKey: 'source_family_member_id',
-  as: 'sourceMember'
+  as: associationAliases.relationshipFamilyMemberAsSource
 });
 
 Relationship.belongsTo(FamilyMember, {
   foreignKey: 'target_family_member_id',
-  as: 'targetMember'
+  as: associationAliases.relationshipFamilyMemberAsTarget
 });
 
 /* -------------------------------------------------------
@@ -129,12 +156,12 @@ Relationship.belongsTo(FamilyMember, {
 ------------------------------------------------------- */
 FamilyTree.hasMany(Invite, {
   foreignKey: 'tree_id',
-  as: 'invites'
+  as: associationAliases.familyTreeInvite
 });
 
 Invite.belongsTo(FamilyTree, {
   foreignKey: 'tree_id',
-  as: 'tree'
+  as: associationAliases.inviteFamilyTree
 });
 
 /* -------------------------------------------------------
@@ -142,12 +169,12 @@ Invite.belongsTo(FamilyTree, {
 ------------------------------------------------------- */
 User.hasMany(Invite, {
   foreignKey: 'invited_by_user_id',
-  as: 'sentInvites'
+  as: associationAliases.hasManyInvite
 });
 
 Invite.belongsTo(User, {
   foreignKey: 'invited_by_user_id',
-  as: 'inviter'
+  as: associationAliases.inviteUser
 });
 
 /* -------------------------------------------------------
@@ -155,10 +182,10 @@ Invite.belongsTo(User, {
 ------------------------------------------------------- */
 User.hasMany(Notification, {
   foreignKey: 'user_id',
-  as: 'notifications'
+  as: associationAliases.hasManyNotification
 });
 
 Notification.belongsTo(User, {
   foreignKey: 'user_id',
-  as: 'user'
+  as: associationAliases.notificationUser
 });

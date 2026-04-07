@@ -2,6 +2,7 @@ import FamilyMember from "../models/FamilyMember";
 import { InferAttributes } from "sequelize";
 import User from "../models/User";
 import FamilyTree from "../models/FamilyTree";
+import Collaborator from "../models/Collaborator";
 import { Relationship } from "@/models";
 
 // #region CORE API TYPES
@@ -441,6 +442,7 @@ export interface CreateTreeResponseV2 {
     tree: FamilyTree | null;
     members: FamilyMember[];
     connections: Relationship[];
+    collaborators?: Collaborator[];
 }
 //#endregion
 
