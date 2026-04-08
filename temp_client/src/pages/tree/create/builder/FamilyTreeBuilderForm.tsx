@@ -1,35 +1,27 @@
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useEffect} from "react";
 import { Button, FormControl, FormControlLabel, Paper, Radio, Typography } from "@mui/material";
 import { Field, useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
 import { v4 } from "uuid";
 import { useZDispatch, useZSelector } from "app/hooks";
 import {
-  clearFieldsByStepName, loadStepFormSectionsAction, setStepsCountAction, cleanupAction,
+  clearFieldsByStepName, loadStepFormSectionsAction, setStepsCountAction,
   setStepSectionsAction, toggleStepFormUpdatingAction, updateGlobalValuesAction
 } from "app/slices/forms/stepForm";
 import BaseDropDown from "components/common/dropdowns/BaseDropdown";
 import GlobalContext from "contexts/creators/global";
 import {
-  StepFormState, stepFormModes, genderOptions, maritalStatusOptions, relationOptions,
-  NodeMenuActions, FieldsSection, InputType, MemberVisibility, TreeVisibility
+  StepFormState, genderOptions, maritalStatusOptions, relationOptions,
+  NodeMenuActions, FieldsSection, InputType, MemberVisibility, TreeVisibility,
+  DropdownOption
 } from "types";
 import { useAddMembers, useChangeMemberPositions, useCreateFamilyTree } from "api";
 import BoxColumn from "components/common/containers/row/BoxColumn";
 import BoxRow from "components/common/containers/column";
 import FieldSectionsGenerator from "components/common/forms/FieldSectionsGenerator";
-/*
- * 
-  * ISSUES: 
-  * 1 - typing of create tree payload must have members as array, not object (Easy)
-  * 2 - in order to have each member hold an array of their relations, we need to either
-  *    a) update the form  so that when you add a new step, the field names map to the relevant array for the current one.
-  *       Adding a father from step 3  should add the values to either current_step.parents, OR first_step.anchor.
-  *       UX needs to be reviewed here to see which one is better, or if user should be given choice for both when updating the settings
-  *    b) reinstate the formatting function to use the key value pairs as we did for V1
- */
-export const FamilyTreeBuilderForm = ({ setTreeCopy, treeCopy, storeImg }: any) => {
-  const { totalSteps, currentFormStep, stepTree, mode } = useZSelector<StepFormState>(state => state.stepForm);
+
+export const FamilyTreeBuilderForm = ({  storeImg }: any) => {
+  const { totalSteps, currentFormStep, stepTree} = useZSelector<StepFormState>(state => state.stepForm);
   const { values, setFieldValue, setValues } = useFormikContext<any>();
   const { modal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
@@ -37,19 +29,23 @@ export const FamilyTreeBuilderForm = ({ setTreeCopy, treeCopy, storeImg }: any) 
   const { isPending: isAddMembersPending } = useAddMembers();
   const { isPending: isChangePositionsPending } = useChangeMemberPositions();
   const isProcessing = isChangePositionsPending || isCreateFamilyTreePending || isAddMembersPending;
-  const isEditMode = useMemo(() => mode === stepFormModes.edit, [mode]);
+  const membersDropdownOptions: (DropdownOption & { key?: string })[] = Object.keys(values?.members || {}).map((key: string) => (
+    {
+      label: `${values?.members?.[key]?.first_name || ''} ${values?.members?.[key]?.last_name || ''}`,
+      value: values?.members?.[key]?.node_id,
+      id: values?.members?.[key]?.node_id,
+      key
+    }
+  )) || [{
+    label: '',
+    value: '',
+    id: '',
+  }];
 
   useEffect(() => {
     dispatch(toggleStepFormUpdatingAction(isProcessing));
   }, [isProcessing]);
   useEffect(() => {
-    // TODO: a nice to have: dropdown to display step number or name above the fields. 
-    /*
-    * the form will direct user to build the tree one  member at the time
-    * for each member, the user will be able to add partners, parents and children (potentially more)
-    */
-    console.log('Applying fields on step #', stepTree, currentFormStep);
-
     generateFieldsSectionsForRelative(currentFormStep, false);
   }, [currentFormStep]);
   useEffect(() => {
@@ -67,7 +63,6 @@ export const FamilyTreeBuilderForm = ({ setTreeCopy, treeCopy, storeImg }: any) 
       }));
     const nameOfStep = matchingStepInTree || "anchor";
     const fieldsInTree = stepTree?.[nameOfStep]?.sections || [];
-    console.log('fields found at current step ', { matchingStepInTree, nameOfStep, fieldsInTree, stepNumber });
 
     if (fieldsInTree?.length) {
       dispatch(loadStepFormSectionsAction({
@@ -80,7 +75,7 @@ export const FamilyTreeBuilderForm = ({ setTreeCopy, treeCopy, storeImg }: any) 
     if (reset) {
       dispatch(clearFieldsByStepName(nameOfStep));
     } else {
-      const newNodeId = v4();
+      const newNodeId = values?.members?.[nameOfStep]?.node_id || v4();
       const sections: FieldsSection[] = [
         {
           title: <Trans>basic_identification</Trans>,
@@ -101,7 +96,6 @@ export const FamilyTreeBuilderForm = ({ setTreeCopy, treeCopy, storeImg }: any) 
           ]
         },
         {
-
           title: <Trans>personal_life</Trans>, fields: [
             {
               fieldName: `members.${nameOfStep || ''}.marital_status`, label: <Trans>marital_status</Trans>, subComponent: () => (
@@ -162,21 +156,57 @@ export const FamilyTreeBuilderForm = ({ setTreeCopy, treeCopy, storeImg }: any) 
   }
   function addRelative() {
     /*
-    * user will select the relative type (kinship) for the next step.
+    * user will select the relative type (kinship) for the next step, or any of the  steps before the current one.
     */
-    console.log('Current total steps  before adding relative', totalSteps, stepTree);
+    const currentStepKey = Object.keys(stepTree || {}).find((key: string) => stepTree?.[key]?.step === currentFormStep) || 'anchor';
+    const selectedMember = membersDropdownOptions.find((m: any) => m.value === values?.next_of_kin_member)
+      || membersDropdownOptions.find((m: any) => m.key === currentStepKey);
+    const selectedRelation = values?.next_of_kin;
+    const newRelativeNodeId = v4();
+    const nextStepName = `${selectedRelation}-${totalSteps + 1}`;
+
+    const relationArrayMap: Record<string, { selectedMemberArray: 'siblings' | 'parents' | 'children' | 'spouses'; newMemberArray: 'siblings' | 'parents' | 'children' | 'spouses' }> = {
+      sister: { selectedMemberArray: 'siblings', newMemberArray: 'siblings' },
+      brother: { selectedMemberArray: 'siblings', newMemberArray: 'siblings' },
+      husband: { selectedMemberArray: 'spouses', newMemberArray: 'spouses' },
+      wife: { selectedMemberArray: 'spouses', newMemberArray: 'spouses' },
+      mother: { selectedMemberArray: 'parents', newMemberArray: 'children' },
+      father: { selectedMemberArray: 'parents', newMemberArray: 'children' },
+      son: { selectedMemberArray: 'children', newMemberArray: 'parents' },
+      daughter: { selectedMemberArray: 'children', newMemberArray: 'parents' },
+    };
+    const relationArrays = relationArrayMap[selectedRelation];
+
+    const pushUnique = (arr: string[] = [], value?: string) => {
+      if (!value) return arr || [];
+      return arr.includes(value) ? arr : [...arr, value];
+    };
 
     //1: Adds an additional step at the end of the list
     dispatch(setStepsCountAction(totalSteps + 1));
     //2: assign right prefixto that step, without creating the fields
-    dispatch(setStepSectionsAction({ name: `${values.next_of_kin}-${totalSteps + 1}`, fields: [], step: totalSteps + 1}));
-    if (isEditMode) {
-      setTreeCopy({ ...treeCopy, [`${totalSteps + 1}`]: values.next_of_kin });
+    dispatch(setStepSectionsAction({ name: nextStepName, fields: [], step: totalSteps + 1 }));
+
+    // Pre-seed the upcoming member with required values so the generated node_id can be linked immediately.
+    setFieldValue(`members.${nextStepName}.node_id`, newRelativeNodeId);
+    setFieldValue(`members.${nextStepName}.step_number`, totalSteps + 1);
+    setFieldValue(`members.${nextStepName}.parents`, values?.members?.[nextStepName]?.parents || []);
+    setFieldValue(`members.${nextStepName}.siblings`, values?.members?.[nextStepName]?.siblings || []);
+    setFieldValue(`members.${nextStepName}.spouses`, values?.members?.[nextStepName]?.spouses || []);
+    setFieldValue(`members.${nextStepName}.children`, values?.members?.[nextStepName]?.children || []);
+
+    const selectedMemberKey = (selectedMember as any)?.key;
+    const selectedMemberNodeId = selectedMember?.value as string | undefined;
+
+    // Link selected existing member <-> newly created member from selected member's perspective.
+    if (relationArrays && selectedMemberKey && selectedMemberNodeId) {
+      const selectedMemberCurrent = values?.members?.[selectedMemberKey]?.[relationArrays.selectedMemberArray] || [];
+      const newMemberCurrent = values?.members?.[nextStepName]?.[relationArrays.newMemberArray] || [];
+      setFieldValue(`members.${selectedMemberKey}.${relationArrays.selectedMemberArray}`, pushUnique(selectedMemberCurrent, newRelativeNodeId));
+      setFieldValue(`members.${nextStepName}.${relationArrays.newMemberArray}`, pushUnique(newMemberCurrent, selectedMemberNodeId));
     }
   }
 
-  // you are adding an extra empty array when selecting edit in the modal. That extra step currently doesnt get the fields loaded. 
-  // If you fix that, you will be one step closer to fixing the issue of haveing a ghost member when submitting edit tree
   return (
     <Paper sx={{ flexDirection: "column", border: 'none' }} elevation={0}>
       <Typography variant="h5">about</Typography>
@@ -217,12 +247,13 @@ export const FamilyTreeBuilderForm = ({ setTreeCopy, treeCopy, storeImg }: any) 
           </BoxRow>
         </FormControl>
         <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
-        <BoxRow >
-          <FormControl>
-            <BaseDropDown name="next_of_kin" options={relationOptions} />
-          </FormControl>
+        <BoxColumn>
+          <Typography variant="subtitle2"><Trans>source_member</Trans></Typography>
+          <BaseDropDown name="next_of_kin_member" options={membersDropdownOptions} />
+          <Typography variant="subtitle2"><Trans>relates_to</Trans></Typography>
+          <BaseDropDown name="next_of_kin" options={relationOptions} />
           <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
-        </BoxRow>
+        </BoxColumn>
       </BoxColumn>
       <FieldSectionsGenerator />
     </Paper>

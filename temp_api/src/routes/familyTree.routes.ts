@@ -1,11 +1,9 @@
 import { Router, Request, Response } from "express";
-
 import FamilyTree from "../models/FamilyTree";
-import { APIGetFamilyTreeResponse, ManageTreeRequestPayload, ManageMembersRequestPayload, DeleteMembersRequestPayload, DeleteTreeRequestPayload, CreateTreeRequestV2, CreateTreeResponseV2 } from "../services/types";
+import { CreateTreeRequestV2, CreateTreeResponseV2, DeleteTreeRequestPayload } from "../services/types";
 import { getSessionUser, sendRouteHandlerResponse } from "./helpers";
-import { createTreeV2, deleteTree, deleteTreeMember, getAllTrees, getTreeById, updateMemberPositions, updateTree } from "../services/familyTree";
+import { createTreeV2, deleteAll, deleteTree, getAllTrees, getTreeById} from "../services/familyTree";
 import { authCheck } from "./middlewares";
-import logger from "../utils/logger";
 
 const router = Router();
 
@@ -59,6 +57,11 @@ router.get('/index', authCheck, (req: Request, res: Response) => {
 router.post('/new', authCheck, (req, res) => {
    const currentUSer = getSessionUser(req) || { userId: 1 };
    sendRouteHandlerResponse<CreateTreeRequestV2, CreateTreeResponseV2 | null>({ ...req.body, created_by_id: currentUSer?.userId }, createTreeV2, res, 'New tree create flow')
+});
+
+router.post('/bulk-delete', authCheck, (req: Request<{}, {},{list: number[]},{}>, res) => {
+   const currentUser = getSessionUser(req) || { userId: 1 };
+   sendRouteHandlerResponse<{list: number[], requester: number}, null>({ list: req.body.list, requester: currentUser.userId }, deleteAll, res, 'New tree create flow')
 });
 
 export default router;

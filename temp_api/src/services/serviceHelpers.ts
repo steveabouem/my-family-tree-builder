@@ -114,4 +114,4 @@ export function processOutgoingImage(img?: any): string | null {
 **/
 export function scramble(val: string): string {
    return bcrypt.hashSync(val);
-}
+};

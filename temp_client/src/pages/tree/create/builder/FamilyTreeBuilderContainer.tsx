@@ -14,7 +14,6 @@ export const FamilyTreeBuilderContainer: React.FC = () => {
   // treeCopy is used to keep copy of the tree through all events.
   // for instance, updating a member requires to rerender the form with only that member's fields.
   // the copy allows for the other existing members to remain rendered in the graph
-  const [treeCopy, setTreeCopy] = useState({});
   const { updateModal } = React.useContext(GlobalContext);
   const { mutate: createFamilyTreeMutation, error, isPending } = useCreateFamilyTree();
   const navigate = useNavigate();
@@ -55,7 +54,6 @@ export const FamilyTreeBuilderContainer: React.FC = () => {
   }
   function handleSubmit(v: FamilyTreeDAOV2) {
     try {
-      const valuesWithRelationshipBuckets = null;
       createFamilyTreeMutation(
         // @ts-ignore: quick update of payload type needed. its an array
         {...v, members: Object.values(v.members)},
@@ -90,7 +88,7 @@ export const FamilyTreeBuilderContainer: React.FC = () => {
           <Grid2 container spacing={2} sx={{gridContainerStyle}}>
             <Grid2 size={6} >
               <form name="gen">
-                <FamilyTreeBuilderForm treeCopy={treeCopy} setTreeCopy={setTreeCopy} storeImg={grabProfilePictureFile} />
+                <FamilyTreeBuilderForm storeImg={grabProfilePictureFile} />
               </form>
             </Grid2>
             <Grid2 size={6}>

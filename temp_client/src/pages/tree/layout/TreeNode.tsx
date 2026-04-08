@@ -38,10 +38,10 @@ const TreeNode = memo(({ data }: any) => {
         type="source"
         id={`${data.id}-source`}
         position={Position.Bottom}
-        style={{ background: '#555' }}
+        style={{ background: 'transparent' }}
         isConnectable={true}
       />
-      <BoxColumn sx={{ alignItems: 'center', background: theme.palette.background.default, padding: '1rem' }}>
+      <BoxColumn sx={{ alignItems: 'center', background: theme.palette.background.default, padding: '.5rem' }}>
         {
           !!data.profile_url?.length ? <MemberThumbnail src={data.profile_url} /> :
             <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
@@ -54,7 +54,7 @@ const TreeNode = memo(({ data }: any) => {
         type="target"
         id={`${data.id}-target`}
         position={Position.Bottom}
-        style={{ background: '#555' }}
+        style={{ background: 'transparent' }}
         isConnectable={true}
       />
     </>
@@ -68,9 +68,9 @@ const MemberName = styled(Typography)`
   border-radius: 5px;
 `;
 const MemberThumbnail = styled.img`
-  height: 40px;
-  border-radius: 80px;
-  width: 40px;
+  height: 30px;
+  border-radius: 60px;
+  width: 30px;
 `;
 
 export default TreeNode;

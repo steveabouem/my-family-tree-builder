@@ -117,7 +117,7 @@ const FamilyTreeDashboard = () => {
       title: <Trans>delete_tree_warning_title?</Trans>,
       content: <Trans>delete_tree_warning_msg</Trans>,
       onConfirm: () => {
-        deleteAllMutation();
+        deleteAllMutation(data?.payload?.map(t => t.id) || []);
       },
     });
   }

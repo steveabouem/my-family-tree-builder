@@ -1,20 +1,11 @@
 import FamilyTree from "../models/FamilyTree";
 import {
-  FamilyTreeFormData, APIGetFamilyTreeResponse,
-  APIRequestPayload, FamilyMemberData, ManageTreeAPIResponse, ManageTreeRequestPayload,
-  ServiceResponseWithPayload,
-  ManageMembersRequestPayload,
-  DeleteMembersRequestPayload,
+  FamilyTreeFormData, APIRequestPayload, FamilyMemberData, ManageTreeAPIResponse, ManageTreeRequestPayload,
+  ServiceResponseWithPayload, CreateTreeRequestV2, CreateTreeResponseV2, RelationshipMapping, MemberVisibility,
   DeleteTreeRequestPayload,
-  CreateTreeRequestV2,
-  FamilyMemberFormValuesV2,
-  CreateTreeResponseV2,
-  RelationshipMapping,
-  MemberVisibility,
 } from "./types";
 import logger from "../utils/logger";
 import { User, Collaborator, FamilyMember, Relationship } from "../models";
-import { extractSingleDataValuesFrom, processIncomingImage, processOutgoingImage } from "./serviceHelpers";
 import { Kinship } from "./types";
 import db from '../../db'
 import { Op } from "sequelize";
@@ -126,11 +117,11 @@ export const createTreeV2 = async (createData: CreateTreeRequestV2): Promise<Ser
     };
 
     const memberPayloads = incomingListOfMembers.map(m => {
-        logger.info('Go through member relationships', {m })
-      
+      logger.info('Go through member relationships', { m })
+
       // Collect relationship mappings
       if (m.parents?.length) {
-        logger.info('Has parents ', {count :m.parents.length})
+        logger.info('Has parents ', { count: m.parents.length })
 
         relationBuckets.parents.push(
           ...m.parents.map(pid => ({
@@ -141,9 +132,9 @@ export const createTreeV2 = async (createData: CreateTreeRequestV2): Promise<Ser
           }))
         );
       }
-      
+
       if (m.siblings?.length) {
-        logger.info('Has siblings ', {count :m.siblings.length})
+        logger.info('Has siblings ', { count: m.siblings.length })
         relationBuckets.siblings.push(
           ...m.siblings.map(sid => ({
             type: Kinship.sibling,
@@ -155,7 +146,7 @@ export const createTreeV2 = async (createData: CreateTreeRequestV2): Promise<Ser
       }
 
       if (m.spouses?.length) {
-        logger.info('Has spouses ', {count :m.spouses.length})
+        logger.info('Has spouses ', { count: m.spouses.length })
         relationBuckets.spouses.push(
           ...m.spouses.map(sid => ({
             type: Kinship.spouse,
@@ -335,81 +326,7 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
   //#endregion
 };
 
-/**
- * 
- */
-export const deleteTreeMember = async (data: DeleteMembersRequestPayload): ManageTreeAPIResponse => {
-  let response: ServiceResponseWithPayload<any | null> = { code: 500, error: true, payload: null };
-
-  // try {
-  //   const currentMember = await FamilyMember.findOne({ where: { node_id: data.node_id } });
-  //   const matchingTree = await FamilyTree.findByPk(data.treeId);
-  //   logger.info('vars', { currentMember, matchingTree });
-
-  //   if (currentMember && matchingTree) {
-  //     const nodes: string[] = JSON.parse(matchingTree.dataValues.members);
-  //     const memberIndex = nodes.indexOf(currentMember.node_id);
-  //     const updatedNodes = nodes.filter(n => n != currentMember.node_id);
-  //     logger.info('DELETE M: ', { nodes, memberIndex, updatedNodes });
-  //     // nodes.splice(memberIndex, 1);
-  //     const done = await matchingTree.update('members', JSON.stringify(updatedNodes));
-  //     logger.info('DELETE M: after splice', { nodes, matchingTree, done });
-
-  //     await currentMember.destroy();
-  //     response.payload = { ...done.dataValues, members: JSON.parse(done.dataValues.members) };
-  //     response.code = 200;
-  //     response.error = false;
-  //   }
-  // } catch (e: unknown) {
-  //   logger.error('Delete member failed: ', { error: e })
-  //   response.message = 'Invalid member';
-  // }
-
-  return response;
-};
-
-//#region update positions
-/**
- * Used to save family members new positions (single or in bulk alike)
- * @param members 
- * @param userId 
- */
-export const updateMemberPositions = async (positions: ManageMembersRequestPayload) => {
-  // TODO: return entire list of members to refresh the tree in the front
-  let response: ServiceResponseWithPayload<any | null> = { code: 500, error: true, payload: null };
-
-  // try {
-  //   if (positions.userId) {
-  //     const nodeIds = positions.data.map(m => m.node_id);
-  //     const memberRecords = await FamilyMember.findAll({
-  //       where: {
-  //         node_id: {
-  //           [Op.in]: nodeIds
-  //         }
-  //       }
-  //     });
-
-  //     if (memberRecords?.length) {
-  //       await Promise.all(memberRecords.map(m => {
-  //         const newCoords = positions.data.find(p => p.node_id === m.node_id);
-  //         m.position = JSON.stringify(newCoords?.new_position);
-  //         m.save();
-  //       }));
-  //     }
-  //     response.payload = memberRecords;
-  //     response.code = 200;
-  //     response.error = false;
-  //   } else {
-  //     response.message = 'Invalid entry';
-  //   }
-  // } catch (e: unknown) {
-  //   response.message = 'Failed operation';
-  // }
-  return response;
-};
-//#endregion
-
-//#region deleteTree
+//#region DELETE
 export const deleteTree = async (data: DeleteTreeRequestPayload): Promise<ServiceResponseWithPayload<null>> => {
   let response: ServiceResponseWithPayload<null> = { code: 500, error: true, payload: null };
   logger.info('payload ', { data })
@@ -432,4 +349,45 @@ export const deleteTree = async (data: DeleteTreeRequestPayload): Promise<Servic
 
   return response;
 };
+//#endregion
+
+//#region DELETE ALL
+export const deleteAll = async (payload: {list: number[], requester: number}) => {
+  const {list, requester} = payload;
+  const t = await db.transaction();
+
+  try {
+    const records = await FamilyTree.findAll({
+      where: { id: { [Op.in]: list } },
+      transaction: t,
+      lock: t.LOCK.UPDATE
+    });
+
+    const isAllowed = !records.some(r => r.created_by_id !== requester);
+
+    if (!isAllowed) {
+      await t.rollback();
+      return { code: 400, error: true, payload: null, message: 'Not allowed' };
+    }
+
+    await FamilyTree.update(
+      { active: false },
+      {
+        where: {
+          id: { [Op.in]: list },
+          created_by_id: requester
+        },
+        transaction: t
+      }
+    );
+
+    await t.commit();
+    return { code: 200, error: false, payload: null };
+  } catch (e) {
+    await t.rollback();
+    logger.error('Delete all trees, ', { e });
+    return { code: 500, error: true, payload: null };
+  }
+};
+
 //#endregion

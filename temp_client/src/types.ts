@@ -166,7 +166,7 @@ export interface BaseDropDownProps {
   selectedOption?: DropdownOption;
   additionalClass?: string;
   onChangeCB?: (value: string | number) => void;
-  label?: string;
+  label?: string | ReactElement;
   sx?: { [key: string]: string },
   id?: string;
   displayVal?: string | number;
@@ -754,7 +754,7 @@ export type APIGetProfileDataResponse = Pick<User, 'age' | 'created_at' | 'first
   membersRecordsCount: number; // how many FamilyMember records use this same user ID
 }
 
-export type APIGetMemberDataResponse = Partial<FamilyMemberDTO> & { relatives: any };
+// export type APIGetMemberDataResponse = Partial<FamilyMemberDTO> & { relatives: any };
 export type ManageTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTreeRecord[]> | null>;
 export type APIDeleteTreeResponse = Promise<APIEndpointResponse<void> | null>;
 export type GetTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTree | null>>;
@@ -944,6 +944,11 @@ export interface RegistrationRequestV2 {
   gender: Gender;
   email: string;
   dob?: string;
+}
+
+export interface GetFamilyMemberResponse {
+    details: FamilyMemberDTOV2 | null;
+    relation_to_user: RelationshipDTOV2 | null;
 }
 //#endregion
 

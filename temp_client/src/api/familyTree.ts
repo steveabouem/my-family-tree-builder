@@ -128,8 +128,15 @@ const deleteMember = async (info: DeleteMembersRequestPayload): Promise<APIEndpo
   return response.json();
 };
 
-const deleteAllTree = async (): Promise<APIEndpointResponse<{payload: {}}>> => {
-  const response = await fetch(`${baseUrl}/trees/flush`, { credentials: 'include' });
+const deleteAllTree = async (list: number[]): Promise<APIEndpointResponse<{payload: null}>> => {
+  const response = await fetch(`${baseUrl}/trees/bulk-delete`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({list }),
+  });
 
   if (!response.ok) {
     throw new Error(`Failed to flush the trees: ${response.statusText}`);

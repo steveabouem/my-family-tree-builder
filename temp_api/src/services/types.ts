@@ -321,66 +321,6 @@ export interface UpdateUserRequestPayload {
     repeat_new_password?: string;
 }
 
-// #region PROJECT & TEAM TYPES
-export interface Expense {
-    name: string;
-    description: string;
-    date: Date;
-    deadline: Date;
-}
-
-export interface ProjectData {
-    goal: string;
-    budget: number;
-    expenses: Expense[];
-    projectLead: number;
-    teams: number[];
-    status: number;
-}
-
-export interface TeamData {
-    name: string;
-    members: number[];
-    lead: number;
-    description: string;
-}
-
-export interface CreateProjectRequestPayload {
-    data: ProjectData;
-    userId: number;
-}
-
-export interface UpdateProjectRequestPayload {
-    projectId: number;
-    data: Partial<ProjectData>;
-    userId: number;
-}
-
-export interface AssignTeamToProjectRequestPayload {
-    projectId: number;
-    teamId: number;
-    userId: number;
-}
-
-export interface CreateTeamRequestPayload {
-    data: TeamData;
-    userId: number;
-}
-
-export interface UpdateTeamRequestPayload {
-    teamId: number;
-    data: Partial<TeamData>;
-    userId: number;
-}
-
-export interface ChangePasswordRequestPayload {
-    email: string;
-    password: string;
-    newPassword: string;
-    repeatNewPassword: string;
-    id: number;
-};
-
 //#region new Tree schema
 export type FamilyMemberFormValuesV2 = Pick<FamilyMember,
     'email' |
@@ -443,6 +383,11 @@ export interface CreateTreeResponseV2 {
     members: FamilyMember[];
     connections: Relationship[];
     collaborators?: Collaborator[];
+}
+
+export interface GetMemberResponse {
+    details: FamilyMember | null;
+    relation_to_user: Relationship | null;
 }
 //#endregion
 

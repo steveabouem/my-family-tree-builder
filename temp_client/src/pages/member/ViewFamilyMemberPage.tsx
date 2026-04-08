@@ -11,22 +11,23 @@ import { useGetMemberDetails } from "api/familyMember";
 const ViewFamilyMemberPage = (): JSX.Element => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data, isLoading, error, refetch } = useGetMemberDetails(id || "", !!id);
-  const member = data?.payload;
+  const { data, isLoading, error, refetch } = useGetMemberDetails(Number(id || ""));
+  const member = data?.payload?.details;
+  const relation = data?.payload?.relation_to_user;
 
-  const handleRelativeClick = (relativeId: string) => {
+  function handleRelativeClick (relativeId: string) {
     navigate(PageUrlsEnum.viewMember.replace(":id", relativeId));
   };
 
   return (
     <Page
-      loading={isLoading} error={!!error || data?.code === 403}
-      prevUrl={PageUrlsEnum.trees} reload={refetch}
-      title={member ? `${member.firstName} ${member.lastName}` : <Trans>member_details_title</Trans>}
+      loading={isLoading} error={!!error} code={data?.code} prevUrl={PageUrlsEnum.trees} reload={refetch}
+      title={member ? `${member.first_name} ${member.last_name}` : <Trans>member_details_title</Trans>}
       subtitle={<Trans>member_details_subtitle</Trans>}
     >
+      <PaperSection>
+
       <Box sx={mainContainerStyle}>
-        <PaperSection>
           <Typography variant="h6" gutterBottom>
             <Trans>general_details_title</Trans>
           </Typography>
@@ -40,13 +41,13 @@ const ViewFamilyMemberPage = (): JSX.Element => {
               <Grid item xs={12} sm={6}>
                 <Typography variant="body2">
                   <strong><Trans>name_label</Trans>:</strong>{" "}
-                  {member.firstName} {member.lastName}
+                  {member.first_name} {member.last_name}
                 </Typography>
                 <Typography variant="body2">
                   <strong><Trans>email_label</Trans>:</strong> {member.email}
                 </Typography>
                 <Typography variant="body2">
-                  <strong><Trans>age_label</Trans>:</strong> {member.age}</Typography>
+                  <strong><Trans>age_label</Trans>:</strong>15</Typography>
                 <Typography variant="body2">
                   <strong><Trans>gender_label</Trans>:</strong> {member.gender}
                 </Typography>
@@ -63,58 +64,21 @@ const ViewFamilyMemberPage = (): JSX.Element => {
                   <strong><Trans>description_label</Trans>:</strong>{" "}
                   {member.description || "-"}
                 </Typography>
+                <Typography variant="body2">
+                  <strong><Trans>directly_related_to_you?</Trans>:</strong>{" "}
+                  {relation ? `${member.first_name} is your ${relation.type}`  : ""}
+                </Typography>
               </Grid>
             </Grid>
           )}
-        </PaperSection>
-
-        <PaperSection >
-          <Typography variant="h6" gutterBottom>
-            <Trans>relatives_section_title</Trans>
-          </Typography>
-          {data?.payload?.relatives && data.payload.relatives.length > 0 ? (
-            <Box sx={relativesContainerStyle}>
-              {data.payload.relatives.map((relative: any) => (
-                <Box key={relative.id} sx={relativeItemStyle}>
-                  {relative.treeName && (
-                    <Typography variant="caption" color="textSecondary" sx={{ mb: 0.5 }}>
-                      {relative.treeName}
-                    </Typography>
-                  )}
-                  <Chip
-                    label={relative.fullName}
-                    clickable
-                    color="primary"
-                    variant="outlined"
-                    onClick={() => handleRelativeClick(relative.id)}
-                  />
-                </Box>
-              ))}
-            </Box>
-          ) : (
-            <Typography variant="body2">
-              <Trans>no_relatives_found</Trans>
-            </Typography>
-          )}
-        </PaperSection>
       </Box>
+      </PaperSection>
     </Page>
   );
 };
 
 const mainContainerStyle = {
   width: "100%",
-};
-
-const relativesContainerStyle = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 1,
-};
-
-const relativeItemStyle = {
-  display: "flex",
-  flexDirection: "column" as const,
 };
 
 export default ViewFamilyMemberPage;

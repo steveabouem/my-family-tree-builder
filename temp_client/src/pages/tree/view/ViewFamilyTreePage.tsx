@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { useParams } from "react-router-dom";
 import Page from "components/common/Page";
-import { CreateTreeResponseV2, FamilyTreeDAOV2, FamilyTreeDTOV2, FamilyTreeState, FlowComponentTypes, Gender, Kinship, MemberVisibility, RelationshipDTOV2, FamilyMemberDTOV2 } from "types";
+import { CreateTreeResponseV2, FlowComponentTypes, Kinship, RelationshipDTOV2, FamilyMemberDTOV2 } from "types";
 import PageUrlsEnum from "utils/urls";
 import { useGetTreeById } from "api/familyTree";
 import PaperSection from "components/common/containers/PaperSection";
@@ -30,7 +30,7 @@ function buildLayoutNodes(
   members: FamilyMemberDTOV2[],
   connections: Array<Omit<RelationshipDTOV2, 'created_at' | 'updated_at'>>,
   anchorId: number | null | undefined,
-): Array<{ id: string; type: string; position: Coords; data: Record<string, unknown> }> {
+): Array<{ id: string; type: string; position: Coords; data: Record<string, unknown>, draggable: boolean }> {
   const byId = new Map(members.map((m) => [Number(m.id), m]));
   const nid = (v: unknown) => Number(v);
 
@@ -44,7 +44,7 @@ function buildLayoutNodes(
   if (rootId == null) return [];
 
   const placed = new Map<number, Coords>();
-  const nodes: Array<{ id: string; type: string; position: Coords; data: Record<string, unknown> }> = [];
+  const nodes: Array<{ id: string; type: string; position: Coords; data: Record<string, unknown>, draggable: boolean }> = [];
   const childSlot = new Map<number, number>();
 
   const pushNode = (id: number, position: Coords) => {
@@ -56,6 +56,8 @@ function buildLayoutNodes(
       type: FlowComponentTypes.customNode,
       position,
       data: { label: `${m.first_name} ${m.last_name}`, ...m },
+      draggable: false //TODO: paywall for premium to set to true
+
     });
   };
 
@@ -112,7 +114,6 @@ function buildLayoutNodes(
     pushNode(idNum, { x: orphanCol * 180, y: orphanY });
     orphanCol += 1;
   }
-console.log({nodes});
 
   return nodes;
 }
