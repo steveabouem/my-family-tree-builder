@@ -7,12 +7,12 @@ const Initials = ({ firstName, lastName, size = 25, bg }: { firstName: string, l
   const theme = useTheme();
   const MemberInitials = styled(Box)`
     align-items: center;
-    background-color: hsl(from  ${theme.palette.info.contrastText} h s l / 0.5);
+    background-color: hsl(from  ${theme.palette.primary.main} h s l / 0.5);
     border-radius: 50%;
     border: .5px solid ${theme.palette.info.main};
     color: ${theme.palette.info.main};
     display: flex;
-    font-size: ${size / 2};
+    font-size: 12px;
     justify-content: center;
     padding: .5em;
   `;

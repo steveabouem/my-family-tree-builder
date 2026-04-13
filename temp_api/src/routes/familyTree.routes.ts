@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import FamilyTree from "../models/FamilyTree";
-import { CreateTreeRequestV2, CreateTreeResponseV2, DeleteTreeRequestPayload } from "../services/types";
+import { CreateTreeRequestV2, CreateTreeResponseV2 } from "../services/types";
 import { getSessionUser, sendRouteHandlerResponse } from "./helpers";
 import { createTreeV2, deleteAll, deleteTree, getAllTrees, getTreeById} from "../services/familyTree";
 import { authCheck } from "./middlewares";
@@ -24,8 +24,10 @@ router.get('/details', authCheck, (req: Request<{}, {}, {}, { id: string }>, res
 //   sendRouteHandlerResponse<ManageTreeRequestPayload, APIGetFamilyTreeResponse | null>(req.body, createTree, res, 'Create family tree');
 // });
 
-router.post('/delete', authCheck, (req: Request<{}, {}, DeleteTreeRequestPayload, {}>, res: Response) => {
-   sendRouteHandlerResponse<DeleteTreeRequestPayload, null>(req.body, deleteTree, res, 'Delete tree');
+router.post('/delete/:id', authCheck, (req: Request<{id: string}, {}, {}, {}>, res: Response) => {
+   const currentUSer = getSessionUser(req) || { userId: 1 };
+   const treeId = req.params.id;
+   sendRouteHandlerResponse<{id: number, userId: number}, null>({id: Number(treeId), userId: currentUSer.userId, }, deleteTree, res, 'Delete tree');
 });
 
 // router.get('/members', authCheck, (req: Request<{ }, {}, {}, {id: string}>, res: Response) => {

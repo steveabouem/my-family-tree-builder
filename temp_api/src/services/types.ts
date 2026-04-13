@@ -89,8 +89,6 @@ export interface ManageTreeRequestPayload {
     userId: number
 }
 
-export interface DeleteTreeRequestPayload { userId: number, id: number };
-
 export interface ManageMembersRequestPayload {
     data: MemberPosition[];
     userId: number

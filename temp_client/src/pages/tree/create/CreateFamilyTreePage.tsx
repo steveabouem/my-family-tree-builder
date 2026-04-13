@@ -25,9 +25,7 @@ const CreateFamilyTreePage = (): JSX.Element => {
       title={<Trans>my_tree_page_title</Trans>} 
       subtitle={<Trans>manage_your_family_tree</Trans>}
     >
-      <PaperSection>
         <FamilyTreeBuilderContainer />
-      </PaperSection>
     </Page>
   );
 }

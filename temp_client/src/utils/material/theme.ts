@@ -10,14 +10,16 @@ function genBG(s: ThemeSeasons) {
       // return 'linear-gradient(70deg, rgb(244 253 255 / 85%) 39%, rgb(255 255 255) 69%, rgb(205 253 255 / 32%) 100%)';
       // return 'linear-gradient(323deg, #f3f5f7 39%, rgb(255 253 208 / 50%) 69%, rgb(229 159 0 / 30%) 100%)';
       // return 'linear-gradient(323deg, #f3f5f7 39%, rgb(243 245 247) 69%, rgb(229 159 0 / 30%) 100%)';
-      return 'radial-gradient(circle at top, #f6f6ef 39%, rgb(254 255 244) 69%, rgb(255 137 0 / 11%) 100%)';
-    case ThemeSeasons.sunny:
-      return 'linear-gradient(70deg, rgb(255 236 160 / 85%) 39%, rgb(255 204 0 / 88%) 69%, rgb(255 149 4 / 46%) 100%)';
+      // return 'radial-gradient(circle at top, #f6f6ef 39%, rgb(254 255 244) 69%, rgb(255 137 0 / 11%) 100%)';
+      return 'radial-gradient(circle at bottom, #ffffff 50%, rgb(255 249 226) 100%, rgb(254 255 201) 75%)'; //white fades in white
+    // case ThemeSeasons.sunny:
+    //   return 'linear-gradient(70deg, rgb(255 236 160 / 85%) 39%, rgb(255 204 0 / 88%) 69%, rgb(255 149 4 / 46%) 100%)';
     default:
     // default:
     //   return 'linear-gradient(70deg, rgb(2 11 26) 56%, rgb(78 47 183 / 92%) 75%, rgb(95 6 59) 103%)';
       // return 'radial-gradient(circle, rgb(205 97 97) 0%, #733248 41%, rgba(23, 2, 26, 1) 100%)'; //pruple and orangey
-      return 'radial-gradient(circle, rgb(0 0 0) 0%, #3f294c 41%, rgb(0 0 0) 100%)'; //purple
+      // return 'radial-gradient(circle, rgb(0 0 0) 0%, #3f294c 41%, rgb(0 0 0) 100%)'; //purple
+      return 'radial-gradient(circle at bottom, rgb(27 19 34) 0%, #1b1322 41%, rgb(31 20 41) 100%)'; //purple with fading paper
       // return 'radial-gradient(circle, rgba(192, 167, 209, 1) 0%, #733248 41%, rgba(23, 2, 26, 1) 100%)';
   }
 }
@@ -198,7 +200,8 @@ const theme = (season: ThemeSeasons) => createTheme({
         root: ({ theme }) => ({
           transition: '.8s',
           background: genBG(season),
-          backgroundSize: '100%'
+          backgroundSize: '100%',
+          height: 'calc(100% - 80px)'
         })
       }
     },

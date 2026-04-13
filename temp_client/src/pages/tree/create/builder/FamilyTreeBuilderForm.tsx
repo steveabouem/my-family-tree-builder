@@ -248,9 +248,9 @@ export const FamilyTreeBuilderForm = ({  storeImg }: any) => {
         </FormControl>
         <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
         <BoxColumn>
-          <Typography variant="subtitle2"><Trans>source_member</Trans></Typography>
+          <Typography variant="subtitle2"><Trans>select_member</Trans></Typography>
           <BaseDropDown name="next_of_kin_member" options={membersDropdownOptions} />
-          <Typography variant="subtitle2"><Trans>relates_to</Trans></Typography>
+          <Typography variant="subtitle2"><Trans>add_relation</Trans></Typography>
           <BaseDropDown name="next_of_kin" options={relationOptions} />
           <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
         </BoxColumn>

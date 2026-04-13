@@ -2,7 +2,6 @@ import FamilyTree from "../models/FamilyTree";
 import {
   FamilyTreeFormData, APIRequestPayload, FamilyMemberData, ManageTreeAPIResponse, ManageTreeRequestPayload,
   ServiceResponseWithPayload, CreateTreeRequestV2, CreateTreeResponseV2, RelationshipMapping, MemberVisibility,
-  DeleteTreeRequestPayload,
 } from "./types";
 import logger from "../utils/logger";
 import { User, Collaborator, FamilyMember, Relationship } from "../models";
@@ -327,7 +326,7 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
 };
 
 //#region DELETE
-export const deleteTree = async (data: DeleteTreeRequestPayload): Promise<ServiceResponseWithPayload<null>> => {
+export const deleteTree = async (data: {id: number, userId: number}): Promise<ServiceResponseWithPayload<null>> => {
   let response: ServiceResponseWithPayload<null> = { code: 500, error: true, payload: null };
   logger.info('payload ', { data })
   try {

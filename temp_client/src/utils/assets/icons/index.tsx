@@ -1,10 +1,10 @@
 import React from 'react';
 import { TfiReload, TfiWrite } from "react-icons/tfi";
-import { LuImagePlus } from "react-icons/lu";
+import { LuImagePlus, LuSun } from "react-icons/lu";
 import { PiTreeStructure, PiBabyFill, PiNewspaperClippingDuotone, PiWarningDuotone, PiArrowsOutLineVerticalLight, PiArrowsInLineVerticalLight } from 'react-icons/pi';
 import { IoWoman, IoMan, IoSettings, IoCaretBackOutline, IoImageOutline } from "react-icons/io5";
 import { FaCaretDown, FaCaretUp, FaChild, FaChildDress, FaLanguage, FaLink, FaTriangleExclamation, FaUpload, FaUser, FaUsers } from "react-icons/fa6";
-import { RiAddCircleLine, RiDeleteBin5Fill, RiArrowUpFill, RiArrowDownFill } from "react-icons/ri";
+import { RiAddCircleLine, RiDeleteBin5Fill, RiArrowUpFill, RiArrowDownFill, RiMoonClearFill } from "react-icons/ri";
 import { GiEntryDoor, GiExitDoor, GiFamilyTree } from "react-icons/gi";
 import { HiColorSwatch } from "react-icons/hi";
 import { CiFileOn, CiSun } from "react-icons/ci";
@@ -175,8 +175,45 @@ export const ThemeSelectIcon = ({ sx = {}, color = '', size = 17, onClick, link,
   ) :
     <StyledHiColorSwatch theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
-
 const StyledHiColorSwatch = styled(HiColorSwatch) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
+export const LightIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
+  const theme = useTheme();
+
+  return tooltip ? (
+    <Tooltip title={tooltip}>
+      <Box>
+        <StyledSun theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+      </Box>
+    </Tooltip>
+  ) :
+    <StyledSun theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+};
+const StyledSun = styled(LuSun) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
+export const DarkIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
+  const theme = useTheme();
+
+  return tooltip ? (
+    <Tooltip title={tooltip}>
+      <Box>
+        <StyledMoon theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+      </Box>
+    </Tooltip>
+  ) :
+    <StyledMoon theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+};
+const StyledMoon = styled(RiMoonClearFill) <{ theme: any }>`
     transition: .4s;
     &:hover {
       color: ${(props: any) => props.theme.palette.action.hover};

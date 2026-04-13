@@ -9,12 +9,8 @@ import {
 import { baseUrl } from "./index";
 
 //#region API Functions
-const getAllTreesForUser = async (userId?: number): Promise<APIEndpointResponse<FamilyTreeRecord[]>> => {
-  if (!userId) {
-    throw new Error('Invalid parameter');
-  }
-
-  const response = await fetch(`${baseUrl}/trees/index?user=${userId}`, { credentials: 'include' });
+const getAllTreesForUser = async (): Promise<APIEndpointResponse<FamilyTreeRecord[]>> => {
+  const response = await fetch(`${baseUrl}/trees/index`, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to get trees for user: ${response.statusText}`);
@@ -50,14 +46,13 @@ const createFamilyTree = async (values: FamilyTreeDAOV2): Promise<CreateTreeResp
   return response.json();
 };
 
-const deleteTree = async (data: { id: number, userId: number }): Promise<void> => {
-  const response = await fetch(`${baseUrl}/trees/delete`, {
+const deleteTree = async (id: number): Promise<void> => {
+  const response = await fetch(`${baseUrl}/trees/delete/${id}`, {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ userId: data.userId, id: data.id })
+    }
   });
 
   if (!response.ok) {
@@ -128,14 +123,13 @@ const deleteMember = async (info: DeleteMembersRequestPayload): Promise<APIEndpo
   return response.json();
 };
 
-const deleteAllTree = async (list: number[]): Promise<APIEndpointResponse<{payload: null}>> => {
+const deleteAllTree = async (): Promise<APIEndpointResponse<{ payload: null }>> => {
   const response = await fetch(`${baseUrl}/trees/bulk-delete`, {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({list }),
+    }
   });
 
   if (!response.ok) {
@@ -147,10 +141,10 @@ const deleteAllTree = async (list: number[]): Promise<APIEndpointResponse<{paylo
 //#endregion
 
 //#region React Query Hooks
-export const useGetAllForUser = (userId: number | undefined) => {
+export const useGetAllForUser = () => {
   return useQuery({
-    queryKey: ['familyTrees', 'user', userId],
-    queryFn: () => getAllTreesForUser(userId),
+    queryKey: ['familyTrees'],
+    queryFn: () => getAllTreesForUser(),
   });
 };
 
@@ -197,9 +191,9 @@ export const useDeleteMembers = () => {
   });
 };
 
-export const useDeleteTree = () => {
+export const useDeleteTree = (id: number) => {
   return useMutation({
-    mutationFn: deleteTree
+    mutationFn: () => deleteTree(id)
   });
 };
 

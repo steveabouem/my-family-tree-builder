@@ -764,6 +764,12 @@ export interface DeleteMembersRequestPayload {
   treeId: number;
 }
 
+export interface ChipGroupProps {
+  list: DropdownOption[];
+  onSelect: (c: DropdownOption) => void;
+  onDelete: (c: DropdownOption) => void;
+  onAdd: (c: DropdownOption) => void;
+}
 
 //#region V2 PROD TYPES
 /*
@@ -947,8 +953,8 @@ export interface RegistrationRequestV2 {
 }
 
 export interface GetFamilyMemberResponse {
-    details: FamilyMemberDTOV2 | null;
-    relation_to_user: RelationshipDTOV2 | null;
+  details: FamilyMemberDTOV2 | null;
+  relation_to_user: RelationshipDTOV2 | null;
 }
 //#endregion
 

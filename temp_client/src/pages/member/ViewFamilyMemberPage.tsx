@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Chip, Grid, Typography } from "@mui/material";
+import { Box, Grid2, Typography } from "@mui/material";
 import { Trans } from "@lingui/macro";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -25,7 +25,6 @@ const ViewFamilyMemberPage = (): JSX.Element => {
       title={member ? `${member.first_name} ${member.last_name}` : <Trans>member_details_title</Trans>}
       subtitle={<Trans>member_details_subtitle</Trans>}
     >
-      <PaperSection>
 
       <Box sx={mainContainerStyle}>
           <Typography variant="h6" gutterBottom>
@@ -37,8 +36,8 @@ const ViewFamilyMemberPage = (): JSX.Element => {
             </Typography>
           )}
           {member && (
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
+            <Grid2 container spacing={2}>
+              <Grid2 size={6}>
                 <Typography variant="body2">
                   <strong><Trans>name_label</Trans>:</strong>{" "}
                   {member.first_name} {member.last_name}
@@ -51,9 +50,9 @@ const ViewFamilyMemberPage = (): JSX.Element => {
                 <Typography variant="body2">
                   <strong><Trans>gender_label</Trans>:</strong> {member.gender}
                 </Typography>
-              </Grid>
+              </Grid2>
 
-              <Grid item xs={12} sm={6}>
+              <Grid2 size={6}>
                 <Typography variant="body2">
                   <strong><Trans>dob_label</Trans>:</strong> {member.dob}
                 </Typography>
@@ -68,11 +67,10 @@ const ViewFamilyMemberPage = (): JSX.Element => {
                   <strong><Trans>directly_related_to_you?</Trans>:</strong>{" "}
                   {relation ? `${member.first_name} is your ${relation.type}`  : ""}
                 </Typography>
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           )}
       </Box>
-      </PaperSection>
     </Page>
   );
 };

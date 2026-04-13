@@ -41,13 +41,13 @@ const TreeNode = memo(({ data }: any) => {
         style={{ background: 'transparent' }}
         isConnectable={true}
       />
-      <BoxColumn sx={{ alignItems: 'center', background: theme.palette.background.default, padding: '.5rem' }}>
+      <BoxColumn sx={{ alignItems: 'center', background: theme.palette.background.paper, padding: '.5rem' }}>
         {
           !!data.profile_url?.length ? <MemberThumbnail src={data.profile_url} /> :
             <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
         }
-        <MemberName variant='body1' color={theme.palette.primary.dark} sx={{
-          backgroundColor: `hsl(from ${theme.palette.info.contrastText} h s l / 0.5)`
+        <MemberName variant='body1' color={theme.palette.info.main} sx={{
+          backgroundColor: `hsl(from ${theme.palette.primary.main} h s l / 0.5)`
         }} >{data.first_name} {data.last_name}</MemberName>
       </BoxColumn>
       <Handle

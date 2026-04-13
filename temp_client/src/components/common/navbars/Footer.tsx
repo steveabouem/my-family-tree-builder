@@ -15,11 +15,11 @@ const Footer = () => {
       gap: "2rem",
       bottom: 0,
       left: 0,
-      background: seasonalTheme.palette.text.primary,
+      background: seasonalTheme.palette.secondary.main,
       padding: "1rem"
     }}>
-      <Typography variant="caption">V1</Typography>
-      <Typography variant="caption">{Dayjs().format('MM-YYYY')}</Typography>
+      <Typography color={seasonalTheme.palette.primary.light} variant="caption">V1</Typography>
+      <Typography color={seasonalTheme.palette.primary.light} variant="caption">{Dayjs().format('MM-YYYY')}</Typography>
     </Box>
   );
 }

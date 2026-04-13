@@ -61,9 +61,7 @@ const UserProfilePage = (): JSX.Element => {
 
   return (
     <Page error={!!getUserError || profileData?.code === 403} reload={reloadProfile} loading={isProcessing} subtitle={<Trans>profile_page_subtitle</Trans>} title={<Trans>profile_management_label {currentUser?.firstName || ''}</Trans>}>
-        <PaperSection>
-          {!!profileData && <UserCredentials handleSubmit={showUpdateProfileConfirm} profileInfo={profileData} />}
-        </PaperSection>
+      {!!profileData && <UserCredentials handleSubmit={showUpdateProfileConfirm} profileInfo={profileData} />}
     </Page>
   );
 };

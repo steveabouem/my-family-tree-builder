@@ -8,6 +8,7 @@ import GlobalContext from "contexts/creators/global/global.context";
 import { keyframes } from "styled-components";
 import NotFound from "./404NotFound";
 import NotAllowed from "./NotAllowed";
+import PaperSection from "./containers/PaperSection";
 
 const Page = ({ title, subtitle, children, loading, code, error, reload }: PageProps): JSX.Element => {
   const { modal } = useContext(GlobalContext);
@@ -19,24 +20,26 @@ const Page = ({ title, subtitle, children, loading, code, error, reload }: PageP
         <Box>
           <Typography variant="h3">{title}</Typography>
           {subtitle ? <Typography variant="h4">{subtitle}</Typography> : ''}
-          {contentNotAllowed ? (
-            <NotAllowed />
-          ) : error ? (
-            <Paper sx={{ width: '70%', margin: 'auto' }}>
-              <NotFound handleReload={() => { reload?.() }} />
-            </Paper>
-          ) : (
-            <>
-              <Spinner loading={!!loading} />
-              {children || null}
-              <BaseModal
-                type="info"
-                hidden={modal?.hidden || true} id={modal?.id || ''}
-                title={modal?.title || ''} content={modal?.content || ''}
-                buttons={{ cancel: modal?.buttons?.cancel || false, confirm: modal?.buttons?.confirm || false }}
-              />
-            </>
-          )}
+          <PaperSection>
+            {contentNotAllowed ? (
+              <NotAllowed />
+            ) : error ? (
+              <Paper sx={{ width: '70%', margin: 'auto' }}>
+                <NotFound handleReload={() => { reload?.() }} />
+              </Paper>
+            ) : (
+              <>
+                <Spinner loading={!!loading} />
+                {children || null}
+                <BaseModal
+                  type="info"
+                  hidden={modal?.hidden || true} id={modal?.id || ''}
+                  title={modal?.title || ''} content={modal?.content || ''}
+                  buttons={{ cancel: modal?.buttons?.cancel || false, confirm: modal?.buttons?.confirm || false }}
+                />
+              </>
+            )}
+          </PaperSection>
         </Box>
       </Section>
     </FadeInPage>
