@@ -4,6 +4,7 @@ import {
   addEdge,
   useNodesState,
   useEdgesState,
+  Background,
 } from '@xyflow/react';
 // @ts-ignore
 import '@xyflow/react/dist/style.css';
@@ -44,7 +45,10 @@ const GenealogyTree = ({ initialNodes, initialEdges }: any) => {
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       fitView
-    />
+      draggable
+    >
+      <Background />
+    </ReactFlow>
   );
 };
 

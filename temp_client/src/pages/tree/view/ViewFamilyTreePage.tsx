@@ -1,9 +1,9 @@
-import React, { ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { Box, Button, Collapse, FormControl, FormControlLabel, Grid2, List, ListItemIcon, MenuItem, Radio, RadioGroup, Select, Typography, useTheme } from "@mui/material";
+import React, { ReactElement, ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import { Box, Button, Collapse, FormControl, FormControlLabel, Grid2, List, ListItemIcon, MenuItem, Radio, RadioGroup, Select, SelectChangeEvent, Typography, useTheme } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { Edge } from "@xyflow/react";
 import Page from "components/common/Page";
-import { CreateTreeResponseV2, FlowComponentTypes, Kinship, RelationshipDTOV2, FamilyMemberDTOV2, DropdownOption } from "types";
+import { FlowComponentTypes, Kinship, RelationshipDTOV2, FamilyMemberDTOV2, DropdownOption, TreeNodeProps, Coorddinates } from "types";
 import PageUrlsEnum from "utils/urls";
 import { useDeleteTree, useGetTreeById } from "api/familyTree";
 import GlobalContext from "contexts/creators/global";
@@ -11,8 +11,11 @@ import { Trans } from "@lingui/macro";
 import GenealogyTree from "../layout/GenealogyTree";
 import { parentGap, siblingGap, spouseGap } from "../constants";
 import BoxRow from "components/common/containers/column";
-import { CollapseIcon, DeleteIcon, ExpandIcon } from "utils/assets/icons";
+import { CollapseIcon, DeleteIcon, ExpandIcon, WritingIcon } from "utils/assets/icons";
 import BoxColumn from "components/common/containers/row/BoxColumn";
+import { useTreeSummary } from "pages/hooks/useTreeSummary";
+import { useGetMEmberBloodline } from "api";
+import LocalSpinner from "components/common/progressIndicators/LocalSpinner";
 
 const offsetByKinship: Record<string, { x: number; y: number }> = {
   [Kinship.parent as string]: parentGap,
@@ -20,7 +23,6 @@ const offsetByKinship: Record<string, { x: number; y: number }> = {
   [Kinship.spouse as string]: spouseGap,
 };
 
-type Coords = { x: number; y: number };
 interface ExpandedSections {
   tree: boolean;
   currentMember: boolean;
@@ -35,7 +37,7 @@ function buildLayoutNodes(
   members: FamilyMemberDTOV2[],
   connections: Array<Omit<RelationshipDTOV2, 'created_at' | 'updated_at'>>,
   anchorId: number | null | undefined,
-): Array<{ id: string; type: string; position: Coords; data: Record<string, unknown>, draggable: boolean }> {
+): TreeNodeProps[] {
   const byId = new Map(members.map((m) => [Number(m.id), m]));
   const nid = (v: unknown) => Number(v);
 
@@ -48,11 +50,11 @@ function buildLayoutNodes(
 
   if (rootId == null) return [];
 
-  const placed = new Map<number, Coords>();
-  const nodes: Array<{ id: string; type: string; position: Coords; data: Record<string, unknown>, draggable: boolean }> = [];
+  const placed = new Map<number, Coorddinates>();
+  const nodes: TreeNodeProps[] = [];
   const childSlot = new Map<number, number>();
 
-  const pushNode = (id: number, position: Coords) => {
+  const pushNode = (id: number, position: Coorddinates) => {
     const m = byId.get(id);
     if (!m) return;
     placed.set(id, position);
@@ -61,19 +63,20 @@ function buildLayoutNodes(
       type: FlowComponentTypes.customNode,
       position,
       data: { label: `${m.first_name} ${m.last_name}`, ...m },
-      draggable: false //TODO: paywall for premium to set to true
+      draggable: true //TODO: paywall for premium to set to true
 
     });
   };
 
-  const tryPlace = (neighborId: number, nextPos: Coords, q: Array<{ id: number; pos: Coords }>) => {
+  //! TODO: move this back to the server, needed to allow and control editPosition endpoint
+  const tryPlace = (neighborId: number, nextPos: Coorddinates, q: Array<{ id: number; pos: Coorddinates }>) => {
     if (!byId.has(neighborId) || placed.has(neighborId)) return;
     pushNode(neighborId, nextPos);
     q.push({ id: neighborId, pos: nextPos });
   };
 
   pushNode(rootId, { x: 0, y: 0 });
-  const queue: Array<{ id: number; pos: Coords }> = [{ id: rootId, pos: { x: 0, y: 0 } }];
+  const queue: Array<{ id: number; pos: Coorddinates }> = [{ id: rootId, pos: { x: 0, y: 0 } }];
 
   while (queue.length) {
     const { id: cur, pos } = queue.shift()!;
@@ -132,16 +135,17 @@ function buildLayoutNodes(
     * View member visibility and filter by it 
  */
 const ViewFamilyTreePage = () => {
-  const [initialNodes, setInitialNodes] = useState<any>([]);
+  const [initialNodes, setInitialNodes] = useState<TreeNodeProps[]>([]);
   const [initialEdges, setInitialEdges] = useState<any>([]);
-  const [expandedSections, setExpandedSections] = useState<ExpandedSections>({ tree: true, currentMember: false });
-  const [isTreeExpanded, setIsTreeExpanded] = useState(true);
+  const [expandedSections, setExpandedSections] = useState<ExpandedSections>({ tree: true, currentMember: true });
+  const [isTreeExpanded, setIsTreeExpanded] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any | undefined>();
-  const [showBloodRelatives, setShowBloodRelatives] = useState<any | undefined>();
+  const [showBloodRelatives, setShowBloodRelatives] = useState<boolean>(false);
   const { loading, toggleLoading } = useContext(GlobalContext);
   const { id } = useParams();
   const { data, isLoading: isUserTreeLoading, isSuccess, isError, refetch } = useGetTreeById(id || '', true);
   const { mutate: deleteTreeMutation, isPending: isDeletePending, isSuccess: deleteTreeSuccess } = useDeleteTree(Number(id));
+  const { data: bloodlineData, isLoading: isGetBloodlineLoading } = useGetMEmberBloodline(selectedMember?.id, showBloodRelatives);
   const theme = useTheme();
   const { updateModal } = useContext(GlobalContext);
   const navigate = useNavigate();
@@ -158,10 +162,11 @@ const ViewFamilyTreePage = () => {
       }
     )
   }), [data?.payload]);
+  const treeSummary = useTreeSummary(data?.payload);
 
   useEffect(() => {
     if (!isSuccess || !data?.payload) return;
-    const p = data.payload as CreateTreeResponseV2['payload'];
+    const p = data.payload;
     const connections = p.connections ?? (p as { tree_relationships?: unknown }).tree_relationships ?? [];
 
     if (Array.isArray(members) && members.length > 0) {
@@ -179,9 +184,32 @@ const ViewFamilyTreePage = () => {
   useEffect(() => {
 
   }, [deleteTreeMutation]);
+
+  useEffect(() => {
+    setInitialNodes((prev: any) => {
+      const update = prev.map((n: any) => ({ ...n, data: { ...n.data, selected: n.data.id === selectedMember.id } }));
+      return update;
+    });
+
+  }, [selectedMember?.id]);
+
+  useEffect(() => {
+    const idsToHighlight = bloodlineData?.payload?.members?.map(m => m.id) || [];
+    const highlightedNodes = initialNodes.map(n => {
+      const shouldHighlightNode = showBloodRelatives && idsToHighlight.includes(n?.data?.id);
+
+      return ({
+        ...n, data: { ...n.data, highlighted: shouldHighlightNode }
+      })
+    });
+
+    setInitialNodes([...highlightedNodes]);
+  }, [showBloodRelatives, bloodlineData?.payload?.members]);
+
   useEffect(() => {
     toggleLoading(false); // TODO: global context;s loading seems redundant
   }, []);
+
 
   function generateNodesAndEdges(payload: {
     members: FamilyMemberDTOV2[];
@@ -215,9 +243,11 @@ const ViewFamilyTreePage = () => {
       },
     });
   }
+
   function toggleSection(section: string) {
     setExpandedSections((prev: any) => ({ ...prev, [section]: !prev?.[section] }));
   }
+
   function renderSidebarSection(content: ReactElement[], collapseKey: keyof ExpandedSections, title: string | ReactNode) {
     return (
       <BoxColumn >
@@ -239,26 +269,20 @@ const ViewFamilyTreePage = () => {
       </BoxColumn>
     );
   }
-  function renderTreeStats() {
-    const metrics: { [key: string]: any } = {
-      total_members: members?.length || 'N/A',
-      youngest: 'not_available',
-      oldest: 'not_available',
-      pending_invites: 'not_available',
-      collaborators_count: 'not_available',
-      members_with_user_profile: 'not_available',
-      members_without_user_profile: 'not_available',
-      full_user_profiles: 'not_available',
-      average_children_per_family: 'not_available',
-      number_of_marriages_or_couples: 'not_available'
-    };
 
-    const metricsItems = Object.keys(metrics).map((m: string) => (
-      <BoxRow sx={{ gap: '1rem', justifyContent: 'space-between' }}>
-        <Typography variant="subtitle2"><Trans>{m}</Trans>:</Typography>
-        <Typography variant="body2">{<Trans>{metrics[m]}</Trans>}</Typography>
-      </BoxRow>
-    ));
+  function renderTreeStats() {
+    const metricsItems = Object.entries(treeSummary).map(([key, metric]) => {
+      // @ts-ignore
+      const value = Array.isArray(metric) ? metric.length : metric?.id ? `${metric.first_name} ${metric.last_name}` : (metric || '__');
+      console.log({ key, metric });
+
+      return (
+        <BoxRow sx={{ gap: '1rem', justifyContent: 'space-between' }}>
+          <Typography variant="subtitle2"><Trans>{key}</Trans>:</Typography>
+          <Typography variant="body2">{value}</Typography>
+        </BoxRow>
+      )
+    });
 
     return renderSidebarSection(metricsItems, 'tree', <Trans>tree_stats</Trans>);
   }
@@ -270,32 +294,37 @@ const ViewFamilyTreePage = () => {
 
     const statItems = Object.keys(memberMetrics).map((m: string, index: number) => (
       <BoxColumn>
-        <Typography variant="subtitle1">view_blood_only?</Typography>
-        <RadioGroup
-          aria-labelledby="blodline-toggle-options-group"
-          name="bloodline-toggle-options"
-          value={showBloodRelatives}
-          sx={{ display: 'flex', gap: 2, justifyContent: 'start', flexDirection: 'row' }}
-        >
-          <FormControlLabel
-            value={false} control={<Radio size='small' onClick={() => setShowBloodRelatives(false)} />}
-            label={
-              <Typography variant='body1'
-                fontWeight="bold">
-                <Trans>no</Trans>
-              </Typography>
-            }
-          />
-          <FormControlLabel
-            value={true} control={<Radio size='small' onClick={() => setShowBloodRelatives(true)} />}
-            label={
-              <Typography variant='body1'
-                fontWeight="bold">
-                <Trans>yes</Trans>
-              </Typography>
-            }
-          />
-        </RadioGroup>
+        {isGetBloodlineLoading ? <LocalSpinner loading={true} /> : ''}
+        {!!selectedMember && (
+          <>
+            <Typography variant="subtitle1">view_blood_only?</Typography>
+            <RadioGroup
+              aria-labelledby="blodline-toggle-options-group"
+              name="bloodline-toggle-options"
+              value={showBloodRelatives}
+              sx={{ display: 'flex', gap: 2, justifyContent: 'start', flexDirection: 'row' }}
+            >
+              <FormControlLabel
+                value={false} control={<Radio size='small' onClick={() => setShowBloodRelatives(false)} />}
+                label={
+                  <Typography variant='body1'
+                    fontWeight="bold">
+                    <Trans>no</Trans>
+                  </Typography>
+                }
+              />
+              <FormControlLabel
+                value={true} control={<Radio size='small' onClick={() => setShowBloodRelatives(true)} />}
+                label={
+                  <Typography variant='body1'
+                    fontWeight="bold">
+                    <Trans>yes</Trans>
+                  </Typography>
+                }
+              />
+            </RadioGroup>
+          </>
+        )}
         <BoxRow sx={{ gap: '1rem', justifyContent: 'space-between' }}>
           {!selectedMember?.id ? (
             <>
@@ -313,56 +342,24 @@ const ViewFamilyTreePage = () => {
     ));
 
 
-    return renderSidebarSection(statItems, 'currentMember', <Trans>member_details</Trans>);
+    return renderSidebarSection(statItems, 'currentMember', selectedMember?.first_name || '__');
   }
 
+  function selectMember(e: SelectChangeEvent) {
+    setShowBloodRelatives(false);
+    setSelectedMember(e.target.value);
+  }
 
   return (
     <Page error={isError} reload={refetch} subtitle="" title={`${currentTree?.name ?? ''}`} prevUrl={PageUrlsEnum.trees} loading={isProcessing}>
       <BoxColumn>
-        <Typography variant="h4">sorting_member_selection</Typography>
-        <BoxColumn>
-          <BoxRow>
-            <Typography variant="subtitle2"><Trans>select_member</Trans></Typography>
-            <FormControl sx={{ width: '100%', height: '35px' }}>
-              <Select
-                // @ts-ignore
-                value={selectedMember?.id || 'N/A'}
-                variant="standard"
-                placeholder={`${<Trans>select</Trans>}`}
-                labelId=""
-                id={id || ''}
-                label={<Trans>{selectedMember?.first_name || 'N/A'}</Trans>}
-                size="small"
-                onChange={(e) => setSelectedMember(e.target.value)}
-                defaultValue=""
-              >
-                {membersDropdownOptions.map((option: DropdownOption, i: number) => {
-                  const isSelected = selectedMember?.id === option.id;
-
-                  return (
-                    <MenuItem
-                      value={option.value}
-                      key={`${id || ''}-dropdown-option-${i}`}
-                      selected={isSelected}
-                    >
-                      {/* @ts-ignore */}
-                      <Trans>{`${option.value.first_name} ${option.value.last_name}`}</Trans>
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </BoxRow>
-        </BoxColumn>
-
-        <Typography variant="h4"><Trans>view</Trans></Typography>
-        <BoxRow>
+        <Typography variant="h4">options_and_filter</Typography>
+        <BoxRow sx={{ justifyContent: 'start' }}>
           <RadioGroup
             aria-labelledby="expand-tree-options-group"
             name="radio-buttons-group"
             value={isTreeExpanded}
-            sx={{ display: 'flex', gap: 2, justifyContent: 'start', flexDirection: 'row' }}
+            sx={{ display: 'flex', gap: 2, justifyContent: 'start', flexDirection: 'row', width: '30%' }}
           >
             <FormControlLabel
               value={false} control={<Radio size='small' onClick={() => setIsTreeExpanded(false)} />}
@@ -383,12 +380,52 @@ const ViewFamilyTreePage = () => {
               }
             />
           </RadioGroup>
-          <Button variant="outlined" color="error" onClick={() => { showDeleteWarning() }}
-            sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}
-          >
-            <Trans>delete_all</Trans>
-            <DeleteIcon size={15} color={theme.palette.error.dark} tooltip={<Trans>delete</Trans>} />
-          </Button>
+          <BoxRow sx={{ justifyContent: 'start', width: '40%' }}>
+            <Typography variant="subtitle2"><Trans>select_member</Trans></Typography>
+            <FormControl sx={{ height: '35px' }}>
+              <Select
+                // @ts-ignore
+                value={selectedMember?.id || 'N/A'}
+                variant="standard"
+                placeholder={`${<Trans>select</Trans>}`}
+                labelId=""
+                id={id || ''}
+                label={<Trans>{selectedMember?.first_name || 'N/A'}</Trans>}
+                size="small"
+                onChange={selectMember}
+                defaultValue=""
+              >
+                {membersDropdownOptions.map((option: DropdownOption, i: number) => {
+                  const isSelected = selectedMember?.id === option.id;
+
+                  return (
+                    <MenuItem
+                      value={option.value}
+                      key={`${id || ''}-dropdown-option-${i}`}
+                      selected={isSelected}
+                    >
+                      {/* @ts-ignore */}
+                      <Trans>{`${option.value.first_name} ${option.value.last_name}`}</Trans>
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </BoxRow>
+          <BoxRow sx={{ justifyContent: 'end', flex: 1 }}>
+            <Button variant="text" color="info" onClick={() => { navigate(PageUrlsEnum.newTree) }}
+              sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}
+            >
+              <Trans>edit</Trans>
+              <WritingIcon size={15} color={theme.palette.info.dark} tooltip={<Trans>go_to_edit_page</Trans>} />
+            </Button>
+            <Button variant="contained" color="error" onClick={() => { showDeleteWarning() }}
+              sx={{ justifyContent: 'start', display: 'flex', gap: '1rem' }}
+            >
+              <Trans>delete</Trans>
+              <DeleteIcon size={15} color={theme.palette.error.dark} tooltip={<Trans>delete</Trans>} />
+            </Button>
+          </BoxRow>
         </BoxRow>
       </BoxColumn>
       <Grid2 container display="flex" sx={{ height: '80vh' }}>

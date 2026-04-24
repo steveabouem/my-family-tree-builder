@@ -4,6 +4,14 @@ import logger from "../utils/logger";
 import { ServiceResponseWithPayload } from "../services/types";
 import { APISessionUser } from "../services/types";
 
+/**
+ * @typedef <P, R> the service function arguments(P) and return(R) types, 
+ * @param requestPayload An object with the params needed
+ * @param action instance of the service function
+ * @param response 
+ * @param actionName name of the service function. Used for logging
+ * @param request Passed down to allow potential request session update
+ */
 export const sendRouteHandlerResponse = <RequestPayload, ResponseType>(
   requestPayload: RequestPayload,
   action: (payload: RequestPayload) => Promise<ServiceResponseWithPayload<ResponseType>>,
@@ -11,7 +19,6 @@ export const sendRouteHandlerResponse = <RequestPayload, ResponseType>(
   actionName: string,
   request?: Request,
 ): void => {
-  // you'r ismanaging ssion pn dirait. localstorag id should b same as session in db. it also looks like dozens of Session records are creatvd
   // TODO: supabase and vercel, and Im sure other PAAS offer built in sign in with providers (google, github, etc)
 
   action(requestPayload)

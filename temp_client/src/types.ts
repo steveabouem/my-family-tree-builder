@@ -1,3 +1,4 @@
+import { NodeProps } from "@xyflow/react";
 import React, { ReactElement, ReactNode } from "react";
 // I like all my types in one place. sue me.
 // ============================================================================
@@ -497,7 +498,7 @@ export interface MembersPositions {
 }
 
 export interface MemberPosition {
-  node_id: string,
+  id: number,
   new_position: { x: number, y: number }
 }
 
@@ -754,11 +755,23 @@ export type APIGetProfileDataResponse = Pick<User, 'age' | 'created_at' | 'first
   membersRecordsCount: number; // how many FamilyMember records use this same user ID
 }
 
-// export type APIGetMemberDataResponse = Partial<FamilyMemberDTO> & { relatives: any };
+
 export type ManageTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTreeRecord[]> | null>;
 export type APIDeleteTreeResponse = Promise<APIEndpointResponse<void> | null>;
 export type GetTreeAPIEndpointResponse = Promise<APIEndpointResponse<FamilyTree | null>>;
 export type APIFamilyMemberArrayKeys = keyof Pick<FamilyMemberDTO, 'children' | 'parents' | 'siblings' | 'spouses'>;
+export type Coorddinates = { x: number; y: number };
+export type TreeNodeData = NodeProps['data'] & FamilyMemberDTOV2 & {
+  highlighted?: boolean;
+  selected?: boolean;
+  // position: {x: number, y: number}
+}
+
+export type TreeNodeProps = Omit<Partial<NodeProps>, 'data'> & {
+  data: TreeNodeData
+  position?: Coorddinates;
+}
+
 export interface DeleteMembersRequestPayload {
   nodeId: string;
   treeId: number;
@@ -872,10 +885,26 @@ export type ViewTreeResponseV2 = CreateTreeRequestPayloadV2 & {
   connections: RelationshipDTOV2[];
 }
 
+export interface TreeSummary {
+  totalMembers: number;
+  youngest: FamilyMemberDTOV2 | undefined; //TODO: do we need the full object? A count might be enough
+  oldest: FamilyMemberDTOV2 | undefined; //TODO: do we need the full object? A count might be enough
+  pendingInvites: number;
+  collaboratorsCount: number;
+  membersWithUserProfile: FamilyMemberDTOV2[]; //TODO: do we need the full object? A count might be enough
+  membersWithoutUserProfile: FamilyMemberDTOV2[]; //TODO: do we need the full object? A count might be enough
+  averageChildrenPerFamily: number | undefined;
+  averageAge: number | undefined;
+  numberOfMarriagesOrCouples: number;
+  men: number;
+  women: number;
+  other: number;
+}
 
-/*
-* Wrapped API responses
-*/
+export type GetMemberBloodlineResponse = APIEndpointResponse<{
+  members: FamilyMemberDTOV2[];
+  connections: RelationshipDTOV2[];
+}>;
 
 export type CreateTreeResponseV2 = APIEndpointResponse<{
   tree: FamilyTreeDTOV2 | null;

@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 
 import { updateUser, login, register } from "../services/auth";
 // import { getProfileDetailsByUserId } from "../services/user";
-import { sendRouteHandlerResponse } from "./helpers";
+import { sendRouteHandlerResponse } from "./routeHelpers";
 import { AuthenticationResponse, LoginRequestPayload, UpdateUserRequestPayload } from "../services/types"
 
 const router = Router();

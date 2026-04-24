@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { getProfileDetailsByUserId } from "../services/user";
-import { sendRouteHandlerResponse } from "./helpers";
+import { sendRouteHandlerResponse } from "./routeHelpers";
 import { authCheck } from "./middlewares";
 
 const router = Router();

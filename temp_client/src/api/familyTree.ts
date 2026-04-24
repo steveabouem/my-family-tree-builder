@@ -4,7 +4,8 @@ import {
   FormField, MembersPositions, FamilyMember, FamilyTreeRecord,
   DeleteMembersRequestPayload,
   FamilyTreeDAOV2,
-  CreateTreeResponseV2
+  CreateTreeResponseV2,
+  ViewTreeResponseV2
 } from "types";
 import { baseUrl } from "./index";
 
@@ -19,7 +20,7 @@ const getAllTreesForUser = async (): Promise<APIEndpointResponse<FamilyTreeRecor
   return response.json();
 };
 // #endregion
-const getTreeById = async (treeId: string) => {
+const getTreeById = async (treeId: string): Promise<CreateTreeResponseV2> => {
   const response = await fetch(`${baseUrl}/trees/details?id=${treeId}`, { credentials: 'include' });
 
   if (!response.ok) {

@@ -1,5 +1,5 @@
 import { FamilyMember, FamilyTree, Relationship } from "../models";
-import { APIRequestPayload, GetMemberResponse, ServiceResponseWithPayload } from "./types";
+import { APIRequestPayload, GetMemberBloodlineResponse, GetMemberResponse, Kinship, ServiceResponseWithPayload } from "./types";
 import logger from "../utils/logger";
 import { associationAliases } from "../associations";
 import { Op } from "sequelize";
@@ -73,3 +73,91 @@ export const getMemberById = async (payload: { id: number, requester: number }):
 
   return response;
 };
+
+export const getBloodline = async (memberId: number): Promise<ServiceResponseWithPayload<GetMemberBloodlineResponse>> => {
+  const response: ServiceResponseWithPayload<GetMemberBloodlineResponse> = { code: 500, error: true, payload: { connections: [], members: [] } };
+
+  try {
+    // TODO: investigate why include fails , its simpler and less verbose
+    // get mmber record
+    const member = await FamilyMember.findByPk(memberId);
+
+    if (!member) {
+      response.code = 404;
+      response.message = 'Invalid data';
+      return response;
+    }
+
+    // get tree record
+    const tree = await FamilyTree.findByPk(member.tree_id);
+
+    if (!tree) {
+      response.code = 404;
+      response.message = 'Invalid data';
+      return response;
+    }
+
+    const relations = await
+      Relationship.findAll({
+        where: {
+          tree_id: tree.id
+        }
+      });
+
+    const nonSpouseRelations = relations.filter(r => r.type !== Kinship.spouse);
+    const relationAdjacency = new Map<number, Relationship[]>();
+
+    for (const relation of nonSpouseRelations) {
+      const sourceRelations = relationAdjacency.get(relation.source_family_member_id) || [];
+      sourceRelations.push(relation);
+      relationAdjacency.set(relation.source_family_member_id, sourceRelations);
+
+      const targetRelations = relationAdjacency.get(relation.target_family_member_id) || [];
+      targetRelations.push(relation);
+      relationAdjacency.set(relation.target_family_member_id, targetRelations);
+    }
+
+    const queue: number[] = [member.id];
+    const visitedMemberIds = new Set<number>([member.id]);
+    const visitedRelationIds = new Set<number>();
+    const bloodlineRelations: Relationship[] = [];
+
+    while (queue.length > 0) {
+      const currentMemberId = queue.shift()!;
+      const connectedRelations = relationAdjacency.get(currentMemberId) || [];
+
+      for (const relation of connectedRelations) {
+        if (!visitedRelationIds.has(relation.id)) {
+          visitedRelationIds.add(relation.id);
+          bloodlineRelations.push(relation);
+        }
+
+        const nextMemberId = relation.source_family_member_id === currentMemberId
+          ? relation.target_family_member_id
+          : relation.source_family_member_id;
+
+        if (!visitedMemberIds.has(nextMemberId)) {
+          visitedMemberIds.add(nextMemberId);
+          queue.push(nextMemberId);
+        }
+      }
+    }
+
+    const bloodlineMemberIds = Array.from(visitedMemberIds);
+    const bloodlineMembers = await FamilyMember.findAll({
+      where: { id: { [Op.in]: bloodlineMemberIds } }
+    });
+    logger.info('bloodline relationships and members', { bloodlineMembers, bloodlineRelations });
+
+    response.payload.connections = bloodlineRelations;
+    response.payload.members = bloodlineMembers;
+    response.code = 200;
+
+    return response;
+  } catch (e: unknown) {
+    logger.error('Failed', { e })
+    return response;
+  }
+};
+
+// export const savePosition = (payload: {})

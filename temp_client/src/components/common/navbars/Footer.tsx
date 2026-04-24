@@ -15,7 +15,7 @@ const Footer = () => {
       gap: "2rem",
       bottom: 0,
       left: 0,
-      background: seasonalTheme.palette.secondary.main,
+      background: seasonalTheme.palette.background.paper,
       padding: "1rem"
     }}>
       <Typography color={seasonalTheme.palette.primary.light} variant="caption">V1</Typography>

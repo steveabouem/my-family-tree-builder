@@ -344,6 +344,20 @@ const theme = (season: ThemeSeasons) => createTheme({
               color: theme.palette.secondary.dark,
               borderColor: theme.palette.secondary.dark,
             }
+          },/* ERROR BUTTONS */
+          '&.MuiButton-colorError': {
+            '&.MuiButton-contained': {
+              color: theme.palette.primary.main,
+              background: theme.palette.error.main,
+              '&:hover': {
+                color: 'white'
+              },
+            },
+            '&.MuiButton-outlined': {
+              background: 'transparent',
+              borderColor: theme.palette.error.main,
+              color: theme.palette.error.main,
+            },
           },
         })
       }

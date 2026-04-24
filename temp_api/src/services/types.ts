@@ -1,9 +1,6 @@
 import FamilyMember from "../models/FamilyMember";
 import { InferAttributes } from "sequelize";
-import User from "../models/User";
-import FamilyTree from "../models/FamilyTree";
-import Collaborator from "../models/Collaborator";
-import { Relationship } from "@/models";
+import { Relationship, Collaborator, User, FamilyTree } from "../models";
 
 // #region CORE API TYPES
 export interface ApiResponse<T = any> {
@@ -12,6 +9,13 @@ export interface ApiResponse<T = any> {
     message?: string;
     payload: T;
 }
+
+/**
+ * @property error Unknown error type
+ * @property code HTTP code
+ * @property message Debugging/feedback
+ * @property addToSession Whether to update the express session's details (user info) object
+ */
 export interface APIEndpointResponse {
     error: boolean;
     code: number;
@@ -22,7 +26,9 @@ export interface APIEndpointResponse {
 export interface APIRequestPayload<P> extends APIEndpointResponse {
     payload: P;
 }
-
+/**
+ *  Accepts a generic type to pass to the responses' payload *
+ */
 export type ServiceResponseWithPayload<G> = APIRequestPayload<G>;
 
 // #region AUTHENTICATION & USER MANAGEMENT TYPES
@@ -89,8 +95,8 @@ export interface ManageTreeRequestPayload {
     userId: number
 }
 
-export interface ManageMembersRequestPayload {
-    data: MemberPosition[];
+export interface SetMembersPositionRequest {
+    coords: MemberPosition[];
     userId: number
 }
 
@@ -386,6 +392,11 @@ export interface CreateTreeResponseV2 {
 export interface GetMemberResponse {
     details: FamilyMember | null;
     relation_to_user: Relationship | null;
+}
+
+export interface GetMemberBloodlineResponse {
+    members: FamilyMember[];
+    connections: Relationship[];
 }
 //#endregion
 

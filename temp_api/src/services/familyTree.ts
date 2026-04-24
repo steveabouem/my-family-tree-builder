@@ -262,6 +262,7 @@ export const getTreeById = async (id: number): Promise<ServiceResponseWithPayloa
     }
 
     const tree = await FamilyTree.findByPk(id);
+
     if (!tree) {
       response.code = 404;
       response.message = 'Tree not found';
@@ -275,6 +276,8 @@ export const getTreeById = async (id: number): Promise<ServiceResponseWithPayloa
       Collaborator.findAll({ where: { tree_id: id } }),
     ]);
 
+    // Make a map of members
+    // loop through connections and 
     logger.info('USER TREE DETAILS', { treeId: id, members: members.length, connections: connections.length });
 
     response.code = 200;
