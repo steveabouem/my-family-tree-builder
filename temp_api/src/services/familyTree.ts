@@ -2,6 +2,7 @@ import FamilyTree from "../models/FamilyTree";
 import {
   FamilyTreeFormData, APIRequestPayload, FamilyMemberData, ManageTreeAPIResponse, ManageTreeRequestPayload,
   ServiceResponseWithPayload, CreateTreeRequestV2, CreateTreeResponseV2, RelationshipMapping, MemberVisibility,
+  TreeLayout, LayoutNode, LayoutEdge,
 } from "./types";
 import logger from "../utils/logger";
 import { User, Collaborator, FamilyMember, Relationship } from "../models";
@@ -69,21 +70,190 @@ export const getAllTrees = async (id: number): Promise<ServiceResponseWithPayloa
 };
 //#endregion
 
+//#region buildLayoutNodes
+const NODE_TYPES = {
+  customNode: 'customNode',
+  relationNode: 'relationNode',
+  generationLayer: 'generationLayer',
+  customEdge: 'customEdge',
+  spouseEdge: 'spouseEdge',
+  siblingEdge: 'siblingEdge',
+} as const;
+
+const LAYOUT_OFFSET = {
+  treeNodeOffsetX: 125,
+  treeNodeOffsetY: 225,
+  spouseGapX: 180,
+  siblingGapX: 200,
+};
+
+function buildLayoutNodes(
+  members: FamilyMember[],
+  connections: Relationship[],
+  anchorId: number | null,
+): TreeLayout {
+  const membersMap = new Map(members.map(m => [m.id, m]));
+
+  const rootId = anchorId != null && membersMap.has(anchorId)
+    ? anchorId
+    : members[0]?.id ?? null;
+
+  if (rootId == null) return { nodes: [], edges: [] };
+
+  // Group children by shared parent set into family units
+  const childToParents = new Map<number, Set<number>>();
+  for (const c of connections) {
+    if (c.type !== Kinship.parent) continue;
+    const childId = Number(c.source_family_member_id);
+    const parentId = Number(c.target_family_member_id);
+    if (!childToParents.has(childId)) childToParents.set(childId, new Set());
+    childToParents.get(childId)!.add(parentId);
+  }
+  const familyUnits = new Map<string, { parentIds: number[]; childIds: number[] }>();
+  for (const [childId, parentSet] of childToParents) {
+    const sortedParents = [...parentSet].sort((a, b) => a - b);
+    const key = sortedParents.join('-');
+    if (!familyUnits.has(key)) familyUnits.set(key, { parentIds: sortedParents, childIds: [] });
+    familyUnits.get(key)!.childIds.push(childId);
+  }
+
+  const coordsMap = new Map<number, { x: number; y: number }>();
+  const nodes: LayoutNode[] = [];
+  const childSlot = new Map<number, number>();
+
+  const placeNode = (id: number, pos: { x: number; y: number }) => {
+    const m = membersMap.get(id);
+    if (!m) return;
+    coordsMap.set(id, pos);
+    nodes.push({ id: String(id), type: NODE_TYPES.customNode, position: pos, data: { label: `${m.first_name} ${m.last_name}`, ...m.toJSON() }, draggable: true });
+  };
+
+  const assign = (neighborId: number, pos: { x: number; y: number }, q: { id: number; pos: { x: number; y: number } }[]) => {
+    if (!membersMap.has(neighborId) || coordsMap.has(neighborId)) return;
+    placeNode(neighborId, pos);
+    q.push({ id: neighborId, pos });
+  };
+
+  placeNode(rootId, { x: 0, y: 0 });
+  const queue: { id: number; pos: { x: number; y: number } }[] = [{ id: rootId, pos: { x: 0, y: 0 } }];
+
+  while (queue.length) {
+    const { id: cur, pos } = queue.shift()!;
+    for (const c of connections) {
+      const src = Number(c.source_family_member_id);
+      const tgt = Number(c.target_family_member_id);
+      const { treeNodeOffsetX, treeNodeOffsetY, spouseGapX, siblingGapX } = LAYOUT_OFFSET;
+
+      if (c.type === Kinship.parent) {
+        if (src === cur) assign(tgt, { x: pos.x, y: pos.y + treeNodeOffsetY }, queue);
+        else if (tgt === cur) {
+          const slot = childSlot.get(cur) ?? 0;
+          assign(src, { x: pos.x + slot * (treeNodeOffsetX + 25), y: pos.y + treeNodeOffsetY }, queue);
+          childSlot.set(cur, slot + 1);
+        }
+      } else if (c.type === Kinship.child) {
+        if (src === cur) {
+          const slot = childSlot.get(cur) ?? 0;
+          childSlot.set(cur, slot + 1);
+          assign(tgt, { x: pos.x + slot * 140, y: pos.y + 100 }, queue);
+        } else if (tgt === cur) assign(src, { x: pos.x, y: pos.y - 100 }, queue);
+      } else if (c.type === Kinship.sibling) {
+        if (src === cur) assign(tgt, { x: pos.x + siblingGapX, y: pos.y }, queue);
+        else if (tgt === cur) assign(src, { x: pos.x - siblingGapX, y: pos.y }, queue);
+      } else if (c.type === Kinship.spouse) {
+        if (src === cur) assign(tgt, { x: pos.x + spouseGapX, y: pos.y }, queue);
+        else if (tgt === cur) assign(src, { x: pos.x - spouseGapX, y: pos.y }, queue);
+      }
+    }
+  }
+
+  let orphanCol = 0;
+  for (const m of members) {
+    if (coordsMap.has(m.id)) continue;
+    placeNode(m.id, { x: orphanCol++ * 180, y: 80 - LAYOUT_OFFSET.treeNodeOffsetY });
+  }
+
+  // Real relationship edges between member nodes
+  const edges: LayoutEdge[] = [];
+  for (const c of connections) {
+    edges.push({
+      id: `${c.source_family_member_id}-${c.target_family_member_id}-${c.id}`,
+      source: String(c.source_family_member_id),
+      target: String(c.target_family_member_id),
+      type: c.type === Kinship.sibling ? NODE_TYPES.spouseEdge
+        : c.type === Kinship.spouse ? NODE_TYPES.siblingEdge
+          : NODE_TYPES.customEdge,
+    });
+  }
+
+  // Build PLI → CLN → GL chains and their edges per family unit
+  for (const [key, unit] of familyUnits) {
+    const parentPositions = unit.parentIds.map(id => coordsMap.get(id)).filter((p): p is { x: number; y: number } => p != null);
+    const childPositions = unit.childIds.map(id => coordsMap.get(id)).filter((p): p is { x: number; y: number } => p != null);
+    if (parentPositions.length === 0 || childPositions.length === 0) continue;
+
+    const avg = (arr: { x: number; y: number }[], k: 'x' | 'y') => arr.reduce((s, p) => s + p[k], 0) / arr.length;
+    const parentsAvgX = avg(parentPositions, 'x');
+    const parentsAvgY = avg(parentPositions, 'y');
+    const childrenAvgX = avg(childPositions, 'x');
+    const childrenAvgY = avg(childPositions, 'y');
+    const dir = parentsAvgY <= childrenAvgY ? 1 : -1;
+
+    const pliPos = { x: parentsAvgX, y: parentsAvgY + dir * 55 };
+    const clnPos = { x: parentsAvgX, y: pliPos.y + dir * 55 };
+    const glPos = { x: childrenAvgX, y: childrenAvgY - dir * 40 };
+
+    const pliId = `pli-${key}`;
+    const clnId = `cln-${key}`;
+    const glId = `gl-${key}`;
+
+    const parentMembers = unit.parentIds.map(id => membersMap.get(id)).filter((m): m is FamilyMember => m != null);
+
+    nodes.push(
+      { id: pliId, type: NODE_TYPES.generationLayer, position: pliPos, data: { label: '' }, draggable: true },
+      {
+        id: clnId, type: NODE_TYPES.relationNode, position: clnPos, draggable: true,
+        data: {
+          label: `Children of ${parentMembers.map(m => m.first_name).join(' and ')}`,
+          sources: parentMembers.map(m => ({ id: m.id, first_name: m.first_name, last_name: m.last_name })),
+        },
+      },
+      { id: glId, type: NODE_TYPES.generationLayer, position: glPos, data: { label: '' }, draggable: true },
+    );
+
+    unit.parentIds.forEach(pid => {
+      if (!coordsMap.has(pid)) return;
+      edges.push({ id: `e-parent-pli-${pid}-${key}`, source: String(pid), target: pliId, type: NODE_TYPES.customEdge });
+    });
+    edges.push(
+      { id: `e-pli-cln-${key}`, source: pliId, target: clnId, type: NODE_TYPES.customEdge },
+      { id: `e-cln-gl-${key}`, source: clnId, target: glId, type: NODE_TYPES.customEdge },
+    );
+    unit.childIds.forEach(cid => {
+      if (!coordsMap.has(cid)) return;
+      edges.push({ id: `e-gl-child-${glId}-${cid}`, source: glId, target: String(cid), type: NODE_TYPES.customEdge });
+    });
+  }
+
+  return { nodes, edges };
+}
+//#endregion
+
 //#region createTree
 /**
- * ? used to create a record for each and to build the members array in the new tree instance
+ * used to create a record for each and to build the members array in the new tree instance
  * @param createData : form values for tree and its desired members.
  * @returns FamilyTree
  */
 
 export const createTreeV2 = async (createData: CreateTreeRequestV2): Promise<ServiceResponseWithPayload<CreateTreeResponseV2 | null>> => {
-  logger.info("START TREE GENERATION ", createData);
   const incomingListOfMembers = Object.values(createData.members);
   const response: APIRequestPayload<CreateTreeResponseV2> = {
     code: 500,
     error: true,
     payload: { tree: null, members: [], connections: [] }
   };
+  let anchorMemberId: number | null = null;
 
   try {
     /** -----------------------------------------------
@@ -116,8 +286,6 @@ export const createTreeV2 = async (createData: CreateTreeRequestV2): Promise<Ser
     };
 
     const memberPayloads = incomingListOfMembers.map(m => {
-      logger.info('Go through member relationships', { m })
-
       // Collect relationship mappings
       if (m.parents?.length) {
         logger.info('Has parents ', { count: m.parents.length })
@@ -126,8 +294,8 @@ export const createTreeV2 = async (createData: CreateTreeRequestV2): Promise<Ser
           ...m.parents.map(pid => ({
             type: Kinship.parent,
             tree_id: newTree.id,
-            sourceNodeId: m.node_id,
-            targetNodeId: pid
+            targetNodeId: m.node_id,
+            sourceNodeId: pid
           }))
         );
       }
@@ -235,12 +403,21 @@ export const createTreeV2 = async (createData: CreateTreeRequestV2): Promise<Ser
             { default_anchor_family_member_id: anchorId },
             { transaction: t }
           );
+          anchorMemberId = anchorId;
         }
       }
 
       response.code = 200;
       response.error = false;
     });
+
+    if (response.code === 200) {
+      response.payload.layout = buildLayoutNodes(
+        response.payload.members,
+        response.payload.connections,
+        anchorMemberId,
+      );
+    }
   } catch (e) {
     logger.error('Failed to create tree', { e });
   }
@@ -280,10 +457,12 @@ export const getTreeById = async (id: number): Promise<ServiceResponseWithPayloa
     // loop through connections and 
     logger.info('USER TREE DETAILS', { treeId: id, members: members.length, connections: connections.length });
 
+    const layout = buildLayoutNodes(members, connections, tree.default_anchor_family_member_id ?? null);
+
     response.code = 200;
     response.error = false;
     response.message = 'Family tree fetched successfully';
-    response.payload = { tree, members, connections, collaborators };
+    response.payload = { tree, members, connections, collaborators, layout };
 
     return response;
   } catch (e: unknown) {
@@ -331,19 +510,19 @@ const updateTreeMembers = async (tree: FamilyTree, userId: number, updateData: F
 //#region DELETE
 export const deleteTree = async (data: {id: number, userId: number}): Promise<ServiceResponseWithPayload<null>> => {
   let response: ServiceResponseWithPayload<null> = { code: 500, error: true, payload: null };
-  logger.info('payload ', { data })
+
   try {
     const tree = await FamilyTree.findByPk(data.id);
     const user = await User.findByPk(data.userId);
     const isAllowed = !!tree?.dataValues && tree.dataValues.created_by_id == user?.id;
 
     if (isAllowed) {
-      await tree.destroy();
+      await tree.update({active: false});
       response = {
         ...response, code: 200, error: false
       };
     } else {
-      logger.error('updateTreeMembers: Invalid delete entries');
+      logger.error('Delete Tree: Invalid delete entries');
     }
   } catch (e: unknown) {
     logger.error('Delete tree, ', { e });

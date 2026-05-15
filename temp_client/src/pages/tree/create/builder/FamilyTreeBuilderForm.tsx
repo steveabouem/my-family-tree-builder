@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from "react";
-import { Button, FormControl, FormControlLabel, Paper, Radio, Typography } from "@mui/material";
+import React, { useContext, useEffect, useRef } from "react";
+import { Button, Checkbox, FormControl, FormControlLabel, FormGroup, Paper, Radio, Typography } from "@mui/material";
 import { Field, useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
 import { v4 } from "uuid";
@@ -33,20 +33,15 @@ export const FamilyTreeBuilderForm = ({ storeImg }: any) => {
   const { isPending: isAddMembersPending } = useAddMembers();
   const { isPending: isChangePositionsPending } = useChangeMemberPositions();
   const isProcessing = isChangePositionsPending || isCreateFamilyTreePending || isAddMembersPending;
-  const membersDropdownOptions: (DropdownOption & { key?: string })[] = Object.keys(values?.members || {}).map((key: string) => {
-    console.log( {
-      label: `${values?.members?.[key]?.first_name || ''} ${values?.members?.[key]?.last_name || ''}`,
-      value: values?.members?.[key]?.node_id,
-      id: values?.members?.[key]?.node_id,
-    });
-    
-    return (
+  const sharedSiblingsRef = useRef<string[]>([]);
+  const membersDropdownOptions: (DropdownOption & { key?: string })[] = Object.keys(values?.members || {}).map((key: string) => (
     {
       label: `${values?.members?.[key]?.first_name || ''} ${values?.members?.[key]?.last_name || ''}`,
       value: values?.members?.[key]?.node_id,
       id: values?.members?.[key]?.node_id,
+      key
     }
-  )}) || [{
+  )) || [{
     label: '',
     value: '',
     id: '',
@@ -175,29 +170,64 @@ export const FamilyTreeBuilderForm = ({ storeImg }: any) => {
 
   }
 
-  /** 
+  /**
   * When the user choses to add a parent, we need to assess whether said parent is the same for all children or not
   * More relationship checks will most likely be added
   */
   function assessRelationship() {
-    const memberSelectedForRelation = Object.values( values?.members || []).find((m: any) => m.node_id = values?.next_of_kin_member);
-    console.log('Initial link ', {memberSelectedForRelation});
-    
+    const memberSelectedForRelation = Object.values(values?.members || {}).find((m: any) => m.node_id === values?.next_of_kin_member);
+
     if ([KinshipName.father, KinshipName.mother].includes(values?.next_of_kin)) {
+      sharedSiblingsRef.current = [];
+//@ts-ignore
+      const siblingNodeIds: string[] = memberSelectedForRelation?.siblings || [];
+      const siblingOptions = siblingNodeIds
+        .map(sibId => {
+          const entry = Object.entries(values?.members || {}).find(([, m]: any) => m.node_id === sibId);
+          if (!entry) return null;
+          const [, sib] = entry as [string, any];
+          const label = `${sib.first_name || ''} ${sib.last_name || ''}`.trim() || sibId;
+          return { label, value: sibId };
+        })
+        .filter((o): o is { label: string; value: string } => o !== null);
+
       updateModal({
         hidden: false,
         buttons: {
-          cancel: true, cancelText: <Trans>no</Trans>,
-          confirm: true, confirmText: <Trans>yes</Trans>
+          cancel: true, cancelText: <Trans>skip</Trans>,
+          confirm: true, confirmText: <Trans>confirm</Trans>
         },
         title: <Trans>confirm_who_are_the_kids</Trans>,
         onConfirm: () => {
-          addRelative();
+          addRelative(sharedSiblingsRef.current);
         },
-        content: <BoxColumn>
-          
-        </BoxColumn>
-      })
+        content: (
+          <BoxColumn sx={{ gap: 1 }}>
+            <Typography variant="body2"><Trans>select_siblings_sharing_parent</Trans></Typography>
+            {siblingOptions.length > 0 ? (
+              <FormGroup>
+                {siblingOptions.map(opt => (
+                  <FormControlLabel
+                    key={opt.value}
+                    label={opt.label}
+                    control={
+                      <Checkbox
+                        onChange={(e) => {
+                          sharedSiblingsRef.current = e.target.checked
+                            ? [...sharedSiblingsRef.current, opt.value]
+                            : sharedSiblingsRef.current.filter(id => id !== opt.value);
+                        }}
+                      />
+                    }
+                  />
+                ))}
+              </FormGroup>
+            ) : (
+              <Typography variant="caption"><Trans>no_siblings_to_share_parent</Trans></Typography>
+            )}
+          </BoxColumn>
+        )
+      });
     } else {
       addRelative();
     }
@@ -205,7 +235,7 @@ export const FamilyTreeBuilderForm = ({ storeImg }: any) => {
   /**
   * user will select the relative type (kinship) for the next step, or any of the  steps before the current one.
   **/
-  function addRelative() {
+  function addRelative(sharedSiblings: string[] = []) {
     const currentStepKey = Object.keys(stepTree || {}).find((key: string) => stepTree?.[key]?.step === currentFormStep) || 'anchor';
     const selectedMember = membersDropdownOptions.find((m: any) => m.value === values?.next_of_kin_member)
       || membersDropdownOptions.find((m: any) => m.key === currentStepKey);
@@ -249,9 +279,22 @@ export const FamilyTreeBuilderForm = ({ storeImg }: any) => {
     // Link selected existing member <-> newly created member from selected member's perspective.
     if (relationArrays && selectedMemberKey && selectedMemberNodeId) {
       const selectedMemberCurrent = values?.members?.[selectedMemberKey]?.[relationArrays.selectedMemberArray] || [];
-      const newMemberCurrent = values?.members?.[nextStepName]?.[relationArrays.newMemberArray] || [];
       setFieldValue(`members.${selectedMemberKey}.${relationArrays.selectedMemberArray}`, pushUnique(selectedMemberCurrent, newRelativeNodeId));
-      setFieldValue(`members.${nextStepName}.${relationArrays.newMemberArray}`, pushUnique(newMemberCurrent, selectedMemberNodeId));
+
+      // Build the new member's relationship array: start with the primary selected member,
+      // then fold in any siblings the user confirmed share this parent.
+      let newMemberRelationArray = pushUnique(
+        values?.members?.[nextStepName]?.[relationArrays.newMemberArray] || [],
+        selectedMemberNodeId
+      );
+      sharedSiblings.forEach(sibNodeId => {
+        newMemberRelationArray = pushUnique(newMemberRelationArray, sibNodeId);
+        const sibKey = Object.keys(values?.members || {}).find(k => values.members[k]?.node_id === sibNodeId);
+        if (sibKey) {
+          setFieldValue(`members.${sibKey}.parents`, pushUnique(values?.members?.[sibKey]?.parents || [], newRelativeNodeId));
+        }
+      });
+      setFieldValue(`members.${nextStepName}.${relationArrays.newMemberArray}`, newMemberRelationArray);
     }
   }
 

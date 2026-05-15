@@ -896,11 +896,32 @@ export type GetMemberBloodlineResponse = APIEndpointResponse<{
   connections: RelationshipDTOV2[];
 }>;
 
+export interface LayoutNode {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  data: Record<string, unknown>;
+  draggable: boolean;
+}
+
+export interface LayoutEdge {
+  id: string;
+  source: string;
+  target: string;
+  type: string;
+}
+
+export interface TreeLayout {
+  nodes: LayoutNode[];
+  edges: LayoutEdge[];
+}
+
 export type CreateTreeResponseV2 = APIEndpointResponse<{
   tree: FamilyTreeDTOV2 | null;
   members: FamilyMemberDTOV2[];
   connections: RelationshipDTOV2[];
   collaborators?: Record<string, unknown>[];
+  layout?: TreeLayout;
 }>;
 /*
 * Enums

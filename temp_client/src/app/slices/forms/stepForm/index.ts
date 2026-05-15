@@ -83,7 +83,6 @@ const setStepSections = (state: StepFormState, action: PayloadAction<StepDetails
   state.updating = true;
   const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]:{sections: action.payload?.sections || [], step: action.payload.step} }
   state.stepTree = newStepTree;
-  state.totalSteps = action.payload.step;
   state.updating = false;
   return state;
 };

@@ -382,11 +382,36 @@ export interface RelationshipMapping {
     targetNodeId: string;
 }
 
+export interface LayoutNode {
+    id: string;
+    type: string;
+    position: { x: number; y: number };
+    data: {
+        label: string;
+        sources?: Array<{ id: number; first_name: string; last_name: string }>;
+        [key: string]: unknown;
+    };
+    draggable: boolean;
+}
+
+export interface LayoutEdge {
+    id: string;
+    source: string;
+    target: string;
+    type: string;
+}
+
+export interface TreeLayout {
+    nodes: LayoutNode[];
+    edges: LayoutEdge[];
+}
+
 export interface CreateTreeResponseV2 {
     tree: FamilyTree | null;
     members: FamilyMember[];
     connections: Relationship[];
     collaborators?: Collaborator[];
+    layout?: TreeLayout;
 }
 
 export interface GetMemberResponse {

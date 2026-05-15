@@ -55,16 +55,22 @@ export const FamilyTreeBuilderContainer: React.FC = () => {
       //! PROBLEM: in case of famille recomposee, this is not workable. What Can I do?
       const membersFromForm = Object.values(v.members);
       const membersMap = new Map(membersFromForm.map(m => [m.node_id, m]));
-      const parentsMap = new Map([]);
 
       membersFromForm.forEach(m => {
         if (m?.siblings?.length && m?.parents?.length) {
           m.siblings.forEach(s => {
             const sib = membersMap.get(s);
             if (sib) {
-              sib.parents = m.parents
+              sib.parents = m.parents;
+              //@ts-ignore
+              m.parents.forEach(parentId => {
+                const parent = membersMap.get(parentId);
+                if (parent && !parent.children?.includes(sib.node_id)) {
+                  parent.children = [...(parent.children || []), sib.node_id];
+                }
+              });
             }
-          })
+          });
         }
       });
 

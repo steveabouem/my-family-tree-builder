@@ -11,11 +11,12 @@ import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode'
 import CustomEdge, { SiblingEdge, SpouseEdge } from './CustomEdge';
 import { FlowComponentTypes } from 'types';
-import { RelationshipNode } from './RelationshipNode';
+import { RelationshipNode, GenerationLayerNode } from './RelationshipNode';
 
 const nodeTypes = {
   [FlowComponentTypes.customNode]: CustomNode,
   [FlowComponentTypes.relationNode]: RelationshipNode,
+  [FlowComponentTypes.generationLayer]: GenerationLayerNode,
 };
 const edgeTypes = {
   [FlowComponentTypes.customEdge]: CustomEdge,

@@ -4,7 +4,7 @@ import { Handle, Position } from '@xyflow/react';
 import styled from 'styled-components';
 import BoxRow from 'components/common/containers/column';
 import { treeNodeWidth } from '../../constants';
-import {  FamilyMemberDTOV2, TreeNodeProps } from 'types';
+import { FamilyMemberDTOV2, TreeNodeProps } from 'types';
 import BoxColumn from 'components/common/containers/row/BoxColumn';
 
 export const RelationshipNode = ({data}: TreeNodeProps) => {
@@ -44,6 +44,14 @@ export const RelationshipNode = ({data}: TreeNodeProps) => {
   )
 }
 
+export const GenerationLayerNode = () => (
+  <>
+    <Handle type="target" position={Position.Top} style={{ background: 'transparent' }} isConnectable />
+    <IntersectionDot />
+    <Handle type="source" position={Position.Bottom} style={{ background: 'transparent' }} isConnectable />
+  </>
+);
+
 export const RelationshipSeparatorEdge = (data: { count: number }) => {
   return <BoxRow sx={{ width: `${data.count * treeNodeWidth}px` }}>______edge here______</BoxRow>
 }
@@ -55,5 +63,12 @@ const RelationNode = styled(BoxColumn)`
   background: black;
   color: white;
   border: none;
-  
+`;
+
+const IntersectionDot = styled.div`
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #555;
+  border: 2px solid #999;
 `;
