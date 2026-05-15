@@ -1,4 +1,4 @@
-import React, { useContext, useEffect} from "react";
+import React, { useContext, useEffect } from "react";
 import { Button, FormControl, FormControlLabel, Paper, Radio, Typography } from "@mui/material";
 import { Field, useFormikContext } from "formik";
 import { Trans } from "@lingui/macro";
@@ -13,30 +13,40 @@ import GlobalContext from "contexts/creators/global";
 import {
   StepFormState, genderOptions, maritalStatusOptions, relationOptions,
   NodeMenuActions, FieldsSection, InputType, MemberVisibility, TreeVisibility,
-  DropdownOption
+  DropdownOption,
+  KinshipType,
+  KinshipName
 } from "types";
 import { useAddMembers, useChangeMemberPositions, useCreateFamilyTree } from "api";
 import BoxColumn from "components/common/containers/row/BoxColumn";
 import BoxRow from "components/common/containers/column";
 import FieldSectionsGenerator from "components/common/forms/FieldSectionsGenerator";
+import { createDispatchHook } from "react-redux";
+import { EmptyIcon } from "utils/assets/icons";
 
-export const FamilyTreeBuilderForm = ({  storeImg }: any) => {
-  const { totalSteps, currentFormStep, stepTree} = useZSelector<StepFormState>(state => state.stepForm);
+export const FamilyTreeBuilderForm = ({ storeImg }: any) => {
+  const { totalSteps, currentFormStep, stepTree } = useZSelector<StepFormState>(state => state.stepForm);
   const { values, setFieldValue, setValues } = useFormikContext<any>();
-  const { modal } = useContext(GlobalContext);
+  const { modal, updateModal } = useContext(GlobalContext);
   const dispatch = useZDispatch();
   const { isPending: isCreateFamilyTreePending } = useCreateFamilyTree();
   const { isPending: isAddMembersPending } = useAddMembers();
   const { isPending: isChangePositionsPending } = useChangeMemberPositions();
   const isProcessing = isChangePositionsPending || isCreateFamilyTreePending || isAddMembersPending;
-  const membersDropdownOptions: (DropdownOption & { key?: string })[] = Object.keys(values?.members || {}).map((key: string) => (
+  const membersDropdownOptions: (DropdownOption & { key?: string })[] = Object.keys(values?.members || {}).map((key: string) => {
+    console.log( {
+      label: `${values?.members?.[key]?.first_name || ''} ${values?.members?.[key]?.last_name || ''}`,
+      value: values?.members?.[key]?.node_id,
+      id: values?.members?.[key]?.node_id,
+    });
+    
+    return (
     {
       label: `${values?.members?.[key]?.first_name || ''} ${values?.members?.[key]?.last_name || ''}`,
       value: values?.members?.[key]?.node_id,
       id: values?.members?.[key]?.node_id,
-      key
     }
-  )) || [{
+  )}) || [{
     label: '',
     value: '',
     id: '',
@@ -154,10 +164,48 @@ export const FamilyTreeBuilderForm = ({  storeImg }: any) => {
       dispatch(loadStepFormSectionsAction({ name: `${nameOfStep}`, sections, title: <Trans>info_on_node {nameOfStep}</Trans>, step: stepNumber }));
     }
   }
+  /**  
+   * GAthers information from the relationship assessment modal, and allows to target which children belong to the newly added parent 
+    * - Once a parental relationship has been selected in the dropdown, 
+    * user needs to indicate who that relation applies to beyond the
+    * parent and child selected in the relationship section
+    * - **Nice to have**: Include confirmation in case a member is selected for *more than 2 parents* (adoption, recomposition or error?) 
+  */
+  function assignParentalLink() {
+
+  }
+
+  /** 
+  * When the user choses to add a parent, we need to assess whether said parent is the same for all children or not
+  * More relationship checks will most likely be added
+  */
+  function assessRelationship() {
+    const memberSelectedForRelation = Object.values( values?.members || []).find((m: any) => m.node_id = values?.next_of_kin_member);
+    console.log('Initial link ', {memberSelectedForRelation});
+    
+    if ([KinshipName.father, KinshipName.mother].includes(values?.next_of_kin)) {
+      updateModal({
+        hidden: false,
+        buttons: {
+          cancel: true, cancelText: <Trans>no</Trans>,
+          confirm: true, confirmText: <Trans>yes</Trans>
+        },
+        title: <Trans>confirm_who_are_the_kids</Trans>,
+        onConfirm: () => {
+          addRelative();
+        },
+        content: <BoxColumn>
+          
+        </BoxColumn>
+      })
+    } else {
+      addRelative();
+    }
+  }
+  /**
+  * user will select the relative type (kinship) for the next step, or any of the  steps before the current one.
+  **/
   function addRelative() {
-    /*
-    * user will select the relative type (kinship) for the next step, or any of the  steps before the current one.
-    */
     const currentStepKey = Object.keys(stepTree || {}).find((key: string) => stepTree?.[key]?.step === currentFormStep) || 'anchor';
     const selectedMember = membersDropdownOptions.find((m: any) => m.value === values?.next_of_kin_member)
       || membersDropdownOptions.find((m: any) => m.key === currentStepKey);
@@ -211,13 +259,15 @@ export const FamilyTreeBuilderForm = ({  storeImg }: any) => {
     <Paper sx={{ flexDirection: "column", border: 'none' }} elevation={0}>
       <Typography variant="h5">about</Typography>
       <Typography variant="body2"><Trans>family_tree_building_explanation</Trans></Typography>
-      <BoxColumn>
-        <Typography variant="h5">form_composition</Typography>
-        <Typography variant="subtitle2"><Trans>tree_settings</Trans></Typography>
-        <FormControl>
-          <Field name="name" />
-        </FormControl>
-        <FormControl>
+      <BoxColumn sx={{ gap: 3 }}>
+        <Typography variant="h5"><Trans>general</Trans></Typography>
+        <BoxColumn sx={{ gap: 1 }}>
+          <Typography variant="subtitle2">tree_name</Typography>
+          <FormControl>
+            <Field name="name" />
+          </FormControl>
+        </BoxColumn>
+        <FormControl sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography variant="subtitle2">tree_visibility</Typography>
           <BoxRow sx={{ justifyContent: 'flex-end' }} >
             <FormControlLabel
@@ -245,6 +295,7 @@ export const FamilyTreeBuilderForm = ({  storeImg }: any) => {
               }
             />
           </BoxRow>
+
         </FormControl>
         <Typography variant="subtitle2"><Trans>whos_next?</Trans></Typography>
         <BoxColumn>
@@ -252,7 +303,7 @@ export const FamilyTreeBuilderForm = ({  storeImg }: any) => {
           <BaseDropDown name="next_of_kin_member" options={membersDropdownOptions} />
           <Typography variant="subtitle2"><Trans>add_relation</Trans></Typography>
           <BaseDropDown name="next_of_kin" options={relationOptions} />
-          <Button variant="outlined" color="primary" onClick={addRelative}><Trans>confirm</Trans></Button>
+          <Button variant="outlined" color="primary" onClick={assessRelationship}><Trans>confirm</Trans></Button>
         </BoxColumn>
       </BoxColumn>
       <FieldSectionsGenerator />

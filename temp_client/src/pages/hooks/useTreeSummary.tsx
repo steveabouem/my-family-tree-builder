@@ -26,7 +26,6 @@ export const useTreeSummary = (payload: CreateTreeResponseV2['payload'] | undefi
     const ageA = getAge(a.dob);
     const ageB = getAge(b.dob);
     ages.push(ageA);
-    console.log('AGES at ', {current: a, ages});
     
     return ageA - ageB;
   });

@@ -9,14 +9,18 @@ import {
 // @ts-ignore
 import '@xyflow/react/dist/style.css';
 import CustomNode from './TreeNode'
-import CustomEdge from './CustomEdge';
+import CustomEdge, { SiblingEdge, SpouseEdge } from './CustomEdge';
 import { FlowComponentTypes } from 'types';
+import { RelationshipNode } from './RelationshipNode';
 
 const nodeTypes = {
   [FlowComponentTypes.customNode]: CustomNode,
+  [FlowComponentTypes.relationNode]: RelationshipNode,
 };
 const edgeTypes = {
   [FlowComponentTypes.customEdge]: CustomEdge,
+  [FlowComponentTypes.spouseEdge]: SpouseEdge,
+  [FlowComponentTypes.siblingEdge]: SiblingEdge,
 };
 
 const GenealogyTree = ({ initialNodes, initialEdges }: any) => {

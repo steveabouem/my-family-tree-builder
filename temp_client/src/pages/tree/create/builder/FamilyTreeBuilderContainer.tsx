@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Grid2, Typography } from '@mui/material';
 import { Trans } from '@lingui/macro';
 import { Formik } from 'formik';
@@ -11,9 +11,6 @@ import { useNavigate } from 'react-router';
 import PageUrls from 'utils/urls';
 
 export const FamilyTreeBuilderContainer: React.FC = () => {
-  // treeCopy is used to keep copy of the tree through all events.
-  // for instance, updating a member requires to rerender the form with only that member's fields.
-  // the copy allows for the other existing members to remain rendered in the graph
   const { updateModal } = React.useContext(GlobalContext);
   const { mutate: createFamilyTreeMutation, error, isPending } = useCreateFamilyTree();
   const navigate = useNavigate();
@@ -54,9 +51,26 @@ export const FamilyTreeBuilderContainer: React.FC = () => {
   }
   function handleSubmit(v: FamilyTreeDAOV2) {
     try {
+      // make a map of siblings and parents. Whenever a member has siblings and parents, use the map to quickly get each sibling and fill their parents array with the same
+      //! PROBLEM: in case of famille recomposee, this is not workable. What Can I do?
+      const membersFromForm = Object.values(v.members);
+      const membersMap = new Map(membersFromForm.map(m => [m.node_id, m]));
+      const parentsMap = new Map([]);
+
+      membersFromForm.forEach(m => {
+        if (m?.siblings?.length && m?.parents?.length) {
+          m.siblings.forEach(s => {
+            const sib = membersMap.get(s);
+            if (sib) {
+              sib.parents = m.parents
+            }
+          })
+        }
+      });
+
       createFamilyTreeMutation(
         // @ts-ignore: quick update of payload type needed. its an array
-        {...v, members: Object.values(v.members)},
+        {...v, members: membersFromForm},
         {
           onSuccess: (response) => {
             if (response.code == 200) {

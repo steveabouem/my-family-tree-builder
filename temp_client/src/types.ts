@@ -1,4 +1,4 @@
-import { NodeProps } from "@xyflow/react";
+import { Edge, NodeProps } from "@xyflow/react";
 import React, { ReactElement, ReactNode } from "react";
 // I like all my types in one place. sue me.
 // ============================================================================
@@ -502,24 +502,6 @@ export interface MemberPosition {
   new_position: { x: number, y: number }
 }
 
-export type DKinsCount = {
-  [kinshipEnum.siblings]: { display: boolean; total: number };
-  [kinshipEnum.partner]: boolean;
-  [kinshipEnum.parents]: { mother: { display: boolean }; father: { display: boolean } };
-}
-
-export interface StepsFieldsByKin {
-  [kinshipEnum.siblings]: { fields: FormField[]; exist: boolean; total: number };
-  [kinshipEnum.partner]?: FormField[];
-  [kinshipEnum.parents]: { father?: FormField[], mother: FormField[] };
-}
-
-export enum kinshipEnum {
-  'parents' = 'parents',
-  'siblings' = "siblings",
-  'partner' = "partner",
-}
-
 export enum orientationEnum {
   'vertical' = 'vertical',
   'horizontal' = 'horizontal',
@@ -764,9 +746,12 @@ export type Coorddinates = { x: number; y: number };
 export type TreeNodeData = NodeProps['data'] & FamilyMemberDTOV2 & {
   highlighted?: boolean;
   selected?: boolean;
+  onClick?: () => void;
+  sources?: FamilyMemberDTOV2[]; // the parent(s)
   // position: {x: number, y: number}
 }
 
+export type CustomSimpleEdge = Edge<{ value: number }, 'custom'>;
 export type TreeNodeProps = Omit<Partial<NodeProps>, 'data'> & {
   data: TreeNodeData
   position?: Coorddinates;
@@ -826,15 +811,20 @@ export type FamilyTreeDAOV2 = Pick<FamilyTreeDTOV2,//? family tree form data
   };
 
 
-/*
-* DTO returned by api (close match to db model)
+/**
+  * ### Link between 2 family members
+  * - type `parent`: target = child, source = parent
+  * - type `child`: target = parent, source = child 
+  * #
+  *  **NOTE**: React Flow's edges use source and target to link the the relevant handles. the direction doesn't actually matter since each edge already comes wit coords
+  * # 
 */
 export interface RelationshipDTOV2 {
   id: number;
   tree_id: number;
   source_family_member_id: number;
   target_family_member_id: number;
-  type: Kinship;
+  type: KinshipType | FlowComponentTypes;
   created_at: string;
   updated_at: string | null;
 }
@@ -950,11 +940,22 @@ export enum Gender {
   Other = 'other'
 }
 
-export enum Kinship {
+export enum KinshipType {
   'sibling' = 'sibling',
   'parent' = 'parent',
   'spouse' = 'spouse',
   'child' = 'child'
+}
+
+export enum KinshipName {
+  'brother' = 'brother',
+  'father' = 'father',
+  'husband' = 'husband',
+  'mother' = 'mother',
+  'sister' = 'sister',
+  'wife' = 'wife',
+  'son' = 'son',
+  'daughter' = 'daughter',
 }
 
 export enum MaritalStatus {
@@ -969,6 +970,10 @@ export enum MaritalStatus {
 export enum FlowComponentTypes {
   customNode = 'customNode',
   customEdge = 'customEdge',
+  spouseEdge = 'spouseEdge',
+  siblingEdge = 'siblingEdge',
+  relationNode = 'relationNode',
+  generationLayer = 'generationLayer',
 }
 
 export interface RegistrationRequestV2 {
@@ -1007,58 +1012,45 @@ export const genderOptions: DropdownOption[] = [
   },
 ];
 
-export const parentOptions: DropdownOption[] = [
-  {
-    label: 'yes',
-    value: 1,
-    id: 'is-parent-option',
-  },
-  {
-    label: 'no',
-    value: 0,
-    id: 'not-parent-option',
-  },
-];
-
 export const relationOptions: DropdownOption[] = [
   {
     label: 'brother',
-    value: 'brother',
+    value: KinshipName.brother,
     id: 'is-brother-option',
   },
   {
     label: 'father',
-    value: 'father',
+    value: KinshipName.father,
     id: 'is-father-option',
   },
   {
     label: 'husband',
-    value: 'husband',
+    value: KinshipName.husband,
     id: 'is-husband-option',
   },
   {
     label: 'mother',
-    value: 'mother',
+    value: KinshipName.mother,
     id: 'is-mother-option',
   },
   {
     label: 'sister',
-    value: 'sister',
+    value: KinshipName.sister,
     id: 'is-sister-option',
   },
   {
     label: 'wife',
-    value: 'wife',
+    value: KinshipName.wife,
     id: 'is-wife-option',
   },
   {
     label: 'son',
-    value: 'son',
+    value: KinshipName.son,
     id: 'is-son-option',
   },
   {
     label: 'daughter',
-    value: 'daughter',
+    value: KinshipName.daughter,
     id: 'is-daughter-option',
   },
 ];
