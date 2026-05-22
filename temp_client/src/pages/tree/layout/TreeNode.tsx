@@ -36,11 +36,11 @@ const TreeNode = memo(({ data }: TreeNodeProps) => {
       <Handle
         type="source"
         id={`${data.id}-source`}
-        position={Position.Bottom}
+        position={Position.Top}
         style={{ background: 'transparent' }}
         isConnectable={true}
       />
-      <MemberFrame sx={{height: treeNodeHeight, width: treeNodeWidth,  alignItems: 'center', background: theme.palette.background.paper, border:  data?.highlighted ?  `1px solid hsl(from ${ theme.palette.info.main} h s l / 0.5)` : 'none', padding: '.5rem' }} onClick={data?.onClick}>
+      <MemberFrame sx={{height: treeNodeHeight, width: treeNodeWidth, maxWidth: treeNodeWidth, alignItems: 'center', background: theme.palette.background.paper, border:  data?.highlighted ?  `1px solid hsl(from ${ theme.palette.info.main} h s l / 0.5)` : 'none', padding: '.5rem' }} onClick={data?.onClick}>
         {
           !!data.profile_url?.length ? <MemberThumbnail src={data.profile_url} /> :
             <Initials firstName={data.first_name} lastName={data.last_name} bg={getInitialsBG()} />
@@ -52,7 +52,7 @@ const TreeNode = memo(({ data }: TreeNodeProps) => {
       <Handle
         type="target"
         id={`${data.id}-target`}
-        position={Position.Bottom}
+        position={Position.Top}
         style={{ background: 'transparent' }}
         isConnectable={true}
       />

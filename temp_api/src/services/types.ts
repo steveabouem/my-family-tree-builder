@@ -399,6 +399,8 @@ export interface LayoutEdge {
     source: string;
     target: string;
     type: string;
+    sourceHandle?: string;
+    targetHandle?: string;
 }
 
 export interface TreeLayout {
