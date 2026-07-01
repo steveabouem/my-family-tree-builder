@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Box, Typography, useTheme } from "@mui/material";
+import { Avatar, Typography, useTheme } from "@mui/material";
 import logo from "utils/assets/images/logo.jpg";
 import PageUrlsEnum from "utils/urls";
 import ThemeSelector from "../ThemeSelector";

@@ -17,6 +17,7 @@ import CreateFamilyTreePage from "pages/tree/create";
 import ViewFamilyMemberPage from "pages/member/ViewFamilyMemberPage";
 import { DAuthMode, User } from "types";
 import { persistor } from "app/store";
+import ViewFamilyTreePage from "pages/tree";
 
 const AppContainer = (): JSX.Element => {
   const [currentUser] = useState<DeepPartial<User>>({});
@@ -52,7 +53,8 @@ const AppContainer = (): JSX.Element => {
               <Route path={PageUrlsEnum.trees} element={<FamilyTreeDashboard />} />
               <Route path={PageUrlsEnum.newTree} element={<CreateFamilyTreePage />} />
               <Route path={PageUrlsEnum.viewMember} element={<ViewFamilyMemberPage />} />
-              <Route path={PageUrlsEnum.viewTree} element={<CreateFamilyTreePage />} />
+              <Route path={PageUrlsEnum.viewTree} element={<ViewFamilyTreePage />} />
+              <Route path={PageUrlsEnum.newTree} element={<CreateFamilyTreePage />} />
               <Route path={PageUrlsEnum.themeTest} element={<ThemingTest />} />
               <Route path="*" element={<LandingPage />} />
             </Routes>

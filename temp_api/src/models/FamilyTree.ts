@@ -1,9 +1,13 @@
 import {
-  DataTypes, Model, InferAttributes, InferCreationAttributes,CreationOptional, NonAttribute
+  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute,
+  ForeignKey,
+  Association
 } from 'sequelize';
 
-import db from "../../db";
+import sequelize from "../../db";
 import FamilyMember from "./FamilyMember";
+import User from './User';
+import { TreeVisibility } from '@/services/types';
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttributes<FamilyTree>> {
@@ -13,62 +17,67 @@ class FamilyTree extends Model<InferAttributes<FamilyTree>, InferCreationAttribu
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
   declare id: CreationOptional<number>;
-  declare authorized_ips: string;
-  declare public: number;
+  declare visibility: any;
   declare name: string;
-  declare active: number;
-  declare members: string; // Store as JSON in DB, but expose as string[], list of node_ids
-  declare emails: string; // email[]
-  declare created_by: number; //User
+  declare active: boolean;
+  declare default_generation_depth: number;
+  declare default_anchor_family_member_id: ForeignKey<FamilyMember['id']> | null;
+  declare created_by_id: number;
+  declare updated_by: ForeignKey<User['id']>;
   declare created_at: CreationOptional<Date>;
   declare updated_at: CreationOptional<Date>;
+
+  // associations
+  declare members?: NonAttribute<FamilyMember[]>;
+
+  static associations: {
+    members: Association<FamilyTree, FamilyMember>;
+  };
+
 }
 
 FamilyTree.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true
-    },
-    authorized_ips: {
-      type: DataTypes.JSON
-    },
-     members: {
-      type: DataTypes.JSON
     },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: new Date
     },
-    created_by: {
+    created_by_id: {
       type: DataTypes.INTEGER,
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false
     },
-    emails: {
-      type: DataTypes.JSON,
-      allowNull: false
+    visibility: {
+      type: DataTypes.ENUM('public', 'private', 'invite_only'),
+      allowNull: false,
+      defaultValue: 'private',
     },
-    public: {
-      type: DataTypes.INTEGER,
-      allowNull: false
+    default_generation_depth: {
+      type: DataTypes.INTEGER
+    },
+    default_anchor_family_member_id: {
+      type: DataTypes.INTEGER
     },
     updated_at: {
       type: DataTypes.DATE
     },
     active: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BOOLEAN,
       allowNull: false
     }
   },
   {
     timestamps: false,
     tableName: 'family_trees',
-    sequelize: db // passing the `sequelize` instance is required
+    sequelize// passing the `sequelize` instance is required
   }
 );
 

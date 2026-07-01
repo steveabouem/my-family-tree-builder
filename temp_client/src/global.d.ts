@@ -59,4 +59,4 @@ declare module '@mui/material/Typography' {
     label: true;
   }
 }
-declare module 'styled-components'
+declare module 'styled-components';

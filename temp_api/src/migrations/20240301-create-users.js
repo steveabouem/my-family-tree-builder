@@ -5,7 +5,7 @@ module.exports = {
     await queryInterface.createTable('users', {
       id: {
         autoIncrement: true,
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
         allowNull: false,
       },
@@ -30,7 +30,6 @@ module.exports = {
       dob: {
         type: Sequelize.STRING,
       },
-      role_id: {type: Sequelize.INTEGER},
       email: {
         allowNull: false,
         type: Sequelize.CHAR(255), // https://www.mindbaz.com/en/email-deliverability/what-is-the-maximum-size-of-an-mail-address/
@@ -42,25 +41,18 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING
       },
-      has_ipa: {
-        type: Sequelize.INTEGER
-      },
       gender: {
         allowNull: false,
-        type: Sequelize.INTEGER
-      },
-      assigned_ips: {
-        allowNull: false,
-        type: Sequelize.JSON
+        type: Sequelize.ENUM('male','female','other')
       },
       profile_url: { type: Sequelize.STRING },
       description: { type: Sequelize.STRING },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: new Date
       },
-      updatedAt: {
+      updated_at: {
         type: Sequelize.DATE,
         defaultValue: new Date
       }

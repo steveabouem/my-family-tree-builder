@@ -1,5 +1,5 @@
 import logger from "../utils/logger";
-import { isUserAuthenticated } from "./helpers";
+import { isUserAuthenticated } from "./routeHelpers";
 
 export const authCheck = async (req: any, res: any, next: any) => {
   const publicUrls = ['/api/auth/login', '/api/auth/logout', '/api/auth/register'];

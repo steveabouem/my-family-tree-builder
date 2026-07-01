@@ -2,17 +2,16 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   APICreateFamilyResponse, APIEndpointResponse, FamilyTree,
   FormField, MembersPositions, FamilyMember, FamilyTreeRecord,
-  DeleteMembersRequestPayload
+  DeleteMembersRequestPayload,
+  FamilyTreeDAOV2,
+  CreateTreeResponseV2,
+  ViewTreeResponseV2
 } from "types";
 import { baseUrl } from "./index";
 
 //#region API Functions
-const getAllTreesForUser = async (userId?: number): Promise<APIEndpointResponse<FamilyTreeRecord[]>> => {
-  if (!userId) {
-    throw new Error('Invalid parameter');
-  }
-
-  const response = await fetch(`${baseUrl}/trees/index?user=${userId}`, {credentials: 'include'});
+const getAllTreesForUser = async (): Promise<APIEndpointResponse<FamilyTreeRecord[]>> => {
+  const response = await fetch(`${baseUrl}/trees/index`, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to get trees for user: ${response.statusText}`);
@@ -21,8 +20,8 @@ const getAllTreesForUser = async (userId?: number): Promise<APIEndpointResponse<
   return response.json();
 };
 // #endregion
-const getTreeById = async (treeId: string) => {
-  const response = await fetch(`${baseUrl}/trees/details?id=${treeId}`, {credentials: 'include'});
+const getTreeById = async (treeId: string): Promise<CreateTreeResponseV2> => {
+  const response = await fetch(`${baseUrl}/trees/details?id=${treeId}`, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to get tree by ID: ${response.statusText}`);
@@ -31,8 +30,8 @@ const getTreeById = async (treeId: string) => {
   return response.json();
 };
 
-const createFamilyTree = async (values: FamilyTree): Promise<APICreateFamilyResponse> => {
-  const response = await fetch(`${baseUrl}/trees/create`, {
+const createFamilyTree = async (values: FamilyTreeDAOV2): Promise<CreateTreeResponseV2> => {
+  const response = await fetch(`${baseUrl}/trees/new`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -48,14 +47,13 @@ const createFamilyTree = async (values: FamilyTree): Promise<APICreateFamilyResp
   return response.json();
 };
 
-const deleteTree = async (data: { id: number, userId: number }): Promise<void> => {
-  const response = await fetch(`${baseUrl}/trees/delete`, {
+const deleteTree = async (id: number): Promise<void> => {
+  const response = await fetch(`${baseUrl}/trees/delete/${id}`, {
     method: 'POST',
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ userId: data.userId, id: data.id })
+    }
   });
 
   if (!response.ok) {
@@ -66,7 +64,7 @@ const deleteTree = async (data: { id: number, userId: number }): Promise<void> =
 };
 
 const getMembers = async (treeId: number) => {
-  const response = await fetch(`${baseUrl}/trees/members?id=${treeId}`, {credentials: 'include'});
+  const response = await fetch(`${baseUrl}/trees/members?id=${treeId}`, { credentials: 'include' });
 
   if (!response.ok) {
     throw new Error(`Failed to get members: ${response.statusText}`);
@@ -126,11 +124,17 @@ const deleteMember = async (info: DeleteMembersRequestPayload): Promise<APIEndpo
   return response.json();
 };
 
-const getGenealogyFormFieldsForStep = async (step: number): Promise<FormField[]> => {
-  const response = await fetch(`${baseUrl}/trees/narration-fields?step=${step}`, {credentials: 'include'});
+const deleteAllTree = async (): Promise<APIEndpointResponse<{ payload: null }>> => {
+  const response = await fetch(`${baseUrl}/trees/bulk-delete`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    }
+  });
 
   if (!response.ok) {
-    throw new Error(`Failed to get genealogy form fields: ${response.statusText}`);
+    throw new Error(`Failed to flush the trees: ${response.statusText}`);
   }
 
   return response.json();
@@ -138,10 +142,10 @@ const getGenealogyFormFieldsForStep = async (step: number): Promise<FormField[]>
 //#endregion
 
 //#region React Query Hooks
-export const useGetAllForUser = (userId: number | undefined) => {
+export const useGetAllForUser = () => {
   return useQuery({
-    queryKey: ['familyTrees', 'user', userId],
-    queryFn: () => getAllTreesForUser(userId),
+    queryKey: ['familyTrees'],
+    queryFn: () => getAllTreesForUser(),
   });
 };
 
@@ -188,16 +192,15 @@ export const useDeleteMembers = () => {
   });
 };
 
-export const useDeleteTree = () => {
+export const useDeleteTree = (id: number) => {
   return useMutation({
-    mutationFn: deleteTree
+    mutationFn: () => deleteTree(id)
   });
 };
 
-export const useGetGenealogyFormFieldsForStep = (step: number, enabled: boolean = true) => {
-  return useQuery({
-    queryKey: ['genealogyFormFields', 'step', step],
-    queryFn: () => getGenealogyFormFieldsForStep(step),
+export const useDeleteAllTree = () => {
+  return useMutation({
+    mutationFn: deleteAllTree
   });
 };
 //#endregion
@@ -210,6 +213,6 @@ export {
   createFamilyTree,
   getMembers,
   addMembers,
-  getGenealogyFormFieldsForStep
+  deleteAllTree
 };
 //#endregion 

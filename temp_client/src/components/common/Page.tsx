@@ -7,20 +7,12 @@ import BaseModal from "./alerts/BaseModal";
 import GlobalContext from "contexts/creators/global/global.context";
 import { keyframes } from "styled-components";
 import NotFound from "./404NotFound";
-import BoxColumn from "./containers/row/BoxColumn";
+import NotAllowed from "./NotAllowed";
+import PaperSection from "./containers/PaperSection";
 
-const Page = ({ title, subtitle, children, loading, error, reload }: PageProps): JSX.Element => {
+const Page = ({ title, subtitle, children, loading, code, error, reload }: PageProps): JSX.Element => {
   const { modal } = useContext(GlobalContext);
-
-  if (error) {
-    return (
-      <BoxColumn sx={{ justifyContent: 'center', height: '100%' }}>
-        <Paper sx={{ width: '70%', margin: 'auto' }}>
-          <NotFound handleReload={() => { reload?.() }} />
-        </Paper>
-      </BoxColumn>
-    );
-  }
+  const contentNotAllowed = code === 403;
 
   return (
     <FadeInPage className="app-page">
@@ -28,14 +20,26 @@ const Page = ({ title, subtitle, children, loading, error, reload }: PageProps):
         <Box>
           <Typography variant="h3">{title}</Typography>
           {subtitle ? <Typography variant="h4">{subtitle}</Typography> : ''}
-          <Spinner loading={!!loading} />
-          {children || null}
-          <BaseModal
-            type="info"
-            hidden={modal?.hidden || true} id={modal?.id || ''}
-            title={modal?.title || ''} content={modal?.content || ''}
-            buttons={{ cancel: modal?.buttons?.cancel || false, confirm: modal?.buttons?.confirm || false }}
-          />
+          <PaperSection>
+            {contentNotAllowed ? (
+              <NotAllowed />
+            ) : error ? (
+              <Paper sx={{ width: '70%', margin: 'auto' }}>
+                <NotFound handleReload={() => { reload?.() }} />
+              </Paper>
+            ) : (
+              <>
+                <Spinner loading={!!loading} />
+                {children || null}
+                <BaseModal
+                  type="info"
+                  hidden={modal?.hidden || true} id={modal?.id || ''}
+                  title={modal?.title || ''} content={modal?.content || ''}
+                  buttons={{ cancel: modal?.buttons?.cancel || false, confirm: modal?.buttons?.confirm || false }}
+                />
+              </>
+            )}
+          </PaperSection>
         </Box>
       </Section>
     </FadeInPage>

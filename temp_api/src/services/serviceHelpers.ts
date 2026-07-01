@@ -1,5 +1,6 @@
 import logger from "../utils/logger";
 import { ServiceResponseWithPayload } from "./types";
+import bcrypt from "bcryptjs";
 
 export const generateResponseData = <R>(data: R): ServiceResponseWithPayload<R> => {
   return {
@@ -103,4 +104,42 @@ export function processOutgoingImage(img?: any): string | null {
       return null;
     }
   }
+}
+
+/**
+* Use for hashing accross all services.
+* Putting here in case I need to apply more rules to the hashing in the future (complexity, pattern, etc...)
+* @param val: string 
+* @returns hash
+**/
+export function scramble(val: string): string {
+  return bcrypt.hashSync(val);
+};
+/**
+ * A "worklist algorithm".
+ * @param list> an array of the given generic type
+ * @param conditionMet> a callback accepting 2 elements of that same generic type, and returning a boolean after comparison. The condition is up to you.
+ * @returns M[]. An array of lements of the generic type, empty if no match found
+ */
+export function getMatchesFromList<M>(
+  list: M[],
+  conditionMet: (a: M, b: M) => boolean
+): M[] {
+  const queue = [...list];
+  const matches: M[] = [];
+
+  while (queue.length > 0) {
+    const current = queue.shift()!;
+
+    for (const other of list) {
+      if (other === current) continue;
+
+      if (conditionMet(current, other)) {
+        matches.push(current);
+        break;
+      }
+    }
+  }
+
+  return matches;
 }

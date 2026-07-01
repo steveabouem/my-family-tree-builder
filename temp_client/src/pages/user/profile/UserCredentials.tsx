@@ -5,7 +5,7 @@ import { MdCancelPresentation } from "react-icons/md";
 import { Formik } from "formik";
 import { Box, Button, Paper } from "@mui/material";
 import styled from "styled-components";
-import { APIGetProfileResponse, ChangePasswordValues, FormField } from "types";
+import { APIGetProfileResponse, ChangePasswordValues, FormField, InputType } from "types";
 import FormFieldsGenerator from "components/common/forms/FormFieldsGenerator";
 
 const UserCredentials = ({ handleSubmit, profileInfo }: { profileInfo: APIGetProfileResponse, handleSubmit: (values: ChangePasswordValues) => void }) => {
@@ -24,16 +24,16 @@ const UserCredentials = ({ handleSubmit, profileInfo }: { profileInfo: APIGetPro
     id: data.id || 0
   };
   const profileFields = [
-      { fieldName: 'first_name', label: <Trans>first_name_form_label</Trans>, type: 'first_name' },
-    { fieldName: 'last_name', label: <Trans>last_name_form_label</Trans>, type: 'last_name' },
-    { fieldName: 'email', label: <Trans>email_form_label</Trans>, type: 'email' },
-    { fieldName: 'password', label: <Trans>password_form_label</Trans>, type: 'password' }
+      { fieldName: 'first_name', label: <Trans>first_name_form_label</Trans> },
+    { fieldName: 'last_name', label: <Trans>last_name_form_label</Trans>},
+    { fieldName: 'email', label: <Trans>email_form_label</Trans>, type: InputType.email },
+    { fieldName: 'password', label: <Trans>password_form_label</Trans>, type: InputType.password }
   ];
 
   const changePassworFields: FormField[] = [
   ...profileFields,
-    { fieldName: 'new_password', label: <Trans>new_password_form_label</Trans>, type: 'password' },
-    { fieldName: 'repeat_new_password', label: <Trans>repeat_new_password_form_label</Trans>, type: 'password' },
+    { fieldName: 'new_password', label: <Trans>new_password_form_label</Trans>, type: InputType.password },
+    { fieldName: 'repeat_new_password', label: <Trans>repeat_new_password_form_label</Trans>, type: InputType.password },
   ];
 
   function toggleMode() {

@@ -1,7 +1,12 @@
 import {
-  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional} from 'sequelize';
+  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional,
+  ForeignKey
+} from 'sequelize';
 
-import db from "../../db";
+import sequelize from "../../db";
+import User from './User';
+import FamilyTree from './FamilyTree';
+import { Gender, MemberVisibility } from '../services/types';
 
 // order of InferAttributes & InferCreationAttributes is important.
 class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAttributes<FamilyMember>> {
@@ -10,30 +15,26 @@ class FamilyMember extends Model<InferAttributes<FamilyMember>, InferCreationAtt
    * */
   // 'CreationOptional' is a special type that marks the field as optional
   // when creating an instance of the model (such as using Model.create()).
-  declare age: number | null;
-  declare children: string; // node_id[]
-  declare created_at: CreationOptional<Date>;
-  declare created_by: number; //User
-  declare description: string;
-  declare dob: string;
-  declare dod: string | null;
-  declare email: string | null;
-  declare first_name: string;
-  declare gender: number; //1:M, 2:F
   declare id: CreationOptional<number>;
+  declare verified_by_user: boolean;
+  declare email: string | null;
+  declare description: string | null;
+  declare dob: string | null;
+  declare dod: string | null | null;
+  declare deceased: boolean;
+  declare first_name: string;
   declare last_name: string;
-  declare marital_status: string;
+  declare gender: Gender;
+  declare visibility: MemberVisibility;
+  declare marital_status: string | null;
   declare node_id: string;
-  declare occupation?: string;
-  declare parents:string; // node_id[]
-  declare profile_url?: string | undefined;
-  declare siblings: string; // node_id[]
-  declare spouses: string; // node_id[]
-  declare position?: string; //{x: number; y: number};
-  declare connections?: string; // {id: string; source: string; target: string}[];
-  declare tree_ids: string | null;
+  declare occupation: string | null;
+  declare profile_url: string | null;
+  declare tree_id: ForeignKey<FamilyTree['id']>;
+  declare user_id: ForeignKey<User['id']> | null;
+  declare created_at: CreationOptional<Date>;
+  declare created_by_id: ForeignKey<User['id']>;
   declare updated_at: CreationOptional<Date>;
-  declare user_id: number | null;
 }
 
 FamilyMember.init(
@@ -43,41 +44,30 @@ FamilyMember.init(
       autoIncrement: true,
       primaryKey: true
     },
+    email: { type: DataTypes.STRING },
     node_id: { type: DataTypes.STRING, allowNull: false },
-    tree_ids: { type: DataTypes.JSON },
-    // allowNull defaults to true
-    user_id: { type: DataTypes.INTEGER},
-    age: { type: DataTypes.INTEGER },
+    tree_id: { type: DataTypes.INTEGER.UNSIGNED, allowNull: false },
+    deceased: { type: DataTypes.BOOLEAN, allowNull: false },
+    verified_by_user: { type: DataTypes.BOOLEAN, allowNull: false },// i.e. has the person confirmed the filiation?
+    user_id: { type: DataTypes.INTEGER },
     occupation: { type: DataTypes.STRING },
     dob: { type: DataTypes.STRING },
     dod: { type: DataTypes.STRING },
     first_name: { type: DataTypes.STRING, allowNull: false },
-    gender: { type: DataTypes.INTEGER, allowNull: false },
-    email: { type: DataTypes.STRING },
+    gender: { type: DataTypes.ENUM('male', 'female', 'other'), allowNull: false },
     last_name: { type: DataTypes.STRING, allowNull: false },
     marital_status: { type: DataTypes.STRING },
-    parents: { type: DataTypes.JSON },
-    spouses: { type: DataTypes.JSON },
-    position: { type: DataTypes.JSON },
-    connections: { type: DataTypes.JSON },
     profile_url: { type: DataTypes.BLOB('long') },
-    description: { type: DataTypes.STRING },
-    children: { type: DataTypes.JSON },
-    siblings: { type: DataTypes.JSON },
-    created_by: {
-      type: DataTypes.INTEGER
-    },
-    created_at: {
-      type: DataTypes.DATE
-    },
-    updated_at: {
-      type: DataTypes.DATE
-    },
+    description: { type: DataTypes.TEXT },
+    visibility: { type: DataTypes.ENUM('public', 'family_only', 'private') },
+    created_by_id: { type: DataTypes.INTEGER },
+    created_at: { type: DataTypes.DATE },
+    updated_at: { type: DataTypes.DATE },
   },
   {
     timestamps: false,
     tableName: 'family_members',
-    sequelize: db // passing the `sequelize` instance is required
+    sequelize // passing the `sequelize` instance is required
   }
 );
 

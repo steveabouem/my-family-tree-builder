@@ -1,4 +1,4 @@
-enum PageUrlsEnum {
+enum PageUrls {
   home = "/",
   auth = "/connect",
   user = '/profile',
@@ -11,4 +11,4 @@ enum PageUrlsEnum {
   viewMember = "/family-members/view/:id",
 };
 
-export default PageUrlsEnum;
+export default PageUrls;

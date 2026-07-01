@@ -1,7 +1,12 @@
 import {
-  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional} from 'sequelize';
+  DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional,
+  NonAttribute,
+  Association} from 'sequelize';
 
-import db from "../../db";
+import sequelize from "../../db";
+import FamilyTree from './FamilyTree';
+import FamilyMember from './FamilyMember';
+import { Gender } from '../services/types';
 
 
 // order of InferAttributes & InferCreationAttributes is important.
@@ -14,26 +19,31 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare last_name: string;
   declare age: number | null;
   declare dob: string;
-  declare role_id: number;
   declare occupation: string;
   declare marital_status: string;
-  declare assigned_ips: string[]; //each User has one or more ip assigned to them. ips can be shared between multiple. model: FTIP"
   declare description: string;
   declare email: string;
-  declare gender: number; // 1:m 2:f"
-  declare has_ipa: CreationOptional<number>; //has authority to update authorized ips"
+  declare gender: Gender;
   declare profile_url: CreationOptional<string>;
   declare password: string;
-  declare createdAt: CreationOptional<Date>;
-  declare updatedAt: CreationOptional<Date>;
-  // declare leadership: number[];
-  // declare teams: number[];
+  declare created_at: CreationOptional<Date>;
+  declare updated_at: CreationOptional<Date>;
+
+   // associations
+  declare trees?: NonAttribute<FamilyTree[]>;
+  declare members?: NonAttribute<FamilyMember[]>;
+
+  static associations: {
+    trees: Association<User, FamilyTree>;
+    members: Association<User, FamilyMember>;
+  };
+
 }
 
 User.init(
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER.UNSIGNED,
       autoIncrement: true,
       primaryKey: true
     },
@@ -46,10 +56,6 @@ User.init(
     dob: {
       type: DataTypes.STRING,
     },
-    assigned_ips: {
-      type: DataTypes.JSON,
-      allowNull: false
-    },
     marital_status: {
       type: DataTypes.STRING,
     },
@@ -61,11 +67,8 @@ User.init(
       allowNull: false,
     },
     gender: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.ENUM('male', 'female', 'other'),
       allowNull: false,
-    },
-    has_ipa: {
-      type: DataTypes.INTEGER,
     },
     email: {
       type: DataTypes.STRING,
@@ -86,23 +89,19 @@ User.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    role_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: new Date
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.DATE,
     },
   },
   {
     timestamps: false,
     tableName: 'users',
-    sequelize: db, // passing the `sequelize` instance is required
+    sequelize // passing the `sequelize` instance is required
   }
 );
 

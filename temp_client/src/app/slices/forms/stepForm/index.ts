@@ -5,9 +5,9 @@ import { FormImageInfo, StepDetails, StepFormState, stepFormModes } from "types"
 * State
 */
 const initialState: StepFormState = {
-  currentFormStep: 0,
+  currentFormStep: 1,
   updating: true,
-  currentFormStepDetails: { name: '', fields: [] }, // this should be renamed currentStepInfo
+  currentFormStepDetails: { name: '', fields: [], sections: [], step: 0},
   globalValues: {},
   totalSteps: 1,
   mode: 'create',
@@ -53,26 +53,46 @@ const changeMode = (state: StepFormState, action: PayloadAction<stepFormModes>):
 };
 
 const setCurrentFields = (state: StepFormState, action: PayloadAction<StepDetails>) => {
+  // state.updating = true;
+  // const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload?.fields || [] }
+  // state.stepTree = newStepTree;
+  // state.currentFormStepDetails = action.payload;
+  // state.updating = false;
+};
+
+const setStepFields = (state: StepFormState, action: PayloadAction<StepDetails & { step: number }>) => {
+  // state.updating = true;
+  // const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload?.fields || [] }
+  // state.stepTree = newStepTree;
+  // state.totalSteps = action.payload.step;
+  // state.updating = false;
+  return state;
+};
+
+const setCurrentSections = (state: StepFormState, action: PayloadAction<Omit<StepDetails, 'fields'>>) => {
   state.updating = true;
-  const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
+  const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]:{sections: action.payload?.sections || [], step: action.payload.step} }
   state.stepTree = newStepTree;
   state.currentFormStepDetails = action.payload;
   state.updating = false;
+  
+  return state;
 };
-const setStepFields = (state: StepFormState, action: PayloadAction<StepDetails & { step: number }>) => {
+
+const setStepSections = (state: StepFormState, action: PayloadAction<StepDetails>) => {
   state.updating = true;
-  const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]: action.payload.fields }
+  const newStepTree = { ...state?.stepTree || {}, [action.payload.name as string]:{sections: action.payload?.sections || [], step: action.payload.step} }
   state.stepTree = newStepTree;
-  state.totalSteps = action.payload.step;
   state.updating = false;
   return state;
 };
 const removeFieldsByStepName = (state: StepFormState, action: PayloadAction<string>) => {
   state.updating = true;
-  state.currentFormStepDetails = { name: action.payload, fields: [] };
+  state.currentFormStepDetails = { name: action.payload, fields: [], step: 0 };
   state.updating = false;
   return state;
 };
+
 const getCurrentFields = (state: StepFormState) => {
   state.updating = true;
   state.updating = false;
@@ -92,7 +112,7 @@ const setCombinedStepValues = <V,>(state: StepFormState, action: PayloadAction<{
 const cleanup = (state: StepFormState) => {
   state.updating = true;
   state.currentFormStep = 0;
-  state.currentFormStepDetails = { name: '', fields: [] };
+  state.currentFormStepDetails = { name: '', fields: [], step: 0 };
   state.globalValues = {};
   state.totalSteps = 1;
   state.updating = false;
@@ -116,7 +136,9 @@ export const stepFormSlice = createSlice({
     fetchNextStepFields: fetchFields,
     getStepFormValuesAction: getCurrentFields,
     loaStepFormFieldsAction: setCurrentFields,
+    loadStepFormSectionsAction: setCurrentSections,
     setStepFieldsAction: setStepFields,
+    setStepSectionsAction: setStepSections,
     goToNextStepAction: goToNextStep,
     goToPrevStepAction: goToPrevStep,
     updateGlobalValuesAction: setCombinedStepValues,
@@ -130,8 +152,8 @@ export const stepFormSlice = createSlice({
 });
 
 export const {
-  changeformStepAction, goToNextStepAction, goToPrevStepAction, clearFieldsByStepName, cleanupAction,
-  loaStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, setStepFieldsAction,
+  changeformStepAction, goToNextStepAction, goToPrevStepAction, clearFieldsByStepName, cleanupAction, setStepSectionsAction,
+  loaStepFormFieldsAction, getStepFormValuesAction, fetchNextStepFields, setStepFieldsAction, loadStepFormSectionsAction,
   getGlobalValuesAction, updateGlobalValuesAction, setStepsCountAction, changeModeAction, toggleStepFormUpdatingAction
 } = stepFormSlice.actions;
 export default stepFormSlice.reducer;

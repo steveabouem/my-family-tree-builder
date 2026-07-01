@@ -12,6 +12,7 @@ import { store } from 'app/store';
 import AppContainer from 'components/common/AppContainer';
 import ThemeGenerator from 'components/common/ThemeGenerator';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactFlowProvider } from '@xyflow/react';
 import('../src/components/common/styles.scss');
 i18n.load({
   en: baseEn.messages,
@@ -28,11 +29,13 @@ root.render(
         <GlobalContextProvider>
           <FamilyTreeContextProvider>
             <I18nProvider i18n={i18n}>
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/*" element={<AppContainer />} />
-                </Routes>
-              </BrowserRouter>
+              <ReactFlowProvider>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/*" element={<AppContainer />} />
+                  </Routes>
+                </BrowserRouter>
+              </ReactFlowProvider>
             </I18nProvider>
           </FamilyTreeContextProvider>
         </GlobalContextProvider>

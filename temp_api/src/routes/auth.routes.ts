@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
 
 import { updateUser, login, register } from "../services/auth";
-import { getProfileDetailsByUserId } from "../services/user";
-import { sendRouteHandlerResponse } from "./helpers";
+// import { getProfileDetailsByUserId } from "../services/user";
+import { sendRouteHandlerResponse } from "./routeHelpers";
 import { AuthenticationResponse, LoginRequestPayload, UpdateUserRequestPayload } from "../services/types"
 
 const router = Router();
@@ -11,10 +11,10 @@ router.post('/register', (req: Request, res: Response) => {
   sendRouteHandlerResponse<any, AuthenticationResponse | null>(req.body, register, res, 'Register', req);
 });
 
-router.get('/:id', (req: Request<{ id: string }, {}, {}, {}>, res: Response) => {
-  const id = parseInt(req.params.id);
-  sendRouteHandlerResponse<number, AuthenticationResponse | null>(id, getProfileDetailsByUserId, res, 'Get user');
-});
+// router.get('/:id', (req: Request<{ id: string }, {}, {}, {}>, res: Response) => {
+//   const id = parseInt(req.params.id);
+//   sendRouteHandlerResponse<number, AuthenticationResponse | null>(id, getProfileDetailsByUserId, res, 'Get user');
+// });
 
 router.post('/login', (req: Request<{}, {}, LoginRequestPayload, {}>, res: Response) => {
   sendRouteHandlerResponse<LoginRequestPayload, AuthenticationResponse>(req.body, login, res, 'Login', req);
