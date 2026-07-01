@@ -1,0 +1,30 @@
+.page, .attempts-grid {
+  display: flex;
+ flex-direction: column;
+ justify-content: center;
+ align-items: center;
+}
+
+.attempts-grid {
+  
+  width: 50vw;
+  background-color: aquamarine;
+}
+
+.attempts-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: orange;
+  padding: 1em;
+  margin: 1em 0;
+  width: 100%;
+}
+
+input {
+  border: 1px solid;
+  color: grey;
+  background: white;
+  height: 35px;
+  padding: 1px;
+}
