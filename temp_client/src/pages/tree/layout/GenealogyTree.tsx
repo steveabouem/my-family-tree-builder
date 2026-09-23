@@ -8,15 +8,12 @@ import {
 } from '@xyflow/react';
 // @ts-ignore
 import '@xyflow/react/dist/style.css';
-import CustomNode from './TreeNode'
 import CustomEdge, { SiblingEdge, SpouseEdge } from './CustomEdge';
 import { FlowComponentTypes } from 'types';
-import { RelationshipNode, GenerationLayerNode } from './RelationshipNode';
+import ExpandableNode from './ExpandableNode';
 
 const nodeTypes = {
-  [FlowComponentTypes.customNode]: CustomNode,
-  [FlowComponentTypes.relationNode]: RelationshipNode,
-  [FlowComponentTypes.generationLayer]: GenerationLayerNode,
+  [FlowComponentTypes.expandableNode]: ExpandableNode,
 };
 const edgeTypes = {
   [FlowComponentTypes.customEdge]: CustomEdge,
@@ -24,21 +21,7 @@ const edgeTypes = {
   [FlowComponentTypes.siblingEdge]: SiblingEdge,
 };
 
-const GenealogyTree = ({ initialNodes, initialEdges }: any) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes ?? []);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges ?? []);
-
-  useEffect(() => {
-    setNodes(initialNodes ?? []);
-  }, [initialNodes, setNodes]);
-
-  useEffect(() => {
-    setEdges(initialEdges ?? []);
-  }, [initialEdges, setEdges]);
-  const onConnect = useCallback(
-    (params: any) => setEdges((els) => addEdge(params, els)),
-    [],
-  );
+const GenealogyTree = ({ nodes, edges, handleNodesChange, handleEdgesChange }: any) => {
 
   return (
     <ReactFlow
@@ -46,9 +29,9 @@ const GenealogyTree = ({ initialNodes, initialEdges }: any) => {
       edges={edges}
       edgeTypes={edgeTypes}
       nodeTypes={nodeTypes}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
+      onNodesChange={handleNodesChange}
+      onEdgesChange={handleEdgesChange}
+      // onConnect={onConnect}
       fitView
       draggable
     >

@@ -23,6 +23,7 @@ import BoxRow from "components/common/containers/column";
 import FieldSectionsGenerator from "components/common/forms/FieldSectionsGenerator";
 import { createDispatchHook } from "react-redux";
 import { EmptyIcon } from "utils/assets/icons";
+import FieldSectionsStepsGenerator from "components/common/forms/FieldSectionsStepsGenerator";
 
 export const FamilyTreeBuilderForm = ({ storeImg }: any) => {
   const { totalSteps, currentFormStep, stepTree } = useZSelector<StepFormState>(state => state.stepForm);
@@ -349,7 +350,7 @@ export const FamilyTreeBuilderForm = ({ storeImg }: any) => {
           <Button variant="outlined" color="primary" onClick={assessRelationship}><Trans>confirm</Trans></Button>
         </BoxColumn>
       </BoxColumn>
-      <FieldSectionsGenerator />
+      <FieldSectionsStepsGenerator />
     </Paper>
   );
 };

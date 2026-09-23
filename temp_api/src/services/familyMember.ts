@@ -92,7 +92,7 @@ export const getBloodline = async (memberId: number): Promise<ServiceResponseWit
     const tree = await FamilyTree.findByPk(member.tree_id);
 
     if (!tree) {
-      response.code = 404;
+      response.code = 400;
       response.message = 'Invalid data';
       return response;
     }

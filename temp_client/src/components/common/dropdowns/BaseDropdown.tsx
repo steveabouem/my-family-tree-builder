@@ -1,12 +1,11 @@
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { useFormikContext } from "formik";
 import { FormControl, Select, MenuItem } from "@mui/material";
 import { Trans } from "@lingui/macro";
 import { BaseDropDownProps, DropdownOption } from "types";
-import { traverse } from "utils/parsingAndFormatting";
 
 const BaseDropDown = ({ id, label, name, options, additionalClass, onChangeCB, sx, selectedOption }: BaseDropDownProps): JSX.Element => {
-  const [currentOption, setCurrentOption] = useState<string | undefined>();
+  const [currentOption, setCurrentOption] = useState<string | ReactElement |  undefined>();
   const { setFieldValue, setFieldTouched, values } = useFormikContext<any>();
 
   function handleFieldValueChange(optionname: string | number) {

@@ -6,7 +6,7 @@ import { IoWoman, IoMan, IoSettings, IoCaretBackOutline, IoImageOutline } from "
 import { FaCaretDown, FaCaretUp, FaChild, FaChildDress, FaLanguage, FaLink, FaTriangleExclamation, FaUpload, FaUser, FaUsers } from "react-icons/fa6";
 import { RiAddCircleLine, RiDeleteBin5Fill, RiArrowUpFill, RiArrowDownFill, RiMoonClearFill } from "react-icons/ri";
 import { GiEntryDoor, GiExitDoor, GiFamilyTree } from "react-icons/gi";
-import { HiColorSwatch } from "react-icons/hi";
+import { HiColorSwatch, HiMinusCircle } from "react-icons/hi";
 import { CiFileOn, CiSun } from "react-icons/ci";
 import { FaSnowman, FaEye } from "react-icons/fa";
 import { TbLeaf } from "react-icons/tb";
@@ -157,6 +157,25 @@ export const AddIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip
     <StyledRiAddCircleLine theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
 };
 const StyledRiAddCircleLine = styled(RiAddCircleLine) <{ theme: any }>`
+    transition: .4s;
+    &:hover {
+      color: ${(props: any) => props.theme.palette.action.hover};
+    }
+`;
+
+export const RemoveIcon = ({ sx = {}, color = '', size = 17, onClick, link, tooltip }: IconProps) => {
+  const theme = useTheme();
+
+  return tooltip ? (
+    <Tooltip title={tooltip}>
+      <Box>
+        <StyledHiMinusCircle theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />
+      </Box>
+    </Tooltip>
+  ) :
+    <StyledHiMinusCircle theme={theme} style={{ ...sx, cursor: link ? 'pointer' : 'auto' }} color={color} size={size} onClick={onClick} />;
+};
+const StyledHiMinusCircle  = styled(HiMinusCircle) <{ theme: any }>`
     transition: .4s;
     &:hover {
       color: ${(props: any) => props.theme.palette.action.hover};

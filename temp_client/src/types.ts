@@ -1,4 +1,4 @@
-import { Edge, NodeProps } from "@xyflow/react";
+import { Edge, Node, NodeProps } from "@xyflow/react";
 import React, { ReactElement, ReactNode } from "react";
 // I like all my types in one place. sue me.
 // ============================================================================
@@ -174,7 +174,7 @@ export interface BaseDropDownProps {
 }
 
 export interface DropdownOption {
-  label: string;
+  label: string | ReactElement;
   value: string | number;
   active?: boolean;
   additionalClass?: string;
@@ -408,22 +408,6 @@ export interface FamilyTree {
   updated_at?: Date;
   userId?: number;
 }
-
-// export interface FamilyTreeFormData {
-//   // Base anchor fields (always present)
-//   anchor_node_id?: string;
-//   treeName?: string;
-//   anchor_firstName?: string;
-//   anchor_lastName?: string;
-//   anchor_marital_status?: string;
-//   anchor_occupation?: string;
-//   anchor_dob?: string;
-//   anchor_gender?: Gender;
-//   anchor_email?: string;
-//   anchor_description?: string;
-//   next_of_kin?: string;
-//   [key: string]: string | undefined | '1' | '2';
-// }
 
 export interface FamilyTreeRecord {
   created_at: string,
@@ -751,6 +735,13 @@ export type TreeNodeData = NodeProps['data'] & FamilyMemberDTOV2 & {
   // position: {x: number, y: number}
 }
 
+export type ExpandableNodeData = {
+  addRelative: (type: KinshipType, alt?: string) => void,
+  onClick: (type: KinshipType, alt?: string) => void,
+  member: FamilyMemberDAOV2,
+  selected: boolean
+};
+export type ExpandableNodeProps = Node<ExpandableNodeData, FlowComponentTypes.expandableNode>;
 export type CustomSimpleEdge = Edge<{ value: number }, 'custom'>;
 export type TreeNodeProps = Omit<Partial<NodeProps>, 'data'> & {
   data: TreeNodeData
@@ -792,7 +783,7 @@ export type FamilyMemberDAOV2 = Pick<FamilyMemberDTOV2,
     step_number: number;
     send_invite: boolean;
     parents?: string[];
-    siblings?: string[];
+    siblings?: {node_id: string, shared_parent?: string}[]; // the shared parent's node_id. USed to differentiate half siblings
     spouses?: string[];
     children?: string[];
   };
@@ -805,6 +796,8 @@ export type FamilyTreeDAOV2 = Pick<FamilyTreeDTOV2,//? family tree form data
   'visibility'
 >
   & {
+    current: FamilyMemberDAOV2 | undefined;
+    relatedToNodeId: string | undefined;
     members: {
       [key: string]: FamilyMemberDAOV2; // node_id key
     }
@@ -964,10 +957,10 @@ export enum Gender {
 }
 
 export enum KinshipType {
-  'sibling' = 'sibling',
-  'parent' = 'parent',
-  'spouse' = 'spouse',
-  'child' = 'child'
+  'sibling' = 'siblings',
+  'parent' = 'parents',
+  'spouse' = 'spouses',
+  'child' = 'children'
 }
 
 export enum KinshipName {
@@ -997,6 +990,7 @@ export enum FlowComponentTypes {
   siblingEdge = 'siblingEdge',
   relationNode = 'relationNode',
   generationLayer = 'generationLayer',
+  expandableNode = 'expandableNode',
 }
 
 export interface RegistrationRequestV2 {
